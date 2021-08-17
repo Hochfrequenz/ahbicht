@@ -6,7 +6,7 @@ from typing import Optional
 
 import attr
 
-# pylint: disable=too-few-public-methods
+# pylint: disable=too-few-public-methods, no-member
 
 
 @attr.s(auto_attribs=True, kw_only=True)
