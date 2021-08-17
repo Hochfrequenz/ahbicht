@@ -1,12 +1,11 @@
-# Mussfeldprüfung / Condition check
+# Expression Evaluation
 
-Condition check (Mussfeldprüfung), that examines and evaluates expressions like `Muss [59] U ([123] O [456])` from the AHBs (edi@energy documents) by parsing it with the [parsing library `lark`](https://lark-parser.readthedocs.io/en/latest/):
+Evaluating expressions like `Muss [59] U ([123] O [456])` from the AHBs (edi@energy documents) by parsing it with the [parsing library `lark`](https://lark-parser.readthedocs.io/en/latest/) and combining the parsing result with information about the state of `[59]`, `[123]`, `[456]` is called expression evaluation.
+Determining the state of each single condition (f.e. `[59]` is fulfilled, `[123]` is not fulfilled, `[456]` is unknown) for a given message is part of the [Content Evaluation](../content_evalution/README_Content_Evaluation.md).
 
 See also [edi-energy.de → Dokumente → Allgemeine Festlegungen](https://www.edi-energy.de/index.php?id=38&tx_bdew_bdew%5Buid%5D=956&tx_bdew_bdew%5Baction%5D=download&tx_bdew_bdew%5Bcontroller%5D=Dokument&cHash=ae3c1bd6fe3f664cd90f5e94f9714e3e) which contains explanation how the Bedingungen are supposed to be read.
 
 ## Functionality
-
-(as of 2021-06-11)
 
 - Expressions can contain single numbers e.g. `[47]` or numbers combined with `U`/`O`/`X` which are translated to boolean operators `and`/`or`/`exclusive or`, e.g. `[45]U[2]` or they can be combined **without** an operator, e.g. `[930][5]` in the case of FormatConstraints.
 - Expressions can contain random whitespaces.
