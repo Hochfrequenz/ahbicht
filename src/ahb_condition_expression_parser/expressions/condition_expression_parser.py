@@ -3,7 +3,6 @@ This module parses a condition expression like "[59] U ([123] O [456])" into a t
 the parsing library lark: https://lark-parser.readthedocs.io/en/latest/
 
 The used terms are defined in the README_conditions.md.
-Hochfrequenz, 2021-05
 """
 
 from lark import Lark, Tree

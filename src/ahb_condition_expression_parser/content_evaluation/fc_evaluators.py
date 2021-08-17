@@ -2,8 +2,6 @@
 Evaluators are classes that evaluate AHB conditions, meaning here for format constraints: Based on a condition key and
 the entered input they return either True or False and for the latter an additional error message.
 Their results are used as input for the condition validation of the entire format constraint expression.
-
-Hochfrequenz, 2021-06
 """
 import asyncio
 from abc import ABC

@@ -1,5 +1,6 @@
 """
-This module handles the classes for the evaluation results.
+This module contains the classes for the evaluation results.
+A "result" is the outcome of a evaluation. It requires actual data to be present.
 """
 
 from typing import Optional

@@ -6,8 +6,6 @@ There are three possible input nodes (RequirementConstraint, Hint and FormatCons
 the EvaluatedComposition node which results from a combination of two nodes (of all possible types).
 
 The used terms are defined in the README_conditions.md.
-
-Hochfrequenz, 2021-05
 """
 from abc import ABC
 from typing import Optional

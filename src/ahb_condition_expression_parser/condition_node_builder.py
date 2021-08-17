@@ -1,8 +1,6 @@
 """
 Module for taking all the condition keys of a condition expression and building their respective ConditionNodes.
 If necessary it evaluates the needed attributes.
-
-Hochfrequenz, 2021-06
 """
 import asyncio
 from typing import Dict, List, Tuple, Union

@@ -4,8 +4,6 @@ The RequirementConstraintTransformer defines the rules how the different parts a
 of the condition expression tree are handled.
 
 The used terms are defined in the README_conditions.md.
-
-Hochfrequenz, 2021-05
 """
 
 from typing import Dict, List

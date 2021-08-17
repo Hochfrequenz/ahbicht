@@ -4,8 +4,6 @@ The FormatConstraintTransformer defines the rules how the different parts and no
 of the format constraint expression tree are handled.
 
 The used terms are defined in the README_conditions.md.
-
-Hochfrequenz, 2021-05
 """
 
 import asyncio

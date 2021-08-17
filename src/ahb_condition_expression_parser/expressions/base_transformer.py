@@ -1,8 +1,6 @@
 """
 This module implements the base class for the condition check Transformers
 that evaluate trees build from the condition_expression_parser.
-
-Hochfrequenz, 2021-05
 """
 
 from abc import ABC, abstractmethod

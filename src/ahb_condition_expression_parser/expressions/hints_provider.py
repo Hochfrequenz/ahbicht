@@ -1,8 +1,6 @@
 """
 Module to provide the condition hints from their respective json file
 as dictionary with the condition keys as keys and the hint texts as values.
-
-Hochfrequenz, 2021-06
 """
 
 import json

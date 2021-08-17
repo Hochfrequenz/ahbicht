@@ -5,7 +5,6 @@ The goal is to separate the requirement indicator (i.e. Muss, Soll, Kann, X, O, 
 and also several modal marks expressions if there are more than one.
 
 The used terms are defined in the README_conditions.md.
-Hochfrequenz, 2021-05
 """
 
 from lark import Lark, Tree
