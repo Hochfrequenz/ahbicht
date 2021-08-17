@@ -1,10 +1,11 @@
 """
-Evaluators are classes that evaluate AHB conditions, meaning: Based on a condition key and a message they return either
-FULFILLED (true), UNFULFILLED (false) or NEUTRAL (None). Their results are used as input for the condition validation of
-the entire message.
+Requirement Constraint (RC) Evaluators are evaluators that check if data are required under given circumstances.
+Typical usecases are for example
+* you must only provide a Gerätenummer if the Transaktionsgrund is f.e. 'E08'
+* you must only provide an Ausbaudatum if the meter is being removed f.e. 'Z02'
 """
 import asyncio
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Dict, List, Optional
 
 from ahb_condition_expression_parser.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluationContext
@@ -29,6 +30,10 @@ class RcEvaluator(Evaluator, ABC):
         if not evaluatable_data:
             raise ValueError("Evaluatable data have to be provided to any evaluator.")
         self.evaluatable_data = evaluatable_data
+
+    @abstractmethod
+    def _get_default_context(self) -> EvaluationContext:
+        raise NotImplementedError("Has to be implemented in inheriting class")
 
     async def evaluate_single_condition(
         self, condition_key: str, context: Optional[EvaluationContext] = None

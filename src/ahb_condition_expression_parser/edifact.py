@@ -1,5 +1,5 @@
 """
-This module manages EDIFACT related stuff.
+This module manages EDIFACT related stuff. It's basically a helper module to avoid stringly typed parameters.
 """
 import re
 from typing import Dict, Optional
@@ -7,6 +7,7 @@ from typing import Dict, Optional
 import aenum
 
 pruefidentifikator_pattern = re.compile(r"^[1-9]\d{4}$")
+
 
 # pylint: disable=too-few-public-methods
 class EdifactFormat(aenum.Enum):
@@ -58,6 +59,7 @@ class EdifactFormatVersion(aenum.Enum):
     _init_ = "value string"
     FV2104 = 2104, "FV2104"  # valid since 2021-04-01
     FV2110 = 2110, "FV2110"  # valid from 2021-10-01 onwards
+    FV2204 = 2204, "FV2204"  # valid from 2022-04-01 onwards ("MaKo 2022")
 
     def __str__(self):
         return self.string

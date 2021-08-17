@@ -1,7 +1,11 @@
 """
-Evaluators are classes that evaluate AHB conditions, meaning here for format constraints: Based on a condition key and
-the entered input they return either True or False and for the latter an additional error message.
-Their results are used as input for the condition validation of the entire format constraint expression.
+A format constraint (FC) evaluator is an evaluator for format constraints.
+Think of stuff like:
+* strings that should match an OBIS regex
+* MarktlokationsIDs having correct check sums
+* pre/post decimal values having specific ranges
+Other than requirement constraints format constraints do not affect if data are required at all, but instead only
+validate already required data.
 """
 import asyncio
 from abc import ABC
@@ -49,7 +53,7 @@ class FcEvaluator(Evaluator, ABC):
         tasks: List[Coroutine] = [
             self.evaluate_single_format_constraint(condition_key, entered_input) for condition_key in condition_keys
         ]
-        results: EvaluatedFormatConstraint = await asyncio.gather(*tasks)
+        results: List[EvaluatedFormatConstraint] = await asyncio.gather(*tasks)
 
         result: Dict[str, EvaluatedFormatConstraint] = dict(zip(condition_keys, results))
         return result
