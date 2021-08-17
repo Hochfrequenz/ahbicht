@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 from typing import Dict
 
-from ahb_condition_expression_parser.edifact import EdifactFormat, EdifactFormatVersion
+from ahbcep.edifact import EdifactFormat, EdifactFormatVersion
 
 
 # pylint: disable = too-few-public-methods

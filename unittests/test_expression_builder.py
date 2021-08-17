@@ -3,11 +3,8 @@ Tests the expression builder module.
 """
 import pytest
 
-from ahb_condition_expression_parser.expressions.condition_nodes import Hint, UnevaluatedFormatConstraint
-from ahb_condition_expression_parser.expressions.expression_builder import (
-    FormatConstraintExpressionBuilder,
-    HintExpressionBuilder,
-)
+from ahbcep.expressions.condition_nodes import Hint, UnevaluatedFormatConstraint
+from ahbcep.expressions.expression_builder import FormatConstraintExpressionBuilder, HintExpressionBuilder
 
 
 class TestFormatConstraintExpressionBuilder:

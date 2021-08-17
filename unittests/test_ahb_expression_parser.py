@@ -3,9 +3,7 @@
 import pytest
 from lark import Token, Tree
 
-from ahb_condition_expression_parser.expressions.ahb_expression_parser import (
-    parse_ahb_expression_to_single_requirement_indicator_expressions,
-)
+from ahbcep.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 
 
 class TestAhbExpressionParser:

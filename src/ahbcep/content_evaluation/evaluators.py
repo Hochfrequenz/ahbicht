@@ -7,7 +7,7 @@ import inspect
 from abc import ABC
 from typing import Callable, Optional
 
-from ahb_condition_expression_parser.edifact import EdifactFormat, EdifactFormatVersion
+from ahbcep.edifact import EdifactFormat, EdifactFormatVersion
 
 
 # pylint: disable=no-self-use, too-few-public-methods

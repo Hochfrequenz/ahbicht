@@ -1,4 +1,4 @@
-# Parsing Conditions from AHBs
+# AHB Condition Expression Parser (AHBCEP)
 
 <!--- you need to replace the `organization/repo_name` in the status badge URLs --->
 
@@ -8,6 +8,7 @@
 ![Black status badge](https://github.com/Hochfrequenz/python_template_repository/workflows/Black/badge.svg)
 
 A python package that parses condition expressions from EDI@Energy Anwendungshandbücher (AHB).
+The acronym of **AHB** **C**ondition **E**xpression **P**arser is `ahbcep`.
 
 ## What is this all about?
 
@@ -33,6 +34,8 @@ Note that determining the individual status of `[210]`, `[182]`, `[90]` and `[18
 ## Usage
 
 ```python
+from ahbcep import foo
+do something
 # todo: add mwe on how to use this library
 ```
 

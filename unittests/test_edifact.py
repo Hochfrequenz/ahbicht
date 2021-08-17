@@ -2,7 +2,7 @@ from typing import Optional, Tuple
 
 import pytest
 
-from ahb_condition_expression_parser.edifact import EdifactFormat, pruefidentifikator_to_format
+from ahbcep.edifact import EdifactFormat, pruefidentifikator_to_format
 
 
 class TestEdifact:

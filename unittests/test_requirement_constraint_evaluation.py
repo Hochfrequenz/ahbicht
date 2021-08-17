@@ -5,19 +5,17 @@ from unittest.mock import Mock
 import inject
 import pytest
 
-from ahb_condition_expression_parser.condition_check_results import RequirementConstraintEvaluationResult
-from ahb_condition_expression_parser.content_evaluation.rc_evaluators import RcEvaluator
-from ahb_condition_expression_parser.expressions.condition_nodes import (
+from ahbcep.condition_check_results import RequirementConstraintEvaluationResult
+from ahbcep.content_evaluation.rc_evaluators import RcEvaluator
+from ahbcep.expressions.condition_nodes import (
     ConditionFulfilledValue,
     EvaluatedComposition,
     Hint,
     RequirementConstraint,
     UnevaluatedFormatConstraint,
 )
-from ahb_condition_expression_parser.expressions.hints_provider import HintsProvider
-from ahb_condition_expression_parser.expressions.requirement_constraint_expression_evaluation import (
-    requirement_constraint_evaluation,
-)
+from ahbcep.expressions.hints_provider import HintsProvider
+from ahbcep.expressions.requirement_constraint_expression_evaluation import requirement_constraint_evaluation
 
 
 class TestRequirementConstraintEvaluation:
@@ -79,7 +77,7 @@ class TestRequirementConstraintEvaluation:
         Odd condition_keys are True, even condition_keys are False
         """
         mocker.patch(
-            "ahb_condition_expression_parser.expressions.requirement_constraint_expression_evaluation.ConditionNodeBuilder.requirement_content_evaluation_for_all_condition_keys",
+            "ahbcep.expressions.requirement_constraint_expression_evaluation.ConditionNodeBuilder.requirement_content_evaluation_for_all_condition_keys",
             return_value=self._input_values,
         )
         requirement_constraint_evaluation_result = requirement_constraint_evaluation(
@@ -155,7 +153,7 @@ class TestRequirementConstraintEvaluation:
     ):
         """Tests that an error is raised when trying to pass invalid values."""
         mocker.patch(
-            "ahb_condition_expression_parser.expressions.requirement_constraint_expression_evaluation.ConditionNodeBuilder.requirement_content_evaluation_for_all_condition_keys",
+            "ahbcep.expressions.requirement_constraint_expression_evaluation.ConditionNodeBuilder.requirement_content_evaluation_for_all_condition_keys",
             return_value=input_values,
         )
         with pytest.raises(expected_error) as excinfo:

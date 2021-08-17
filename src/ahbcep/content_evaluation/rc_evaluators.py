@@ -8,9 +8,9 @@ import asyncio
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional
 
-from ahb_condition_expression_parser.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluationContext
-from ahb_condition_expression_parser.content_evaluation.evaluators import Evaluator
-from ahb_condition_expression_parser.expressions.condition_nodes import ConditionFulfilledValue
+from ahbcep.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluationContext
+from ahbcep.content_evaluation.evaluators import Evaluator
+from ahbcep.expressions.condition_nodes import ConditionFulfilledValue
 
 
 # pylint: disable=no-self-use

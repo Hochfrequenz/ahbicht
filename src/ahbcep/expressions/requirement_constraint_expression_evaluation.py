@@ -12,12 +12,12 @@ import inject
 from lark import Token, Tree, v_args
 from lark.exceptions import VisitError
 
-from ahb_condition_expression_parser.condition_check_results import RequirementConstraintEvaluationResult
-from ahb_condition_expression_parser.condition_node_builder import ConditionNodeBuilder
-from ahb_condition_expression_parser.content_evaluation.rc_evaluators import RcEvaluator
-from ahb_condition_expression_parser.expressions.base_transformer import BaseTransformer
-from ahb_condition_expression_parser.expressions.condition_expression_parser import parse_condition_expression_to_tree
-from ahb_condition_expression_parser.expressions.condition_nodes import (
+from ahbcep.condition_check_results import RequirementConstraintEvaluationResult
+from ahbcep.condition_node_builder import ConditionNodeBuilder
+from ahbcep.content_evaluation.rc_evaluators import RcEvaluator
+from ahbcep.expressions.base_transformer import BaseTransformer
+from ahbcep.expressions.condition_expression_parser import parse_condition_expression_to_tree
+from ahbcep.expressions.condition_nodes import (
     ConditionFulfilledValue,
     ConditionNode,
     EvaluatedComposition,
@@ -26,11 +26,8 @@ from ahb_condition_expression_parser.expressions.condition_nodes import (
     RequirementConstraint,
     UnevaluatedFormatConstraint,
 )
-from ahb_condition_expression_parser.expressions.expression_builder import (
-    FormatConstraintExpressionBuilder,
-    HintExpressionBuilder,
-)
-from ahb_condition_expression_parser.expressions.hints_provider import HintsProvider
+from ahbcep.expressions.expression_builder import FormatConstraintExpressionBuilder, HintExpressionBuilder
+from ahbcep.expressions.hints_provider import HintsProvider
 
 
 # pylint: disable=no-self-use

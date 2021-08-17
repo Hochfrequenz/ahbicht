@@ -11,8 +11,8 @@ import asyncio
 from abc import ABC
 from typing import Callable, Coroutine, Dict, List
 
-from ahb_condition_expression_parser.content_evaluation.evaluators import Evaluator
-from ahb_condition_expression_parser.expressions.condition_nodes import EvaluatedFormatConstraint
+from ahbcep.content_evaluation.evaluators import Evaluator
+from ahbcep.expressions.condition_nodes import EvaluatedFormatConstraint
 
 
 # pylint: disable=no-self-use

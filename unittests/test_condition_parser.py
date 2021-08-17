@@ -3,7 +3,7 @@
 import pytest
 from lark import Token, Tree
 
-from ahb_condition_expression_parser.expressions.condition_expression_parser import parse_condition_expression_to_tree
+from ahbcep.expressions.condition_expression_parser import parse_condition_expression_to_tree
 
 
 class TestConditionParser:

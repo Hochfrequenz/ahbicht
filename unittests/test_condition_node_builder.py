@@ -2,17 +2,17 @@
 
 import pytest
 
-from ahb_condition_expression_parser.condition_node_builder import ConditionNodeBuilder
-from ahb_condition_expression_parser.content_evaluation.evaluationdatatypes import EvaluationContext
-from ahb_condition_expression_parser.content_evaluation.rc_evaluators import EvaluatableData, RcEvaluator
-from ahb_condition_expression_parser.edifact import EdifactFormat, EdifactFormatVersion
-from ahb_condition_expression_parser.expressions.condition_nodes import (
+from ahbcep.condition_node_builder import ConditionNodeBuilder
+from ahbcep.content_evaluation.evaluationdatatypes import EvaluationContext
+from ahbcep.content_evaluation.rc_evaluators import EvaluatableData, RcEvaluator
+from ahbcep.edifact import EdifactFormat, EdifactFormatVersion
+from ahbcep.expressions.condition_nodes import (
     ConditionFulfilledValue,
     Hint,
     RequirementConstraint,
     UnevaluatedFormatConstraint,
 )
-from ahb_condition_expression_parser.expressions.hints_provider import HintsProvider
+from ahbcep.expressions.hints_provider import HintsProvider
 
 
 class DummyRcEvaluator(RcEvaluator):
@@ -102,7 +102,7 @@ class TestConditionNodeBuilder:
         """Tests that requirement constraint nodes are build correctly."""
 
         mocker.patch(
-            "ahb_condition_expression_parser.content_evaluation.rc_evaluators.RcEvaluator.evaluate_single_condition",
+            "ahbcep.content_evaluation.rc_evaluators.RcEvaluator.evaluate_single_condition",
             side_effect=[expected_conditions_fulfilled_11, expected_conditions_fulfilled_78],
         )
 
@@ -120,7 +120,7 @@ class TestConditionNodeBuilder:
     def test_requirement_evaluation_for_all_condition_keys(self, mocker):
 
         mocker.patch(
-            "ahb_condition_expression_parser.content_evaluation.rc_evaluators.RcEvaluator.evaluate_single_condition",
+            "ahbcep.content_evaluation.rc_evaluators.RcEvaluator.evaluate_single_condition",
             side_effect=[ConditionFulfilledValue.FULFILLED, ConditionFulfilledValue.UNFULFILLED],
         )
 

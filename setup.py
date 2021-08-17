@@ -14,4 +14,4 @@ You are using Python {sys.version_info}
     )
     sys.exit(error)
 
-setup(name="ahb_condition_expression_parser", use_scm_version=True)
+setup(name="ahbcep", use_scm_version=True)

@@ -13,12 +13,12 @@ import inject
 from lark import Token, Tree, v_args
 from lark.exceptions import VisitError
 
-from ahb_condition_expression_parser.condition_check_results import FormatConstraintEvaluationResult
-from ahb_condition_expression_parser.content_evaluation.fc_evaluators import FcEvaluator
-from ahb_condition_expression_parser.expressions.base_transformer import BaseTransformer
-from ahb_condition_expression_parser.expressions.condition_expression_parser import parse_condition_expression_to_tree
-from ahb_condition_expression_parser.expressions.condition_nodes import EvaluatedFormatConstraint
-from ahb_condition_expression_parser.expressions.expression_builder import FormatErrorMessageExpressionBuilder
+from ahbcep.condition_check_results import FormatConstraintEvaluationResult
+from ahbcep.content_evaluation.fc_evaluators import FcEvaluator
+from ahbcep.expressions.base_transformer import BaseTransformer
+from ahbcep.expressions.condition_expression_parser import parse_condition_expression_to_tree
+from ahbcep.expressions.condition_nodes import EvaluatedFormatConstraint
+from ahbcep.expressions.expression_builder import FormatErrorMessageExpressionBuilder
 
 
 # pylint: disable=no-self-use

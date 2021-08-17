@@ -8,7 +8,7 @@ from typing import Dict
 
 from lark import Token, Transformer, v_args
 
-from ahb_condition_expression_parser.expressions.condition_nodes import ConditionNode
+from ahbcep.expressions.condition_nodes import ConditionNode
 
 
 @v_args(inline=True)  # Children are provided as *args instead of a list argument
