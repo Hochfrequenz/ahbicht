@@ -36,6 +36,12 @@ Note that determining the individual status of `[210]`, `[182]`, `[90]` and `[18
 # todo: add mwe on how to use this library
 ```
 
+## Code Quality / Production Readiness
+
+- The code has at least a 95%s unit test coverage. ✔️
+- The code is rated 10/10 in pylint. ✔
+- There are only [few dependencies](requirements.in). ✔
+
 ## Expression Evaluation / Parsing the Condition String
 
 Evaluating expressions like `Muss [59] U ([123] O [456])` from the AHBs by parsing it with the [parsing library `lark`](https://lark-parser.readthedocs.io/en/latest/) and combining the parsing result with information about the state of `[59]`, `[123]`, `[456]` is called expression evaluation.
