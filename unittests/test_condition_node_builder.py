@@ -3,6 +3,7 @@
 import pytest
 
 from ahb_condition_expression_parser.condition_node_builder import ConditionNodeBuilder
+from ahb_condition_expression_parser.content_evaluation.evaluationdatatypes import EvaluationContext
 from ahb_condition_expression_parser.content_evaluation.rc_evaluators import EvaluatableData, RcEvaluator
 from ahb_condition_expression_parser.edifact import EdifactFormat, EdifactFormatVersion
 from ahb_condition_expression_parser.expressions.condition_nodes import (
@@ -19,9 +20,11 @@ class DummyRcEvaluator(RcEvaluator):
     a dummy requirement constraint evaluator to be used in the test
     """
 
+    def _get_default_context(self) -> EvaluationContext:
+        return None
+
     edifact_format = EdifactFormat.UTILMD
     edifact_format_version = EdifactFormatVersion.FV2104
-    pass
 
 
 class TestConditionNodeBuilder:
