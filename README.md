@@ -7,6 +7,14 @@
 ![Linting status badge](https://github.com/Hochfrequenz/python_template_repository/workflows/Linting/badge.svg)
 ![Black status badge](https://github.com/Hochfrequenz/python_template_repository/workflows/Black/badge.svg)
 
+
+<a href="https://ahbcep.readthedocs.io">
+    <img src="./media/ahbcep-logo.png"
+         alt="ahbcep logo"
+         height="150px"
+         align="right">
+</a>
+
 A python package that parses condition expressions from EDI@Energy Anwendungshandbücher (AHB).
 The acronym of **AHB** **C**ondition **E**xpression **P**arser is `ahbcep`.
 
