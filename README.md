@@ -24,7 +24,7 @@ The German energy market uses [EDIFACT](https://en.wikipedia.org/wiki/EDIFACT) a
 The rules on how to structure and validate the EDIFACT messages are written in
 
 - one **M**essage **I**mplementation **G**uide (MIG) per EDIFACT format (for example UTILMD or MSCONS)
-- one _**A**nwendungs**h**and**b**uch_ (AHB, en. manual) per use case group (for example [GPKE](https://de.wikipedia.org/wiki/Gesch%C3%A4ftsprozesse_zur_Kundenbelieferung_mit_Elektrizit%C3%A4t) or _Wechsel im Messwesen_ (WiM))
+- one _**A**nwendungs**h**and**b**uch_ (AHB, en. manual) per use case group (for example [GPKE](https://de.wikipedia.org/wiki/Gesch%C3%A4ftsprozesse_zur_Kundenbelieferung_mit_Elektrizit%C3%A4t) or _Wechselprozesse im Messwesen_ (WiM))
 
 According to the legislation for the German energy market, the organisations in charge of maintaining the documents described above (AHB and MIGs) are the _**B**undesverband **d**er **E**nergie- und **W**asserwirtschaft_ (BDEW) and the _**B**undes**netza**gentur_ (BNetzA).
 They form a working group named "Arbeitsgruppe EDI@Energy". This work group publishes the MIGs and AHBs on [edi-energy.de](https://edi-energy.de/).
