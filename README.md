@@ -5,7 +5,7 @@
 ![Linting status badge](https://github.com/Hochfrequenz/ahbicht/workflows/Linting/badge.svg)
 ![Black status badge](https://github.com/Hochfrequenz/ahbicht/workflows/Black/badge.svg)
 
-<a href="https://ahbcep.readthedocs.io">
+<a href="https://ahbicht.readthedocs.io">
     <img src="./media/ahbicht-logo.png"
          alt="ahbicht logo"
          height="150px"
