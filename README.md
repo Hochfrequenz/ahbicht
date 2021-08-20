@@ -7,7 +7,6 @@
 ![Linting status badge](https://github.com/Hochfrequenz/python_template_repository/workflows/Linting/badge.svg)
 ![Black status badge](https://github.com/Hochfrequenz/python_template_repository/workflows/Black/badge.svg)
 
-
 <a href="https://ahbcep.readthedocs.io">
     <img src="./media/ahbcep-logo.png"
          alt="ahbcep logo"
@@ -118,7 +117,6 @@ The following diagram shows the structure of the condition check for more than o
 
 ![grafik](src/ahbcep/expressions/Condition_Structure_with_more_than_one_condition.png)
 
-
 The raw and updated data for this diagram can be found in the [draw_io_charts repository](https://github.com/Hochfrequenz/draw_io_charts/tree/main/wimbee/conditions) and edited under [app.diagrams.net](https://app.diagrams.net/#HHochfrequenz%2Fdraw_io_charts%2Fmain%2Fwimbee%2Fconditions%2FCondition_Structure_with_more_than_one_condition.drawio) with your GitHub Account.
 
 ### Truth tables
@@ -205,7 +203,6 @@ Those results are relevant for the user when entering data, probably based in a 
 The **`EvaluationContext`** class is a container for the scope and other information that are relevant for a single condition and a single evaluation only but (other than `EvaluatableData`) might change within an otherwise stable message.
 
 ![grafik](src/ahbcep/content_evaluation/EvaluatingConditions.png)
-
 
 <!-- The raw and updated data for this diagram can be found in the [draw_io_charts repository](https://github.com/Hochfrequenz/draw_io_charts/tree/main/wimbee/) and edited under [app.diagrams.net](https://app.diagrams.net/#HHochfrequenz%2Fdraw_io_charts%2Fmain%2Fwimbee%2FEvaluatingConditions.drawio) with your Hochfrequenz GitHub Account. -->
 
