@@ -2,7 +2,7 @@
 This module evaluates the parsed ahb expression tree.
 The AhbExpressionTransformer defines the rules how the different parts of the parsed tree are handled.
 
-The used terms are defined in the README_conditions.md.
+The used terms are defined in the README.md.
 """
 
 from typing import List
