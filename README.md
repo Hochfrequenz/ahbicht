@@ -56,8 +56,8 @@ do something
 
 ## Expression Evaluation / Parsing the Condition String
 
-Evaluating expressions like `Muss [59] U ([123] O [456])` from the AHBs by parsing it with the [parsing library `lark`](https://lark-parser.readthedocs.io/en/latest/) and combining the parsing result with information about the state of `[59]`, `[123]`, `[456]` is called expression evaluation.
-Determining the state of each single condition (f.e. `[59]` is fulfilled, `[123]` is not fulfilled, `[456]` is unknown) for a given message is part of the content evaluation (see next chapter).
+Evaluating expressions like `Muss [59] U ([123] O [456])` from the AHBs by parsing it with the [parsing library `lark`](https://lark-parser.readthedocs.io/en/latest/) and combining the parsing result with information about the state of `[59]`, `[123]`, `[456]` is called **expression evaluation**.
+Determining the state of each single condition (f.e. `[59]` is fulfilled, `[123]` is not fulfilled, `[456]` is unknown) for a given message is part of the **content evaluation** (see next chapter).
 
 If you're new to this topic, please read [edi-energy.de → Dokumente → Allgemeine Festlegungen](https://www.edi-energy.de/index.php?id=38&tx_bdew_bdew%5Buid%5D=956&tx_bdew_bdew%5Baction%5D=download&tx_bdew_bdew%5Bcontroller%5D=Dokument&cHash=ae3c1bd6fe3f664cd90f5e94f9714e3e) first.
 This document contains German explanations, how the Bedingungen are supposed to be read.
