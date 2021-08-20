@@ -1,4 +1,3 @@
-import json
 from typing import Union
 
 from lark import Token, Tree
@@ -70,6 +69,3 @@ class TreeSchema(Schema):
     @post_load
     def deserialize(self, data, **kwargs) -> Tree:
         return Tree(**data)
-
-    class Meta:
-        json_module = json
