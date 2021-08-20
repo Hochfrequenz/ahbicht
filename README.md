@@ -110,7 +110,7 @@ This document contains German explanations, how the Bedingungen are supposed to 
 | `neutral`                                      | Hints and UnevaluatedFormat Constraints are seen as neutral as they don't have a condition to be fulfilled or unfulfilled and should not change the requirement outcome. See truth table below.                                                                                                                                                                                                                                                                                                                               |
 | `unknown`                                      | If the condition can be fulfilled but we don't know (yet) if it is or not. See truth table below.                                                                                                                                                                                                                                                                                                                                                                                                                             | "Wenn vorhanden"                                                                                                      |
 
-The decision if a requirement constraint is met / fulfilled / true is made in the content evaluation module. See [its README](evaluation/README_Evaluation.md).
+The decision if a requirement constraint is met / fulfilled / true is made in the content evaluation module.
 
 ### Program structure
 
