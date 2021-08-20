@@ -6,7 +6,7 @@ import json
 import pytest
 from lark import Token, Tree
 
-from ahbcep.json_serialization.tree_schema import TreeSchema
+from ahbicht.json_serialization.tree_schema import TreeSchema
 
 
 class TestJsonSerialization:

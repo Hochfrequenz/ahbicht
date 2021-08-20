@@ -3,11 +3,11 @@
 import inject
 import pytest
 
-from ahbcep.condition_check_results import FormatConstraintEvaluationResult
-from ahbcep.content_evaluation.fc_evaluators import FcEvaluator
-from ahbcep.edifact import EdifactFormat, EdifactFormatVersion
-from ahbcep.expressions.condition_nodes import EvaluatedFormatConstraint
-from ahbcep.expressions.format_constraint_expression_evaluation import (
+from ahbicht.condition_check_results import FormatConstraintEvaluationResult
+from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
+from ahbicht.edifact import EdifactFormat, EdifactFormatVersion
+from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
+from ahbicht.expressions.format_constraint_expression_evaluation import (
     _build_evaluated_format_constraint_nodes,
     format_constraint_evaluation,
 )
@@ -104,7 +104,7 @@ class TestFormatConstraintExpressionEvaluation:
         Odd condition_keys are True, even condition_keys are False
         """
         mocker.patch(
-            "ahbcep.expressions.format_constraint_expression_evaluation._build_evaluated_format_constraint_nodes",
+            "ahbicht.expressions.format_constraint_expression_evaluation._build_evaluated_format_constraint_nodes",
             return_value=self._input_values,
         )
 
@@ -138,7 +138,7 @@ class TestFormatConstraintExpressionEvaluation:
     ):
         """Tests that an error is raised when trying to pass invalid values."""
         mocker.patch(
-            "ahbcep.expressions.format_constraint_expression_evaluation._build_evaluated_format_constraint_nodes",
+            "ahbicht.expressions.format_constraint_expression_evaluation._build_evaluated_format_constraint_nodes",
             return_value=input_values,
         )
 

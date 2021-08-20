@@ -2,17 +2,17 @@
 
 import pytest
 
-from ahbcep.condition_node_builder import ConditionNodeBuilder
-from ahbcep.content_evaluation.evaluationdatatypes import EvaluationContext
-from ahbcep.content_evaluation.rc_evaluators import EvaluatableData, RcEvaluator
-from ahbcep.edifact import EdifactFormat, EdifactFormatVersion
-from ahbcep.expressions.condition_nodes import (
+from ahbicht.condition_node_builder import ConditionNodeBuilder
+from ahbicht.content_evaluation.evaluationdatatypes import EvaluationContext
+from ahbicht.content_evaluation.rc_evaluators import EvaluatableData, RcEvaluator
+from ahbicht.edifact import EdifactFormat, EdifactFormatVersion
+from ahbicht.expressions.condition_nodes import (
     ConditionFulfilledValue,
     Hint,
     RequirementConstraint,
     UnevaluatedFormatConstraint,
 )
-from ahbcep.expressions.hints_provider import HintsProvider
+from ahbicht.expressions.hints_provider import HintsProvider
 
 
 class DummyRcEvaluator(RcEvaluator):
@@ -102,7 +102,7 @@ class TestConditionNodeBuilder:
         """Tests that requirement constraint nodes are build correctly."""
 
         mocker.patch(
-            "ahbcep.content_evaluation.rc_evaluators.RcEvaluator.evaluate_single_condition",
+            "ahbicht.content_evaluation.rc_evaluators.RcEvaluator.evaluate_single_condition",
             side_effect=[expected_conditions_fulfilled_11, expected_conditions_fulfilled_78],
         )
 
@@ -120,7 +120,7 @@ class TestConditionNodeBuilder:
     def test_requirement_evaluation_for_all_condition_keys(self, mocker):
 
         mocker.patch(
-            "ahbcep.content_evaluation.rc_evaluators.RcEvaluator.evaluate_single_condition",
+            "ahbicht.content_evaluation.rc_evaluators.RcEvaluator.evaluate_single_condition",
             side_effect=[ConditionFulfilledValue.FULFILLED, ConditionFulfilledValue.UNFULFILLED],
         )
 

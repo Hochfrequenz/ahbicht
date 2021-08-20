@@ -5,7 +5,7 @@ import re
 from abc import ABC, abstractmethod
 from typing import Optional, Union
 
-from ahbcep.expressions.condition_nodes import (
+from ahbicht.expressions.condition_nodes import (
     ConditionNode,
     EvaluatedComposition,
     EvaluatedFormatConstraint,

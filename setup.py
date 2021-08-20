@@ -14,4 +14,4 @@ You are using Python {sys.version_info}
     )
     sys.exit(error)
 
-setup(name="ahbcep", use_scm_version=True)
+setup(name="ahbicht", use_scm_version=True)

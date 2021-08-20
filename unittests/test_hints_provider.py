@@ -1,8 +1,8 @@
 """
 Tests the hints provider module.
 """
-from ahbcep.edifact import EdifactFormat, EdifactFormatVersion
-from ahbcep.expressions.hints_provider import HintsProvider
+from ahbicht.edifact import EdifactFormat, EdifactFormatVersion
+from ahbicht.expressions.hints_provider import HintsProvider
 
 
 class TestHintsProvider:

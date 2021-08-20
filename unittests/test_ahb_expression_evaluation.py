@@ -5,11 +5,11 @@ from unittest.mock import Mock
 import inject
 import pytest
 
-from ahbcep.condition_check_results import FormatConstraintEvaluationResult, RequirementConstraintEvaluationResult
-from ahbcep.content_evaluation.rc_evaluators import RcEvaluator
-from ahbcep.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
-from ahbcep.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
-from ahbcep.expressions.hints_provider import HintsProvider
+from ahbicht.condition_check_results import FormatConstraintEvaluationResult, RequirementConstraintEvaluationResult
+from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
+from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
+from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
+from ahbicht.expressions.hints_provider import HintsProvider
 
 
 class TestAHBExpressionEvaluation:
@@ -98,11 +98,11 @@ class TestAHBExpressionEvaluation:
                 )
 
         mocker.patch(
-            "ahbcep.expressions.ahb_expression_evaluation.requirement_constraint_evaluation",
+            "ahbicht.expressions.ahb_expression_evaluation.requirement_constraint_evaluation",
             side_effect=side_effect_rc_evaluation,
         )
         mocker.patch(
-            "ahbcep.expressions.ahb_expression_evaluation.format_constraint_evaluation",
+            "ahbicht.expressions.ahb_expression_evaluation.format_constraint_evaluation",
             return_value=FormatConstraintEvaluationResult(format_constraints_fulfilled=True, error_message=None),
         )
 

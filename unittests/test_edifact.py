@@ -2,7 +2,7 @@ from typing import Optional, Tuple
 
 import pytest
 
-from ahbcep.edifact import EdifactFormat, pruefidentifikator_to_format
+from ahbicht.edifact import EdifactFormat, pruefidentifikator_to_format
 
 
 class TestEdifact:
