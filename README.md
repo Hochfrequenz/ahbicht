@@ -203,7 +203,8 @@ Those results are relevant for the user when entering data, probably based in a 
 
 The **`EvaluationContext`** class is a container for the scope and other information that are relevant for a single condition and a single evaluation only but (other than `EvaluatableData`) might change within an otherwise stable message.
 
-![grafik](EvaluatingConditions.png)
+![grafik](src/ahbcep/content_evaluation/EvaluatingConditions.png)
+
 
 <!-- The raw and updated data for this diagram can be found in the [draw_io_charts repository](https://github.com/Hochfrequenz/draw_io_charts/tree/main/wimbee/) and edited under [app.diagrams.net](https://app.diagrams.net/#HHochfrequenz%2Fdraw_io_charts%2Fmain%2Fwimbee%2FEvaluatingConditions.drawio) with your Hochfrequenz GitHub Account. -->
 
