@@ -116,7 +116,8 @@ The decision if a requirement constraint is met / fulfilled / true is made in th
 
 The following diagram shows the structure of the condition check for more than one condition. If it is only a single condition or just a requirement indicator, the respective tree consists of just this token and the result equals the input.
 
-![grafik](Condition_Structure_with_more_than_one_condition.png)
+![grafik](src/ahbcep/expressions/Condition_Structure_with_more_than_one_condition.png)
+
 
 The raw and updated data for this diagram can be found in the [draw_io_charts repository](https://github.com/Hochfrequenz/draw_io_charts/tree/main/wimbee/conditions) and edited under [app.diagrams.net](https://app.diagrams.net/#HHochfrequenz%2Fdraw_io_charts%2Fmain%2Fwimbee%2Fconditions%2FCondition_Structure_with_more_than_one_condition.drawio) with your GitHub Account.
 
