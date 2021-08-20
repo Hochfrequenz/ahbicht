@@ -1,21 +1,19 @@
-# AHB Condition Expression Parser (AHBCEP)
+# AHB Condition Expression Parser (AHBicht)
 
-<!--- you need to replace the `organization/repo_name` in the status badge URLs --->
+![Unittests status badge](https://github.com/Hochfrequenz/ahbicht/workflows/Unittests/badge.svg)
+![Coverage status badge](https://github.com/Hochfrequenz/ahbicht/workflows/Coverage/badge.svg)
+![Linting status badge](https://github.com/Hochfrequenz/ahbicht/workflows/Linting/badge.svg)
+![Black status badge](https://github.com/Hochfrequenz/ahbicht/workflows/Black/badge.svg)
 
-![Unittests status badge](https://github.com/Hochfrequenz/python_template_repository/workflows/Unittests/badge.svg)
-![Coverage status badge](https://github.com/Hochfrequenz/python_template_repository/workflows/Coverage/badge.svg)
-![Linting status badge](https://github.com/Hochfrequenz/python_template_repository/workflows/Linting/badge.svg)
-![Black status badge](https://github.com/Hochfrequenz/python_template_repository/workflows/Black/badge.svg)
-
-<a href="https://ahbcep.readthedocs.io">
-    <img src="./media/ahbcep-logo.png"
-         alt="ahbcep logo"
+<a href="https://ahbicht.readthedocs.io">
+    <img src="./media/ahbicht-logo.png"
+         alt="ahbicht logo"
          height="150px"
          align="right">
 </a>
 
 A python package that parses condition expressions from EDI@Energy Anwendungshandbücher (AHB).
-The acronym of **AHB** **C**ondition **E**xpression **P**arser is `ahbcep`.
+Since it's based on lark, we named the module AHBicht.
 
 ## What is this all about?
 
@@ -41,7 +39,7 @@ Note that determining the individual status of `[210]`, `[182]`, `[90]` and `[18
 ## Usage
 
 ```python
-from ahbcep import foo
+from ahbicht import foo
 do something
 # todo: add mwe on how to use this library
 ```
@@ -115,7 +113,7 @@ The decision if a requirement constraint is met / fulfilled / true is made in th
 
 The following diagram shows the structure of the condition check for more than one condition. If it is only a single condition or just a requirement indicator, the respective tree consists of just this token and the result equals the input.
 
-![grafik](src/ahbcep/expressions/Condition_Structure_with_more_than_one_condition.png)
+![grafik](src/ahbicht/expressions/Condition_Structure_with_more_than_one_condition.png)
 
 The raw and updated data for this diagram can be found in the [draw_io_charts repository](https://github.com/Hochfrequenz/draw_io_charts/tree/main/wimbee/conditions) and edited under [app.diagrams.net](https://app.diagrams.net/#HHochfrequenz%2Fdraw_io_charts%2Fmain%2Fwimbee%2Fconditions%2FCondition_Structure_with_more_than_one_condition.drawio) with your GitHub Account.
 
@@ -202,7 +200,7 @@ Those results are relevant for the user when entering data, probably based in a 
 
 The **`EvaluationContext`** class is a container for the scope and other information that are relevant for a single condition and a single evaluation only but (other than `EvaluatableData`) might change within an otherwise stable message.
 
-![grafik](src/ahbcep/content_evaluation/EvaluatingConditions.png)
+![grafik](src/ahbicht/content_evaluation/EvaluatingConditions.png)
 
 <!-- The raw and updated data for this diagram can be found in the [draw_io_charts repository](https://github.com/Hochfrequenz/draw_io_charts/tree/main/wimbee/) and edited under [app.diagrams.net](https://app.diagrams.net/#HHochfrequenz%2Fdraw_io_charts%2Fmain%2Fwimbee%2FEvaluatingConditions.drawio) with your Hochfrequenz GitHub Account. -->
 

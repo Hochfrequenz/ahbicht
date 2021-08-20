@@ -2,7 +2,7 @@
 
 import pytest
 
-from ahbcep.expressions.condition_nodes import (
+from ahbicht.expressions.condition_nodes import (
     ConditionFulfilledValue,
     ConditionNode,
     EvaluatedComposition,

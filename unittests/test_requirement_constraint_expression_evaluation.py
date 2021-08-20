@@ -3,8 +3,8 @@ from typing import Dict, Optional
 
 import pytest
 
-from ahbcep.expressions.condition_expression_parser import parse_condition_expression_to_tree
-from ahbcep.expressions.condition_nodes import (
+from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
+from ahbicht.expressions.condition_nodes import (
     ConditionFulfilledValue,
     ConditionNode,
     EvaluatedComposition,
@@ -12,7 +12,7 @@ from ahbcep.expressions.condition_nodes import (
     RequirementConstraint,
     UnevaluatedFormatConstraint,
 )
-from ahbcep.expressions.requirement_constraint_expression_evaluation import evaluate_requirement_constraint_tree
+from ahbicht.expressions.requirement_constraint_expression_evaluation import evaluate_requirement_constraint_tree
 
 
 class TestRequirementConstraintEvaluation:

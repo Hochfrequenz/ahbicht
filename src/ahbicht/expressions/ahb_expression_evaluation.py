@@ -10,13 +10,13 @@ from typing import List
 from lark import Token, Transformer, Tree, v_args
 from lark.exceptions import VisitError
 
-from ahbcep.condition_check_results import (
+from ahbicht.condition_check_results import (
     ConditionCheckResult,
     FormatConstraintEvaluationResult,
     RequirementConstraintEvaluationResult,
 )
-from ahbcep.expressions.format_constraint_expression_evaluation import format_constraint_evaluation
-from ahbcep.expressions.requirement_constraint_expression_evaluation import requirement_constraint_evaluation
+from ahbicht.expressions.format_constraint_expression_evaluation import format_constraint_evaluation
+from ahbicht.expressions.requirement_constraint_expression_evaluation import requirement_constraint_evaluation
 
 
 # pylint: disable=no-self-use, invalid-name

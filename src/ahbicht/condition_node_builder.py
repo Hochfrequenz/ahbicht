@@ -5,9 +5,9 @@ If necessary it evaluates the needed attributes.
 import asyncio
 from typing import Dict, List, Tuple, Union
 
-from ahbcep.content_evaluation.rc_evaluators import RcEvaluator
-from ahbcep.expressions.condition_nodes import Hint, RequirementConstraint, UnevaluatedFormatConstraint
-from ahbcep.expressions.hints_provider import HintsProvider
+from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
+from ahbicht.expressions.condition_nodes import Hint, RequirementConstraint, UnevaluatedFormatConstraint
+from ahbicht.expressions.hints_provider import HintsProvider
 
 
 # pylint: disable=no-member, too-few-public-methods
