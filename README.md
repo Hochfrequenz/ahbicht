@@ -49,7 +49,7 @@ do something
 
 ## Code Quality / Production Readiness
 
-- The code has at least a 95%s unit test coverage. ✔️
+- The code has at least a 95% unit test coverage. ✔️
 - The code is rated 10/10 in pylint. ✔
 - The code is MIT licensed. ✔
 - There are only [few dependencies](requirements.in). ✔
