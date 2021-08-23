@@ -28,7 +28,7 @@ class ConditionNodeBuilder:
             self.format_constraints_condition_keys,
         ) = self._seperate_condition_keys_into_each_type()
 
-    def _seperate_condition_keys_into_each_type(self) -> Tuple[List[str]]:
+    def _seperate_condition_keys_into_each_type(self) -> Tuple[List[str], List[str], List[str]]:
         """
         Seperates the list of all condition keys into three lists of their respective types.
         The types are differentiated by their number range.
