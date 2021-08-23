@@ -28,7 +28,7 @@ class ConditionNodeBuilder:
             self.format_constraints_condition_keys,
         ) = self._seperate_condition_keys_into_each_type()
 
-    def _seperate_condition_keys_into_each_type(self) -> Tuple[List[str]]:
+    def _seperate_condition_keys_into_each_type(self) -> Tuple[List[str], List[str], List[str]]:
         """
         Seperates the list of all condition keys into three lists of their respective types.
         The types are differentiated by their number range.
@@ -51,7 +51,7 @@ class ConditionNodeBuilder:
     def _build_hint_nodes(self) -> Dict[str, Hint]:
         """Builds Hint nodes from their condition keys by getting all hint texts from the HintsProvider."""
         all_hints: Dict[str, str] = self.hints_provider.all_hints
-        evaluated_hints = dict()
+        evaluated_hints: Dict[str, Hint] = {}
         for condition_key in self.hints_condition_keys:
             try:
                 evaluated_hints[condition_key] = Hint(condition_key=condition_key, hint=all_hints[condition_key])
@@ -61,7 +61,7 @@ class ConditionNodeBuilder:
 
     def _build_unevaluated_format_constraint_nodes(self) -> Dict[str, UnevaluatedFormatConstraint]:
         """Build unevaluated format constraint nodes."""
-        unevaluated_format_constraints = dict()
+        unevaluated_format_constraints: Dict[str, UnevaluatedFormatConstraint] = {}
         for condition_key in self.format_constraints_condition_keys:
             unevaluated_format_constraints[condition_key] = UnevaluatedFormatConstraint(condition_key=condition_key)
         return unevaluated_format_constraints
@@ -78,7 +78,7 @@ class ConditionNodeBuilder:
             self.rc_evaluator.evaluate_conditions(self.requirement_constraints_condition_keys)
         )
 
-        evaluated_requirement_constraints = dict()
+        evaluated_requirement_constraints: Dict[str, RequirementConstraint] = {}
         for condition_key in self.requirement_constraints_condition_keys:
             evaluated_requirement_constraints[condition_key] = RequirementConstraint(
                 condition_key=condition_key,
