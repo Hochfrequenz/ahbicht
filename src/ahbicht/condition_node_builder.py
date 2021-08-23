@@ -53,8 +53,6 @@ class ConditionNodeBuilder:
         all_hints: Dict[str, str] = self.hints_provider.all_hints
         evaluated_hints = dict()
         for condition_key in self.hints_condition_keys:
-            foo = "asd"
-            print(foo)
             try:
                 evaluated_hints[condition_key] = Hint(condition_key=condition_key, hint=all_hints[condition_key])
             except KeyError as key_err:
