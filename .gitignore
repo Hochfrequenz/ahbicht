@@ -134,4 +134,4 @@ dmypy.json
 .vscode/
 
 # raw svg logo file
-./media/ahbicht-logo-raw.svg
+media/ahbicht-logo-raw.svg
