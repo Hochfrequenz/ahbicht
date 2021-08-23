@@ -132,3 +132,6 @@ dmypy.json
 
 # vscode settings
 .vscode/
+
+# raw svg logo file
+media/ahbicht-logo-raw.svg
