@@ -204,6 +204,10 @@ The **`EvaluationContext`** class is a container for the scope and other informa
 
 <!-- The raw and updated data for this diagram can be found in the [draw_io_charts repository](https://github.com/Hochfrequenz/draw_io_charts/tree/main/wimbee/) and edited under [app.diagrams.net](https://app.diagrams.net/#HHochfrequenz%2Fdraw_io_charts%2Fmain%2Fwimbee%2FEvaluatingConditions.drawio) with your Hochfrequenz GitHub Account. -->
 
+## Releasing
+
+The version number has to be changed in [setup.cfg](./setup.cfg) file.
+
 ## Contributing
 
 You are very welcome to contribute to this repository by opening a pull request against the main branch.
