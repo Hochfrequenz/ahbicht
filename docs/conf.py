@@ -4,6 +4,7 @@
 # list see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+
 # -- Project information -----------------------------------------------------
 
 project = "ahbicht"
@@ -16,7 +17,12 @@ author = "Annika Schloegl"
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ["myst_parser", "sphinx.ext.napoleon", "sphinx.ext.autodoc"]
+extensions = [
+    "sphinx.ext.napoleon",  # translate google/numpy docstring
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinxcontrib.apidoc",
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
