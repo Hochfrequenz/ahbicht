@@ -7,7 +7,7 @@ AHB Condition Expression Parser (AHBicht)
 .. raw:: html
 
    <a href="https://ahbicht.readthedocs.io">
-       <img src="../docs/_static/ahbicht-logo.png"
+       <img src="./docs/_static/ahbicht-logo.png"
             alt="ahbicht logo"
             height="150px"
             align="right">
@@ -90,4 +90,4 @@ Evaluating expressions like ``Muss [59] U ([123] O [456])`` from
 .. |Coverage status badge| image:: https://github.com/Hochfrequenz/ahbicht/workflows/Coverage/badge.svg
 .. |Linting status badge| image:: https://github.com/Hochfrequenz/ahbicht/workflows/Linting/badge.svg
 .. |Black status badge| image:: https://github.com/Hochfrequenz/ahbicht/workflows/Black/badge.svg
-.. |UTILMD_AHB_WiM_3_1b_20201016.pdf page 90| image:: ../docs/_static/wim-ahb-screenshot.png
+.. |UTILMD_AHB_WiM_3_1b_20201016.pdf page 90| image:: ./docs/_static/wim_ahb_screenshot.png
