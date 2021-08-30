@@ -70,9 +70,9 @@ Code Quality / Production Readiness
 -----------------------------------
 
 -  The code has at least a 95% unit test coverage. ✔️
--  The code is rated 10/10 in pylint. ✔
--  The code is MIT licensed. ✔
--  There are only `few dependencies`_. ✔
+-  The code is rated 10/10 in pylint. ✔️
+-  The code is MIT licensed. ✔️
+-  There are only `few dependencies`_. ✔️
 
 .. _expression-evaluation--parsing-the-condition-string:
 
