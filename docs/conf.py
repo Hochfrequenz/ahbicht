@@ -21,6 +21,7 @@ extensions = [
     "sphinx.ext.napoleon",  # translate google/numpy docstring
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
+    "sphinx.ext.doctest",
     "sphinxcontrib.apidoc",
 ]
 
