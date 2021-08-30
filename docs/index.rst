@@ -5,7 +5,6 @@ Welcome to ahbicht's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   README
    Module Reference <api/modules>
 
 
