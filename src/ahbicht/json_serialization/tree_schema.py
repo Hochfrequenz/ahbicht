@@ -1,7 +1,15 @@
+"""
+Schemata for the JSON serialization of expressions.
+"""
+
 from typing import Union
 
 from lark import Token, Tree
 from marshmallow import Schema, fields, post_load, pre_dump
+
+# in the classes/schemata we don't care about if there aren't enough public versions.
+# We also don't care about unused kwargs, or no self-use.
+# pylint: disable=too-few-public-methods,unused-argument,no-self-use
 
 
 class _StringOrTree:
@@ -25,7 +33,10 @@ class _StrOrTreeSchema(Schema):
     """
 
     string = fields.String(dump_default=False, required=False, allow_none=True)
-    tree = fields.Nested(lambda: TreeSchema(), dump_default=False, required=False, allow_none=True)
+    # disable unnecessary lambda warning because of circular imports
+    tree = fields.Nested(
+        lambda: TreeSchema(), dump_default=False, required=False, allow_none=True  # pylint: disable=unnecessary-lambda
+    )
 
     @post_load
     def deserialize(self, data, **kwargs) -> Union[str, Tree, Token]:
@@ -39,7 +50,7 @@ class _StrOrTreeSchema(Schema):
             if not isinstance(data["tree"], Tree):
                 return Tree(**data["tree"])
             return data["tree"]
-        elif "string" in data and data["string"]:
+        if "string" in data and data["string"]:
             return Token("INT", data["string"])
         return data
 
@@ -53,7 +64,7 @@ class _StrOrTreeSchema(Schema):
         """
         if isinstance(data, Tree):
             return _StringOrTree(string=None, tree=data)
-        elif isinstance(data, str):
+        if isinstance(data, str):
             return _StringOrTree(string=data, tree=None)
         raise NotImplementedError(f"Data type of {data} is not implemented for JSON serialization")
 
@@ -64,8 +75,15 @@ class TreeSchema(Schema):
     """
 
     data = fields.String(data_key="type")  # for example 'or_composition', 'and_composition', 'condition_key'
-    children = fields.List(fields.Nested(lambda: _StrOrTreeSchema()))
+    # disable lambda warning. I don't know how to resolve this circular imports
+    children = fields.List(fields.Nested(lambda: _StrOrTreeSchema()))  # pylint: disable=unnecessary-lambda
 
     @post_load
     def deserialize(self, data, **kwargs) -> Tree:
+        """
+        converts the barely typed data dictionary into an actual Tree
+        :param data:
+        :param kwargs:
+        :return:
+        """
         return Tree(**data)

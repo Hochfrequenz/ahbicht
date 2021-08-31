@@ -207,6 +207,7 @@ class FormatErrorMessageExpressionBuilder(ExpressionBuilder):
             self._expression = f"Entweder '{self._expression}' oder '{other.error_message}'"
         elif self.format_constraint_fulfilled is True and other.format_constraint_fulfilled is True:
             self._expression = "Zwei exklusive Formatdefinitionen dürfen nicht gleichzeitig erfüllt sein"
+            # pylint: disable=fixme
             # TODO: Do we need to know which one? It's probably more work than benefit.
         else:
             self._expression = None
