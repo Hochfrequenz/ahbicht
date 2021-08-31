@@ -1,3 +1,7 @@
+"""
+Schemata for the JSON serialization of expressions.
+"""
+
 from typing import Union
 
 from lark import Token, Tree
