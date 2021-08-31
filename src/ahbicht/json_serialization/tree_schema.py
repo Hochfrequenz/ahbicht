@@ -9,7 +9,7 @@ from marshmallow import Schema, fields, post_load, pre_dump
 
 # in the classes/schemata we don't care about if there aren't enough public versions.
 # We also don't care about unused kwargs, or no self-use.
-# pylint: disable=too-few-public-methods,unused-arguments,no-self-use
+# pylint: disable=too-few-public-methods,unused-argument,no-self-use
 
 
 class _StringOrTree:
@@ -35,8 +35,8 @@ class _StrOrTreeSchema(Schema):
     string = fields.String(dump_default=False, required=False, allow_none=True)
     # disable unnecessary lambda warning because of circular imports
     tree = fields.Nested(
-        lambda: TreeSchema(), dump_default=False, required=False, allow_none=True
-    )  # pylint: disable=unnecessary-lambda
+        lambda: TreeSchema(), dump_default=False, required=False, allow_none=True  # pylint: disable=unnecessary-lambda
+    )
 
     @post_load
     def deserialize(self, data, **kwargs) -> Union[str, Tree, Token]:
@@ -64,7 +64,7 @@ class _StrOrTreeSchema(Schema):
         """
         if isinstance(data, Tree):
             return _StringOrTree(string=None, tree=data)
-        elif isinstance(data, str):
+        if isinstance(data, str):
             return _StringOrTree(string=data, tree=None)
         raise NotImplementedError(f"Data type of {data} is not implemented for JSON serialization")
 
