@@ -1,0 +1,12 @@
+{
+  "506": "[506] Hinweis: Für jeden 11-stelligen Code im LOC+172 (Meldepunkt) sollen die entsprechenden Kundendaten des LF angegeben werden, falls bekannt",
+  "580": "[580] Hinweis: Es sind alle Marktlokationen, Tranchen und Messlokationen zu nennen, die aktuell dem gleichen Lokationsbündel gehören wie die prozessual behandelte Messlokation",
+  "583": "[583] Hinweis: Verwendung der ID der Marktlokation",
+  "584": "[584] Hinweis: Verwendung der ID der Messlokation",
+  "586": "[586] Hinweis: Die Messlokationsadresse ist der Messlokation zugeordnet, welche in SG8 SEQ+Z18 (Daten der Messlokation) mit CCI+Z01++Z82 (Verwendungsumfang: ID der prozessual behandelten Messlokation) gekennzeichnet ist",
+  "599": "[599] Hinweis: Es ist der Name und die Adresse des Ablesekartenempfängers für die Messlokation anzugeben, welche in SG8 SEQ+Z18 (Daten der Messlokation) mit CCI+Z01++Z82 (Verwendungsumfang: ID der prozessual behandelten Messlokation) gekennzeichnet ist",
+  "611": "[611] Hinweis: Wenn das Unternehmen NB die Aufgaben der Marktrolle LF wahrnimmt, ist die MP-ID des Unternehmens NB in der Marktrolle LF anzugeben",
+  "618": "[618] Hinweis: Bisheriges Datum des MSBA. Sollte der MSBN ein abweichendes Datum verwenden wollen, so teilt er das neue Datum mit einer Stammdatenänderung mit",
+  "621": "[621] Hinweis: Es ist der MSB anzugeben, welcher ab dem Zeitpunkt der Lokation zugeordnet ist, der in DTM+76 (Datum zum geplanten Leistungsbeginn) genannt ist.",
+  "636": "[636] Hinweis: Dieses RFF klassifiziert mit einem Code im DE1153 die in derselben Segmentgruppe enthaltenen DTM zu einem Markt- bzw. Messlokation relevanten Inhalt"
+}
