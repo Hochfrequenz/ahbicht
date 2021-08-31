@@ -4,6 +4,13 @@
 # list see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+import os
+import sys
+
+from sphinx.ext import apidoc
+
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, project_root)
 
 # -- Project information -----------------------------------------------------
 
@@ -22,7 +29,6 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
     "sphinx.ext.doctest",
-    "sphinxcontrib.apidoc",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -56,8 +62,13 @@ html_favicon = "./_static/ahbicht-favicon.png"
 html_static_path = ["_static"]
 
 
-# -- sphinxcontrib-apidoc settings -------------------------------------------
-apidoc_module_dir = "../src/ahbicht"
-apidoc_output_dir = "api"
-apidoc_excluded_paths = ["unittests"]
-apidoc_separate_modules = True
+# Auto-generate API documentation
+# Source: https://github.com/readthedocs/readthedocs.org/issues/1139
+def run_apidoc(_):
+    output_path = os.path.join(project_root, "docs", "apidoc")
+    module_path = os.path.join(project_root, "src/ahbicht")
+    apidoc.main(["-o", output_path, module_path, "--separate", "--force"])
+
+
+def setup(app):
+    app.connect("builder-inited", run_apidoc)
