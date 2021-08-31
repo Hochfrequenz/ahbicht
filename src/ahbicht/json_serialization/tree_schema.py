@@ -7,6 +7,9 @@ from typing import Union
 from lark import Token, Tree
 from marshmallow import Schema, fields, post_load, pre_dump
 
+# in the classes/schemata we don't care about if there are enough public versions
+# pylint: disable=too-few-public-methods
+
 
 class _StringOrTree:
     """
@@ -29,7 +32,10 @@ class _StrOrTreeSchema(Schema):
     """
 
     string = fields.String(dump_default=False, required=False, allow_none=True)
-    tree = fields.Nested(lambda: TreeSchema(), dump_default=False, required=False, allow_none=True)
+    # disable unnecessary lambda warning because of circular imports
+    tree = fields.Nested(
+        lambda: TreeSchema(), dump_default=False, required=False, allow_none=True
+    )  # pylint: disable=unnecessary-lambda
 
     @post_load
     def deserialize(self, data, **kwargs) -> Union[str, Tree, Token]:
@@ -68,7 +74,8 @@ class TreeSchema(Schema):
     """
 
     data = fields.String(data_key="type")  # for example 'or_composition', 'and_composition', 'condition_key'
-    children = fields.List(fields.Nested(lambda: _StrOrTreeSchema()))
+    # disable lambda warning. I don't know how to resolve this circular imports
+    children = fields.List(fields.Nested(lambda: _StrOrTreeSchema()))  # pylint: disable=unnecessary-lambda
 
     @post_load
     def deserialize(self, data, **kwargs) -> Tree:
