@@ -7,8 +7,9 @@ from typing import Union
 from lark import Token, Tree
 from marshmallow import Schema, fields, post_load, pre_dump
 
-# in the classes/schemata we don't care about if there are enough public versions
-# pylint: disable=too-few-public-methods
+# in the classes/schemata we don't care about if there aren't enough public versions.
+# We also don't care about unused kwargs, or no self-use.
+# pylint: disable=too-few-public-methods,unused-arguments,no-self-use
 
 
 class _StringOrTree:
@@ -49,7 +50,7 @@ class _StrOrTreeSchema(Schema):
             if not isinstance(data["tree"], Tree):
                 return Tree(**data["tree"])
             return data["tree"]
-        elif "string" in data and data["string"]:
+        if "string" in data and data["string"]:
             return Token("INT", data["string"])
         return data
 
@@ -79,4 +80,10 @@ class TreeSchema(Schema):
 
     @post_load
     def deserialize(self, data, **kwargs) -> Tree:
+        """
+        converts the barely typed data dictionary into an actual Tree
+        :param data:
+        :param kwargs:
+        :return:
+        """
         return Tree(**data)
