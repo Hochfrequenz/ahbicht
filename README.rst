@@ -80,7 +80,7 @@ Expression Evaluation / Parsing the Condition String
 
 Evaluating expressions like ``Muss [59] U ([123] O [456])`` from the
 AHBs by parsing it with the `parsing library
-``lark`` <https://lark-parser.readthedocs.io/en/latest/>`__ and
+lark <https://lark-parser.readthedocs.io/en/latest/>`__ and
 combining the parsing result with information about the state of
 ``[59]``, ``[123]``, ``[456]`` is called **expression evaluation**.
 Determining the state of each single condition (f.e. ``[59]`` is
@@ -109,8 +109,8 @@ Functionality
    so far functionally implemented as the result returns if the
    condition expression is fulfilled and which Hints and
    FormatConstraints are relevant.
--  The boolean logic follows ‘brackets ``( )`` before ``then_also``
-   before ``and`` before ``or``’.
+-  The boolean logic follows 'brackets ``( )`` before ``then_also``
+   before ``and`` before ``or``'.
 -  Hints and UnevaluatedFormatConstraints are implemented as ``neutral``
    element, so not changing the boolean outcome of an expression for the
    evaluation regarding the requirement constraints and raising errors
@@ -236,8 +236,6 @@ and the result equals the input.
 .. figure:: src/ahbicht/expressions/Condition_Structure_with_more_than_one_condition.png
    :alt: grafik
 
-   grafik
-
 The raw and updated data for this diagram can be found in the
 `draw_io_charts
 repository <https://github.com/Hochfrequenz/draw_io_charts/tree/main/wimbee/conditions>`__
@@ -328,7 +326,7 @@ inside a message can then be used to validate a message. The latter is
 This library does *not* provide content evaluation code for all the
 conditions used in the available AHBs. You can use the Content
 Evaluation class stubs though. Please contact
-[@JoschaMetze](https://github.com/joschametze) if you’re interested in a
+`@JoschaMetze <https://github.com/joschametze>`_ if you’re interested in a
 ready-to-use solution to validate your EDIFACT messages according to the
 latest AHBs. We probably have you covered.
 
@@ -339,7 +337,7 @@ For the evaluation of a condition (that is referenced by its key,
 e.g. “17”) it is necessary to have a data basis that allows to decide
 whether the respective condition is met or not met. This data basis that
 is stable for all conditions that are evaluated in on evaluation run is
-called **``EvaluatableData``**. These data usually contain the **edifact
+called ``EvaluatableData``. These data usually contain the **edifact
 seed** (a JSON representation of the EDIFACT message) but may also hold
 other information. The ``EvaluatableData`` class acts a container for
 these data.
@@ -368,7 +366,7 @@ Each of the single vorgang scopes can have a different evaluation
 result. Those results are relevant for the user when entering data,
 probably based in a somehow Vorgang-centric manner.
 
-The **``EvaluationContext``** class is a container for the scope and
+The ``EvaluationContext`` class is a container for the scope and
 other information that are relevant for a single condition and a single
 evaluation only but (other than ``EvaluatableData``) might change within
 an otherwise stable message.
