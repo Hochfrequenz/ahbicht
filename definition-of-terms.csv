@@ -1,0 +1,41 @@
+﻿Term;Description;Example
+condition;single operand;[53]
+condition_key;int or str, the number of the condition;53
+operator;combines two conditions;U, O
+composition;two parts of an expression combined by an operator;([4]U[76])O[5] consists of an and_composition of [4] and [76] and an or_composition of [4]U[76] and [5]
+;used in the context of the parsing and evaluation of the expression;
+ahb expression;an expression as given from the ahb;X[59]U[53]
+;Consists of at least one single requirement indicator expression.;Muss[59]U([123]O[456])Soll[53]
+;In case of several model mark expressions the first one will be evaluated and if not fulfilled, it will be continued with the next one.;
+single requirement indicator expression;An expression consisting of exactly one requirement indicator and their respective condition expression.;Soll[53]
+;If there is only one requirement indicator in the ahb expression, then both expressions are identical.;
+condition expression;one or multiple conditions combined with or (in case of FormatConstraints) also without operators;[1]
+;used as input for the condition parser;[4]O[5]U[45]
+format constraint expression;Is returned after the evaluation of the RequirementConstraints;[901]X[954]
+;consist only of FormatConstraints;
+requirement indicator;The Merkmal/modal_mark or Operator/prefix_operator of the data element/data element group/segment/segment group.;Muss, Soll, Kann, X, O, U
+Merkmal / modal_mark;as defined by the EDI Energy group (see edi-energy.de → Dokumente → Allgemeine Festlegungen);Muss, Soll, Kann
+;Stands alone or before a condition expression, can be the start of several requirement indicator expressions in one ahb expression;
+Muss;Is required for the correct structure of the message;
+;If the following condition is not fulfilled, the information must not be given.;
+Soll;Is required for technical reasons.;
+;Always followed by a condition.;
+;If the following condition is not fulfilled, the information must not be given.;
+Kann;Optional;
+prefix operator;Operator which does not function to combine conditions, but as requirement indicator.;X, O, U
+;Stands alone or in front of a condition expression.;
+tree, branches, token;as used by lark;
+ConditionNode;Defines the nodes of the tree as they are passed, evaluated und returned.;RequirementConstraint, FormatConstraint, Hint, EvaluatedComposition
+;There are different kinds of conditions (Bedingung, Hinweis, Format) as defined by the EDI Energy group (see edi-energy.de → Dokumente → Allgemeine Festlegungen) and also a EvaluatedComposition after a composition of two nodes is evaluated.;
+Bedingung / RequirementConstraint (rc);- are true or false, has to be determined;"""falls SG2+IDE+CCI == EHZ"""
+;- keys between [1] and [499];
+Hinweis / Hint;- just a hint, even if it is worded like a condition;"""Hinweis: 'ID der Messlokation'"""
+;- keys from [500] onwards, starts with 'Hinweis:';"""Hinweis: 'Es ist der alte MSB zu verwenden'"""
+Formatdefinition / FormatConstraint (fc);- a constraint for how the data should be given;"""Format: Muss größer 0 sein"""
+;- keys between [901] and [999], starts with 'Format:';"""Format: max 5 Nachkommastellen"""
+;"Format Constraints are ""collected"" while evaluating the rest of the tree, meaning the evaluated composition of the Mussfeldprüfung contains an expression that consists only of format constraints.";
+UnevaluatedFormatConstraint;"A format constraint that is just ""collected"" during the requirement constraint evaluation. To have a clear separation of conditions that affect whether a field is mandatory or not and those that check the format of fields without changing their state it will become a part of the format_constraint_expression which is part of the EvaluatedComposition.";
+EvaluatableFormatConstraint;An evaluatable FormatConstraint will (other than the UnevaluatedFormatConstraint) be evaluated by e.g. matching a regex, calculating a checksum etc. This happens after the Mussfeldprüfung. (details to be added upon implementing);
+EvaluatedComposition;is returned after a composition of two nodes is evaluated;
+neutral;Hints and UnevaluatedFormat Constraints are seen as neutral as they don't have a condition to be fulfilled or unfulfilled and should not change the requirement outcome. See truth table below.;
+unknown;If the condition can be fulfilled but we don't know (yet) if it is or not. See truth table below.;"""Wenn vorhanden"""

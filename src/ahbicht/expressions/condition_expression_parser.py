@@ -13,7 +13,7 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree:
     """
     Parse a given condition expression with the help of the here defined grammar to a lark tree.
     The grammar starts with condition keys, e.g. [45] and combines them with
-    and_/or_compositions corresponding to U/O operators or without an operator (then_also_composition).
+    and _/or_compositions corresponding to U/O operators or without an operator (then_also_composition).
     It follows the boolean logic 'brackets before `then_also` before `and` before `xor` before `or`'.
     Whitespaces are ignored.
 
