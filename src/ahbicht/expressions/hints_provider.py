@@ -36,7 +36,7 @@ class HintsProvider(ABC):
 
     async def get_hints(self, condition_keys: List[str], raise_key_error: bool = True) -> Dict[str, Hint]:
         """
-        Get Hints for given condition keys by asynchronously awaiting all self.get_hin_text at once
+        Get Hints for given condition keys by asynchronously awaiting all self.get_hint_text at once
         """
         tasks = [self.get_hint_text(ck) for ck in condition_keys]
         results: List[Optional[str]] = await asyncio.gather(*tasks)
