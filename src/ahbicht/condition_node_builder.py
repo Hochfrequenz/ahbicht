@@ -2,7 +2,6 @@
 Module for taking all the condition keys of a condition expression and building their respective ConditionNodes.
 If necessary it evaluates the needed attributes.
 """
-import asyncio
 from typing import Dict, List, Tuple, Union
 
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
@@ -65,18 +64,15 @@ class ConditionNodeBuilder:
             unevaluated_format_constraints[condition_key] = UnevaluatedFormatConstraint(condition_key=condition_key)
         return unevaluated_format_constraints
 
-    def _build_requirement_constraint_nodes(self) -> Dict[str, RequirementConstraint]:
+    async def _build_requirement_constraint_nodes(self) -> Dict[str, RequirementConstraint]:
         """
         Build requirement constraint nodes by evaluating the constraints
         with the help of the respective Evaluator.
         """
 
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        evaluated_conditions_fulfilled_attribute: dict = loop.run_until_complete(
-            self.rc_evaluator.evaluate_conditions(self.requirement_constraints_condition_keys)
+        evaluated_conditions_fulfilled_attribute: dict = await self.rc_evaluator.evaluate_conditions(
+            self.requirement_constraints_condition_keys
         )
-
         evaluated_requirement_constraints: Dict[str, RequirementConstraint] = {}
         for condition_key in self.requirement_constraints_condition_keys:
             evaluated_requirement_constraints[condition_key] = RequirementConstraint(

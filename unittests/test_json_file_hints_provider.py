@@ -13,7 +13,7 @@ class TestHintsProvider:
     """Test Class for JsonFileHintsProvider"""
 
     @pytest.mark.datafiles("./unittests/resources_condition_hints/FV2104/Hints_FV2104_UTILMD.json")
-    async def test_initiating_hints_provider(self, datafiles):
+    async def test_initiating_hints_provider(self, datafiles, event_loop):
         """Tests if hints provider is initiated correctly."""
         path_to_hint_json = datafiles / "Hints_FV2104_UTILMD.json"
         hints_provider = JsonFileHintsProvider(

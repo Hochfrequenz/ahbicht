@@ -4,8 +4,8 @@ The AhbExpressionTransformer defines the rules how the different parts of the pa
 
 The used terms are defined in the README.md.
 """
-
-from typing import List
+import inspect
+from typing import Awaitable, List, Union
 
 from lark import Token, Transformer, Tree, v_args
 from lark.exceptions import VisitError
@@ -60,7 +60,8 @@ class AhbExpressionTransformer(Transformer):
         requirement_constraint_evaluation_result: RequirementConstraintEvaluationResult = (
             await requirement_constraint_evaluation(condition_expression)
         )
-        format_constraint_evaluation_result: FormatConstraintEvaluationResult = format_constraint_evaluation(
+
+        format_constraint_evaluation_result: FormatConstraintEvaluationResult = await format_constraint_evaluation(
             requirement_constraint_evaluation_result.format_constraints_expression, self.entered_input
         )
 
@@ -73,7 +74,7 @@ class AhbExpressionTransformer(Transformer):
         return result_of_condition_check
 
     @v_args(inline=True)  # Children are provided as *args instead of a list argument
-    def requirement_indicator(self, requirement_indicator) -> ConditionCheckResult:
+    async def requirement_indicator(self, requirement_indicator) -> ConditionCheckResult:
         """
         If there is no condition expression but only a requirement indicator,
         all evaluations are automatically set to True.
@@ -92,15 +93,24 @@ class AhbExpressionTransformer(Transformer):
         )
 
     # pylint: disable=(line-too-long)
-    def ahb_expression(
-        self, list_of_single_requirement_indicator_expressions: List[ConditionCheckResult]
+    async def ahb_expression(
+        self,
+        list_of_single_requirement_indicator_expressions: Union[
+            List[ConditionCheckResult], Awaitable[List[ConditionCheckResult]]
+        ],
     ) -> ConditionCheckResult:
         """
         Returns the requirement indicator with its condition expressions already evaluated to booleans.
         If there are more than one modal mark the first whose conditions are fulfilled is returned or the
         last of the list if they are all unfulfilled.
         """
+        if inspect.isawaitable(list_of_single_requirement_indicator_expressions):
+            list_of_single_requirement_indicator_expressions: List[
+                Union[ConditionCheckResult, Awaitable[ConditionCheckResult]]
+            ] = await list_of_single_requirement_indicator_expressions
         for single_requirement_indicator_expression in list_of_single_requirement_indicator_expressions:
+            if inspect.isawaitable(single_requirement_indicator_expression):
+                single_requirement_indicator_expression = await single_requirement_indicator_expression
             if (
                 single_requirement_indicator_expression.requirement_constraint_evaluation_result.requirement_constraints_fulfilled
             ):
@@ -111,10 +121,11 @@ class AhbExpressionTransformer(Transformer):
                         True
                     )
                 return single_requirement_indicator_expression
-        return list_of_single_requirement_indicator_expressions[-1]
+        result = list_of_single_requirement_indicator_expressions[-1]
+        return result
 
 
-def evaluate_ahb_expression_tree(parsed_tree: Tree, entered_input: str) -> ConditionCheckResult:
+async def evaluate_ahb_expression_tree(parsed_tree: Tree, entered_input: str) -> ConditionCheckResult:
     """
     Evaluates the tree built from the ahb expressions with the help of the AhbExpressionTransformer.
 
@@ -124,8 +135,8 @@ def evaluate_ahb_expression_tree(parsed_tree: Tree, entered_input: str) -> Condi
         several modal marks)
     """
     try:
-        result = AhbExpressionTransformer(entered_input).transform(parsed_tree)
+        transformer = AhbExpressionTransformer(entered_input)
+        result = transformer.transform(parsed_tree)
     except VisitError as visit_err:
         raise visit_err.orig_exc
-
-    return result
+    return await result

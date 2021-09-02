@@ -17,6 +17,8 @@ from ahbicht.expressions.condition_nodes import (
 from ahbicht.expressions.hints_provider import HintsProvider
 from ahbicht.expressions.requirement_constraint_expression_evaluation import requirement_constraint_evaluation
 
+pytestmark = pytest.mark.asyncio
+
 
 class TestRequirementConstraintEvaluation:
     """Test for the evaluation of the condition expression regarding the requirement constraints."""
@@ -71,6 +73,7 @@ class TestRequirementConstraintEvaluation:
         expected_format_constraints_expression,
         expected_hints,
         setup_and_teardown_injector,
+        event_loop,
     ):
         """
         Tests that valid ahb expressions are evaluated as expected.
@@ -150,6 +153,7 @@ class TestRequirementConstraintEvaluation:
         expected_error: type,
         expected_error_message: str,
         setup_and_teardown_injector,
+        event_loop,
     ):
         """Tests that an error is raised when trying to pass invalid values."""
         mocker.patch(

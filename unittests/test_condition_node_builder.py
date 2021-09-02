@@ -68,7 +68,7 @@ class TestConditionNodeBuilder:
 
         assert "Condition key is not in valid number range." in str(excinfo.value)
 
-    async def test_build_hint_nodes(self):
+    async def test_build_hint_nodes(self, event_loop):
         """Tests that hint nodes are build correctly."""
         condition_keys = ["584", "583"]
         condition_node_builder = ConditionNodeBuilder(condition_keys, self._hints_provider, self._evaluator)
@@ -76,7 +76,7 @@ class TestConditionNodeBuilder:
         excepted_hints_nodes = {"583": self._h_583, "584": self._h_584}
         assert hint_nodes == excepted_hints_nodes
 
-    async def test_invalid_hint_nodes(self):
+    async def test_invalid_hint_nodes(self, event_loop):
         """Tests that correct error is shown, when hint is not implemented."""
         condition_keys = ["500"]
         # it is possible that a hint with [500] will be implemented in the future as not all hints are collected yet.
@@ -85,7 +85,7 @@ class TestConditionNodeBuilder:
         with pytest.raises(KeyError) as excinfo:
             _ = await condition_node_builder._build_hint_nodes()
 
-        assert "There seems to be no hint implemented with this condition key." in str(excinfo.value)
+        assert "There seems to be no hint implemented with the condition key 500." in str(excinfo.value)
 
     def test_build_unevaluated_format_constraint_nodes(self):
         """Tests that unevaluated format constraints nodes are build correctly."""
@@ -123,7 +123,7 @@ class TestConditionNodeBuilder:
         }
         assert evaluated_requirement_constraints == expected_requirement_constraints
 
-    async def test_requirement_evaluation_for_all_condition_keys(self, mocker):
+    async def test_requirement_evaluation_for_all_condition_keys(self, mocker, event_loop):
         mocker.patch(
             "ahbicht.content_evaluation.rc_evaluators.RcEvaluator.evaluate_single_condition",
             side_effect=[ConditionFulfilledValue.FULFILLED, ConditionFulfilledValue.UNFULFILLED],

@@ -1,6 +1,6 @@
 """ Test for the evaluation of the ahb expression conditions tests (Mussfeldprüfung) """
 
-from unittest.mock import Mock
+from unittest.mock import AsyncMock, Mock
 
 import inject
 import pytest
@@ -11,6 +11,8 @@ from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expressio
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 from ahbicht.expressions.hints_provider import HintsProvider
 
+pytestmark = pytest.mark.asyncio
+
 
 class TestAHBExpressionEvaluation:
     """Test for the evaluation of the ahb expression conditions tests (Mussfeldprüfung)"""
@@ -18,7 +20,7 @@ class TestAHBExpressionEvaluation:
     @pytest.fixture()
     def setup_and_teardown_injector(self):
         inject.clear_and_configure(
-            lambda binder: binder.bind(HintsProvider, Mock(wraps=HintsProvider)).bind(
+            lambda binder: binder.bind(HintsProvider, AsyncMock(wraps=HintsProvider)).bind(
                 RcEvaluator, Mock(wraps=RcEvaluator)
             )
         )
@@ -52,7 +54,7 @@ class TestAHBExpressionEvaluation:
             pytest.param("Muss[2]Kann", "Kann", True, True, None, None),
         ],
     )
-    def test_evaluate_valid_ahb_expression(
+    async def test_evaluate_valid_ahb_expression(
         self,
         mocker,
         ahb_expression,
@@ -61,6 +63,7 @@ class TestAHBExpressionEvaluation:
         expected_requirement_is_conditional,
         expected_format_constraints_expression,
         expected_hints,
+        event_loop,
     ):
         """
         Tests that valid ahb expressions are evaluated as expected.
@@ -107,7 +110,7 @@ class TestAHBExpressionEvaluation:
         )
 
         parsed_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_expression)
-        result = evaluate_ahb_expression_tree(parsed_tree, entered_input=None)
+        result = await evaluate_ahb_expression_tree(parsed_tree, entered_input=None)
 
         assert result.requirement_indicator == expected_requirement_indicator
         assert (
@@ -144,14 +147,19 @@ class TestAHBExpressionEvaluation:
             ),
         ],
     )
-    def test_invalid_ahb_expressions(
-        self, expression: str, expected_error: type, expected_error_message: str, setup_and_teardown_injector
+    async def test_invalid_ahb_expressions(
+        self,
+        expression: str,
+        expected_error: type,
+        expected_error_message: str,
+        setup_and_teardown_injector,
+        event_loop,
     ):
         """Tests that an error is raised when trying to pass invalid values."""
 
         parsed_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(expression)
 
         with pytest.raises(expected_error) as excinfo:
-            evaluate_ahb_expression_tree(parsed_tree, entered_input=None)
+            await evaluate_ahb_expression_tree(parsed_tree, entered_input=None)
 
         assert expected_error_message in str(excinfo.value)
