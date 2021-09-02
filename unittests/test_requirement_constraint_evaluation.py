@@ -1,6 +1,6 @@
 """ Test for the requirement constraint evaluation of the condition expressions. """
 
-from unittest.mock import Mock
+from unittest.mock import AsyncMock, Mock
 
 import inject
 import pytest
@@ -36,8 +36,8 @@ class TestRequirementConstraintEvaluation:
     @pytest.fixture()
     def setup_and_teardown_injector(self):
         inject.clear_and_configure(
-            lambda binder: binder.bind(HintsProvider, Mock(wraps=HintsProvider)).bind(
-                RcEvaluator, Mock(wraps=RcEvaluator)
+            lambda binder: binder.bind(HintsProvider, AsyncMock(wraps=HintsProvider)).bind(
+                RcEvaluator, AsyncMock(wraps=RcEvaluator)
             )
         )
         yield
