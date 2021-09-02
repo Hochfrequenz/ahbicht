@@ -13,7 +13,7 @@ from ahbicht.expressions.hints_provider import HintsProvider
 # pylint: disable=no-member, too-few-public-methods
 class ConditionNodeBuilder:
     """
-    Builds ConditionNodes for the given condition_keys by seperating them into their respective types
+    Builds ConditionNodes for the given condition_keys by separating them into their respective types
     and evaluating the necessary attributes.
     It distinguishes between requirement constraint evaluation and format constraint evaluation.
     """
@@ -30,7 +30,7 @@ class ConditionNodeBuilder:
 
     def _seperate_condition_keys_into_each_type(self) -> Tuple[List[str], List[str], List[str]]:
         """
-        Seperates the list of all condition keys into three lists of their respective types.
+        Separates the list of all condition keys into three lists of their respective types.
         The types are differentiated by their number range.
         See 'Allgemeine Festlegungen' from EDI@Energy.
         """
@@ -50,14 +50,9 @@ class ConditionNodeBuilder:
 
     def _build_hint_nodes(self) -> Dict[str, Hint]:
         """Builds Hint nodes from their condition keys by getting all hint texts from the HintsProvider."""
-        all_hints: Dict[str, str] = self.hints_provider.all_hints
-        evaluated_hints: Dict[str, Hint] = {}
-        for condition_key in self.hints_condition_keys:
-            try:
-                evaluated_hints[condition_key] = Hint(condition_key=condition_key, hint=all_hints[condition_key])
-            except KeyError as key_err:
-                raise KeyError("There seems to be no hint implemented with this condition key.") from key_err
-        return evaluated_hints
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        return loop.run_until_complete(self.hints_provider.get_hints(self.hints_condition_keys))
 
     def _build_unevaluated_format_constraint_nodes(self) -> Dict[str, UnevaluatedFormatConstraint]:
         """Build unevaluated format constraint nodes."""

@@ -31,7 +31,7 @@ class AhbExpressionTransformer(Transformer):
     def __init__(self, entered_input: str):
         """
         The input are the evaluated format constraint conditions in the form of ConditionNodes.
-        :param input_values: dict(condition_keys, ConditionNode)
+        :param entered_input: dict(condition_keys, ConditionNode)
         """
         super().__init__()
         self.entered_input = entered_input
@@ -119,7 +119,7 @@ def evaluate_ahb_expression_tree(parsed_tree: Tree, entered_input: str) -> Condi
     Evaluates the tree built from the ahb expressions with the help of the AhbExpressionTransformer.
 
     :param parsed_tree: Tree
-    :param input_values: the conditions as defined in the AHBs in the form of ConditionNodes
+    :param entered_input: the conditions as defined in the AHBs in the form of ConditionNodes
     :return: the result of the overall condition check (including requirement constraints, format constraints,
         several modal marks)
     """

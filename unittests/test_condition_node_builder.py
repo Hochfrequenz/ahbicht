@@ -1,4 +1,5 @@
 """ Tests for Class Condition Node Builder"""
+from pathlib import Path
 
 import pytest
 
@@ -12,7 +13,7 @@ from ahbicht.expressions.condition_nodes import (
     RequirementConstraint,
     UnevaluatedFormatConstraint,
 )
-from ahbicht.expressions.hints_provider import HintsProvider
+from ahbicht.expressions.hints_provider import JsonFileHintsProvider
 
 
 class DummyRcEvaluator(RcEvaluator):
@@ -28,12 +29,15 @@ class DummyRcEvaluator(RcEvaluator):
 
 
 class TestConditionNodeBuilder:
-
     _edifact_format = EdifactFormat.UTILMD
     _edifact_format_version = EdifactFormatVersion.FV2104
     _dummy_evaluatable_data = EvaluatableData(edifact_seed=dict())
     _evaluator = DummyRcEvaluator(_dummy_evaluatable_data)
-    _hints_provider = HintsProvider(_edifact_format, _edifact_format_version)
+    _hints_provider = JsonFileHintsProvider(
+        _edifact_format,
+        _edifact_format_version,
+        file_path=Path("unittests/resources_condition_hints/FV2104/Hints_FV2104_UTILMD.json"),
+    )
 
     _h_583 = Hint(condition_key="583", hint="[583] Hinweis: Verwendung der ID der Marktlokation")
     _h_584 = Hint(condition_key="584", hint="[584] Hinweis: Verwendung der ID der Messlokation")
@@ -79,7 +83,7 @@ class TestConditionNodeBuilder:
         with pytest.raises(KeyError) as excinfo:
             _ = condition_node_builder._build_hint_nodes()
 
-        assert "There seems to be no hint implemented with this condition key." in str(excinfo.value)
+        assert "There seems to be no hint implemented with condition key '500'." in str(excinfo.value)
 
     def test_build_unevaluated_format_constraint_nodes(self):
         """Tests that unevaluated format constraints nodes are build correctly."""
@@ -118,7 +122,6 @@ class TestConditionNodeBuilder:
         assert evaluated_requirement_constraints == expected_requirement_constraints
 
     def test_requirement_evaluation_for_all_condition_keys(self, mocker):
-
         mocker.patch(
             "ahbicht.content_evaluation.rc_evaluators.RcEvaluator.evaluate_single_condition",
             side_effect=[ConditionFulfilledValue.FULFILLED, ConditionFulfilledValue.UNFULFILLED],
