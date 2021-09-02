@@ -48,15 +48,14 @@ class ConditionNodeBuilder:
                 raise ValueError("Condition key is not in valid number range.")
         return requirement_constraints, hints, format_constraints
 
-    def _build_hint_nodes(self) -> Dict[str, Hint]:
+    async def _build_hint_nodes(self) -> Dict[str, Hint]:
         """Builds Hint nodes from their condition keys by getting all hint texts from the HintsProvider."""
-        all_hints: Dict[str, str] = self.hints_provider.all_hints
         evaluated_hints: Dict[str, Hint] = {}
         for condition_key in self.hints_condition_keys:
-            try:
-                evaluated_hints[condition_key] = Hint(condition_key=condition_key, hint=all_hints[condition_key])
-            except KeyError as key_err:
-                raise KeyError("There seems to be no hint implemented with this condition key.") from key_err
+            hint_text = await self.hints_provider.get_hint_text(condition_key)
+            if not hint_text:
+                raise KeyError(f"There seems to be no hint implemented with the condition key {condition_key}.")
+            evaluated_hints[condition_key] = Hint(condition_key=condition_key, hint=hint_text)
         return evaluated_hints
 
     def _build_unevaluated_format_constraint_nodes(self) -> Dict[str, UnevaluatedFormatConstraint]:
@@ -86,12 +85,12 @@ class ConditionNodeBuilder:
             )
         return evaluated_requirement_constraints
 
-    def requirement_content_evaluation_for_all_condition_keys(
+    async def requirement_content_evaluation_for_all_condition_keys(
         self,
     ) -> Dict[str, Union[RequirementConstraint, UnevaluatedFormatConstraint, Hint]]:
         """Gets input nodes for all condition keys."""
         requirement_constraint_nodes = self._build_requirement_constraint_nodes()
-        hint_nodes = self._build_hint_nodes()
+        hint_nodes = await self._build_hint_nodes()
         unevaluated_format_constraint_nodes = self._build_unevaluated_format_constraint_nodes()
         input_nodes = {**requirement_constraint_nodes, **hint_nodes, **unevaluated_format_constraint_nodes}
         return input_nodes

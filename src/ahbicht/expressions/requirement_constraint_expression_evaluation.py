@@ -240,7 +240,7 @@ of the type RequirementConstraint, Hint or FormatConstraint."""
     return result
 
 
-def requirement_constraint_evaluation(condition_expression: str) -> RequirementConstraintEvaluationResult:
+async def requirement_constraint_evaluation(condition_expression: str) -> RequirementConstraintEvaluationResult:
     """
     Evaluation of the condition expression in regard to the requirement conditions (rc).
     """
@@ -253,7 +253,9 @@ def requirement_constraint_evaluation(condition_expression: str) -> RequirementC
     # get all condition keys from tree
     all_condition_keys: List[str] = [t.value for t in parsed_tree_rc.scan_values(lambda v: isinstance(v, Token))]
     condition_node_builder = ConditionNodeBuilder(all_condition_keys, hints_provider, rc_evaluator)
-    input_nodes: List[ConditionNode] = condition_node_builder.requirement_content_evaluation_for_all_condition_keys()
+    input_nodes: List[
+        ConditionNode
+    ] = await condition_node_builder.requirement_content_evaluation_for_all_condition_keys()
 
     resulting_condition_node: ConditionNode = evaluate_requirement_constraint_tree(parsed_tree_rc, input_nodes)
 

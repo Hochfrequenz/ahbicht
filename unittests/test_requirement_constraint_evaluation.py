@@ -62,7 +62,7 @@ class TestRequirementConstraintEvaluation:
             pytest.param("[503]U[504]", True, False, None, "[503] Hinweis:foo und [504] Hinweis:bar"),
         ],
     )
-    def test_evaluate_valid_ahb_expression(
+    async def test_evaluate_valid_ahb_expression(
         self,
         mocker,
         condition_expression,
@@ -80,7 +80,7 @@ class TestRequirementConstraintEvaluation:
             "ahbicht.expressions.requirement_constraint_expression_evaluation.ConditionNodeBuilder.requirement_content_evaluation_for_all_condition_keys",
             return_value=self._input_values,
         )
-        requirement_constraint_evaluation_result = requirement_constraint_evaluation(
+        requirement_constraint_evaluation_result = await requirement_constraint_evaluation(
             condition_expression=condition_expression
         )
 
@@ -142,7 +142,7 @@ class TestRequirementConstraintEvaluation:
             ),
         ],
     )
-    def test_evaluate_condition_expression_with_invalid_values(
+    async def test_evaluate_condition_expression_with_invalid_values(
         self,
         mocker,
         condition_expression: str,
@@ -157,6 +157,6 @@ class TestRequirementConstraintEvaluation:
             return_value=input_values,
         )
         with pytest.raises(expected_error) as excinfo:
-            requirement_constraint_evaluation(condition_expression)
+            await requirement_constraint_evaluation(condition_expression)
 
         assert expected_error_message in str(excinfo.value)
