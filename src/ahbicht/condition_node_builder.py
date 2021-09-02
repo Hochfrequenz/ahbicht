@@ -55,7 +55,7 @@ class ConditionNodeBuilder:
         hints_provider = inject.instance(HintsProvider)
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
-        return loop.run_until_complete(hints_provider.get_hints())
+        return loop.run_until_complete(hints_provider.get_hints(self.hints_condition_keys))
 
     def _build_unevaluated_format_constraint_nodes(self) -> Dict[str, UnevaluatedFormatConstraint]:
         """Build unevaluated format constraint nodes."""
