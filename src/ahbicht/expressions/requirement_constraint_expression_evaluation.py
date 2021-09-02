@@ -27,7 +27,6 @@ from ahbicht.expressions.condition_nodes import (
     UnevaluatedFormatConstraint,
 )
 from ahbicht.expressions.expression_builder import FormatConstraintExpressionBuilder, HintExpressionBuilder
-from ahbicht.expressions.hints_provider import HintsProvider
 
 
 # pylint: disable=no-self-use
@@ -245,14 +244,13 @@ def requirement_constraint_evaluation(condition_expression: str) -> RequirementC
     Evaluation of the condition expression in regard to the requirement conditions (rc).
     """
 
-    hints_provider = inject.instance(HintsProvider)
     rc_evaluator = inject.instance(RcEvaluator)
 
     parsed_tree_rc: Tree = parse_condition_expression_to_tree(condition_expression)
 
     # get all condition keys from tree
     all_condition_keys: List[str] = [t.value for t in parsed_tree_rc.scan_values(lambda v: isinstance(v, Token))]
-    condition_node_builder = ConditionNodeBuilder(all_condition_keys, hints_provider, rc_evaluator)
+    condition_node_builder = ConditionNodeBuilder(all_condition_keys, rc_evaluator)
     input_nodes: List[ConditionNode] = condition_node_builder.requirement_content_evaluation_for_all_condition_keys()
 
     resulting_condition_node: ConditionNode = evaluate_requirement_constraint_tree(parsed_tree_rc, input_nodes)
