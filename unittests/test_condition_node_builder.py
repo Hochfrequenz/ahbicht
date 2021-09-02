@@ -83,7 +83,7 @@ class TestConditionNodeBuilder:
         with pytest.raises(KeyError) as excinfo:
             _ = condition_node_builder._build_hint_nodes()
 
-        assert "There seems to be no hint implemented with this condition key." in str(excinfo.value)
+        assert "There seems to be no hint implemented with condition key '500'." in str(excinfo.value)
 
     def test_build_unevaluated_format_constraint_nodes(self):
         """Tests that unevaluated format constraints nodes are build correctly."""

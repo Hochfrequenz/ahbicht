@@ -5,8 +5,6 @@ If necessary it evaluates the needed attributes.
 import asyncio
 from typing import Dict, List, Tuple, Union
 
-import inject
-
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.expressions.condition_nodes import Hint, RequirementConstraint, UnevaluatedFormatConstraint
 from ahbicht.expressions.hints_provider import HintsProvider
@@ -52,10 +50,9 @@ class ConditionNodeBuilder:
 
     def _build_hint_nodes(self) -> Dict[str, Hint]:
         """Builds Hint nodes from their condition keys by getting all hint texts from the HintsProvider."""
-        hints_provider = inject.instance(HintsProvider)
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
-        return loop.run_until_complete(hints_provider.get_hints(self.hints_condition_keys))
+        return loop.run_until_complete(self.hints_provider.get_hints(self.hints_condition_keys))
 
     def _build_unevaluated_format_constraint_nodes(self) -> Dict[str, UnevaluatedFormatConstraint]:
         """Build unevaluated format constraint nodes."""

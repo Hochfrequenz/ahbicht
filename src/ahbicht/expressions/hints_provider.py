@@ -11,6 +11,7 @@ from typing import Dict, List, Optional
 from ahbicht.edifact import EdifactFormat, EdifactFormatVersion
 
 # pylint: disable = too-few-public-methods
+from ahbicht.expressions.condition_nodes import Hint
 
 
 class HintsProvider(ABC):
@@ -33,13 +34,20 @@ class HintsProvider(ABC):
         """
         raise NotImplementedError("The inheriting class has to implement this method")
 
-    async def get_hints(self, condition_keys: List[str]) -> Dict[str, Optional[str]]:
+    async def get_hints(self, condition_keys: List[str], raise_key_error: bool = True) -> Dict[str, Hint]:
         """
         Get Hints for given condition keys by asynchronously awaiting all self.get_hin_text at once
         """
         tasks = [self.get_hint_text(ck) for ck in condition_keys]
         results: List[Optional[str]] = await asyncio.gather(*tasks)
-        return {key: value for key, value in zip(condition_keys, results)}
+        result: Dict[str, Hint] = {}
+        for key, value in zip(condition_keys, results):
+            if value is None:
+                if raise_key_error:
+                    raise KeyError(f"There seems to be no hint implemented with condition key '{key}'.")
+            else:
+                result[key] = Hint(hint=value, condition_key=key)
+        return result
 
 
 class JsonFileHintsProvider(HintsProvider):
