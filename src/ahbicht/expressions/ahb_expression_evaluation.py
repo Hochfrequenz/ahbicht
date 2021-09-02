@@ -31,7 +31,7 @@ class AhbExpressionTransformer(Transformer):
     def __init__(self, entered_input: str):
         """
         The input are the evaluated format constraint conditions in the form of ConditionNodes.
-        :param input_values: dict(condition_keys, ConditionNode)
+        :param entered_input: dict(condition_keys, ConditionNode)
         """
         super().__init__()
         self.entered_input = entered_input

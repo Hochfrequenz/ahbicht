@@ -1,6 +1,6 @@
 """ Test for the evaluation of the ahb expression conditions tests (Mussfeldprüfung) """
 
-from unittest.mock import AsyncMock, Mock
+from unittest.mock import AsyncMock
 
 import inject
 import pytest

@@ -13,7 +13,7 @@ from ahbicht.expressions.hints_provider import HintsProvider
 # pylint: disable=no-member, too-few-public-methods
 class ConditionNodeBuilder:
     """
-    Builds ConditionNodes for the given condition_keys by seperating them into their respective types
+    Builds ConditionNodes for the given condition_keys by separating them into their respective types
     and evaluating the necessary attributes.
     It distinguishes between requirement constraint evaluation and format constraint evaluation.
     """
@@ -30,7 +30,7 @@ class ConditionNodeBuilder:
 
     def _seperate_condition_keys_into_each_type(self) -> Tuple[List[str], List[str], List[str]]:
         """
-        Seperates the list of all condition keys into three lists of their respective types.
+        Separates the list of all condition keys into three lists of their respective types.
         The types are differentiated by their number range.
         See 'Allgemeine Festlegungen' from EDI@Energy.
         """

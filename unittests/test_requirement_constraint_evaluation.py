@@ -1,6 +1,6 @@
 """ Test for the requirement constraint evaluation of the condition expressions. """
 
-from unittest.mock import AsyncMock, Mock
+from unittest.mock import AsyncMock
 
 import inject
 import pytest
