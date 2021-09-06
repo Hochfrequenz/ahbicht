@@ -1,6 +1,7 @@
 """ Tests for Class Condition Node Builder"""
 from pathlib import Path
 
+import inject
 import pytest
 
 from ahbicht.condition_node_builder import ConditionNodeBuilder
@@ -13,7 +14,7 @@ from ahbicht.expressions.condition_nodes import (
     RequirementConstraint,
     UnevaluatedFormatConstraint,
 )
-from ahbicht.expressions.hints_provider import JsonFileHintsProvider
+from ahbicht.expressions.hints_provider import HintsProvider, JsonFileHintsProvider
 
 
 class DummyRcEvaluator(RcEvaluator):
@@ -33,22 +34,28 @@ class TestConditionNodeBuilder:
     _edifact_format_version = EdifactFormatVersion.FV2104
     _dummy_evaluatable_data = EvaluatableData(edifact_seed=dict())
     _evaluator = DummyRcEvaluator(_dummy_evaluatable_data)
-    _hints_provider = JsonFileHintsProvider(
-        _edifact_format,
-        _edifact_format_version,
-        file_path=Path("unittests/resources_condition_hints/FV2104/Hints_FV2104_UTILMD.json"),
-    )
 
     _h_583 = Hint(condition_key="583", hint="[583] Hinweis: Verwendung der ID der Marktlokation")
     _h_584 = Hint(condition_key="584", hint="[584] Hinweis: Verwendung der ID der Messlokation")
     _ufc_955 = UnevaluatedFormatConstraint(condition_key="955")
     _ufc_907 = UnevaluatedFormatConstraint(condition_key="907")
 
-    def test_initiating_condition_node_builder(self):
+    @pytest.fixture()
+    def setup_and_teardown_injector(self):
+        _hints_provider = JsonFileHintsProvider(
+            TestConditionNodeBuilder._edifact_format,
+            TestConditionNodeBuilder._edifact_format_version,
+            file_path=Path("unittests/resources_condition_hints/FV2104/Hints_FV2104_UTILMD.json"),
+        )
+        inject.clear_and_configure(lambda binder: binder.bind(HintsProvider, _hints_provider))
+        yield
+        inject.clear()
+
+    def test_initiating_condition_node_builder(self, setup_and_teardown_injector):
         """Tests if condition node builder is initiated correctly."""
 
         condition_keys = ["501", "12", "903"]
-        condition_node_builder = ConditionNodeBuilder(condition_keys, self._hints_provider, self._evaluator)
+        condition_node_builder = ConditionNodeBuilder(condition_keys, self._evaluator)
 
         assert condition_node_builder.hints_provider.edifact_format == self._edifact_format
         assert condition_node_builder.rc_evaluator.edifact_format_version == self._edifact_format_version
@@ -57,38 +64,38 @@ class TestConditionNodeBuilder:
         assert condition_node_builder.hints_condition_keys == ["501"]
         assert condition_node_builder.format_constraints_condition_keys == ["903"]
 
-    def test_invalid_initiating_condition_node_builder(self):
+    def test_invalid_initiating_condition_node_builder(self, setup_and_teardown_injector):
         """Test that correct error is shown if condition keys are out of range."""
         condition_keys = ["5", "1011"]
 
         with pytest.raises(ValueError) as excinfo:
-            _ = ConditionNodeBuilder(condition_keys, self._hints_provider, self._evaluator)
+            _ = ConditionNodeBuilder(condition_keys, self._evaluator)
 
         assert "Condition key is not in valid number range." in str(excinfo.value)
 
-    def test_build_hint_nodes(self):
+    def test_build_hint_nodes(self, setup_and_teardown_injector):
         """Tests that hint nodes are build correctly."""
         condition_keys = ["584", "583"]
-        condition_node_builder = ConditionNodeBuilder(condition_keys, self._hints_provider, self._evaluator)
+        condition_node_builder = ConditionNodeBuilder(condition_keys, self._evaluator)
         hint_nodes = condition_node_builder._build_hint_nodes()
         excepted_hints_nodes = {"583": self._h_583, "584": self._h_584}
         assert hint_nodes == excepted_hints_nodes
 
-    def test_invalid_hint_nodes(self):
+    def test_invalid_hint_nodes(self, setup_and_teardown_injector):
         """Tests that correct error is shown, when hint is not implemented."""
         condition_keys = ["500"]
         # it is possible that a hint with [500] will be implemented in the future as not all hints are collected yet.
         # If test fails, look up if hint exist. And if hint list is completed take one that does not exist.
-        condition_node_builder = ConditionNodeBuilder(condition_keys, self._hints_provider, self._evaluator)
+        condition_node_builder = ConditionNodeBuilder(condition_keys, self._evaluator)
         with pytest.raises(KeyError) as excinfo:
             _ = condition_node_builder._build_hint_nodes()
 
         assert "There seems to be no hint implemented with condition key '500'." in str(excinfo.value)
 
-    def test_build_unevaluated_format_constraint_nodes(self):
+    def test_build_unevaluated_format_constraint_nodes(self, setup_and_teardown_injector):
         """Tests that unevaluated format constraints nodes are build correctly."""
         condition_keys = ["907", "955"]
-        condition_node_builder = ConditionNodeBuilder(condition_keys, self._hints_provider, self._evaluator)
+        condition_node_builder = ConditionNodeBuilder(condition_keys, self._evaluator)
         unevaluated_fc_nodes = condition_node_builder._build_unevaluated_format_constraint_nodes()
         expected_unevaluated_fc_nodes = {"907": self._ufc_907, "955": self._ufc_955}
         assert unevaluated_fc_nodes == expected_unevaluated_fc_nodes
@@ -101,7 +108,7 @@ class TestConditionNodeBuilder:
         ],
     )
     def test_build_requirement_constraint_nodes(
-        self, mocker, expected_conditions_fulfilled_11, expected_conditions_fulfilled_78
+        self, mocker, expected_conditions_fulfilled_11, expected_conditions_fulfilled_78, setup_and_teardown_injector
     ):
         """Tests that requirement constraint nodes are build correctly."""
 
@@ -111,7 +118,7 @@ class TestConditionNodeBuilder:
         )
 
         condition_keys = ["11", "78"]
-        condition_node_builder = ConditionNodeBuilder(condition_keys, self._hints_provider, self._evaluator)
+        condition_node_builder = ConditionNodeBuilder(condition_keys, self._evaluator)
 
         evaluated_requirement_constraints = condition_node_builder._build_requirement_constraint_nodes()
 
@@ -121,14 +128,14 @@ class TestConditionNodeBuilder:
         }
         assert evaluated_requirement_constraints == expected_requirement_constraints
 
-    def test_requirement_evaluation_for_all_condition_keys(self, mocker):
+    def test_requirement_evaluation_for_all_condition_keys(self, mocker, setup_and_teardown_injector):
         mocker.patch(
             "ahbicht.content_evaluation.rc_evaluators.RcEvaluator.evaluate_single_condition",
             side_effect=[ConditionFulfilledValue.FULFILLED, ConditionFulfilledValue.UNFULFILLED],
         )
 
         condition_keys = ["78", "907", "11", "583"]
-        condition_node_builder = ConditionNodeBuilder(condition_keys, self._hints_provider, self._evaluator)
+        condition_node_builder = ConditionNodeBuilder(condition_keys, self._evaluator)
 
         evaluated_requirement_constraints = (
             condition_node_builder.requirement_content_evaluation_for_all_condition_keys()

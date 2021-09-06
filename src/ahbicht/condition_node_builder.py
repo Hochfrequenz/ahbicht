@@ -5,6 +5,8 @@ If necessary it evaluates the needed attributes.
 import asyncio
 from typing import Dict, List, Tuple, Union
 
+import inject
+
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.expressions.condition_nodes import Hint, RequirementConstraint, UnevaluatedFormatConstraint
 from ahbicht.expressions.hints_provider import HintsProvider
@@ -18,8 +20,8 @@ class ConditionNodeBuilder:
     It distinguishes between requirement constraint evaluation and format constraint evaluation.
     """
 
-    def __init__(self, condition_keys: List[str], hints_provider: HintsProvider, rc_evaluator: RcEvaluator):
-        self.hints_provider = hints_provider
+    def __init__(self, condition_keys: List[str], rc_evaluator: RcEvaluator):
+        self.hints_provider = inject.instance(HintsProvider)
         self.rc_evaluator = rc_evaluator
         self.condition_keys = condition_keys
         (
