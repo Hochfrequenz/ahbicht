@@ -40,7 +40,7 @@ class FcEvaluator(Evaluator, ABC):
 
         # Fallback error message if there is no error message even though format constraint isn't fulfilled
         if result.format_constraint_fulfilled is False and result.error_message is None:
-            result.error_message = f"Bedingung [{condition_key}] muss erfüllt werden."
+            result.error_message = f"Condition [{condition_key}] has to be fulfilled."
 
         return result
 
