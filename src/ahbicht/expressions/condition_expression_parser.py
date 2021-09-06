@@ -17,7 +17,7 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree:
     It follows the boolean logic 'brackets before `then_also` before `and` before `xor` before `or`'.
     Whitespaces are ignored.
 
-    :param expression: str, e.g. '[45]U[502]O[1][906]'
+    :param condition_expression: str, e.g. '[45]U[502]O[1][906]'
     :return parsed_tree: Tree
     """
 
