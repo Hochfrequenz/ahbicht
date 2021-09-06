@@ -21,9 +21,13 @@ class HintsProvider(ABC):
     as dictionary with the condition keys as keys and the hint texts as values.
     """
 
-    def __init__(self, edifact_format: EdifactFormat, edifact_format_version: EdifactFormatVersion):
-        self.edifact_format: EdifactFormat = edifact_format
-        self.edifact_format_version: EdifactFormatVersion = edifact_format_version
+    edifact_format: EdifactFormat = NotImplementedError(
+        "The inheriting class needs to define a format to which it is applicable."
+    )
+
+    edifact_format_version: EdifactFormatVersion = NotImplementedError(
+        "The inheriting class needs to define a format version."
+    )
 
     @abstractmethod
     async def get_hint_text(self, condition_key: str) -> Optional[str]:
@@ -56,7 +60,9 @@ class JsonFileHintsProvider(HintsProvider):
     """
 
     def __init__(self, edifact_format: EdifactFormat, edifact_format_version: EdifactFormatVersion, file_path: Path):
-        super().__init__(edifact_format, edifact_format_version)
+        super().__init__()
+        self.edifact_format = edifact_format
+        self.edifact_format_version = edifact_format_version
         self._all_hints: Dict[str, str] = self._open_and_load_hint_json(file_path)
 
     @staticmethod
