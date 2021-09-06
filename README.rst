@@ -61,11 +61,7 @@ below) is **not** within the scope of this parsing library.
 Usage
 -----
 
-.. code:: python
-
-   from ahbicht import foo
-   do something
-   # todo: add mwe on how to use this library
+For a minimal working example of what this library does, check out `this Jupyter notebook <minimal_working_example.ipynb>`__.
 
 Code Quality / Production Readiness
 -----------------------------------
