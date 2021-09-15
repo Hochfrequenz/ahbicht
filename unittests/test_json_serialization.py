@@ -6,6 +6,7 @@ import json
 import pytest
 from lark import Token, Tree
 
+from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 from ahbicht.json_serialization.tree_schema import TreeSchema
 
 
@@ -53,6 +54,41 @@ class TestJsonSerialization:
         ],
     )
     def test_tree_serialization(self, tree: Tree, expected_json_dict: dict):
+        json_string = TreeSchema().dumps(tree)
+        assert json_string is not None
+        actual_json_dict = json.loads(json_string)
+        assert actual_json_dict == expected_json_dict
+        deserialized_tree = TreeSchema().loads(json_data=json_string)
+        assert isinstance(deserialized_tree, Tree)
+        assert deserialized_tree == tree
+
+    @pytest.mark.parametrize(
+        "condition_string, expected_json_dict",
+        [
+            pytest.param(
+                "Muss [2] U ([3] O [4])[901] U [555]",
+                {
+                    "children": [
+                        {
+                            "string": None,
+                            "tree": {
+                                "children": [
+                                    {"string": "Muss", "tree": None},
+                                    {"string": "[2] U ([3] O [4])[901] U [555]", "tree": None},
+                                ],
+                                "type": "single_requirement_indicator_expression",
+                            },
+                        }
+                    ],
+                    "type": "ahb_expression",
+                },
+            )
+        ],
+    )
+    def test_single_requirement_indicator_expression_serialization(
+        self, condition_string: str, expected_json_dict: dict
+    ):
+        tree = parse_ahb_expression_to_single_requirement_indicator_expressions(condition_string)
         json_string = TreeSchema().dumps(tree)
         assert json_string is not None
         actual_json_dict = json.loads(json_string)
