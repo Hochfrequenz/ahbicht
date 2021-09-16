@@ -33,7 +33,7 @@ class _TokenOrTreeSchema(Schema):
     """
 
     token = fields.Nested(
-        lambda: TokenSchema(), allow_none=True, required=False
+        lambda: TokenSchema(), allow_none=True, required=False  # pylint: disable=unnecessary-lambda
     )  # fields.String(dump_default=False, required=False, allow_none=True)
     # disable unnecessary lambda warning because of circular imports
     tree = fields.Nested(
