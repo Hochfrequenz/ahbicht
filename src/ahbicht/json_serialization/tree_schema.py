@@ -2,37 +2,40 @@
 Schemata for the JSON serialization of expressions.
 """
 
-from typing import Union
+from typing import Optional, Union
 
 from lark import Token, Tree
-from marshmallow import Schema, fields, post_load, pre_dump
+from marshmallow import Schema, fields, post_dump, post_load, pre_dump
 
 # in the classes/schemata we don't care about if there aren't enough public versions.
 # We also don't care about unused kwargs, or no self-use.
 # pylint: disable=too-few-public-methods,unused-argument,no-self-use
+from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 
 
-class _StringOrTree:
+class _TokenOrTree:
     """
     A class that is easily serializable as dictionary and allows us to _not_ use the marshmallow-union package.
     """
 
-    def __init__(self, string: str = None, tree: Tree = None):
-        self.string = string
+    def __init__(self, token: Optional[Token] = None, tree: Optional[Tree] = None):
+        self.token = token
         self.tree = tree
 
-    string: str
+    token: Token
     tree: Tree
 
 
-class _StrOrTreeSchema(Schema):
+class _TokenOrTreeSchema(Schema):
     """
     A schema that represents data of the kind Union[str,Tree]
     There is a python package for that: https://github.com/adamboche/python-marshmallow-union
     but is only has 15 stars; not sure if it's worth the dependency
     """
 
-    string = fields.String(dump_default=False, required=False, allow_none=True)
+    token = fields.Nested(
+        lambda: TokenSchema(), allow_none=True, required=False
+    )  # fields.String(dump_default=False, required=False, allow_none=True)
     # disable unnecessary lambda warning because of circular imports
     tree = fields.Nested(
         lambda: TreeSchema(), dump_default=False, required=False, allow_none=True  # pylint: disable=unnecessary-lambda
@@ -50,12 +53,12 @@ class _StrOrTreeSchema(Schema):
             if not isinstance(data["tree"], Tree):
                 return Tree(**data["tree"])
             return data["tree"]
-        if "string" in data and data["string"]:
-            return Token("INT", data["string"])
+        if "token" in data and data["token"]:
+            return data["token"]
         return data
 
     @pre_dump
-    def prepare_tree_for_serialization(self, data, **kwargs) -> _StringOrTree:
+    def prepare_tree_for_serialization(self, data, **kwargs) -> _TokenOrTree:
         """
         Create a string of tree object
         :param data:
@@ -63,10 +66,49 @@ class _StrOrTreeSchema(Schema):
         :return:
         """
         if isinstance(data, Tree):
-            return _StringOrTree(string=None, tree=data)
-        if isinstance(data, str):
-            return _StringOrTree(string=data, tree=None)
+            return _TokenOrTree(token=None, tree=data)
+        if isinstance(data, Token):
+            return _TokenOrTree(token=data, tree=None)
         raise NotImplementedError(f"Data type of {data} is not implemented for JSON serialization")
+
+
+class TokenSchema(Schema):
+    """
+    A schema that represents a lark Token and allows (de-)serializing is as JSON
+    """
+
+    value = fields.String(dump_default=False, allow_none=True)
+    type = fields.String(dump_default=False, data_key="type")
+    condition_expression = fields.Nested(lambda: TreeSchema())
+
+    @post_load
+    def deserialize(self, data, **kwargs) -> Token:
+        """
+        converts the barely typed data dictionary into an actual Tree
+        :param data:
+        :param kwargs:
+        :return:
+        """
+        return Token(data["type"], data["value"])
+
+    @pre_dump
+    def prepare_token_for_serialization(self, data, **kwargs) -> Token:
+        """
+        Create a string of token object
+        :param data:
+        :param kwargs:
+        :return:
+        """
+        # if data.type == "CONDITION_EXPRESSION":
+        #    return parse_condition_expression_to_tree(data.value)
+        return data
+
+    @post_dump
+    def post_process_dumped_token(self, data, **kwargs):
+        # if data["type"] == "CONDITION_EXPRESSION":
+        #    tree = parse_condition_expression_to_tree(data["value"])
+        #    return TreeSchema().dump(tree)
+        return data
 
 
 class TreeSchema(Schema):
@@ -76,7 +118,7 @@ class TreeSchema(Schema):
 
     data = fields.String(data_key="type")  # for example 'or_composition', 'and_composition', 'condition_key'
     # disable lambda warning. I don't know how to resolve this circular imports
-    children = fields.List(fields.Nested(lambda: _StrOrTreeSchema()))  # pylint: disable=unnecessary-lambda
+    children = fields.List(fields.Nested(lambda: _TokenOrTreeSchema()))  # pylint: disable=unnecessary-lambda
 
     @post_load
     def deserialize(self, data, **kwargs) -> Tree:
@@ -87,3 +129,17 @@ class TreeSchema(Schema):
         :return:
         """
         return Tree(**data)
+
+    @pre_dump
+    def prepare_tree_for_serialization(self, data, **kwargs) -> Tree:
+        """
+        Create a string of tree object
+        :param data:
+        :param kwargs:
+        :return:
+        """
+        return data
+
+    @post_dump
+    def post_process_dumped_tree(self, data, **kwargs) -> dict:
+        return data

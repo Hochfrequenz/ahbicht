@@ -26,29 +26,38 @@ class TestJsonSerialization:
                     ],
                 ),
                 {
-                    "type": "or_composition",
                     "children": [
                         {
-                            "string": None,
-                            "tree": {"children": [{"string": "53", "tree": None}], "type": "condition_key"},
+                            "token": None,
+                            "tree": {
+                                "children": [{"token": {"type": "INT", "value": "53"}, "tree": None}],
+                                "type": "condition_key",
+                            },
                         },
                         {
-                            "string": None,
+                            "token": None,
                             "tree": {
                                 "children": [
                                     {
-                                        "string": None,
-                                        "tree": {"children": [{"string": "1", "tree": None}], "type": "condition_key"},
+                                        "token": None,
+                                        "tree": {
+                                            "children": [{"token": {"type": "INT", "value": "1"}, "tree": None}],
+                                            "type": "condition_key",
+                                        },
                                     },
                                     {
-                                        "string": None,
-                                        "tree": {"children": [{"string": "2", "tree": None}], "type": "condition_key"},
+                                        "token": None,
+                                        "tree": {
+                                            "children": [{"token": {"type": "INT", "value": "2"}, "tree": None}],
+                                            "type": "condition_key",
+                                        },
                                     },
                                 ],
                                 "type": "and_composition",
                             },
                         },
                     ],
+                    "type": "or_composition",
                 },
             )
         ],
@@ -70,11 +79,17 @@ class TestJsonSerialization:
                 {
                     "children": [
                         {
-                            "string": None,
+                            "token": None,
                             "tree": {
                                 "children": [
-                                    {"string": "Muss", "tree": None},
-                                    {"string": "[2] U ([3] O [4])[901] U [555]", "tree": None},
+                                    {"token": {"type": "MODAL_MARK", "value": "Muss"}, "tree": None},
+                                    {
+                                        "token": {
+                                            "type": "CONDITION_EXPRESSION",
+                                            "value": " [2] U ([3] O [4])[901] U [555]",
+                                        },
+                                        "tree": None,
+                                    },
                                 ],
                                 "type": "single_requirement_indicator_expression",
                             },
