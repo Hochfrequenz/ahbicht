@@ -5,12 +5,11 @@ Schemata for the JSON serialization of expressions.
 from typing import Optional, Union
 
 from lark import Token, Tree
-from marshmallow import Schema, fields, post_dump, post_load, pre_dump
+from marshmallow import Schema, fields, post_load, pre_dump
 
 # in the classes/schemata we don't care about if there aren't enough public versions.
 # We also don't care about unused kwargs, or no self-use.
 # pylint: disable=too-few-public-methods,unused-argument,no-self-use
-from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 
 
 class _TokenOrTree:
@@ -91,25 +90,6 @@ class TokenSchema(Schema):
         """
         return Token(data["type"], data["value"])
 
-    @pre_dump
-    def prepare_token_for_serialization(self, data, **kwargs) -> Token:
-        """
-        Create a string of token object
-        :param data:
-        :param kwargs:
-        :return:
-        """
-        # if data.type == "CONDITION_EXPRESSION":
-        #    return parse_condition_expression_to_tree(data.value)
-        return data
-
-    @post_dump
-    def post_process_dumped_token(self, data, **kwargs):
-        # if data["type"] == "CONDITION_EXPRESSION":
-        #    tree = parse_condition_expression_to_tree(data["value"])
-        #    return TreeSchema().dump(tree)
-        return data
-
 
 class TreeSchema(Schema):
     """
@@ -129,17 +109,3 @@ class TreeSchema(Schema):
         :return:
         """
         return Tree(**data)
-
-    @pre_dump
-    def prepare_tree_for_serialization(self, data, **kwargs) -> Tree:
-        """
-        Create a string of tree object
-        :param data:
-        :param kwargs:
-        :return:
-        """
-        return data
-
-    @post_dump
-    def post_process_dumped_tree(self, data, **kwargs) -> dict:
-        return data
