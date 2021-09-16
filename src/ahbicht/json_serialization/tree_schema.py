@@ -78,7 +78,6 @@ class TokenSchema(Schema):
 
     value = fields.String(dump_default=False, allow_none=True)
     type = fields.String(dump_default=False, data_key="type")
-    condition_expression = fields.Nested(lambda: TreeSchema())
 
     @post_load
     def deserialize(self, data, **kwargs) -> Token:
