@@ -7,6 +7,7 @@ import pytest
 from lark import Token, Tree
 
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
+from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint, EvaluatedFormatConstraintSchema
 from ahbicht.json_serialization.tree_schema import TreeSchema
 
 
@@ -111,3 +112,27 @@ class TestJsonSerialization:
         deserialized_tree = TreeSchema().loads(json_data=json_string)
         assert isinstance(deserialized_tree, Tree)
         assert deserialized_tree == tree
+
+    @pytest.mark.parametrize(
+        "evaluated_format_constraint, expected_json_dict",
+        [
+            pytest.param(
+                EvaluatedFormatConstraint(format_constraint_fulfilled=True, error_message=None),
+                {"format_constraint_fulfilled": True, "error_message": None},
+            ),
+            pytest.param(
+                EvaluatedFormatConstraint(format_constraint_fulfilled=False, error_message="something is wrong"),
+                {"format_constraint_fulfilled": False, "error_message": "something is wrong"},
+            ),
+        ],
+    )
+    def test_evaluated_format_constraint_evaluation(
+        self, evaluated_format_constraint: EvaluatedFormatConstraint, expected_json_dict: dict
+    ):
+        json_string = EvaluatedFormatConstraintSchema().dumps(evaluated_format_constraint)
+        assert json_string is not None
+        actual_json_dict = json.loads(json_string)
+        assert actual_json_dict == expected_json_dict
+        deserialized_constraint = EvaluatedFormatConstraintSchema().loads(json_data=json_string)
+        assert isinstance(deserialized_constraint, EvaluatedFormatConstraint)
+        assert deserialized_constraint == evaluated_format_constraint
