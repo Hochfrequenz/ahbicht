@@ -54,16 +54,31 @@ class HintsProvider(ABC):
         return result
 
 
-class JsonFileHintsProvider(HintsProvider):
+class DictBasesHintsProvider(HintsProvider):
+    def __init__(self, results: Dict[str, Optional[str]]):
+        """
+        initialize with a dictionary that contains all the results
+        :param results:
+        """
+        self._all_hints: Dict[str, Optional[str]] = results
+
+    async def get_hint_text(self, condition_key: str) -> Optional[str]:
+        if not condition_key:
+            raise ValueError(f"The condition key must not be None/empty but was '{condition_key}'")
+        if condition_key in self._all_hints:
+            return self._all_hints[condition_key]
+        return None
+
+
+class JsonFileHintsProvider(DictBasesHintsProvider):
     """
     The JsonFileHintsProvider loads hints from a JSON file.
     """
 
     def __init__(self, edifact_format: EdifactFormat, edifact_format_version: EdifactFormatVersion, file_path: Path):
-        super().__init__()
+        super().__init__(self._open_and_load_hint_json(file_path))
         self.edifact_format = edifact_format
         self.edifact_format_version = edifact_format_version
-        self._all_hints: Dict[str, str] = self._open_and_load_hint_json(file_path)
 
     @staticmethod
     def _open_and_load_hint_json(file_path: Path) -> Dict[str, str]:
@@ -72,10 +87,3 @@ class JsonFileHintsProvider(HintsProvider):
         """
         with open(file_path, encoding="utf-8") as json_infile:
             return json.load(json_infile)
-
-    async def get_hint_text(self, condition_key: str) -> Optional[str]:
-        if not condition_key:
-            raise ValueError(f"The condition key must not be None/empty but was '{condition_key}'")
-        if condition_key in self._all_hints:
-            return self._all_hints[condition_key]
-        return None

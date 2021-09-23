@@ -74,3 +74,28 @@ class RcEvaluator(Evaluator, ABC):
 
         result = dict(zip(condition_keys, results))
         return result
+
+
+class DictBasedRcEvaluator(RcEvaluator):
+    """
+    A requirement constraint evaluator that is based on a plain dictionary
+    """
+
+    def _get_default_context(self) -> EvaluationContext:
+        raise NotImplementedError()
+
+    # pylint:disable=unused-argument
+    async def evaluate_single_condition(
+        self, condition_key: str, context: Optional[EvaluationContext] = None
+    ) -> ConditionFulfilledValue:
+        try:
+            return self._results[condition_key]
+        except KeyError as ke:
+            raise NotImplementedError(f"No result was provided for {condition_key}.") from ke
+
+    def __init__(self, results: Dict[str, ConditionFulfilledValue]):
+        """
+        initialize with a dictionary that contains all the results
+        :param results:
+        """
+        self._results: Dict[str, ConditionFulfilledValue] = results

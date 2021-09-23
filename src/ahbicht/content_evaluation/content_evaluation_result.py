@@ -1,5 +1,5 @@
 """
-This module contains a class to store _all_ kinds of content evaluation results.
+This module contains a class and corresponding schema to store _all_ kinds of content evaluation results.
 """
 from typing import Dict, Optional
 from uuid import UUID
