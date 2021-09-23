@@ -13,11 +13,14 @@ from ahbicht.expressions.condition_nodes import (
     EvaluatedFormatConstraintSchema,
 )
 
+# pylint: disable=too-few-public-methods, no-self-use, unused-argument
+
 
 @attr.s(auto_attribs=True)
 class ContentEvaluationResult:
     """
-    A class that holds the results of a full content evaluation (meaning all hints, requirement constraints and format constraints have been evaluated)
+    A class that holds the results of a full content evaluation (meaning all hints, requirement constraints and
+    format constraints have been evaluated)
     """
 
     hints: Dict[str, Optional[str]]  # maps the key of a hint (e.g. "501" to a hint text)
