@@ -20,7 +20,7 @@ from ahbicht.json_serialization.tree_schema import TreeSchema
 
 def _test_serialization_roundtrip(serializable_object, schema: Schema, expected_json_dict: dict):
     """
-    serializes the serializable_object using the provided schema,
+    Serializes the serializable_object using the provided schema,
     asserts, that the result is equal to the expected_json_dict
     then deserializes it again and asserts on equality with the original serializable_object
     """
