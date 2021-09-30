@@ -51,7 +51,7 @@ class ContentEvaluationResultSchema(Schema):
     @post_load
     def deserialize(self, data, **kwargs) -> ContentEvaluationResult:
         """
-        converts the barely typed data dictionary into an actual ContentEvaluationResult
+        Converts the barely typed data dictionary into an actual ContentEvaluationResult
         :param data:
         :param kwargs:
         :return:
