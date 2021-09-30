@@ -14,6 +14,7 @@ import attr
 from aenum import Enum
 
 # pylint: disable=too-few-public-methods
+from marshmallow import Schema, fields, post_load
 
 
 class ConditionFulfilledValue(Enum):
@@ -97,6 +98,26 @@ class EvaluatedFormatConstraint:
 
     format_constraint_fulfilled: bool = attr.ib(validator=attr.validators.instance_of(bool))
     error_message: Optional[str] = attr.ib(default=None)
+
+
+class EvaluatedFormatConstraintSchema(Schema):
+    """
+    A schema to (de)serialize EvaluatedFormatConstraints.
+    """
+
+    format_constraint_fulfilled = fields.Boolean(required=True)
+    error_message = fields.String(required=False, allow_none=True, dump_default=True)
+
+    # pylint: disable=no-self-use, unused-argument
+    @post_load
+    def deserialize(self, data, **kwargs) -> EvaluatedFormatConstraint:
+        """
+        converts the barely typed data dictionary into an actual EvaluatedFormatConstraint
+        :param data:
+        :param kwargs:
+        :return:
+        """
+        return EvaluatedFormatConstraint(**data)
 
 
 # @attr.s(auto_attribs=True, kw_only=True)
