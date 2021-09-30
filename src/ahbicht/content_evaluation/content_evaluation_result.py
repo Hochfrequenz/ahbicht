@@ -35,7 +35,7 @@ class ContentEvaluationResult:
 
 class ContentEvaluationResultSchema(Schema):
     """
-    A Schema to (de)serialize ContentEvaluationResults
+    A schema to (de)serialize ContentEvaluationResults
     """
 
     hints = fields.Dict(keys=fields.String(allow_none=False), values=fields.String(allow_none=True), required=True)
