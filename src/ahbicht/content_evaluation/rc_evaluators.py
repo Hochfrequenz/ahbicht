@@ -90,12 +90,13 @@ class DictBasedRcEvaluator(RcEvaluator):
     ) -> ConditionFulfilledValue:
         try:
             return self._results[condition_key]
-        except KeyError as ke:
-            raise NotImplementedError(f"No result was provided for {condition_key}.") from ke
+        except KeyError as key_error:
+            raise NotImplementedError(f"No result was provided for condition '{condition_key}'.") from key_error
 
     def __init__(self, results: Dict[str, ConditionFulfilledValue]):
         """
         initialize with a dictionary that contains all the results
         :param results:
         """
+        super().__init__(evaluatable_data=EvaluatableData(edifact_seed=results))
         self._results: Dict[str, ConditionFulfilledValue] = results

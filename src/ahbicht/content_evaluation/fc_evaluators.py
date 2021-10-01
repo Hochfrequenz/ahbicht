@@ -77,5 +77,5 @@ class DictBasedFcEvaluator(FcEvaluator):
     ) -> EvaluatedFormatConstraint:
         try:
             return self._results[condition_key]
-        except KeyError as ke:
-            raise NotImplementedError(f"No result was provided for {condition_key}.") from ke
+        except KeyError as key_error:
+            raise NotImplementedError(f"No result was provided for {condition_key}.") from key_error
