@@ -1,5 +1,5 @@
 """
-This module contains a class and corresponding schema to store _all_ kinds of content evaluation results.
+This module contains a class to store _all_ kinds of content evaluation results.
 """
 from typing import Dict, Optional
 from uuid import UUID
@@ -35,7 +35,7 @@ class ContentEvaluationResult:
 
 class ContentEvaluationResultSchema(Schema):
     """
-    A Schema to (de)serialize ContentEvaluationResults
+    A schema to (de)serialize ContentEvaluationResults
     """
 
     hints = fields.Dict(keys=fields.String(allow_none=False), values=fields.String(allow_none=True), required=True)
@@ -51,7 +51,7 @@ class ContentEvaluationResultSchema(Schema):
     @post_load
     def deserialize(self, data, **kwargs) -> ContentEvaluationResult:
         """
-        converts the barely typed data dictionary into an actual ContentEvaluationResult
+        Converts the barely typed data dictionary into an actual ContentEvaluationResult
         :param data:
         :param kwargs:
         :return:
