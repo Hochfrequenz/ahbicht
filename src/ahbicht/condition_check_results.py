@@ -7,7 +7,7 @@ from typing import Optional
 
 import attr
 
-# pylint: disable=too-few-public-methods, no-member
+# pylint: disable=too-few-public-methods, no-member, no-self-use, unused-argument
 from marshmallow import Schema, fields, post_load
 
 
@@ -91,8 +91,8 @@ class ConditionCheckResultSchema(Schema):
     """
 
     requirement_indicator = fields.String(required=True, allow_none=True)
-    requirement_constraint_evaluation_result = fields.Nested(lambda: RequirementConstraintEvaluationResultSchema())
-    format_constraint_evaluation_result = fields.Nested(lambda: FormatConstraintEvaluationResultSchema())
+    requirement_constraint_evaluation_result = fields.Nested(RequirementConstraintEvaluationResultSchema())
+    format_constraint_evaluation_result = fields.Nested(FormatConstraintEvaluationResultSchema())
 
     @post_load
     def deserialize(self, data, **kwargs) -> ConditionCheckResult:
