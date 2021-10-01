@@ -55,6 +55,10 @@ class HintsProvider(ABC):
 
 
 class DictBasesHintsProvider(HintsProvider):
+    """
+    A Hints Provider that is based on hardcoded values from a dictionary
+    """
+
     def __init__(self, results: Dict[str, Optional[str]]):
         """
         initialize with a dictionary that contains all the results
