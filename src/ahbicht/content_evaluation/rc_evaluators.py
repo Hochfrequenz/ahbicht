@@ -95,7 +95,7 @@ class DictBasedRcEvaluator(RcEvaluator):
 
     def __init__(self, results: Dict[str, ConditionFulfilledValue]):
         """
-        initialize with a dictionary that contains all the results
+        Initialize with a dictionary that contains all the requirement constraint evaluation results.
         :param results:
         """
         super().__init__(evaluatable_data=EvaluatableData(edifact_seed=results))
