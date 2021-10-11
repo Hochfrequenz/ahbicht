@@ -78,7 +78,7 @@ class RcEvaluator(Evaluator, ABC):
 
 class DictBasedRcEvaluator(RcEvaluator):
     """
-    A requirement constraint evaluator that is based on a plain dictionary
+    A requirement constraint evaluator that is initialized with a prefilled dictionary.
     """
 
     def _get_default_context(self) -> EvaluationContext:
