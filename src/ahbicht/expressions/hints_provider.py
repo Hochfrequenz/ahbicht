@@ -61,7 +61,7 @@ class DictBasesHintsProvider(HintsProvider):
 
     def __init__(self, results: Dict[str, Optional[str]]):
         """
-        initialize with a dictionary that contains all the results
+        Initialize with a dictionary that contains all the Hinweis texts.
         :param results:
         """
         self._all_hints: Dict[str, Optional[str]] = results
