@@ -15,7 +15,7 @@ def create_evaluators(
     content_evaluation_result: ContentEvaluationResult,
 ) -> Tuple[RcEvaluator, FcEvaluator, HintsProvider]:
     """
-    create evaluators based on the given content_evaluation_result
+    Creates evaluators based on the given content_evaluation_result
     :param content_evaluation_result:
     :return:
     """
