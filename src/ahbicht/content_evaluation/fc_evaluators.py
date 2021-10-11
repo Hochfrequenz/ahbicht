@@ -72,9 +72,7 @@ class DictBasedFcEvaluator(FcEvaluator):
         self._results: Dict[str, EvaluatedFormatConstraint] = results
 
     # pylint: disable=unused-argument
-    async def evaluate_single_format_constraint(
-        self, condition_key: str, entered_input: str
-    ) -> EvaluatedFormatConstraint:
+    async def evaluate_single_format_constraint(self, condition_key: str) -> EvaluatedFormatConstraint:
         try:
             return self._results[condition_key]
         except KeyError as key_error:
