@@ -58,10 +58,17 @@ Note that determining the individual status of ``[210]``, ``[182]``,
 ``[90]`` and ``[183]`` itself (the so called “content evaluation”, see
 below) is **not** within the scope of this parsing library.
 
-Usage
------
+Usage and Examples
+------------------
 
-For a minimal working example of what this library does, check out `this Jupyter notebook <minimal_working_example.ipynb>`__.
+Jupyter Notebook
+~~~~~~~~~~~~~~~~
+For a minimal working example on how what the library is used, check out `this Jupyter notebook <minimal_working_example.ipynb>`__.
+
+Free to Use REST API
+~~~~~~~~~~~~~~~~~~~~
+You can also use our public REST API to parse condition expressions (other features will follow). Simply send a GET request with the condition expression as query parameter to:
+`ahbicht.azurewebsites.net/api/ParseConditionExpression?condition_expression=[2] U ([3] O [4])[901] U [555] <https://ahbicht.azurewebsites.net/api/ParseConditionExpression?condition_expression=%5B2%5D%20U%20(%5B3%5D%20O%20%5B4%5D)%5B901%5D%20U%20%5B555%5D>`__
 
 Code Quality / Production Readiness
 -----------------------------------
