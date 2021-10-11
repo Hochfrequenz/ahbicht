@@ -8,6 +8,12 @@ import pytest
 from lark import Token, Tree
 from marshmallow import Schema
 
+from ahbicht.condition_check_results import (
+    ConditionCheckResult,
+    ConditionCheckResultSchema,
+    FormatConstraintEvaluationResult,
+    RequirementConstraintEvaluationResult,
+)
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 from ahbicht.expressions.condition_nodes import (
@@ -179,3 +185,40 @@ class TestJsonSerialization:
         self, content_evaluation_result: ContentEvaluationResult, expected_json_dict: dict
     ):
         _test_serialization_roundtrip(content_evaluation_result, ContentEvaluationResultSchema(), expected_json_dict)
+
+    @pytest.mark.parametrize(
+        "condition_check_result, expected_json_dict",
+        [
+            pytest.param(
+                ConditionCheckResult(
+                    requirement_indicator="Muss",
+                    format_constraint_evaluation_result=FormatConstraintEvaluationResult(
+                        error_message="hello", format_constraints_fulfilled=False
+                    ),
+                    requirement_constraint_evaluation_result=RequirementConstraintEvaluationResult(
+                        hints="foo bar",
+                        requirement_constraints_fulfilled=True,
+                        requirement_is_conditional=True,
+                        format_constraints_expression="[asd]",
+                    ),
+                ),
+                {
+                    "format_constraint_evaluation_result": {
+                        "error_message": "hello",
+                        "format_constraints_fulfilled": False,
+                    },
+                    "requirement_constraint_evaluation_result": {
+                        "format_constraints_expression": "[asd]",
+                        "hints": "foo bar",
+                        "requirement_constraints_fulfilled": True,
+                        "requirement_is_conditional": True,
+                    },
+                    "requirement_indicator": "Muss",
+                },
+            ),
+        ],
+    )
+    def test_condition_check_result_serialization(
+        self, condition_check_result: ConditionCheckResult, expected_json_dict: dict
+    ):
+        _test_serialization_roundtrip(condition_check_result, ConditionCheckResultSchema(), expected_json_dict)
