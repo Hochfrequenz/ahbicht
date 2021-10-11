@@ -66,7 +66,7 @@ class DictBasedFcEvaluator(FcEvaluator):
 
     def __init__(self, results: Dict[str, EvaluatedFormatConstraint]):
         """
-        initialize with a dictionary that contains all the results
+        Initialize with a dictionary that contains all the format constraint evaluation results.
         :param results:
         """
         self._results: Dict[str, EvaluatedFormatConstraint] = results
