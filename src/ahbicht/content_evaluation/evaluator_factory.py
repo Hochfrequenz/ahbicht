@@ -11,7 +11,7 @@ from ahbicht.content_evaluation.rc_evaluators import DictBasedRcEvaluator, RcEva
 from ahbicht.expressions.hints_provider import DictBasesHintsProvider, HintsProvider
 
 
-def create_evaluators(
+def create_hardcoded_evaluators(
     content_evaluation_result: ContentEvaluationResult,
 ) -> Tuple[RcEvaluator, FcEvaluator, HintsProvider]:
     """
@@ -31,7 +31,7 @@ def create_and_inject_hardcoded_evaluators(content_evaluation_result: ContentEva
     :param content_evaluation_result:
     :return:
     """
-    evaluators = create_evaluators(content_evaluation_result)
+    evaluators = create_hardcoded_evaluators(content_evaluation_result)
     inject.clear_and_configure(
         lambda binder: binder.bind(RcEvaluator, evaluators[0])
         .bind(FcEvaluator, evaluators[1])
