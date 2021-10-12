@@ -82,6 +82,14 @@ class TestConditionParser:
                     [Tree("condition_key", [Token("INT", "1")]), Tree("condition_key", [Token("INT", "2")])],
                 ),
             ),
+            pytest.param(
+                # xor_composition
+                "[1]⊻[2]",
+                Tree(
+                    "xor_composition",
+                    [Tree("condition_key", [Token("INT", "1")]), Tree("condition_key", [Token("INT", "2")])],
+                ),
+            ),
         ],
     )
     def test_parse_valid_expression_to_tree(self, expression: str, expected_tree: Tree):
@@ -297,6 +305,32 @@ class TestConditionParser:
                 ),
             ),
             pytest.param(
+                # complex expression with two brackets
+                "([1]∨[2])∧([53]∧[4]∨[12])",
+                Tree(
+                    "and_composition",
+                    [
+                        Tree(
+                            "or_composition",
+                            [Tree("condition_key", [Token("INT", "1")]), Tree("condition_key", [Token("INT", "2")])],
+                        ),
+                        Tree(
+                            "or_composition",
+                            [
+                                Tree(
+                                    "and_composition",
+                                    [
+                                        Tree("condition_key", [Token("INT", "53")]),
+                                        Tree("condition_key", [Token("INT", "4")]),
+                                    ],
+                                ),
+                                Tree("condition_key", [Token("INT", "12")]),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            pytest.param(
                 # nested brackets
                 "[100]U([2]U([53]O[4]))",
                 Tree(
@@ -359,3 +393,24 @@ class TestConditionParser:
              """ in str(
             excinfo.value
         )
+
+    @pytest.mark.parametrize(
+        "old_expression, new_expression",
+        [
+            pytest.param("[1]U[2]", "[1]∧[2]"),
+            pytest.param("[1]O[2]", "[1]∨[2]"),
+            pytest.param("[1]X[2]", "[1]⊻[2]"),
+            pytest.param("[1]X[2]", "[1]⊻[2]"),
+            pytest.param(
+                "([951][510]U[522])O([950][514]U([523]O[525]))", "([951][510]∧[522])∨([950][514]∧([523]∨[525]))"
+            ),
+        ],
+    )
+    def test_equivalence_of_new_and_old_notation_expressions(self, old_expression: str, new_expression: str):
+        """
+        Tests that U/A/X are treated just the same as the new logical operands.
+        :return:
+        """
+        old_tree = parse_condition_expression_to_tree(old_expression)
+        new_tree = parse_condition_expression_to_tree(new_expression)
+        assert old_tree == new_tree
