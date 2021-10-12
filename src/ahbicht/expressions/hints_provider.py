@@ -54,7 +54,7 @@ class HintsProvider(ABC):
         return result
 
 
-class DictBasesHintsProvider(HintsProvider):
+class DictBasedHintsProvider(HintsProvider):
     """
     A Hints Provider that is based on hardcoded values from a dictionary
     """
@@ -74,7 +74,7 @@ class DictBasesHintsProvider(HintsProvider):
         return None
 
 
-class JsonFileHintsProvider(DictBasesHintsProvider):
+class JsonFileHintsProvider(DictBasedHintsProvider):
     """
     The JsonFileHintsProvider loads hints from a JSON file.
     """

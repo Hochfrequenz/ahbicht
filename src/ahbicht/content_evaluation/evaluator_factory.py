@@ -8,7 +8,7 @@ import inject
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.fc_evaluators import DictBasedFcEvaluator, FcEvaluator
 from ahbicht.content_evaluation.rc_evaluators import DictBasedRcEvaluator, RcEvaluator
-from ahbicht.expressions.hints_provider import DictBasesHintsProvider, HintsProvider
+from ahbicht.expressions.hints_provider import DictBasedHintsProvider, HintsProvider
 
 
 def create_hardcoded_evaluators(
@@ -21,7 +21,7 @@ def create_hardcoded_evaluators(
     """
     rc_evaluator = DictBasedRcEvaluator(content_evaluation_result.requirement_constraints)
     fc_evaluator = DictBasedFcEvaluator(content_evaluation_result.format_constraints)
-    hints_provider = DictBasesHintsProvider(content_evaluation_result.hints)
+    hints_provider = DictBasedHintsProvider(content_evaluation_result.hints)
     return rc_evaluator, fc_evaluator, hints_provider
 
 
