@@ -58,6 +58,10 @@ Note that determining the individual status of ``[210]``, ``[182]``,
 ``[90]`` and ``[183]`` itself (the so called “content evaluation”, see
 below) is **not** within the scope of this parsing library.
 
+Note also, that this library also parses the new convention using logical operators that becomes effective 2022-04-01 ("MaKo2022").
+``Muss [210] ∧ ([182] ⊻ ([90] ∧ [183]))``.
+
+
 Usage and Examples
 ------------------
 
