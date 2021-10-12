@@ -11,6 +11,7 @@ from ahbicht.expressions.condition_nodes import (
     ConditionFulfilledValue,
     EvaluatedFormatConstraint,
     EvaluatedFormatConstraintSchema,
+    string_to_condition_fulfilled_value,
 )
 
 # pylint: disable=too-few-public-methods, no-self-use, unused-argument
@@ -56,7 +57,12 @@ class ContentEvaluationResultSchema(Schema):
         :param kwargs:
         :return:
         """
-        return ContentEvaluationResult(**data)
+        result = ContentEvaluationResult(**data)
+        for rc_key in list(result.requirement_constraints.keys()):
+            value = result.requirement_constraints[rc_key]
+            if isinstance(value, str):
+                result.requirement_constraints[rc_key] = string_to_condition_fulfilled_value(value)
+        return result
 
     @pre_dump
     def prepare_tree_for_serialization(self, data, **kwargs):
@@ -68,5 +74,6 @@ class ContentEvaluationResultSchema(Schema):
         """
         if isinstance(data, ContentEvaluationResult):
             for rc_key, rc_value in data.requirement_constraints.items():
-                data.requirement_constraints.update({rc_key: rc_value.name})
+                if isinstance(rc_value, ConditionFulfilledValue):
+                    data.requirement_constraints.update({rc_key: rc_value.string})
         return data

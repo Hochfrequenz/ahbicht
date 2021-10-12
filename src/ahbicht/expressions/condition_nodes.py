@@ -10,23 +10,46 @@ The used terms are defined in the README_conditions.md.
 from abc import ABC
 from typing import Optional
 
+import aenum
 import attr
-from aenum import Enum
 
 # pylint: disable=too-few-public-methods
 from marshmallow import Schema, fields, post_load
 
 
-class ConditionFulfilledValue(Enum):
+class ConditionFulfilledValue(aenum.Enum):
     """
     Possible values to describe the state of a condition
     in the condition_fulfilled attribute of the ConditionNodes.
     """
 
-    FULFILLED = True  # if condition is fulfilled
-    UNFULFILLED = False  # if condition is not fulfilled
-    UNKNOWN = None  # if it cannot be checked if condition is fulfilled (e.g. "Wenn vorhanden")
-    NEUTRAL = "Neutral"  # a hint or unevaluated format constraint which do not have a status of being fulfilled or not
+    _init_ = "value string"
+    FULFILLED = True, "FULFILLED"  # if condition is fulfilled
+    UNFULFILLED = False, "UNFULFILLED"  # if condition is not fulfilled
+    UNKNOWN = None, "UNKNOWN"  # if it cannot be checked if condition is fulfilled (e.g. "Wenn vorhanden")
+    NEUTRAL = (
+        "Neutral",
+        "NEUTRAL",
+    )  # a hint or unevaluated format constraint which do not have a status of being fulfilled or not
+
+
+def string_to_condition_fulfilled_value(string: str) -> Optional[ConditionFulfilledValue]:
+    """
+    returns the matching condition fulfilled value or None
+    :param string:
+    :return:
+    """
+    if not string:
+        return None
+    if string.upper() == "FULFILLED":
+        return ConditionFulfilledValue.FULFILLED
+    if string.upper() == "UNFULFILLED":
+        return ConditionFulfilledValue.UNFULFILLED
+    if string.upper() == "UNKNOWN":
+        return ConditionFulfilledValue.UNKNOWN
+    if string.upper() == "NEUTRAL":
+        return ConditionFulfilledValue.NEUTRAL
+    return None
 
 
 @attr.s(auto_attribs=True, kw_only=True)
