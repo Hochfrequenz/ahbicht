@@ -30,7 +30,7 @@ def parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_express
     prefix_operator_expression: PREFIX_OPERATOR CONDITION_EXPRESSION -> single_requirement_indicator_expression
     requirement_indicator: PREFIX_OPERATOR | MODAL_MARK
     PREFIX_OPERATOR: "X" | "O" | "U"
-    MODAL_MARK: "Muss" | "Kann" | "Soll"
+    MODAL_MARK: "Muss" | "M" | "Kann" | "K" | "Soll" | "S"
     // Matches if it looks like a condition expression, but does not yet check if it is a syntactically valid one:
     CONDITION_EXPRESSION: /[\[\]\(\)UOX\d\s]+/
     """
@@ -41,7 +41,7 @@ def parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_express
     except (UnexpectedEOF, UnexpectedCharacters, TypeError) as eof:
         raise SyntaxError(
             """Please make sure that the ahb_expression starts with a requirement indicator \
-(i.e Muss, Soll, Kann, X, O, U) and the condition expressions consist of only \
+(i.e Muss/M, Soll/S, Kann/K, X, O, U) and the condition expressions consist of only \
 the following characters: [ ] ( ) U O X and digits."""
         ) from eof
 
