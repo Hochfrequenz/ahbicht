@@ -81,6 +81,14 @@ class DictBasedRcEvaluator(RcEvaluator):
     A requirement constraint evaluator that is initialized with a prefilled dictionary.
     """
 
+    def __init__(self, results: Dict[str, ConditionFulfilledValue]):
+        """
+        Initialize with a dictionary that contains all the requirement constraint evaluation results.
+        :param results:
+        """
+        super().__init__(evaluatable_data=EvaluatableData(edifact_seed=results))
+        self._results: Dict[str, ConditionFulfilledValue] = results
+
     def _get_default_context(self) -> EvaluationContext:
         raise NotImplementedError()
 
@@ -92,11 +100,3 @@ class DictBasedRcEvaluator(RcEvaluator):
             return self._results[condition_key]
         except KeyError as key_error:
             raise NotImplementedError(f"No result was provided for condition '{condition_key}'.") from key_error
-
-    def __init__(self, results: Dict[str, ConditionFulfilledValue]):
-        """
-        Initialize with a dictionary that contains all the requirement constraint evaluation results.
-        :param results:
-        """
-        super().__init__(evaluatable_data=EvaluatableData(edifact_seed=results))
-        self._results: Dict[str, ConditionFulfilledValue] = results
