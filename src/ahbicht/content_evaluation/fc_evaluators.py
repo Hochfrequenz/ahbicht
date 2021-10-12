@@ -57,3 +57,25 @@ class FcEvaluator(Evaluator, ABC):
 
         result: Dict[str, EvaluatedFormatConstraint] = dict(zip(condition_keys, results))
         return result
+
+
+class DictBasedFcEvaluator(FcEvaluator):
+    """
+    A format constraint evaluator that is initialized with a prefilled dictionary.
+    """
+
+    def __init__(self, results: Dict[str, EvaluatedFormatConstraint]):
+        """
+        Initialize with a dictionary that contains all the format constraint evaluation results.
+        :param results:
+        """
+        self._results: Dict[str, EvaluatedFormatConstraint] = results
+
+    # pylint: disable=unused-argument
+    async def evaluate_single_format_constraint(
+        self, condition_key: str, entered_input: str
+    ) -> EvaluatedFormatConstraint:
+        try:
+            return self._results[condition_key]
+        except KeyError as key_error:
+            raise NotImplementedError(f"No result was provided for {condition_key}.") from key_error

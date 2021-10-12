@@ -59,12 +59,12 @@ class RcEvaluator(Evaluator, ABC):
         Validate all the conditions provided in condition_keys in their respective context.
         """
         if condition_keys_with_context is None:
-            tasks = [self.evaluate_single_condition(condition_key) for condition_key in condition_keys]
+            tasks = [self.evaluate_single_condition(condition_key, None) for condition_key in condition_keys]
         else:
             tasks = []
             for condition_key in condition_keys:
                 if condition_key not in condition_keys_with_context:
-                    tasks.append(self.evaluate_single_condition(condition_key))
+                    tasks.append(self.evaluate_single_condition(condition_key, None))
                 else:
                     tasks.append(
                         self.evaluate_single_condition(condition_key, condition_keys_with_context[condition_key])
@@ -74,3 +74,29 @@ class RcEvaluator(Evaluator, ABC):
 
         result = dict(zip(condition_keys, results))
         return result
+
+
+class DictBasedRcEvaluator(RcEvaluator):
+    """
+    A requirement constraint evaluator that is initialized with a prefilled dictionary.
+    """
+
+    def __init__(self, results: Dict[str, ConditionFulfilledValue]):
+        """
+        Initialize with a dictionary that contains all the requirement constraint evaluation results.
+        :param results:
+        """
+        super().__init__(evaluatable_data=EvaluatableData(edifact_seed=results))
+        self._results: Dict[str, ConditionFulfilledValue] = results
+
+    def _get_default_context(self) -> EvaluationContext:
+        raise NotImplementedError()
+
+    # pylint:disable=unused-argument
+    async def evaluate_single_condition(
+        self, condition_key: str, context: Optional[EvaluationContext] = None
+    ) -> ConditionFulfilledValue:
+        try:
+            return self._results[condition_key]
+        except KeyError as key_error:
+            raise NotImplementedError(f"No result was provided for condition '{condition_key}'.") from key_error
