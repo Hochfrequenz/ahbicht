@@ -26,6 +26,6 @@ class TestDictBasedFcEvaluator:
         )
         with pytest.raises(NotImplementedError):
             await evaluator.evaluate_single_format_constraint("3", entered_input="qwe")
-        dict_evaluation_mock = mocker.spy(evaluator, "evaluate_single_format_constraint")
+        dict_evaluation_spy = mocker.spy(evaluator, "evaluate_single_format_constraint")
         assert await evaluator.evaluate_format_constraints(["1", "2"], entered_input="asd") == hardcoded_results
-        dict_evaluation_mock.assert_has_awaits([mock.call("1", "asd"), mock.call("2", "asd")])
+        dict_evaluation_spy.assert_has_awaits([mock.call("1", "asd"), mock.call("2", "asd")])

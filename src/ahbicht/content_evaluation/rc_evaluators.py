@@ -59,12 +59,12 @@ class RcEvaluator(Evaluator, ABC):
         Validate all the conditions provided in condition_keys in their respective context.
         """
         if condition_keys_with_context is None:
-            tasks = [self.evaluate_single_condition(condition_key) for condition_key in condition_keys]
+            tasks = [self.evaluate_single_condition(condition_key, None) for condition_key in condition_keys]
         else:
             tasks = []
             for condition_key in condition_keys:
                 if condition_key not in condition_keys_with_context:
-                    tasks.append(self.evaluate_single_condition(condition_key))
+                    tasks.append(self.evaluate_single_condition(condition_key, None))
                 else:
                     tasks.append(
                         self.evaluate_single_condition(condition_key, condition_keys_with_context[condition_key])

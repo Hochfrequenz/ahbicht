@@ -1,4 +1,5 @@
 """ Tests the dictionary based RC evaluator"""
+from unittest import mock
 
 import pytest
 
@@ -11,7 +12,7 @@ pytestmark = pytest.mark.asyncio
 class TestDictBasedRcEvaluator:
     """Test for the evaluation using the Dict Based RC Evaluator"""
 
-    async def test_evaluation(self):
+    async def test_evaluation(self, mocker):
         hardcoded_results = {
             "1": ConditionFulfilledValue.NEUTRAL,
             "2": ConditionFulfilledValue.UNFULFILLED,
@@ -26,4 +27,8 @@ class TestDictBasedRcEvaluator:
         with pytest.raises(NotImplementedError):
             await evaluator.evaluate_single_condition("5")
 
+        single_condition_spy = mocker.spy(evaluator, "evaluate_single_condition")
         assert await evaluator.evaluate_conditions(["1", "2", "3", "4"]) == hardcoded_results
+        single_condition_spy.assert_has_awaits(
+            [mock.call("1", None), mock.call("2", None), mock.call("3", None), mock.call("4", None)]
+        )
