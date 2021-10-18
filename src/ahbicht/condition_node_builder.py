@@ -3,7 +3,7 @@ Module for taking all the condition keys of a condition expression and building 
 If necessary it evaluates the needed attributes.
 """
 import asyncio
-from typing import Dict, List, Tuple, Type, Union
+from typing import Dict, List, Tuple, Union
 
 import inject
 
@@ -21,8 +21,8 @@ class ConditionNodeBuilder:
     """
 
     def __init__(self, condition_keys: List[str]):
-        self.hints_provider: Type[HintsProvider] = inject.instance(HintsProvider)
-        self.rc_evaluator: Type[RcEvaluator] = inject.instance(RcEvaluator)
+        self.hints_provider: HintsProvider = inject.instance(HintsProvider)  # type:ignore
+        self.rc_evaluator: RcEvaluator = inject.instance(RcEvaluator)  # type:ignore
         self.condition_keys = condition_keys
         (
             self.requirement_constraints_condition_keys,

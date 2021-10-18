@@ -120,7 +120,7 @@ def _build_evaluated_format_constraint_nodes(
 ) -> Dict[str, EvaluatedFormatConstraint]:
     """Build evaluated format constraint nodes."""
 
-    evaluator: FcEvaluator = inject.instance(FcEvaluator)
+    evaluator: FcEvaluator = inject.instance(FcEvaluator)  # type:ignore
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     evaluated_format_constraints: dict = loop.run_until_complete(

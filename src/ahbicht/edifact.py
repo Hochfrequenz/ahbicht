@@ -32,19 +32,19 @@ class EdifactFormat(aenum.Enum):
 
 
 _leading_digits_format_map: Dict[str, EdifactFormat] = {
-    "99": EdifactFormat.APERAK,
-    "21": EdifactFormat.IFTSTA,
-    "23": EdifactFormat.INSRPT,
-    "31": EdifactFormat.INVOIC,
-    "13": EdifactFormat.MSCONS,
-    "17": EdifactFormat.ORDERS,
-    "19": EdifactFormat.ORDRSP,
-    "27": EdifactFormat.PRICAT,
-    "15": EdifactFormat.QUOTES,
-    "33": EdifactFormat.REMADV,
-    "35": EdifactFormat.REQOTE,
-    "11": EdifactFormat.UTILMD,
-    "25": EdifactFormat.UTILTS,
+    "99": EdifactFormat.APERAK,  # type:ignore
+    "21": EdifactFormat.IFTSTA,  # type:ignore
+    "23": EdifactFormat.INSRPT,  # type:ignore
+    "31": EdifactFormat.INVOIC,  # type:ignore
+    "13": EdifactFormat.MSCONS,  # type:ignore
+    "17": EdifactFormat.ORDERS,  # type:ignore
+    "19": EdifactFormat.ORDRSP,  # type:ignore
+    "27": EdifactFormat.PRICAT,  # type:ignore
+    "15": EdifactFormat.QUOTES,  # type:ignore
+    "33": EdifactFormat.REMADV,  # type:ignore
+    "35": EdifactFormat.REQOTE,  # type:ignore
+    "11": EdifactFormat.UTILMD,  # type:ignore
+    "25": EdifactFormat.UTILTS,  # type:ignore
 }
 
 
