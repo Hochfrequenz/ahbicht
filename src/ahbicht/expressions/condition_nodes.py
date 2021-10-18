@@ -10,14 +10,14 @@ The used terms are defined in the README_conditions.md.
 from abc import ABC
 from typing import Optional
 
+import aenum
 import attr
-from aenum import Enum
 
 # pylint: disable=too-few-public-methods
 from marshmallow import Schema, fields, post_load
 
 
-class ConditionFulfilledValue(Enum):
+class ConditionFulfilledValue(aenum.Enum):
     """
     Possible values to describe the state of a condition
     in the condition_fulfilled attribute of the ConditionNodes.
