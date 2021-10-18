@@ -5,7 +5,7 @@ from typing import Dict, Optional
 from uuid import UUID
 
 import attr
-from marshmallow import Schema, fields, post_dump, post_load, pre_dump
+from marshmallow import Schema, fields, post_dump, post_load
 
 from ahbicht.expressions.condition_nodes import (
     ConditionFulfilledValue,
