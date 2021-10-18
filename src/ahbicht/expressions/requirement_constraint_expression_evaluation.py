@@ -8,13 +8,11 @@ The used terms are defined in the README_conditions.md.
 
 from typing import Dict, List
 
-import inject
 from lark import Token, Tree, v_args
 from lark.exceptions import VisitError
 
 from ahbicht.condition_check_results import RequirementConstraintEvaluationResult
 from ahbicht.condition_node_builder import ConditionNodeBuilder
-from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.expressions.base_transformer import BaseTransformer
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.condition_nodes import (
@@ -244,13 +242,11 @@ def requirement_constraint_evaluation(condition_expression: str) -> RequirementC
     Evaluation of the condition expression in regard to the requirement conditions (rc).
     """
 
-    rc_evaluator = inject.instance(RcEvaluator)
-
     parsed_tree_rc: Tree = parse_condition_expression_to_tree(condition_expression)
 
     # get all condition keys from tree
     all_condition_keys: List[str] = [t.value for t in parsed_tree_rc.scan_values(lambda v: isinstance(v, Token))]
-    condition_node_builder = ConditionNodeBuilder(all_condition_keys, rc_evaluator)
+    condition_node_builder = ConditionNodeBuilder(all_condition_keys)
     input_nodes: List[ConditionNode] = condition_node_builder.requirement_content_evaluation_for_all_condition_keys()
 
     resulting_condition_node: ConditionNode = evaluate_requirement_constraint_tree(parsed_tree_rc, input_nodes)
