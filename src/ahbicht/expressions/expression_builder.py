@@ -201,7 +201,7 @@ class FormatErrorMessageExpressionBuilder(ExpressionBuilder):
             self._expression = None
         return self
 
-    def xor(self, other: Union[Hint, Optional[str]]) -> ExpressionBuilder:
+    def xor(self, other: Union[Type[ConditionNode], EvaluatedFormatConstraint]) -> ExpressionBuilder:
         if self.format_constraint_fulfilled is False and other.format_constraint_fulfilled is False:
             self._expression = f"Entweder '{self._expression}' oder '{other.error_message}'"
         elif self.format_constraint_fulfilled is True and other.format_constraint_fulfilled is True:

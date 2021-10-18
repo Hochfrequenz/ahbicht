@@ -4,7 +4,7 @@ This module manages EDIFACT related stuff. It's basically a helper module to avo
 import re
 from typing import Dict, Optional
 
-import aenum
+import aenum  # type:ignore
 
 pruefidentifikator_pattern = re.compile(r"^[1-9]\d{4}$")
 
@@ -29,9 +29,6 @@ class EdifactFormat(aenum.Enum):
     REQOTE = 35, "REQOTE"  # request quote
     UTILMD = 11, "UTILMD"  # utilities master data
     UTILTS = 25, "UTILTS"  # formula
-
-    def __str__(self):
-        return self.string
 
 
 _leading_digits_format_map: Dict[str, EdifactFormat] = {

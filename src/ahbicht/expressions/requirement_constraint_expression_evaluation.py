@@ -6,7 +6,7 @@ of the condition expression tree are handled.
 The used terms are defined in the README_conditions.md.
 """
 
-from typing import List, Mapping, Type
+from typing import List, Mapping, Type, Union
 
 from lark import Token, Tree, v_args
 from lark.exceptions import VisitError
@@ -76,7 +76,7 @@ class RequirementConstraintTransformer(BaseTransformer):
 
         return evaluated_composition
 
-    def _or_xor_composition(self, left: ConditionNode, right: ConditionNode, composition: str):
+    def _or_xor_composition(self, left: ConditionNode, right: ConditionNode, composition: str) -> EvaluatedComposition:
         """
         Determine the condition_fulfilled attribute for or_/xor_compostions.
         """
@@ -130,14 +130,14 @@ class RequirementConstraintTransformer(BaseTransformer):
                     resulting_conditions_fulfilled = ConditionFulfilledValue.UNKNOWN
                 else:
                     resulting_conditions_fulfilled = (
-                        left.conditions_fulfilled.value ^ right.conditions_fulfilled.value
-                    )  # type:ignore
+                        left.conditions_fulfilled.value ^ right.conditions_fulfilled.value  # type:ignore
+                    )
             evaluated_composition = EvaluatedComposition(
                 conditions_fulfilled=ConditionFulfilledValue(resulting_conditions_fulfilled)
             )
         return evaluated_composition
 
-    def or_composition(self, left: ConditionNode, right: ConditionNode) -> EvaluatedComposition:
+    def or_composition(self, left: Type[ConditionNode], right: Type[ConditionNode]) -> EvaluatedComposition:
         """Evaluates logical (inclusive) or_composition"""
 
         evaluated_composition = self._or_xor_composition(left, right, "or_composition")
@@ -168,7 +168,7 @@ class RequirementConstraintTransformer(BaseTransformer):
     def _then_also(
         self,
         format_constraint: UnevaluatedFormatConstraint,
-        other_condition: ConditionNode,
+        other_condition: Type[ConditionNode],
     ) -> EvaluatedComposition:
         """
         Evaluates a boolean condition with a format constraint. The functions name indicates its behaviour:
@@ -201,7 +201,11 @@ class RequirementConstraintTransformer(BaseTransformer):
             )
         return evaluated_composition
 
-    def then_also_composition(self, left: ConditionNode, right: ConditionNode) -> EvaluatedComposition:
+    def then_also_composition(
+        self,
+        left: Union[UnevaluatedFormatConstraint, Type[ConditionNode]],
+        right: Union[Type[ConditionNode], UnevaluatedFormatConstraint],
+    ) -> EvaluatedComposition:
         """
         A "then also" composition is typically used for format constraints.
         It connects an evaluable expression with a format constraint.

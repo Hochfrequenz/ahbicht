@@ -3,7 +3,7 @@ Module for taking all the condition keys of a condition expression and building 
 If necessary it evaluates the needed attributes.
 """
 import asyncio
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Tuple, Type, Union
 
 import inject
 
@@ -21,8 +21,8 @@ class ConditionNodeBuilder:
     """
 
     def __init__(self, condition_keys: List[str]):
-        self.hints_provider = inject.instance(HintsProvider)
-        self.rc_evaluator = inject.instance(RcEvaluator)
+        self.hints_provider: Type[HintsProvider] = inject.instance(HintsProvider)
+        self.rc_evaluator: Type[RcEvaluator] = inject.instance(RcEvaluator)
         self.condition_keys = condition_keys
         (
             self.requirement_constraints_condition_keys,
@@ -54,7 +54,7 @@ class ConditionNodeBuilder:
         """Builds Hint nodes from their condition keys by getting all hint texts from the HintsProvider."""
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
-        return loop.run_until_complete(self.hints_provider.get_hints(self.hints_condition_keys))
+        return loop.run_until_complete(self.hints_provider.get_hints(condition_keys=self.hints_condition_keys))
 
     def _build_unevaluated_format_constraint_nodes(self) -> Dict[str, UnevaluatedFormatConstraint]:
         """Build unevaluated format constraint nodes."""
@@ -72,7 +72,7 @@ class ConditionNodeBuilder:
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         evaluated_conditions_fulfilled_attribute: dict = loop.run_until_complete(
-            self.rc_evaluator.evaluate_conditions(self.requirement_constraints_condition_keys)
+            self.rc_evaluator.evaluate_conditions(condition_keys=self.requirement_constraints_condition_keys)
         )
 
         evaluated_requirement_constraints: Dict[str, RequirementConstraint] = {}
