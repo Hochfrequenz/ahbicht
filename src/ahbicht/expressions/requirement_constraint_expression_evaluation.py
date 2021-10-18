@@ -8,13 +8,11 @@ The used terms are defined in the README_conditions.md.
 
 from typing import Dict, List
 
-import inject
 from lark import Token, Tree, v_args
 from lark.exceptions import VisitError
 
 from ahbicht.condition_check_results import RequirementConstraintEvaluationResult
 from ahbicht.condition_node_builder import ConditionNodeBuilder
-from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.expressions.base_transformer import BaseTransformer
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.condition_nodes import (
