@@ -1,5 +1,6 @@
 """ Tests the Evaluator Factory"""
 import uuid
+from typing import Optional
 
 import pytest
 from _pytest.fixtures import SubRequest
@@ -43,8 +44,21 @@ class TestEvaluatorFactory:
         ],
         indirect=True,
     )
-    @pytest.mark.parametrize("expression", ["Muss ([2] O [3])[902]U[501]", "Muss [2] O [3][902]U[501]"])
-    def test_correct_injection(self, inject_content_evaluation_result, expression):
+    @pytest.mark.parametrize(
+        "expression, expected_requirement_indicator, expected_format_constraint_result, expected_in_hints",
+        [
+            pytest.param("Muss ([2] O [3])[902]U[501]", "Muss", True, "foo"),
+            pytest.param("Muss [2] O [3][902]U[501]", "Muss", True, None),
+        ],
+    )
+    def test_correct_injection(
+        self,
+        inject_content_evaluation_result,
+        expression: str,
+        expected_requirement_indicator: str,
+        expected_format_constraint_result: bool,
+        expected_in_hints: Optional[str],
+    ):
         tree = parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_expression=expression)
         assert tree is not None
         expression_evaluation_result = evaluate_ahb_expression_tree(tree, entered_input="hello")
@@ -52,6 +66,12 @@ class TestEvaluatorFactory:
             expression_evaluation_result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled
             is True
         )
-        assert expression_evaluation_result.requirement_indicator == "Muss"
-        assert expression_evaluation_result.format_constraint_evaluation_result.format_constraints_fulfilled is True
-        assert "foo" in expression_evaluation_result.requirement_constraint_evaluation_result.hints
+        assert expression_evaluation_result.requirement_indicator == expected_requirement_indicator
+        assert (
+            expression_evaluation_result.format_constraint_evaluation_result.format_constraints_fulfilled
+            is expected_format_constraint_result
+        )
+        if expected_in_hints:
+            assert expected_in_hints in expression_evaluation_result.requirement_constraint_evaluation_result.hints
+        else:
+            assert expression_evaluation_result.requirement_constraint_evaluation_result.hints is None
