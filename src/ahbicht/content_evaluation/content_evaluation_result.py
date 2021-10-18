@@ -5,7 +5,7 @@ from typing import Dict, Optional
 from uuid import UUID
 
 import attr
-from marshmallow import Schema, fields, post_dump, post_load
+from marshmallow import Schema, fields, post_load
 
 from ahbicht.expressions.condition_nodes import (
     ConditionFulfilledValue,
@@ -64,18 +64,3 @@ class ContentEvaluationResultSchema(Schema):
                         result.requirement_constraints[rc_key] = ConditionFulfilledValue(enum_value.value)
                         break
         return result
-
-    @post_dump
-    def post_process_serialized_tree(self, data, **kwargs):
-        """
-        Create a string of tree object
-        :param data:
-        :param kwargs:
-        :return:
-        """
-        if data and "requirement_constraints" in data:
-            rc_constraints = data["requirement_constraints"]
-            for rc_key in list(rc_constraints.keys()):
-                if rc_constraints[rc_key].startswith("ConditionFulfilledValue."):
-                    rc_constraints[rc_key] = rc_constraints[rc_key].split(".")[1]
-        return data

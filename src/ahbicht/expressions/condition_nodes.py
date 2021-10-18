@@ -32,6 +32,9 @@ class ConditionFulfilledValue(Enum):
         "NEUTRAL",
     )  # a hint or unevaluated format constraint which do not have a status of being fulfilled or not
 
+    def __str__(self):
+        return self.string
+
 
 @attr.s(auto_attribs=True, kw_only=True)
 class ConditionNode(ABC):
