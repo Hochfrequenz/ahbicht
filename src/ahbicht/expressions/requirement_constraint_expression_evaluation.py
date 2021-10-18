@@ -6,7 +6,7 @@ of the condition expression tree are handled.
 The used terms are defined in the README_conditions.md.
 """
 
-from typing import Dict, List
+from typing import List, Mapping
 
 import inject
 from lark import Token, Tree, v_args
@@ -125,10 +125,13 @@ class RequirementConstraintTransformer(BaseTransformer):
             if composition == "or_composition":
                 resulting_conditions_fulfilled = left.conditions_fulfilled.value or right.conditions_fulfilled.value
             elif composition == "xor_composition":
-                try:
-                    resulting_conditions_fulfilled = left.conditions_fulfilled.value ^ right.conditions_fulfilled.value
-                except TypeError:  # when one of the nodes is unknown because ^ does not support None
+                if (
+                    left.conditions_fulfilled.value == ConditionFulfilledValue.UNKNOWN
+                    or right.conditions_fulfilled.value == ConditionFulfilledValue.UNKNOWN
+                ):
                     resulting_conditions_fulfilled = ConditionFulfilledValue.UNKNOWN
+                else:
+                    resulting_conditions_fulfilled = left.conditions_fulfilled.value ^ right.conditions_fulfilled.value
             evaluated_composition = EvaluatedComposition(
                 conditions_fulfilled=ConditionFulfilledValue(resulting_conditions_fulfilled)
             )
@@ -213,7 +216,7 @@ class RequirementConstraintTransformer(BaseTransformer):
         )  # this might raise the NotImplementedError
 
 
-def evaluate_requirement_constraint_tree(parsed_tree: Tree, input_values: Dict[str, ConditionNode]) -> ConditionNode:
+def evaluate_requirement_constraint_tree(parsed_tree: Tree, input_values: Mapping[str, ConditionNode]) -> ConditionNode:
     """
     Evaluates the tree built from the expressions with the help of the ConditionsTransformer.
 
@@ -249,9 +252,14 @@ def requirement_constraint_evaluation(condition_expression: str) -> RequirementC
     parsed_tree_rc: Tree = parse_condition_expression_to_tree(condition_expression)
 
     # get all condition keys from tree
-    all_condition_keys: List[str] = [t.value for t in parsed_tree_rc.scan_values(lambda v: isinstance(v, Token))]
+    all_condition_keys: List[str] = [
+        t.value
+        for t in parsed_tree_rc.scan_values(  # type:ignore
+            lambda v: isinstance(v, Token)
+        )
+    ]
     condition_node_builder = ConditionNodeBuilder(all_condition_keys, rc_evaluator)
-    input_nodes: List[ConditionNode] = condition_node_builder.requirement_content_evaluation_for_all_condition_keys()
+    input_nodes = condition_node_builder.requirement_content_evaluation_for_all_condition_keys()
 
     resulting_condition_node: ConditionNode = evaluate_requirement_constraint_tree(parsed_tree_rc, input_nodes)
 

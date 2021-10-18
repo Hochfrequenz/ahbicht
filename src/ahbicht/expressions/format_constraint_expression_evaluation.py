@@ -89,7 +89,7 @@ def evaluate_format_constraint_tree(
 
 
 def format_constraint_evaluation(
-    format_constraints_expression: str, entered_input: str
+    format_constraints_expression: Optional[str], entered_input: str
 ) -> FormatConstraintEvaluationResult:
     """
     Evaluation of the format constraint expression.
@@ -99,7 +99,7 @@ def format_constraint_evaluation(
     else:
         parsed_tree_fc: Tree = parse_condition_expression_to_tree(format_constraints_expression)
         all_evaluatable_format_constraint_keys: List[str] = [
-            t.value for t in parsed_tree_fc.scan_values(lambda v: isinstance(v, Token))
+            t.value for t in parsed_tree_fc.scan_values(lambda v: isinstance(v, Token))  # type:ignore
         ]
         input_values: Dict[str, EvaluatedFormatConstraint] = _build_evaluated_format_constraint_nodes(
             all_evaluatable_format_constraint_keys, entered_input

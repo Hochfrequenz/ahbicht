@@ -21,8 +21,8 @@ class _TokenOrTree:
         self.token = token
         self.tree = tree
 
-    token: Token
-    tree: Tree
+    token: Optional[Token]
+    tree: Optional[Tree]
 
 
 class _TokenOrTreeSchema(Schema):

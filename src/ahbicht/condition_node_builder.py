@@ -90,5 +90,9 @@ class ConditionNodeBuilder:
         requirement_constraint_nodes = self._build_requirement_constraint_nodes()
         hint_nodes = self._build_hint_nodes()
         unevaluated_format_constraint_nodes = self._build_unevaluated_format_constraint_nodes()
-        input_nodes = {**requirement_constraint_nodes, **hint_nodes, **unevaluated_format_constraint_nodes}
+        input_nodes: Dict[str, Union[RequirementConstraint, UnevaluatedFormatConstraint, Hint]] = {
+            **requirement_constraint_nodes,
+            **hint_nodes,
+            **unevaluated_format_constraint_nodes,
+        }
         return input_nodes

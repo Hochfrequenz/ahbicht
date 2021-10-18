@@ -3,7 +3,7 @@ Module to create expressions from scratch.
 """
 import re
 from abc import ABC, abstractmethod
-from typing import Optional, Union
+from typing import Optional, Type, Union
 
 from ahbicht.expressions.condition_nodes import (
     ConditionNode,
@@ -30,7 +30,7 @@ class ExpressionBuilder(ABC):
         raise NotImplementedError("Has to be implemented by inheriting class.")
 
     @abstractmethod
-    def land(self, other: Union[ConditionNode, Optional[str]]):
+    def land(self, other: Union[Type[ConditionNode], Optional[str]]):
         """
         connects the expression with a logical and (LAND)
         :param other: condition or expression to be connected to the expression
@@ -39,7 +39,7 @@ class ExpressionBuilder(ABC):
         raise NotImplementedError("Has to be implemented by inheriting class.")
 
     @abstractmethod
-    def lor(self, other: Union[ConditionNode, Optional[str]]):
+    def lor(self, other: Union[Type[ConditionNode], Optional[str]]):
         """
         connects the expression with a logical or (LOR)
         :param other: condition or expression to be connected to the expression
@@ -48,7 +48,7 @@ class ExpressionBuilder(ABC):
         raise NotImplementedError("Has to be implemented by inheriting class.")
 
     @abstractmethod
-    def xor(self, other: Union[ConditionNode, Optional[str]]):
+    def xor(self, other: Union[Type[ConditionNode], Optional[str]]):
         """
         connects the expression with an exclusive or (XOR)
         :param other: condition or expression to be connected to the expression
@@ -71,6 +71,7 @@ class FormatConstraintExpressionBuilder(ExpressionBuilder):
         Start with a plain expression
         :param init_condition_or_expression: initial format constraint or existing expression
         """
+        self._expression: Optional[str] = None
         if isinstance(init_condition_or_expression, UnevaluatedFormatConstraint):
             # the condition key of the token in expression '[42]' is only '42'
             # so the get a valid expression, we add the square brackets
@@ -82,8 +83,6 @@ class FormatConstraintExpressionBuilder(ExpressionBuilder):
             self._expression = init_condition_or_expression.format_constraints_expression
         elif isinstance(init_condition_or_expression, str):
             self._expression = f"{init_condition_or_expression}"
-        else:
-            self._expression = None
 
     def get_expression(self) -> str:
         # could add simplifications here
