@@ -2,6 +2,7 @@
 import uuid
 
 import pytest
+from _pytest.fixtures import SubRequest
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.evaluator_factory import create_and_inject_hardcoded_evaluators
@@ -16,22 +17,36 @@ class TestEvaluatorFactory:
     """Tests, that evaluators are created and injected correctly"""
 
     @pytest.fixture()
-    def setup_and_teardown_injector(self):
-        content_eval_result = ContentEvaluationResult(
-            hints={"501": "foo"},
-            format_constraints={
-                "902": EvaluatedFormatConstraint(format_constraint_fulfilled=True, error_message=None),
-            },
-            requirement_constraints={
-                "2": ConditionFulfilledValue.FULFILLED,
-                "3": ConditionFulfilledValue.UNFULFILLED,
-            },
-            id=uuid.UUID("d106f335-f663-4d14-9636-4f43a883ad26"),
-        )
-        create_and_inject_hardcoded_evaluators(content_eval_result)
+    def setup_and_teardown_injector(self, content_evaluation_result: ContentEvaluationResult):
+        create_and_inject_hardcoded_evaluators(content_evaluation_result)
 
-    def test_correct_injection(self, setup_and_teardown_injector):
-        tree = parse_ahb_expression_to_single_requirement_indicator_expressions("Muss ([2] O [3])[902]U[501]")
+    @pytest.fixture
+    def inject_content_evaluation_result(self, request: SubRequest):
+        # indirect parametrization: https://stackoverflow.com/a/33879151/10009545
+        content_evaluation_result = request.param
+        create_and_inject_hardcoded_evaluators(content_evaluation_result=content_evaluation_result)
+
+    @pytest.mark.parametrize(
+        "inject_content_evaluation_result",
+        [
+            ContentEvaluationResult(
+                hints={"501": "foo"},
+                format_constraints={
+                    "902": EvaluatedFormatConstraint(format_constraint_fulfilled=True, error_message=None),
+                },
+                requirement_constraints={
+                    "2": ConditionFulfilledValue.FULFILLED,
+                    "3": ConditionFulfilledValue.UNFULFILLED,
+                },
+                id=uuid.UUID("d106f335-f663-4d14-9636-4f43a883ad26"),
+            )
+        ],
+        indirect=True,
+    )
+    @pytest.mark.parametrize("expression", ["Muss ([2] O [3])[902]U[501]", "Muss [2] O [3][902]U[501]"])
+    def test_correct_injection(self, inject_content_evaluation_result, expression):
+        tree = parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_expression=expression)
+        assert tree is not None
         expression_evaluation_result = evaluate_ahb_expression_tree(tree, entered_input="hello")
         assert (
             expression_evaluation_result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled
