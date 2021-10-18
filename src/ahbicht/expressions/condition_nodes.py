@@ -23,10 +23,14 @@ class ConditionFulfilledValue(Enum):
     in the condition_fulfilled attribute of the ConditionNodes.
     """
 
-    FULFILLED = True  # if condition is fulfilled
-    UNFULFILLED = False  # if condition is not fulfilled
-    UNKNOWN = None  # if it cannot be checked if condition is fulfilled (e.g. "Wenn vorhanden")
-    NEUTRAL = "Neutral"  # a hint or unevaluated format constraint which do not have a status of being fulfilled or not
+    _init_ = "value string"
+    FULFILLED = True, "FULFILLED"  # if condition is fulfilled
+    UNFULFILLED = False, "UNFULFILLED"  # if condition is not fulfilled
+    UNKNOWN = None, "UNKNOWN"  # if it cannot be checked if condition is fulfilled (e.g. "Wenn vorhanden")
+    NEUTRAL = (
+        "Neutral",
+        "NEUTRAL",
+    )  # a hint or unevaluated format constraint which do not have a status of being fulfilled or not
 
 
 @attr.s(auto_attribs=True, kw_only=True)

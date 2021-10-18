@@ -196,6 +196,8 @@ class TestJsonSerialization:
         )
         for rc_evaluation_result in deserialized_object.requirement_constraints.values():
             assert isinstance(rc_evaluation_result, ConditionFulfilledValue)
+        for rc_evaluation_result in content_evaluation_result.requirement_constraints.values():
+            assert isinstance(rc_evaluation_result, ConditionFulfilledValue)
 
     @pytest.mark.parametrize(
         "condition_check_result, expected_json_dict",
