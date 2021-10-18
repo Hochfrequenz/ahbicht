@@ -143,6 +143,6 @@ class EvaluatedComposition(ConditionNode):
     Node which is returned after a composition of two nodes is evaluated.
     """
 
-    hint: str = attr.ib(default=None)  # text from hints/notes
+    hint: Optional[str] = attr.ib(default=None)  # text from hints/notes
     format_constraints_expression: Optional[str] = attr.ib(default=None)  # an expression that consists of (initially
     # unevaluated) format constraints that the evaluated field needs to obey

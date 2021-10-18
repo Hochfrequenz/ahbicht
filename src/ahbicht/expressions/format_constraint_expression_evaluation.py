@@ -95,7 +95,7 @@ def format_constraint_evaluation(
     Evaluation of the format constraint expression.
     """
     if not format_constraints_expression:
-        format_constraints_fulfilled = True
+        format_constraints_fulfilled: bool = True
     else:
         parsed_tree_fc: Tree = parse_condition_expression_to_tree(format_constraints_expression)
         all_evaluatable_format_constraint_keys: List[str] = [
@@ -108,7 +108,7 @@ def format_constraint_evaluation(
             parsed_tree_fc, input_values
         )
         format_constraints_fulfilled: bool = resulting_evaluated_format_constraint_node.format_constraint_fulfilled
-        error_message: List[Optional[str]] = resulting_evaluated_format_constraint_node.error_message
+        error_message: Optional[str] = resulting_evaluated_format_constraint_node.error_message
 
     return FormatConstraintEvaluationResult(
         format_constraints_fulfilled=format_constraints_fulfilled, error_message=error_message

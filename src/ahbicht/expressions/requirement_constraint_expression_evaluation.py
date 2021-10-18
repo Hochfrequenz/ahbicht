@@ -6,7 +6,7 @@ of the condition expression tree are handled.
 The used terms are defined in the README_conditions.md.
 """
 
-from typing import List, Mapping
+from typing import List, Mapping, Type
 
 import inject
 from lark import Token, Tree, v_args
@@ -131,7 +131,9 @@ class RequirementConstraintTransformer(BaseTransformer):
                 ):
                     resulting_conditions_fulfilled = ConditionFulfilledValue.UNKNOWN
                 else:
-                    resulting_conditions_fulfilled = left.conditions_fulfilled.value ^ right.conditions_fulfilled.value
+                    resulting_conditions_fulfilled = (
+                        left.conditions_fulfilled.value ^ right.conditions_fulfilled.value
+                    )  # type:ignore
             evaluated_composition = EvaluatedComposition(
                 conditions_fulfilled=ConditionFulfilledValue(resulting_conditions_fulfilled)
             )
@@ -253,10 +255,8 @@ def requirement_constraint_evaluation(condition_expression: str) -> RequirementC
 
     # get all condition keys from tree
     all_condition_keys: List[str] = [
-        t.value
-        for t in parsed_tree_rc.scan_values(  # type:ignore
-            lambda v: isinstance(v, Token)
-        )
+        t.value  # type:ignore
+        for t in parsed_tree_rc.scan_values(lambda v: isinstance(v, Token))
     ]
     condition_node_builder = ConditionNodeBuilder(all_condition_keys, rc_evaluator)
     input_nodes = condition_node_builder.requirement_content_evaluation_for_all_condition_keys()

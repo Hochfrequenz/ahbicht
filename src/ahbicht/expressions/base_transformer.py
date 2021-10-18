@@ -4,7 +4,7 @@ that evaluate trees build from the condition_expression_parser.
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, Mapping
+from typing import Dict, Mapping, Type
 
 from lark import Token, Transformer, v_args
 
@@ -41,19 +41,19 @@ class BaseTransformer(Transformer, ABC):
         return condition_key
 
     @abstractmethod
-    def and_composition(self, left: ConditionNode, right: ConditionNode) -> ConditionNode:
+    def and_composition(self, left: Type[ConditionNode], right: Type[ConditionNode]) -> Type[ConditionNode]:
         """Evaluates logical and_composition"""
 
         raise NotImplementedError("Has to be implemented by inheriting class.")
 
     @abstractmethod
-    def or_composition(self, left: ConditionNode, right: ConditionNode) -> ConditionNode:
+    def or_composition(self, left: Type[ConditionNode], right: Type[ConditionNode]) -> Type[ConditionNode]:
         """Evaluates logical (inclusive) or_composition"""
 
         raise NotImplementedError("Has to be implemented by inheriting class.")
 
     @abstractmethod
-    def xor_composition(self, left: ConditionNode, right: ConditionNode) -> ConditionNode:
+    def xor_composition(self, left: Type[ConditionNode], right: Type[ConditionNode]) -> Type[ConditionNode]:
         """Evaluates exclusive xor_composition"""
 
         raise NotImplementedError("Has to be implemented by inheriting class.")
