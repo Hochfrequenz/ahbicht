@@ -20,9 +20,9 @@ class ConditionNodeBuilder:
     It distinguishes between requirement constraint evaluation and format constraint evaluation.
     """
 
-    def __init__(self, condition_keys: List[str], rc_evaluator: RcEvaluator):
+    def __init__(self, condition_keys: List[str]):
         self.hints_provider = inject.instance(HintsProvider)
-        self.rc_evaluator = rc_evaluator
+        self.rc_evaluator = inject.instance(RcEvaluator)
         self.condition_keys = condition_keys
         (
             self.requirement_constraints_condition_keys,
