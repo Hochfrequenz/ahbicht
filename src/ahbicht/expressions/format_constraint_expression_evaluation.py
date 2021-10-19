@@ -89,7 +89,7 @@ def evaluate_format_constraint_tree(
 
 
 def format_constraint_evaluation(
-    format_constraints_expression: str, entered_input: str
+    format_constraints_expression: Optional[str], entered_input: str
 ) -> FormatConstraintEvaluationResult:
     """
     Evaluation of the format constraint expression.

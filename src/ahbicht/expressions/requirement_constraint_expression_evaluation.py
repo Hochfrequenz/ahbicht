@@ -245,9 +245,11 @@ def requirement_constraint_evaluation(condition_expression: str) -> RequirementC
     parsed_tree_rc: Tree = parse_condition_expression_to_tree(condition_expression)
 
     # get all condition keys from tree
-    all_condition_keys: List[str] = [t.value for t in parsed_tree_rc.scan_values(lambda v: isinstance(v, Token))]
+    all_condition_keys: List[str] = [
+        t.value for t in parsed_tree_rc.scan_values(lambda v: isinstance(v, Token))  # type: ignore[attr-defined]
+    ]
     condition_node_builder = ConditionNodeBuilder(all_condition_keys)
-    input_nodes: List[ConditionNode] = condition_node_builder.requirement_content_evaluation_for_all_condition_keys()
+    input_nodes = condition_node_builder.requirement_content_evaluation_for_all_condition_keys()
 
     resulting_condition_node: ConditionNode = evaluate_requirement_constraint_tree(parsed_tree_rc, input_nodes)
 

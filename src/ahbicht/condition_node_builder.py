@@ -21,8 +21,8 @@ class ConditionNodeBuilder:
     """
 
     def __init__(self, condition_keys: List[str]):
-        self.hints_provider = inject.instance(HintsProvider)
-        self.rc_evaluator = inject.instance(RcEvaluator)
+        self.hints_provider: HintsProvider = inject.instance(HintsProvider)  # type:ignore[assignment]
+        self.rc_evaluator: RcEvaluator = inject.instance(RcEvaluator)  # type:ignore[assignment]
         self.condition_keys = condition_keys
         (
             self.requirement_constraints_condition_keys,
@@ -90,5 +90,9 @@ class ConditionNodeBuilder:
         requirement_constraint_nodes = self._build_requirement_constraint_nodes()
         hint_nodes = self._build_hint_nodes()
         unevaluated_format_constraint_nodes = self._build_unevaluated_format_constraint_nodes()
-        input_nodes = {**requirement_constraint_nodes, **hint_nodes, **unevaluated_format_constraint_nodes}
+        input_nodes: Dict[str, Union[RequirementConstraint, UnevaluatedFormatConstraint, Hint]] = {
+            **requirement_constraint_nodes,
+            **hint_nodes,
+            **unevaluated_format_constraint_nodes,
+        }
         return input_nodes

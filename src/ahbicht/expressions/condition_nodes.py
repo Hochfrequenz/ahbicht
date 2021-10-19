@@ -10,11 +10,13 @@ The used terms are defined in the README_conditions.md.
 from abc import ABC
 from typing import Optional
 
-import aenum
+import aenum  # type:ignore[import]
 import attr
 
 # pylint: disable=too-few-public-methods
 from marshmallow import Schema, fields, post_load
+
+aenum.Enum("ConditionFulfilledValue", {})
 
 
 class ConditionFulfilledValue(aenum.Enum):
@@ -72,7 +74,7 @@ class Hint(ConditionNode, ConditionKeyNodeMixin):
     e.g. "Hinweis: 'Es ist der alte MSB zu verwenden'"
     """
 
-    conditions_fulfilled: ConditionFulfilledValue = ConditionFulfilledValue.NEUTRAL
+    conditions_fulfilled: ConditionFulfilledValue = ConditionFulfilledValue("Neutral")
     hint: str = attr.ib(validator=attr.validators.instance_of(str))  # an informatory text
 
 
@@ -92,7 +94,7 @@ class UnevaluatedFormatConstraint(FormatConstraint):
     Mussfeldprüfung where the constraints are collected but not evaluated yet.
     """
 
-    conditions_fulfilled: ConditionFulfilledValue = ConditionFulfilledValue.NEUTRAL
+    conditions_fulfilled: ConditionFulfilledValue = ConditionFulfilledValue("Neutral")
 
 
 @attr.s(auto_attribs=True)

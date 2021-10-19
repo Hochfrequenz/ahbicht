@@ -20,11 +20,11 @@ class Evaluator(ABC):
     """
 
     # define some common attributes. They will be needed to find the correct validator for each use case.
-    edifact_format: EdifactFormat = NotImplementedError(
+    edifact_format: EdifactFormat = NotImplementedError(  # type:ignore[assignment]
         "The inheriting class needs to define a format to which it is applicable."
     )
 
-    edifact_format_version: EdifactFormatVersion = NotImplementedError(
+    edifact_format_version: EdifactFormatVersion = NotImplementedError(  # type:ignore[assignment]
         "The inheriting class needs to define a format version."
     )
 
