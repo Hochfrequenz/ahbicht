@@ -126,7 +126,9 @@ class FormatConstraintExpressionBuilder(ExpressionBuilder[TFCExpressionBuilderAr
         return self
 
 
-THExpressionBuilderArgument = Union[Hint, Optional[str]]  # node types supported by the HintExpressionBuilder
+THExpressionBuilderArgument = Union[
+    EvaluatedComposition, UnevaluatedFormatConstraint, Hint, Optional[str]
+]  # node types supported by the HintExpressionBuilder
 
 
 class HintExpressionBuilder(ExpressionBuilder[THExpressionBuilderArgument]):
