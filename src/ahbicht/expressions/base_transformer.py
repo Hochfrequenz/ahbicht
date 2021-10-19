@@ -4,7 +4,7 @@ that evaluate trees build from the condition_expression_parser.
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict
+from typing import Dict, Mapping
 
 from lark import Token, Transformer, v_args
 
@@ -22,7 +22,7 @@ class BaseTransformer(Transformer, ABC):
     the format constraint expression is fulfiled or not.
     """
 
-    def __init__(self, input_values: Dict[str, ConditionNode]):
+    def __init__(self, input_values: Mapping[str, ConditionNode]):
         """
         The input are the evaluated format constraint conditions in the form of ConditionNodes.
         :param input_values: dict(condition_keys, ConditionNode)
@@ -30,7 +30,7 @@ class BaseTransformer(Transformer, ABC):
         super().__init__()
         self.input_values = input_values
 
-    def condition_key(self, token: Token) -> str:
+    def condition_key(self, token: Token) -> Token:
         """Returns ConditionNode of condition_key"""
         try:
             condition_key = self.input_values[token.value]

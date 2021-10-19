@@ -9,7 +9,7 @@ validate already required data.
 """
 import asyncio
 from abc import ABC
-from typing import Callable, Coroutine, Dict, List
+from typing import Coroutine, Dict, List
 
 from ahbicht.content_evaluation.evaluators import Evaluator
 from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint

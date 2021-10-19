@@ -3,18 +3,19 @@ Module to create expressions from scratch.
 """
 import re
 from abc import ABC, abstractmethod
-from typing import Optional, Union
+from typing import Generic, Optional, TypeVar, Union
 
 from ahbicht.expressions.condition_nodes import (
-    ConditionNode,
     EvaluatedComposition,
     EvaluatedFormatConstraint,
     Hint,
     UnevaluatedFormatConstraint,
 )
 
+TSupportedNodes = TypeVar("TSupportedNodes")
 
-class ExpressionBuilder(ABC):
+
+class ExpressionBuilder(Generic[TSupportedNodes], ABC):
     """
     Class that helps to create expression strings. It separates the logical operation (connect two conditions with a
     logical operator) from the implementation which might differ depending on the condition type and other
@@ -30,7 +31,7 @@ class ExpressionBuilder(ABC):
         raise NotImplementedError("Has to be implemented by inheriting class.")
 
     @abstractmethod
-    def land(self, other: Union[ConditionNode, Optional[str]]):
+    def land(self, other: TSupportedNodes):
         """
         connects the expression with a logical and (LAND)
         :param other: condition or expression to be connected to the expression
@@ -39,7 +40,7 @@ class ExpressionBuilder(ABC):
         raise NotImplementedError("Has to be implemented by inheriting class.")
 
     @abstractmethod
-    def lor(self, other: Union[ConditionNode, Optional[str]]):
+    def lor(self, other: TSupportedNodes):
         """
         connects the expression with a logical or (LOR)
         :param other: condition or expression to be connected to the expression
@@ -48,7 +49,7 @@ class ExpressionBuilder(ABC):
         raise NotImplementedError("Has to be implemented by inheriting class.")
 
     @abstractmethod
-    def xor(self, other: Union[ConditionNode, Optional[str]]):
+    def xor(self, other: TSupportedNodes):
         """
         connects the expression with an exclusive or (XOR)
         :param other: condition or expression to be connected to the expression
@@ -57,7 +58,12 @@ class ExpressionBuilder(ABC):
         raise NotImplementedError("Has to be implemented by inheriting class.")
 
 
-class FormatConstraintExpressionBuilder(ExpressionBuilder):
+TFCExpressionBuilderArgument = Union[
+    EvaluatedComposition, UnevaluatedFormatConstraint, Optional[str]
+]  # node types that are supported by the FormatConstraintExpressionBuilder
+
+
+class FormatConstraintExpressionBuilder(ExpressionBuilder[TFCExpressionBuilderArgument]):
     """
     Class to create expressions that consists of FormatConstraints
     """
@@ -66,11 +72,12 @@ class FormatConstraintExpressionBuilder(ExpressionBuilder):
 
     # (?P<group_name>...) is a named group: https://docs.python.org/3/howto/regex.html#non-capturing-and-named-groups
 
-    def __init__(self, init_condition_or_expression: Union[EvaluatedComposition, UnevaluatedFormatConstraint, str]):
+    def __init__(self, init_condition_or_expression: TFCExpressionBuilderArgument):
         """
         Start with a plain expression
         :param init_condition_or_expression: initial format constraint or existing expression
         """
+        self._expression: Optional[str] = None
         if isinstance(init_condition_or_expression, UnevaluatedFormatConstraint):
             # the condition key of the token in expression '[42]' is only '42'
             # so the get a valid expression, we add the square brackets
@@ -82,23 +89,21 @@ class FormatConstraintExpressionBuilder(ExpressionBuilder):
             self._expression = init_condition_or_expression.format_constraints_expression
         elif isinstance(init_condition_or_expression, str):
             self._expression = f"{init_condition_or_expression}"
-        else:
-            self._expression = None
 
-    def get_expression(self) -> str:
+    def get_expression(self) -> Optional[str]:
         # could add simplifications here
         return self._expression
 
-    def land(self, other: Union[EvaluatedComposition, UnevaluatedFormatConstraint, str]) -> ExpressionBuilder:
+    def land(self, other: TFCExpressionBuilderArgument) -> ExpressionBuilder:
         return self._connect("U", other)
 
-    def lor(self, other: Union[EvaluatedComposition, UnevaluatedFormatConstraint, str]) -> ExpressionBuilder:
+    def lor(self, other: TFCExpressionBuilderArgument) -> ExpressionBuilder:
         return self._connect("O", other)
 
-    def xor(self, other: Union[EvaluatedComposition, UnevaluatedFormatConstraint, str]) -> ExpressionBuilder:
+    def xor(self, other: TFCExpressionBuilderArgument) -> ExpressionBuilder:
         return self._connect("X", other)
 
-    def _connect(self, operator_character: str, other: Union[EvaluatedComposition, UnevaluatedFormatConstraint, str]):
+    def _connect(self, operator_character: str, other: TFCExpressionBuilderArgument):
         """
         Connect the existing expression and the other part.
         :param operator_character: "X", "U" or "O"
@@ -121,13 +126,16 @@ class FormatConstraintExpressionBuilder(ExpressionBuilder):
         return self
 
 
-class HintExpressionBuilder(ExpressionBuilder):
+THExpressionBuilderArgument = Union[Hint, Optional[str]]  # node types supported by the HintExpressionBuilder
+
+
+class HintExpressionBuilder(ExpressionBuilder[THExpressionBuilderArgument]):
     """
     Allows to connect hints with logical operations.
     """
 
     @staticmethod
-    def get_hint_text(hinty_object: Union[Hint, Optional[str]]) -> Optional[str]:
+    def get_hint_text(hinty_object: THExpressionBuilderArgument) -> Optional[str]:
         """
         get the hint from a Hint instance or plain string
         :param hinty_object:
@@ -139,16 +147,16 @@ class HintExpressionBuilder(ExpressionBuilder):
             return hinty_object
         return getattr(hinty_object, "hint", None)
 
-    def __init__(self, init_condition: Union[Hint, Optional[str]]):
+    def __init__(self, init_condition: THExpressionBuilderArgument):
         """
         Initialize by providing either a Hint Node or a hint string
         """
         self._expression = HintExpressionBuilder.get_hint_text(init_condition)
 
-    def get_expression(self) -> str:
+    def get_expression(self) -> Optional[str]:
         return self._expression
 
-    def land(self, other: Union[Hint, Optional[str]]) -> ExpressionBuilder:
+    def land(self, other: THExpressionBuilderArgument) -> ExpressionBuilder:
         if other is not None:
             if self._expression:
                 self._expression += f" und {HintExpressionBuilder.get_hint_text(other)}"
@@ -156,7 +164,7 @@ class HintExpressionBuilder(ExpressionBuilder):
                 self._expression = HintExpressionBuilder.get_hint_text(other)
         return self
 
-    def lor(self, other: Union[Hint, Optional[str]]) -> ExpressionBuilder:
+    def lor(self, other: THExpressionBuilderArgument) -> ExpressionBuilder:
         if other is not None:
             if self._expression:
                 self._expression += f" oder {HintExpressionBuilder.get_hint_text(other)}"
@@ -164,7 +172,7 @@ class HintExpressionBuilder(ExpressionBuilder):
                 self._expression = HintExpressionBuilder.get_hint_text(other)
         return self
 
-    def xor(self, other: Union[Hint, Optional[str]]) -> ExpressionBuilder:
+    def xor(self, other: THExpressionBuilderArgument) -> ExpressionBuilder:
         if other is not None:
             if self._expression:
                 self._expression = f"Entweder ({self._expression}) oder ({HintExpressionBuilder.get_hint_text(other)})"
@@ -173,19 +181,24 @@ class HintExpressionBuilder(ExpressionBuilder):
         return self
 
 
-class FormatErrorMessageExpressionBuilder(ExpressionBuilder):
+TFEMExpressionBuilderArgument = (
+    EvaluatedFormatConstraint  # node types supported by the FormatErrorMessageExpressionBuilder
+)
+
+
+class FormatErrorMessageExpressionBuilder(ExpressionBuilder[TFEMExpressionBuilderArgument]):
     """
     Class to build the error messages for the format constraint evaluation.
     """
 
-    def __init__(self, init_condition: EvaluatedFormatConstraint):
+    def __init__(self, init_condition: TFEMExpressionBuilderArgument):
         self._expression = init_condition.error_message
         self.format_constraint_fulfilled = init_condition.format_constraint_fulfilled
 
-    def get_expression(self) -> str:
+    def get_expression(self) -> Optional[str]:
         return self._expression
 
-    def land(self, other: EvaluatedFormatConstraint) -> ExpressionBuilder:
+    def land(self, other: TFEMExpressionBuilderArgument) -> ExpressionBuilder:
         if other.format_constraint_fulfilled is True:
             self._expression = self._expression
         else:
@@ -195,14 +208,14 @@ class FormatErrorMessageExpressionBuilder(ExpressionBuilder):
                 self._expression = f"'{self._expression}' und '{other.error_message}'"
         return self
 
-    def lor(self, other: EvaluatedFormatConstraint) -> ExpressionBuilder:
+    def lor(self, other: TFEMExpressionBuilderArgument) -> ExpressionBuilder:
         if self.format_constraint_fulfilled is False and other.format_constraint_fulfilled is False:
             self._expression = f"'{self._expression}' oder '{other.error_message}'"
         else:
             self._expression = None
         return self
 
-    def xor(self, other: Union[Hint, Optional[str]]) -> ExpressionBuilder:
+    def xor(self, other: TFEMExpressionBuilderArgument) -> ExpressionBuilder:
         if self.format_constraint_fulfilled is False and other.format_constraint_fulfilled is False:
             self._expression = f"Entweder '{self._expression}' oder '{other.error_message}'"
         elif self.format_constraint_fulfilled is True and other.format_constraint_fulfilled is True:
