@@ -94,6 +94,7 @@ def format_constraint_evaluation(
     """
     Evaluation of the format constraint expression.
     """
+    error_message: Optional[str] = None
     format_constraints_fulfilled: bool
     if not format_constraints_expression:
         format_constraints_fulfilled = True

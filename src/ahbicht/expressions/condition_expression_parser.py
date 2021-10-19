@@ -23,8 +23,11 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree:
 
     grammar = """
     ?expression: expression "O" expression -> or_composition
+                | expression "∨" expression -> or_composition
                 | expression "X" expression -> xor_composition
+                | expression "⊻" expression -> xor_composition
                 | expression "U" expression -> and_composition
+                | expression "∧" expression -> and_composition
                 | expression expression -> then_also_composition
                 | brackets
                 | condition_key

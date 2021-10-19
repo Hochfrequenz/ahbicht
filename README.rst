@@ -58,6 +58,10 @@ Note that determining the individual status of ``[210]``, ``[182]``,
 ``[90]`` and ``[183]`` itself (the so called “content evaluation”, see
 below) is **not** within the scope of this parsing library.
 
+Note also, that this library also parses the new convention using logical operators that becomes effective 2022-04-01 ("MaKo2022").
+``Muss [210] ∧ ([182] ⊻ ([90] ∧ [183]))``.
+
+
 Usage and Examples
 ------------------
 
@@ -100,7 +104,7 @@ Functionality
 ~~~~~~~~~~~~~
 
 -  Expressions can contain single numbers e.g. ``[47]`` or numbers
-   combined with ``U``/``O``/``X`` which are translated to boolean
+   combined with ``U``/``O``/``X`` or ``∧``/``∨``/``⊻`` respectivly which are translated to boolean
    operators ``and``/``or``/``exclusive or``, e.g. ``[45]U[2]`` or they
    can be combined **without** an operator, e.g. ``[930][5]`` in the
    case of FormatConstraints.
