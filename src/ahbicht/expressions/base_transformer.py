@@ -6,7 +6,7 @@ that evaluate trees build from the condition_expression_parser.
 from abc import ABC, abstractmethod
 from typing import Generic, Mapping, TypeVar
 
-from lark import Token, Transformer
+from lark import Token, Transformer, v_args
 
 TSupportedArgumentNodeType = TypeVar("TSupportedArgumentNodeType")  # bound=ConditionNode)
 # bound does not work because:
@@ -15,6 +15,7 @@ TSupportedArgumentNodeType = TypeVar("TSupportedArgumentNodeType")  # bound=Cond
 TSupportedReturnType = TypeVar("TSupportedReturnType")
 
 
+@v_args(inline=True)  # Children are provided as *args instead of a list argument
 class BaseTransformer(Transformer, ABC, Generic[TSupportedArgumentNodeType, TSupportedReturnType]):
     """
     Transformer that evaluates the trees built from the format constraint expressions.

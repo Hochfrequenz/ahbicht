@@ -15,6 +15,19 @@ class TestConditionNodes:
     """Test for creating different condition nodes that are used in the parsed tree."""
 
     @pytest.mark.parametrize(
+        "cfv, equivalent_string",
+        [
+            pytest.param(
+                ConditionFulfilledValue.FULFILLED,
+                "FULFILLED",
+            ),
+        ],
+    )
+    def test_condition_fulfilled_value_equality(self, cfv: ConditionFulfilledValue, equivalent_string: str):
+        """For mypy we had to replace some enum comparisons. This test is to ensure that everything works as expected"""
+        assert cfv == ConditionFulfilledValue(ConditionFulfilledValue.FULFILLED)
+
+    @pytest.mark.parametrize(
         "conditions_fulfilled, conditions_fulfilled_expected_value",
         [
             pytest.param(ConditionFulfilledValue.FULFILLED, True),

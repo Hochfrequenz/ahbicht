@@ -31,6 +31,7 @@ TRCTransformerArgument = Union[RequirementConstraint, UnevaluatedFormatConstrain
 
 # pylint: disable=no-self-use
 @v_args(inline=True)  # Children are provided as *args instead of a list argument
+# pylint:disable=inherit-non-class
 class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, EvaluatedComposition]):
     """
     Transformer that evaluates the trees built from the condition expressions regarding the requirement constraints.
@@ -57,7 +58,7 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
         # in Python 'False and None' results in False the way we expect it,
         # but 'None and False' results in None, so we have to set it to False manually
         elif left.conditions_fulfilled.value is None and right.conditions_fulfilled.value is False:
-            evaluated_composition = EvaluatedComposition(conditions_fulfilled=ConditionFulfilledValue("Unfulfilled"))
+            evaluated_composition = EvaluatedComposition(conditions_fulfilled=ConditionFulfilledValue(False))
 
         elif isinstance(left.conditions_fulfilled.value, (bool, type(None))) and isinstance(
             right.conditions_fulfilled.value, (bool, type(None))
@@ -75,9 +76,9 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
             )
         evaluated_composition.format_constraints_expression = (
             # todo: ask annika why the case of "invalid arguments" never happens here...
-            FormatConstraintExpressionBuilder(left)
-            .land(right)
-            .get_expression()  # type:ignore[arg-type]
+            FormatConstraintExpressionBuilder(left)  # type:ignore[arg-type]
+            .land(right)  # type:ignore[arg-type]
+            .get_expression()
         )
 
         return evaluated_composition
@@ -121,7 +122,7 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
         # in Python 'False or None' results in None the way we expect it,
         # but 'None or False' results in False, so we have to set it to None manually
         elif left.conditions_fulfilled.value is None and right.conditions_fulfilled.value is False:
-            evaluated_composition = EvaluatedComposition(conditions_fulfilled=ConditionFulfilledValue("Unknown"))
+            evaluated_composition = EvaluatedComposition(conditions_fulfilled=ConditionFulfilledValue(None))
 
         elif isinstance(left.conditions_fulfilled.value, (bool, type(None))) and isinstance(
             right.conditions_fulfilled.value, (bool, type(None))
@@ -135,10 +136,10 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
                 try:
                     # todo: think of overload __xor(self, ConditionFulfilledValue)__
                     resulting_conditions_fulfilled = (
-                        left.conditions_fulfilled.value ^ right.conditions_fulfilled.value
-                    )  # type:ignore[operator]
+                        left.conditions_fulfilled.value ^ right.conditions_fulfilled.value  # type:ignore[operator]
+                    )
                 except TypeError:  # when one of the nodes is unknown because ^ does not support None
-                    resulting_conditions_fulfilled = ConditionFulfilledValue("Unknown")
+                    resulting_conditions_fulfilled = ConditionFulfilledValue(None)
             # todo: resulting_conditions_fulfilled might be referenced before assignment.
             # maybe throw not implemented exception in else branch
             evaluated_composition = EvaluatedComposition(
@@ -154,9 +155,9 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
 
         evaluated_composition.format_constraints_expression = (
             # todo: ask annika why the case of "invalid arguments" never happens here...
-            FormatConstraintExpressionBuilder(left)
-            .lor(right)
-            .get_expression()  # type:ignore[arg-type]
+            FormatConstraintExpressionBuilder(left)  # type:ignore[arg-type]
+            .lor(right)  # type:ignore[arg-type]
+            .get_expression()
         )
         evaluated_composition.hint = (
             HintExpressionBuilder(getattr(left, "hint", None)).lor(getattr(right, "hint", None)).get_expression()
@@ -171,9 +172,9 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
 
         evaluated_composition.format_constraints_expression = (
             # todo: ask annika why the case of "invalid arguments" never happens here...
-            FormatConstraintExpressionBuilder(left)
-            .xor(right)
-            .get_expression()  # type:ignore[arg-type]
+            FormatConstraintExpressionBuilder(left)  # type:ignore[arg-type]
+            .xor(right)  # type:ignore[arg-type]
+            .get_expression()
         )
         evaluated_composition.hint = (
             HintExpressionBuilder(getattr(left, "hint", None)).xor(getattr(right, "hint", None)).get_expression()
@@ -214,8 +215,10 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
         if format_constraint_is_required:
             # todo: ask annika why the case of "invalid arguments" never happens here...
             evaluated_composition.format_constraints_expression = (
-                FormatConstraintExpressionBuilder(format_constraint).land(other_condition).get_expression()
-            )  # type:ignore[arg-type]
+                FormatConstraintExpressionBuilder(format_constraint)  # type:ignore[arg-type]
+                .land(other_condition)  # type:ignore[arg-type]
+                .get_expression()
+            )
 
         return evaluated_composition
 
@@ -238,7 +241,7 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
 
 def evaluate_requirement_constraint_tree(
     parsed_tree: Tree, input_values: Mapping[str, TRCTransformerArgument]
-) -> ConditionNode:
+) -> EvaluatedComposition:
     """
     Evaluates the tree built from the expressions with the help of the ConditionsTransformer.
 
@@ -278,14 +281,14 @@ def requirement_constraint_evaluation(condition_expression: str) -> RequirementC
     condition_node_builder = ConditionNodeBuilder(all_condition_keys)
     input_nodes = condition_node_builder.requirement_content_evaluation_for_all_condition_keys()
 
-    resulting_condition_node = evaluate_requirement_constraint_tree(parsed_tree_rc, input_nodes)
+    resulting_condition_node: ConditionNode = evaluate_requirement_constraint_tree(parsed_tree_rc, input_nodes)
 
     requirement_constraints_fulfilled = resulting_condition_node.conditions_fulfilled.value
     requirement_is_conditional = True
-    if resulting_condition_node.conditions_fulfilled == ConditionFulfilledValue.NEUTRAL:
+    if resulting_condition_node.conditions_fulfilled == ConditionFulfilledValue("Neutral"):
         requirement_constraints_fulfilled = True
         requirement_is_conditional = False
-    if resulting_condition_node.conditions_fulfilled == ConditionFulfilledValue.UNKNOWN:
+    if resulting_condition_node.conditions_fulfilled == ConditionFulfilledValue(None):
         raise NotImplementedError("It is unknown if the conditions are fulfilled due to missing information.")
 
     format_constraints_expression = getattr(resulting_condition_node, "format_constraints_expression", None)

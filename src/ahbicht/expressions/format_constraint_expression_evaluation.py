@@ -23,6 +23,7 @@ from ahbicht.expressions.expression_builder import FormatErrorMessageExpressionB
 
 # pylint: disable=no-self-use
 @v_args(inline=True)  # Children are provided as *args instead of a list argument
+# pylint:disable=inherit-non-class
 class FormatConstraintTransformer(BaseTransformer[EvaluatedFormatConstraint, EvaluatedFormatConstraint]):
     """
     Transformer that evaluates the trees built from the format constraint expressions.
@@ -110,7 +111,7 @@ def format_constraint_evaluation(
             parsed_tree_fc, input_values
         )
         format_constraints_fulfilled = resulting_evaluated_format_constraint_node.format_constraint_fulfilled
-        error_message: Optional[str] = resulting_evaluated_format_constraint_node.error_message
+        error_message = resulting_evaluated_format_constraint_node.error_message
 
     return FormatConstraintEvaluationResult(
         format_constraints_fulfilled=format_constraints_fulfilled, error_message=error_message
