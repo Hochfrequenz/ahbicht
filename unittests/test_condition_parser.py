@@ -400,7 +400,6 @@ class TestConditionParser:
             pytest.param("[1]U[2]", "[1]∧[2]"),
             pytest.param("[1]O[2]", "[1]∨[2]"),
             pytest.param("[1]X[2]", "[1]⊻[2]"),
-            pytest.param("[1]X[2]", "[1]⊻[2]"),
             pytest.param(
                 "([951][510]U[522])O([950][514]U([523]O[525]))", "([951][510]∧[522])∨([950][514]∧([523]∨[525]))"
             ),
