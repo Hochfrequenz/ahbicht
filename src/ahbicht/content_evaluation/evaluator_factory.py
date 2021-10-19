@@ -41,7 +41,7 @@ def create_and_inject_hardcoded_evaluators(content_evaluation_result: ContentEva
     """
     evaluators = create_hardcoded_evaluators(content_evaluation_result)
     inject.clear_and_configure(
-        lambda binder: binder.bind(RcEvaluator, evaluators[0])
+        lambda binder: binder.bind(RcEvaluator, evaluators[0])  # type:ignore[arg-type]
         .bind(FcEvaluator, evaluators[1])
         .bind(HintsProvider, evaluators[2])
     )

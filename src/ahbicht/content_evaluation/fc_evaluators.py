@@ -33,7 +33,7 @@ class FcEvaluator(Evaluator, ABC):
         :param entered_input: the entered input whose format should be checked, e.g. "12345678913"
         :return: If the format constraint is fulfilled and an optional error_message.
         """
-        evaluation_method: Callable = self.get_evaluation_method(condition_key)
+        evaluation_method = self.get_evaluation_method(condition_key)
         if evaluation_method is None:
             raise NotImplementedError(f"There is no content_evaluation method for format constraint '{condition_key}'")
         result: EvaluatedFormatConstraint = await evaluation_method(entered_input)
