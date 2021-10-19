@@ -408,7 +408,7 @@ class TestConditionParser:
     )
     def test_equivalence_of_new_and_old_notation_expressions(self, old_expression: str, new_expression: str):
         """
-        Tests that U/A/X are treated just the same as the new logical operands.
+        Tests that U/O/X are treated just the same as the new logical operands.
         :return:
         """
         old_tree = parse_condition_expression_to_tree(old_expression)
