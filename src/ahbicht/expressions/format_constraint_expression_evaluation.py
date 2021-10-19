@@ -111,7 +111,7 @@ def format_constraint_evaluation(
             parsed_tree_fc, input_values
         )
         format_constraints_fulfilled = resulting_evaluated_format_constraint_node.format_constraint_fulfilled
-        error_message = resulting_evaluated_format_constraint_node.error_message
+        error_message = resulting_evaluated_format_constraint_node.error_message  # pylint:disable=no-member
 
     return FormatConstraintEvaluationResult(
         format_constraints_fulfilled=format_constraints_fulfilled, error_message=error_message

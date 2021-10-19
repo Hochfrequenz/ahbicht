@@ -285,10 +285,10 @@ def requirement_constraint_evaluation(condition_expression: str) -> RequirementC
 
     requirement_constraints_fulfilled = resulting_condition_node.conditions_fulfilled.value
     requirement_is_conditional = True
-    if resulting_condition_node.conditions_fulfilled == ConditionFulfilledValue("Neutral"):
+    if resulting_condition_node.conditions_fulfilled == ConditionFulfilledValue("Neutral"):  # pylint:disable=no-member
         requirement_constraints_fulfilled = True
         requirement_is_conditional = False
-    if resulting_condition_node.conditions_fulfilled == ConditionFulfilledValue(None):
+    if resulting_condition_node.conditions_fulfilled == ConditionFulfilledValue(None):  # pylint:disable=no-member
         raise NotImplementedError("It is unknown if the conditions are fulfilled due to missing information.")
 
     format_constraints_expression = getattr(resulting_condition_node, "format_constraints_expression", None)
