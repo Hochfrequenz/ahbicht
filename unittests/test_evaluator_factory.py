@@ -17,10 +17,6 @@ pytestmark = pytest.mark.asyncio
 class TestEvaluatorFactory:
     """Tests, that evaluators are created and injected correctly"""
 
-    @pytest.fixture()
-    def setup_and_teardown_injector(self, content_evaluation_result: ContentEvaluationResult):
-        create_and_inject_hardcoded_evaluators(content_evaluation_result)
-
     @pytest.fixture
     def inject_content_evaluation_result(self, request: SubRequest):
         # indirect parametrization: https://stackoverflow.com/a/33879151/10009545
