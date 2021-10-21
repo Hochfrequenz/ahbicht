@@ -7,7 +7,7 @@ from typing import TypeVar
 
 import pytest
 from lark import Token, Tree
-from marshmallow import Schema
+from marshmallow import Schema, ValidationError
 
 from ahbicht.condition_check_results import (
     ConditionCheckResult,
@@ -153,6 +153,21 @@ class TestJsonSerialization:
         _test_serialization_roundtrip(
             evaluated_format_constraint, EvaluatedFormatConstraintSchema(), expected_json_dict
         )
+
+    @pytest.mark.parametrize(
+        "invalid_content_evaluation_result_dict",
+        [
+            pytest.param({}, id="empty dict"),
+            pytest.param({"format_constraints": {}, "hints": {}}, id="missing requirement constraints"),
+            pytest.param({"requirement_constraints": {}, "hints": {}}, id="missing format_constraints"),
+        ],
+    )
+    def test_validation_errors_on_content_evaluation_result_deserialization(
+        self, invalid_content_evaluation_result_dict: dict
+    ):
+        schema = ContentEvaluationResultSchema()
+        with pytest.raises(ValidationError):
+            schema.load(invalid_content_evaluation_result_dict)
 
     @pytest.mark.parametrize(
         "content_evaluation_result, expected_json_dict",
