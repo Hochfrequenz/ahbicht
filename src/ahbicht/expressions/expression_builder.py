@@ -141,8 +141,15 @@ class FormatConstraintExpressionBuilder(ExpressionBuilder[TSupportedFCExpression
             self._expression = f"{prefix} ({other.format_constraints_expression})"
         elif isinstance(other, str):
             self._expression = f"{prefix} ({other})"
+        # other types than the above don't affect the newly built format constraint expression
+        elif isinstance(other, (RequirementConstraint, EvaluatedComposition, Hint)):
+            # explicitly no effect
+            self._expression = None
         else:
-            pass  # other types than the above don't affect the newly built format constraint expression
+            # implicitly (all other types) no effect
+            self._expression = None  # we should never come here
+            print("bla")
+            pass
         if self._expression:
             self._expression = self._expression.strip()
             self._expression = self._one_key_surrounded_by_brackets_pattern.sub(r"\g<body>", self._expression)
