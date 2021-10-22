@@ -103,9 +103,9 @@ class FormatConstraintExpressionBuilder(ExpressionBuilder[TSupportedFCExpression
         elif isinstance(init_condition_or_expression, str):
             self._expression = f"{init_condition_or_expression}"
         elif isinstance(init_condition_or_expression, (RequirementConstraint, EvaluatedComposition, Hint)):
-            # requirement constraints, evaluated compositions and hint don't have any effect on the a newly built
+            # requirement constraints and hints don't have any effect on the a newly built
             # format constraint expression
-            # todo @annika: please check, remove this line if above assumption is correct
+            # also evaluated compositions that don't have a format constraint expression
             self._expression = None
         else:
             # we should never come here
