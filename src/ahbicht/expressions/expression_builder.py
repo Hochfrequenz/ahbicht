@@ -3,7 +3,7 @@ Module to create expressions from scratch.
 """
 import re
 from abc import ABC, abstractmethod
-from typing import Generic, Literal, Optional, Type, TypeVar, Union
+from typing import Any, Generic, Literal, Optional, Type, TypeVar, Union
 
 from ahbicht.expressions.condition_nodes import (
     ConditionNode,
@@ -147,18 +147,13 @@ class FormatConstraintExpressionBuilder(ExpressionBuilder[TSupportedFCExpression
         return self
 
 
-THExpressionBuilderArgument = Union[
-    EvaluatedComposition, UnevaluatedFormatConstraint, Hint, Optional[str]
-]  # node types supported by the HintExpressionBuilder
-
-
-class HintExpressionBuilder(ExpressionBuilder[THExpressionBuilderArgument]):
+class HintExpressionBuilder(ExpressionBuilder[Any]):
     """
     Allows to connect hints with logical operations.
     """
 
     @staticmethod
-    def get_hint_text(hinty_object: THExpressionBuilderArgument) -> Optional[str]:
+    def get_hint_text(hinty_object: Any) -> Optional[str]:
         """
         get the hint from a Hint instance or plain string
         :param hinty_object:
@@ -170,7 +165,7 @@ class HintExpressionBuilder(ExpressionBuilder[THExpressionBuilderArgument]):
             return hinty_object
         return getattr(hinty_object, "hint", None)
 
-    def __init__(self, init_condition: THExpressionBuilderArgument):
+    def __init__(self, init_condition: Any):
         """
         Initialize by providing either a Hint Node or a hint string
         """
@@ -179,7 +174,7 @@ class HintExpressionBuilder(ExpressionBuilder[THExpressionBuilderArgument]):
     def get_expression(self) -> Optional[str]:
         return self._expression
 
-    def land(self, other: THExpressionBuilderArgument) -> ExpressionBuilder:
+    def land(self, other: Any) -> ExpressionBuilder:
         if other is not None:
             if self._expression:
                 self._expression += f" und {HintExpressionBuilder.get_hint_text(other)}"
@@ -187,7 +182,7 @@ class HintExpressionBuilder(ExpressionBuilder[THExpressionBuilderArgument]):
                 self._expression = HintExpressionBuilder.get_hint_text(other)
         return self
 
-    def lor(self, other: THExpressionBuilderArgument) -> ExpressionBuilder:
+    def lor(self, other: Any) -> ExpressionBuilder:
         if other is not None:
             if self._expression:
                 self._expression += f" oder {HintExpressionBuilder.get_hint_text(other)}"
@@ -195,7 +190,7 @@ class HintExpressionBuilder(ExpressionBuilder[THExpressionBuilderArgument]):
                 self._expression = HintExpressionBuilder.get_hint_text(other)
         return self
 
-    def xor(self, other: THExpressionBuilderArgument) -> ExpressionBuilder:
+    def xor(self, other: Any) -> ExpressionBuilder:
         if other is not None:
             if self._expression:
                 self._expression = f"Entweder ({self._expression}) oder ({HintExpressionBuilder.get_hint_text(other)})"
