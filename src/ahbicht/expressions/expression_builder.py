@@ -67,7 +67,8 @@ TEffectiveFCExpressionBuilderArguments = Union[
 TOtherFCExpressionBuilderArguments = Union[
     RequirementConstraint, EvaluatedComposition, Hint, Type[ConditionNode]
 ]  # node types that are formally accepted as argument but don't
-# have any effect. These are more kind of artefacts from previous transformation steps
+# have any effect. Instead of checking which nodes contain format constraints all are put into the FormatConstraintExpressionBuilder, but it only has an effect on those with format constraints.
+# Note that EvaluatedComposition is in both classes since they can have format constraints but don't have to.
 
 TSupportedFCExpressionBuilderArguments = Union[
     TEffectiveFCExpressionBuilderArguments, TOtherFCExpressionBuilderArguments
