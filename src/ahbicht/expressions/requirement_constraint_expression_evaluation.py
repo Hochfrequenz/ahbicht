@@ -57,8 +57,8 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
         elif right.conditions_fulfilled == ConditionFulfilledValue.NEUTRAL:
             evaluated_composition = EvaluatedComposition(conditions_fulfilled=left.conditions_fulfilled)
 
-        # in Python 'False and None' results are falsy in the way we expect it,
-        # but 'None and False' results in None, so we have to set it to False manually
+        # in Python 'False and None' results in 'False' in the way we expect it,
+        # but 'None and False' results in 'None', so we have to set it to False manually
         elif left.conditions_fulfilled.value is None and right.conditions_fulfilled.value is False:
             evaluated_composition = EvaluatedComposition(conditions_fulfilled=ConditionFulfilledValue(False))
 
