@@ -42,6 +42,7 @@ class ContentEvaluationResultSchema(Schema):
     format_constraints = fields.Dict(
         keys=fields.String(allow_none=False),
         values=fields.Nested(EvaluatedFormatConstraintSchema, allow_none=False, required=True),
+        required=True,
     )
     requirement_constraints = fields.Dict(
         keys=fields.String(allow_none=False), values=fields.String(allow_none=True), required=True
