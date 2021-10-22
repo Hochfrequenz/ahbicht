@@ -64,7 +64,7 @@ TEffectiveFCExpressionBuilderArguments = Union[
     EvaluatedComposition, UnevaluatedFormatConstraint, Optional[str]
 ]  # node types that have an effect on the built format constraint expression
 
-TOtherFCExpressionBuilderArguments = Union[
+TUneffectiveFCExpressionBuilderArguments = Union[
     RequirementConstraint, EvaluatedComposition, Hint, Type[ConditionNode]
 ]  # node types that are formally accepted as argument but don't
 # have any effect. Instead of checking which nodes contain format constraints all are put into the
@@ -72,7 +72,7 @@ TOtherFCExpressionBuilderArguments = Union[
 # Note that EvaluatedComposition is in both classes since they can have format constraints but don't have to.
 
 TSupportedFCExpressionBuilderArguments = Union[
-    TEffectiveFCExpressionBuilderArguments, TOtherFCExpressionBuilderArguments
+    TEffectiveFCExpressionBuilderArguments, TUneffectiveFCExpressionBuilderArguments
 ]
 
 
