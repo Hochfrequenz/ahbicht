@@ -26,6 +26,9 @@ from ahbicht.expressions.condition_nodes import (
 )
 from ahbicht.expressions.expression_builder import FormatConstraintExpressionBuilder, HintExpressionBuilder
 
+# TRCTransformerArgument is a union of nodes that are already evaluated from a Requirement Constraint (RC) perspective.
+# The Format Constraints (FC) might still be unevaluated. That's why the return type used in the
+# RequirementConstraintTransformer is always an EvaluatedComposition.
 TRCTransformerArgument = Union[RequirementConstraint, UnevaluatedFormatConstraint, Hint]
 
 
