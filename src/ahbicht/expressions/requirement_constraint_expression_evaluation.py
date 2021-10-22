@@ -42,7 +42,6 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
     In the case of a Bedingung/RequirementConstraint already evaluated for the single condition.
     Hints are evaluated as neutral element in the boolean logic: and_composition: True, or_composition: False.
 
-    The possible input types are RequirementConstraint, Hint and FormatConstraint.
     After two nodes are evaluated in a composition, the resulting node has the node type EvalutatedComposition.
     The return value is a ConditionNode whose attribute `conditions_fulfilled` describes whether it is a required field,
     its hints are the gathered hints and its `format_constraint_expression` contains the gathered format constraints
