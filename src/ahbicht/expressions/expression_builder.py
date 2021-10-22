@@ -3,9 +3,10 @@ Module to create expressions from scratch.
 """
 import re
 from abc import ABC, abstractmethod
-from typing import Generic, Literal, Optional, TypeVar, Union
+from typing import Generic, Literal, Optional, Type, TypeVar, Union
 
 from ahbicht.expressions.condition_nodes import (
+    ConditionNode,
     EvaluatedComposition,
     EvaluatedFormatConstraint,
     Hint,
@@ -64,7 +65,7 @@ TEffectiveFCExpressionBuilderArguments = Union[
 ]  # node types that have an effect on the built format constraint expression
 
 TOtherFCExpressionBuilderArguments = Union[
-    RequirementConstraint, EvaluatedComposition, Hint
+    RequirementConstraint, EvaluatedComposition, Hint, Type[ConditionNode]
 ]  # node types that are formally accepted as arugment but don't
 # have any effect. These are more kind of artefacts from previous transformation steps
 

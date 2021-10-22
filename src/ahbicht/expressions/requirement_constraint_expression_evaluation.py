@@ -6,7 +6,7 @@ of the condition expression tree are handled.
 The used terms are defined in the README_conditions.md.
 """
 
-from typing import List, Literal, Mapping, Union
+from typing import List, Literal, Mapping, Type, Union
 
 from lark import Token, Tree, v_args
 from lark.exceptions import VisitError
@@ -184,7 +184,7 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
     def _then_also(
         self,
         format_constraint: UnevaluatedFormatConstraint,
-        other_condition: ConditionNode,
+        other_condition: Type[ConditionNode],
     ) -> EvaluatedComposition:
         """
         Evaluates a boolean condition with a format constraint. The functions name indicates its behaviour:
@@ -212,16 +212,13 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
                 f"{format_constraint.__class__} is not implemented."
             )
         if format_constraint_is_required:
-            # todo: ask annika why the case of "invalid arguments" never happens here...
             evaluated_composition.format_constraints_expression = (
-                FormatConstraintExpressionBuilder(format_constraint)  # type:ignore[arg-type]
-                .land(other_condition)  # type:ignore[arg-type]
-                .get_expression()
+                FormatConstraintExpressionBuilder(format_constraint).land(other_condition).get_expression()
             )
 
         return evaluated_composition
 
-    def then_also_composition(self, left: ConditionNode, right: ConditionNode) -> EvaluatedComposition:
+    def then_also_composition(self, left: Type[ConditionNode], right: Type[ConditionNode]) -> EvaluatedComposition:
         """
         A "then also" composition is typically used for format constraints.
         It connects an evaluable expression with a format constraint.
