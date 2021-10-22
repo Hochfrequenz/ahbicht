@@ -11,8 +11,13 @@ from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.expressions.condition_nodes import Hint, RequirementConstraint, UnevaluatedFormatConstraint
 from ahbicht.expressions.hints_provider import HintsProvider
 
+# TRCTransformerArgument is a union of nodes that are already evaluated from a Requirement Constraint (RC) perspective.
+# The Format Constraints (FC) might still be unevaluated. That's why the return type used in the
+# RequirementConstraintTransformer is always an EvaluatedComposition.
+TRCTransformerArgument = Union[RequirementConstraint, UnevaluatedFormatConstraint, Hint]
+
+
 # pylint: disable=no-member, too-few-public-methods
-from ahbicht.expressions.requirement_constraint_expression_evaluation import TRCTransformerArgument
 
 
 class ConditionNodeBuilder:

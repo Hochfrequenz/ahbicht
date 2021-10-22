@@ -6,13 +6,13 @@ of the condition expression tree are handled.
 The used terms are defined in the README_conditions.md.
 """
 
-from typing import List, Literal, Mapping, Type, Union
+from typing import List, Literal, Mapping, Type
 
 from lark import Token, Tree, v_args
 from lark.exceptions import VisitError
 
 from ahbicht.condition_check_results import RequirementConstraintEvaluationResult
-from ahbicht.condition_node_builder import ConditionNodeBuilder
+from ahbicht.condition_node_builder import ConditionNodeBuilder, TRCTransformerArgument
 from ahbicht.expressions.base_transformer import BaseTransformer
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.condition_nodes import (
@@ -25,11 +25,6 @@ from ahbicht.expressions.condition_nodes import (
     UnevaluatedFormatConstraint,
 )
 from ahbicht.expressions.expression_builder import FormatConstraintExpressionBuilder, HintExpressionBuilder
-
-# TRCTransformerArgument is a union of nodes that are already evaluated from a Requirement Constraint (RC) perspective.
-# The Format Constraints (FC) might still be unevaluated. That's why the return type used in the
-# RequirementConstraintTransformer is always an EvaluatedComposition.
-TRCTransformerArgument = Union[RequirementConstraint, UnevaluatedFormatConstraint, Hint]
 
 
 # pylint: disable=no-self-use
