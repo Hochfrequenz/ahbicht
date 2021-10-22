@@ -11,8 +11,10 @@ from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.expressions.condition_nodes import Hint, RequirementConstraint, UnevaluatedFormatConstraint
 from ahbicht.expressions.hints_provider import HintsProvider
 
-
 # pylint: disable=no-member, too-few-public-methods
+from ahbicht.expressions.requirement_constraint_expression_evaluation import TRCTransformerArgument
+
+
 class ConditionNodeBuilder:
     """
     Builds ConditionNodes for the given condition_keys by separating them into their respective types
@@ -90,7 +92,7 @@ class ConditionNodeBuilder:
         requirement_constraint_nodes = self._build_requirement_constraint_nodes()
         hint_nodes = self._build_hint_nodes()
         unevaluated_format_constraint_nodes = self._build_unevaluated_format_constraint_nodes()
-        input_nodes: Dict[str, Union[RequirementConstraint, UnevaluatedFormatConstraint, Hint]] = {
+        input_nodes: Dict[str, TRCTransformerArgument] = {
             **requirement_constraint_nodes,
             **hint_nodes,
             **unevaluated_format_constraint_nodes,
