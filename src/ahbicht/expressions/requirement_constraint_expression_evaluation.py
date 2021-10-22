@@ -57,14 +57,14 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
         elif right.conditions_fulfilled == ConditionFulfilledValue.NEUTRAL:
             evaluated_composition = EvaluatedComposition(conditions_fulfilled=left.conditions_fulfilled)
 
-        # in Python 'False and None' results in False the way we expect it,
+        # in Python 'False and None' results are falsy in the way we expect it,
         # but 'None and False' results in None, so we have to set it to False manually
         elif left.conditions_fulfilled.value is None and right.conditions_fulfilled.value is False:
             evaluated_composition = EvaluatedComposition(conditions_fulfilled=ConditionFulfilledValue(False))
 
         elif isinstance(left.conditions_fulfilled.value, (bool, type(None))) and isinstance(
             right.conditions_fulfilled.value, (bool, type(None))
-        ):
+        ):  # todo: explain these isinstance checks
             resulting_conditions_fulfilled = left.conditions_fulfilled.value and right.conditions_fulfilled.value
             evaluated_composition = EvaluatedComposition(
                 conditions_fulfilled=ConditionFulfilledValue(resulting_conditions_fulfilled)
@@ -77,10 +77,7 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
                 HintExpressionBuilder(getattr(left, "hint", None)).land(getattr(right, "hint", None)).get_expression()
             )
         evaluated_composition.format_constraints_expression = (
-            # todo: ask annika why the case of "invalid arguments" never happens here...
-            FormatConstraintExpressionBuilder(left)  # type:ignore[arg-type]
-            .land(right)  # type:ignore[arg-type]
-            .get_expression()
+            FormatConstraintExpressionBuilder(left).land(right).get_expression()
         )
 
         return evaluated_composition

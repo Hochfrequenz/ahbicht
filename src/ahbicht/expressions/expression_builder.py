@@ -3,12 +3,13 @@ Module to create expressions from scratch.
 """
 import re
 from abc import ABC, abstractmethod
-from typing import Generic, Optional, TypeVar, Union
+from typing import Generic, Literal, Optional, TypeVar, Union
 
 from ahbicht.expressions.condition_nodes import (
     EvaluatedComposition,
     EvaluatedFormatConstraint,
     Hint,
+    RequirementConstraint,
     UnevaluatedFormatConstraint,
 )
 
@@ -58,12 +59,21 @@ class ExpressionBuilder(Generic[TSupportedNodes], ABC):
         raise NotImplementedError("Has to be implemented by inheriting class.")
 
 
-TFCExpressionBuilderArgument = Union[
+TEffectiveFCExpressionBuilderArguments = Union[
     EvaluatedComposition, UnevaluatedFormatConstraint, Optional[str]
-]  # node types that are supported by the FormatConstraintExpressionBuilder
+]  # node types that have an effect on the built format constraint expression
+
+TOtherFCExpressionBuilderArguments = Union[
+    RequirementConstraint, EvaluatedComposition, Hint
+]  # node types that are formally accepted as arugment but don't
+# have any effect. These are more kind of artefacts from previous transformation steps
+
+TSupportedFCExpressionBuilderArguments = Union[
+    TEffectiveFCExpressionBuilderArguments, TOtherFCExpressionBuilderArguments
+]
 
 
-class FormatConstraintExpressionBuilder(ExpressionBuilder[TFCExpressionBuilderArgument]):
+class FormatConstraintExpressionBuilder(ExpressionBuilder[TSupportedFCExpressionBuilderArguments]):
     """
     Class to create expressions that consists of FormatConstraints
     """
@@ -72,12 +82,12 @@ class FormatConstraintExpressionBuilder(ExpressionBuilder[TFCExpressionBuilderAr
 
     # (?P<group_name>...) is a named group: https://docs.python.org/3/howto/regex.html#non-capturing-and-named-groups
 
-    def __init__(self, init_condition_or_expression: TFCExpressionBuilderArgument):
+    def __init__(self, init_condition_or_expression: TSupportedFCExpressionBuilderArguments):
         """
         Start with a plain expression
         :param init_condition_or_expression: initial format constraint or existing expression
         """
-        self._expression: Optional[str] = None
+        self._expression: Optional[str]
         if isinstance(init_condition_or_expression, UnevaluatedFormatConstraint):
             # the condition key of the token in expression '[42]' is only '42'
             # so the get a valid expression, we add the square brackets
@@ -89,21 +99,29 @@ class FormatConstraintExpressionBuilder(ExpressionBuilder[TFCExpressionBuilderAr
             self._expression = init_condition_or_expression.format_constraints_expression
         elif isinstance(init_condition_or_expression, str):
             self._expression = f"{init_condition_or_expression}"
+        elif isinstance(init_condition_or_expression, (RequirementConstraint, EvaluatedComposition, Hint)):
+            # requirement constraints, evaluated compositions and hint don't have any effect on the a newly built
+            # format constraint expression
+            # todo @annika: please check, remove this line if above assumption is correct
+            self._expression = None
+        else:
+            # we should never come here
+            self._expression = None
 
     def get_expression(self) -> Optional[str]:
         # could add simplifications here
         return self._expression
 
-    def land(self, other: TFCExpressionBuilderArgument) -> ExpressionBuilder:
+    def land(self, other: TSupportedFCExpressionBuilderArguments) -> ExpressionBuilder:
         return self._connect("U", other)
 
-    def lor(self, other: TFCExpressionBuilderArgument) -> ExpressionBuilder:
+    def lor(self, other: TSupportedFCExpressionBuilderArguments) -> ExpressionBuilder:
         return self._connect("O", other)
 
-    def xor(self, other: TFCExpressionBuilderArgument) -> ExpressionBuilder:
+    def xor(self, other: TSupportedFCExpressionBuilderArguments) -> ExpressionBuilder:
         return self._connect("X", other)
 
-    def _connect(self, operator_character: str, other: TFCExpressionBuilderArgument):
+    def _connect(self, operator_character: Literal["U", "O", "X"], other: TSupportedFCExpressionBuilderArguments):
         """
         Connect the existing expression and the other part.
         :param operator_character: "X", "U" or "O"
@@ -120,6 +138,8 @@ class FormatConstraintExpressionBuilder(ExpressionBuilder[TFCExpressionBuilderAr
             self._expression = f"{prefix} ({other.format_constraints_expression})"
         elif isinstance(other, str):
             self._expression = f"{prefix} ({other})"
+        else:
+            pass  # other types than the above don't affect the newly built format constraint expression
         if self._expression:
             self._expression = self._expression.strip()
             self._expression = self._one_key_surrounded_by_brackets_pattern.sub(r"\g<body>", self._expression)
