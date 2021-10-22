@@ -34,7 +34,7 @@ class BaseTransformer(Transformer, ABC, Generic[TSupportedArgumentNodeType, TSup
     def __init__(self, input_values: Mapping[str, TSupportedArgumentNodeType]):
         """
         The input are the evaluated format constraint conditions in the form of ConditionNodes.
-        :param input_values: dict(condition_keys, ConditionNode)
+        :param input_values: something that maps a condition key (str) onto an argument
         """
         super().__init__()
         self.input_values = input_values

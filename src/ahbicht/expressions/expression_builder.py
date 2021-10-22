@@ -183,24 +183,21 @@ class HintExpressionBuilder(ExpressionBuilder[THExpressionBuilderArgument]):
         return self
 
 
-TFEMExpressionBuilderArgument = (
-    EvaluatedFormatConstraint  # node types supported by the FormatErrorMessageExpressionBuilder
-)
-
-
-class FormatErrorMessageExpressionBuilder(ExpressionBuilder[TFEMExpressionBuilderArgument]):
+# This class is only used by the FormatConstraintTransformer.
+# That's why it only accepts EvaluatedFormatConstraints as input.
+class FormatErrorMessageExpressionBuilder(ExpressionBuilder[EvaluatedFormatConstraint]):
     """
     Class to build the error messages for the format constraint evaluation.
     """
 
-    def __init__(self, init_condition: TFEMExpressionBuilderArgument):
+    def __init__(self, init_condition: EvaluatedFormatConstraint):
         self._expression = init_condition.error_message
         self.format_constraint_fulfilled = init_condition.format_constraint_fulfilled
 
     def get_expression(self) -> Optional[str]:
         return self._expression
 
-    def land(self, other: TFEMExpressionBuilderArgument) -> ExpressionBuilder:
+    def land(self, other: EvaluatedFormatConstraint) -> ExpressionBuilder:
         if other.format_constraint_fulfilled is True:
             self._expression = self._expression
         else:
@@ -210,19 +207,18 @@ class FormatErrorMessageExpressionBuilder(ExpressionBuilder[TFEMExpressionBuilde
                 self._expression = f"'{self._expression}' und '{other.error_message}'"
         return self
 
-    def lor(self, other: TFEMExpressionBuilderArgument) -> ExpressionBuilder:
+    def lor(self, other: EvaluatedFormatConstraint) -> ExpressionBuilder:
         if self.format_constraint_fulfilled is False and other.format_constraint_fulfilled is False:
             self._expression = f"'{self._expression}' oder '{other.error_message}'"
         else:
             self._expression = None
         return self
 
-    def xor(self, other: TFEMExpressionBuilderArgument) -> ExpressionBuilder:
+    def xor(self, other: EvaluatedFormatConstraint) -> ExpressionBuilder:
         if self.format_constraint_fulfilled is False and other.format_constraint_fulfilled is False:
             self._expression = f"Entweder '{self._expression}' oder '{other.error_message}'"
         elif self.format_constraint_fulfilled is True and other.format_constraint_fulfilled is True:
             self._expression = "Zwei exklusive Formatdefinitionen dürfen nicht gleichzeitig erfüllt sein"
-            # pylint: disable=fixme
             # TODO: Do we need to know which one? It's probably more work than benefit.
         else:
             self._expression = None
