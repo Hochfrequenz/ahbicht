@@ -66,7 +66,7 @@ TEffectiveFCExpressionBuilderArguments = Union[
 
 TOtherFCExpressionBuilderArguments = Union[
     RequirementConstraint, EvaluatedComposition, Hint, Type[ConditionNode]
-]  # node types that are formally accepted as arugment but don't
+]  # node types that are formally accepted as argument but don't
 # have any effect. These are more kind of artefacts from previous transformation steps
 
 TSupportedFCExpressionBuilderArguments = Union[
