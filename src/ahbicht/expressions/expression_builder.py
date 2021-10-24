@@ -3,7 +3,7 @@ Module to create expressions from scratch.
 """
 import re
 from abc import ABC, abstractmethod
-from typing import Any, Generic, Literal, Optional, Type, TypeVar, Union
+from typing import Generic, Literal, Optional, Protocol, Type, TypeVar, Union
 
 from ahbicht.expressions.condition_nodes import (
     ConditionNode,
@@ -153,7 +153,17 @@ class FormatConstraintExpressionBuilder(ExpressionBuilder[TSupportedFCExpression
         return self
 
 
-TNodesWithHint = Union[Hint, EvaluatedComposition]  # node types having and `.hint` attribute
+class _ClassesWithHintAttribute(Protocol):
+    hint: str
+
+
+TClassesWithHintAttribute = TypeVar("TClassesWithHintAttribute", bound=_ClassesWithHintAttribute)
+
+TNodesWithHint = Union[
+    # Hint,
+    # EvaluatedComposition,  # nodes having a hint attribute (explicit)
+    TClassesWithHintAttribute  # other "hinty" objects (implicit)
+]
 
 
 class HintExpressionBuilder(ExpressionBuilder[TNodesWithHint]):
