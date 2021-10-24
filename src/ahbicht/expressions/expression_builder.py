@@ -153,26 +153,25 @@ class FormatConstraintExpressionBuilder(ExpressionBuilder[TSupportedFCExpression
         return self
 
 
+# pylint:disable=too-few-public-methods
 class _ClassesWithHintAttribute(Protocol):
+    """
+    A class to be used in type hints. describes all classes that have a "hint" attribute
+    """
+
     hint: str
 
 
 TClassesWithHintAttribute = TypeVar("TClassesWithHintAttribute", bound=_ClassesWithHintAttribute)
 
-TNodesWithHint = Union[
-    # Hint,
-    # EvaluatedComposition,  # nodes having a hint attribute (explicit)
-    TClassesWithHintAttribute  # other "hinty" objects (implicit)
-]
 
-
-class HintExpressionBuilder(ExpressionBuilder[TNodesWithHint]):
+class HintExpressionBuilder(ExpressionBuilder[TClassesWithHintAttribute]):
     """
     Allows to connect hints with logical operations.
     """
 
     @staticmethod
-    def get_hint_text(hinty_object: TNodesWithHint) -> Optional[str]:
+    def get_hint_text(hinty_object: TClassesWithHintAttribute) -> Optional[str]:
         """
         get the hint from a Hint instance or plain string
         :param hinty_object:
@@ -184,7 +183,7 @@ class HintExpressionBuilder(ExpressionBuilder[TNodesWithHint]):
             return hinty_object
         return getattr(hinty_object, "hint", None)
 
-    def __init__(self, init_condition: TNodesWithHint):
+    def __init__(self, init_condition: TClassesWithHintAttribute):
         """
         Initialize by providing either a Hint Node or a hint string
         """
@@ -193,7 +192,7 @@ class HintExpressionBuilder(ExpressionBuilder[TNodesWithHint]):
     def get_expression(self) -> Optional[str]:
         return self._expression
 
-    def land(self, other: TNodesWithHint) -> ExpressionBuilder:
+    def land(self, other: TClassesWithHintAttribute) -> ExpressionBuilder:
         if other is not None:
             if self._expression:
                 self._expression += f" und {HintExpressionBuilder.get_hint_text(other)}"
@@ -201,7 +200,7 @@ class HintExpressionBuilder(ExpressionBuilder[TNodesWithHint]):
                 self._expression = HintExpressionBuilder.get_hint_text(other)
         return self
 
-    def lor(self, other: TNodesWithHint) -> ExpressionBuilder:
+    def lor(self, other: TClassesWithHintAttribute) -> ExpressionBuilder:
         if other is not None:
             if self._expression:
                 self._expression += f" oder {HintExpressionBuilder.get_hint_text(other)}"
@@ -209,7 +208,7 @@ class HintExpressionBuilder(ExpressionBuilder[TNodesWithHint]):
                 self._expression = HintExpressionBuilder.get_hint_text(other)
         return self
 
-    def xor(self, other: TNodesWithHint) -> ExpressionBuilder:
+    def xor(self, other: TClassesWithHintAttribute) -> ExpressionBuilder:
         if other is not None:
             if self._expression:
                 self._expression = f"Entweder ({self._expression}) oder ({HintExpressionBuilder.get_hint_text(other)})"
