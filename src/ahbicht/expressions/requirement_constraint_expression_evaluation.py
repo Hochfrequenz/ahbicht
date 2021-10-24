@@ -59,7 +59,7 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
 
         elif isinstance(left.conditions_fulfilled.value, (bool, type(None))) and isinstance(
             right.conditions_fulfilled.value, (bool, type(None))
-        ):  # todo: explain these isinstance checks
+        ):
             resulting_conditions_fulfilled = left.conditions_fulfilled.value and right.conditions_fulfilled.value
             evaluated_composition = EvaluatedComposition(
                 conditions_fulfilled=ConditionFulfilledValue(resulting_conditions_fulfilled)
