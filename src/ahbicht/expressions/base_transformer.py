@@ -9,10 +9,9 @@ from typing import Generic, Mapping, TypeVar
 from lark import Token, Transformer, v_args
 
 # All non-abstract transformers obey the following generic type constraints:
-#   1. The methods of each transformer all have the same return type referred to as "TSupportedArgumentNodeType".
+#   1. The methods of each transformer all have the same accepted argument type ("TSupportedArgumentNodeType").
 #       This type is arbitrary but fixed per Transformer.
-#   2. Also all of the methods of one transformer return objects of the same type which is named
-#       "TSupportedReturnType" here.
+#   2. Also all of the methods of one transformer return objects of the same type ("TSupportedReturnType").
 TSupportedArgumentNodeType = TypeVar("TSupportedArgumentNodeType")  # bound=ConditionNode)
 # bound does not work because:
 # error: Type argument "ahbicht.expressions.condition_nodes.EvaluatedFormatConstraint" of "BaseTransformer" must be a
