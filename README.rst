@@ -1,7 +1,10 @@
+===========================================
 AHB Condition Expression Parser (AHBicht)
-=========================================
+===========================================
 
-|Unittests status badge| |Coverage status badge| |Linting status badge|
+|Unittests status badge|
+|Coverage status badge|
+|Linting status badge|
 |Black status badge|
 
 .. raw:: html
