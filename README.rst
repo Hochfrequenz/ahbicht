@@ -4,17 +4,14 @@ AHB Condition Expression Parser (AHBicht)
 |Unittests status badge| |Coverage status badge| |Linting status badge|
 |Black status badge|
 
-.. raw:: html
-
-   <a href="https://ahbicht.readthedocs.io">
-       <img src="./docs/_static/ahbicht-logo.png"
-            alt="ahbicht logo"
-            height="150px"
-            align="right">
-   </a>
+.. image:: ./docs/_static/ahbicht-logo.png
+   :target: https://ahbicht.readthedocs.io
+   :align: right
+   :alt: ahbicht logo
+   :width: 150px
 
 A python package that parses condition expressions from EDI@Energy
-Anwendungshandbücher (AHB). Since it’s based on lark, we named the
+Anwendungshandbücher (AHB). Since it's based on lark, we named the
 module AHBicht.
 
 What is this all about?
@@ -38,7 +35,7 @@ organisations in charge of maintaining the documents described above
 **B**\ undesverband **d**\ er*\ **E**\ nergie-
 und*\ **W**\ *\ asserwirtschaft* (BDEW) and the
 **B**\ undes\ **netza**\ gentur (BNetzA). They form a working
-group named “Arbeitsgruppe EDI@Energy”. This work group publishes the
+group named "Arbeitsgruppe EDI@Energy". This work group publishes the
 MIGs and AHBs on `edi-energy.de <https://edi-energy.de/>`__. The
 documents are published as PDFs which is better than faxing them but far
 from ideal.
