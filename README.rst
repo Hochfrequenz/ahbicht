@@ -38,7 +38,7 @@ organisations in charge of maintaining the documents described above
 **B**\ undesverband **d**\ er*\ **E**\ nergie-
 und*\ **W**\ *\ asserwirtschaft* (BDEW) and the
 **B**\ undes\ **netza**\ gentur (BNetzA). They form a working
-group named “Arbeitsgruppe EDI@Energy”. This work group publishes the
+group named "Arbeitsgruppe EDI@Energy". This work group publishes the
 MIGs and AHBs on `edi-energy.de <https://edi-energy.de/>`__. The
 documents are published as PDFs which is better than faxing them but far
 from ideal.
