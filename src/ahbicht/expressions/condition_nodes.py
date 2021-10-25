@@ -8,13 +8,15 @@ the EvaluatedComposition node which results from a combination of two nodes (of 
 The used terms are defined in the README_conditions.md.
 """
 from abc import ABC
-from typing import Optional
+from typing import Optional, TypeVar
 
-import aenum
+import aenum  # type:ignore[import]
 import attr
 
 # pylint: disable=too-few-public-methods
 from marshmallow import Schema, fields, post_load
+
+aenum.Enum("ConditionFulfilledValue", {})
 
 
 class ConditionFulfilledValue(aenum.Enum):
@@ -49,6 +51,10 @@ class ConditionNode(ABC):
     )
 
 
+# TConditionNode is a type var that matches any class inheriting from ConditionNode (in contrast to Type[ConditionNode])
+TConditionNode = TypeVar("TConditionNode", bound=ConditionNode)
+
+
 @attr.s(auto_attribs=True, kw_only=True)
 class ConditionKeyNodeMixin(ABC):
     """
@@ -72,7 +78,7 @@ class Hint(ConditionNode, ConditionKeyNodeMixin):
     e.g. "Hinweis: 'Es ist der alte MSB zu verwenden'"
     """
 
-    conditions_fulfilled: ConditionFulfilledValue = ConditionFulfilledValue.NEUTRAL
+    conditions_fulfilled: ConditionFulfilledValue = ConditionFulfilledValue("Neutral")
     hint: str = attr.ib(validator=attr.validators.instance_of(str))  # an informatory text
 
 
@@ -92,7 +98,7 @@ class UnevaluatedFormatConstraint(FormatConstraint):
     Mussfeldprüfung where the constraints are collected but not evaluated yet.
     """
 
-    conditions_fulfilled: ConditionFulfilledValue = ConditionFulfilledValue.NEUTRAL
+    conditions_fulfilled: ConditionFulfilledValue = ConditionFulfilledValue("Neutral")
 
 
 @attr.s(auto_attribs=True)
@@ -150,6 +156,6 @@ class EvaluatedComposition(ConditionNode):
     Node which is returned after a composition of two nodes is evaluated.
     """
 
-    hint: str = attr.ib(default=None)  # text from hints/notes
+    hint: Optional[str] = attr.ib(default=None)  # text from hints/notes
     format_constraints_expression: Optional[str] = attr.ib(default=None)  # an expression that consists of (initially
     # unevaluated) format constraints that the evaluated field needs to obey

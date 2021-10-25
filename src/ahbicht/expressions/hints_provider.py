@@ -6,7 +6,7 @@ import asyncio
 import json
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Mapping, Optional
 
 from ahbicht.edifact import EdifactFormat, EdifactFormatVersion
 
@@ -21,11 +21,11 @@ class HintsProvider(ABC):
     as dictionary with the condition keys as keys and the hint texts as values.
     """
 
-    edifact_format: EdifactFormat = NotImplementedError(
+    edifact_format: EdifactFormat = NotImplementedError(  # type:ignore[assignment]
         "The inheriting class needs to define a format to which it is applicable."
     )
 
-    edifact_format_version: EdifactFormatVersion = NotImplementedError(
+    edifact_format_version: EdifactFormatVersion = NotImplementedError(  # type:ignore[assignment]
         "The inheriting class needs to define a format version."
     )
 
@@ -59,12 +59,12 @@ class DictBasedHintsProvider(HintsProvider):
     A Hints Provider that is based on hardcoded values from a dictionary
     """
 
-    def __init__(self, results: Dict[str, Optional[str]]):
+    def __init__(self, results: Mapping[str, Optional[str]]):
         """
         Initialize with a dictionary that contains all the Hinweis texts.
         :param results:
         """
-        self._all_hints: Dict[str, Optional[str]] = results
+        self._all_hints: Mapping[str, Optional[str]] = results
 
     async def get_hint_text(self, condition_key: str) -> Optional[str]:
         if not condition_key:

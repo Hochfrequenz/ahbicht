@@ -13,3 +13,4 @@ profile = "black"
 
 [tool.pylint."MESSAGES CONTROL"]
 max-line-length = 120
+disable = "fixme"

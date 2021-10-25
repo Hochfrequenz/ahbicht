@@ -2,9 +2,9 @@
 This module manages EDIFACT related stuff. It's basically a helper module to avoid stringly typed parameters.
 """
 import re
-from typing import Dict, Optional
+from typing import Optional
 
-import aenum
+import aenum  # type: ignore[import]
 
 pruefidentifikator_pattern = re.compile(r"^[1-9]\d{4}$")
 
@@ -34,23 +34,6 @@ class EdifactFormat(aenum.Enum):
         return self.string
 
 
-_leading_digits_format_map: Dict[str, EdifactFormat] = {
-    "99": EdifactFormat.APERAK,
-    "21": EdifactFormat.IFTSTA,
-    "23": EdifactFormat.INSRPT,
-    "31": EdifactFormat.INVOIC,
-    "13": EdifactFormat.MSCONS,
-    "17": EdifactFormat.ORDERS,
-    "19": EdifactFormat.ORDRSP,
-    "27": EdifactFormat.PRICAT,
-    "15": EdifactFormat.QUOTES,
-    "33": EdifactFormat.REMADV,
-    "35": EdifactFormat.REQOTE,
-    "11": EdifactFormat.UTILMD,
-    "25": EdifactFormat.UTILTS,
-}
-
-
 class EdifactFormatVersion(aenum.Enum):
     """
     One format version refers to the period in which an AHB is valid.
@@ -76,6 +59,7 @@ def pruefidentifikator_to_format(pruefidentifikator: str) -> Optional[EdifactFor
     if not pruefidentifikator_pattern.match(pruefidentifikator):
         raise ValueError(f"The pruefidentifikator '{pruefidentifikator}' is invalid.")
     try:
-        return _leading_digits_format_map[pruefidentifikator[:2]]
-    except KeyError:
+        result: EdifactFormat = EdifactFormat(int(pruefidentifikator[:2]))
+        return result
+    except ValueError:
         return None
