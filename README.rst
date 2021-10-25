@@ -106,43 +106,42 @@ are supposed to be read.
 Functionality
 ~~~~~~~~~~~~~
 
--  Expressions can contain single numbers e.g. ``[47]`` or numbers
++  Expressions can contain single numbers e.g. ``[47]`` or numbers
    combined with ``U``/``O``/``X`` or ``∧``/``∨``/``⊻`` respectivly which are translated to boolean
    operators ``and``/``or``/``exclusive or``, e.g. ``[45]U[2]`` or they
    can be combined **without** an operator, e.g. ``[930][5]`` in the
    case of FormatConstraints.
--  Expressions can contain random whitespaces.
--  Input conditions are passed in form of a ``ConditionNode``, see
++  Expressions can contain random whitespaces.
++  Input conditions are passed in form of a ``ConditionNode``, see
    below.
--  Bedingungen/``RequirementConstraints`` with a boolean value,
++  Bedingungen/``RequirementConstraints`` with a boolean value,
    Hinweise/``Hints`` and Formatdefinitionen/``FormatConstraints`` are
    so far functionally implemented as the result returns if the
    condition expression is fulfilled and which Hints and
    FormatConstraints are relevant.
--  The boolean logic follows 'brackets ``( )`` before ``then_also``
++  The boolean logic follows 'brackets ``( )`` before ``then_also``
    before ``and`` before ``or``'.
--  Hints and UnevaluatedFormatConstraints are implemented as ``neutral``
++  Hints and UnevaluatedFormatConstraints are implemented as ``neutral``
    element, so not changing the boolean outcome of an expression for the
    evaluation regarding the requirement constraints and raising errors
    when there is no sensible logical outcome of the expression.
--  A ``condition_fulfilled`` attribute can also take the value
++  A ``condition_fulfilled`` attribute can also take the value
    ``unknown``.
--  Brackets e.g. ``([43]O[4])U[5]``
--  Requirement indicators (i.e ``Muss``, ``Soll``, ``Kann``, ``X``,
++  Brackets e.g. ``([43]O[4])U[5]``
++  Requirement indicators (i.e ``Muss``, ``Soll``, ``Kann``, ``X``,
    ``O``, ``U``) are seperated from the condition expressions and also
    seperated into single requirement indicator expressions if there are
    more than one (for modal marks).
--  ``Format Constraint Expressions`` that are returned after the
++  ``Format Constraint Expressions`` that are returned after the
    requirement condition evaluation can now be parsed and evaluated.
--  Evaluate several modal marks in one ahb_expression: the first one
++  Evaluate several modal marks in one ahb_expression: the first one
    that evaluates to fulfilled is the valid one.
 
 In planning
 ^^^^^^^^^^^
 
--  Evaluate requirement indicators:
-
-   -  Soll, Kann, Muss, X, O, U -> is_required, is_forbidden, etc…
++  Evaluate requirement indicators:
++ Soll, Kann, Muss, X, O, U -> is_required, is_forbidden, etc…
 
 Definition of terms
 ~~~~~~~~~~~~~~~~~~~
