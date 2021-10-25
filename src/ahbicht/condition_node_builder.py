@@ -92,7 +92,7 @@ class ConditionNodeBuilder:
 
     def requirement_content_evaluation_for_all_condition_keys(
         self,
-    ) -> Dict[str, Union[RequirementConstraint, UnevaluatedFormatConstraint, Hint]]:
+    ) -> Dict[str, TRCTransformerArgument]:
         """Gets input nodes for all condition keys."""
         requirement_constraint_nodes = self._build_requirement_constraint_nodes()
         hint_nodes = self._build_hint_nodes()
