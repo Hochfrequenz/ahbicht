@@ -32,7 +32,7 @@ def parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_express
     PREFIX_OPERATOR: "X" | "O" | "U"
     MODAL_MARK: "Muss" | "Kann" | "Soll"
     // Matches if it looks like a condition expression, but does not yet check if it is a syntactically valid one:
-    CONDITION_EXPRESSION: /[\[\]\(\)U∧O∨X⊻\d\s]+/
+    CONDITION_EXPRESSION: /[\[\]\(\)U∧O∨X⊻\d\sP]+/
     """
 
     parser = Lark(grammar, start="ahb_expression")

@@ -31,7 +31,9 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree:
                 | expression expression -> then_also_composition
                 | brackets
                 | condition_key
+                | package
     ?brackets: "(" expression ")"
+    package: "[" INT "P]"
     condition_key: "[" INT "]"
 
     %import common.INT
@@ -46,6 +48,7 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree:
         raise SyntaxError(
             """Please make sure that:
              * all conditions have the form [INT]
+             * all packages have the form [INTP]
              * no conditions are empty
              * all compositions are combined by operators 'U'/'O'/'X' or without an operator
              * all open brackets are closed again and vice versa
