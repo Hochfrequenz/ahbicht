@@ -76,7 +76,7 @@ Code Quality / Production Readiness
 
 -  The code has at least a 95% unit test coverage. ✔️
 -  The code is rated 10/10 in pylint and type checked with mypy. ✔️
--  The code is MIT licensed. ✔️
+-  The code is `MIT licensed <LICENSE>`__. ✔️
 -  There are only `few dependencies <requirements.in>`__. ✔️
 
 Expression Evaluation / Parsing the Condition String
