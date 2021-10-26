@@ -132,6 +132,7 @@ class TestAHBExpressionEvaluation:
                 SyntaxError,
                 """Please make sure that:
              * all conditions have the form [INT]
+             * all packages have the form [INTP]
              * no conditions are empty
              * all compositions are combined by operators 'U'/'O'/'X' or without an operator
              * all open brackets are closed again and vice versa
