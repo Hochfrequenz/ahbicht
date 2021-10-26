@@ -12,7 +12,7 @@ from lark.exceptions import UnexpectedCharacters, UnexpectedEOF
 def parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_expression: str) -> Tree:
     """
     Parse a given expression as it appears in the AHB with the help of the here defined grammar to a lark tree.
-    The goal is to separate the requirement indicator (i.e. Muss, Soll, Kann, X, O, U) from the condition expression
+    The goal is to separate the requirement indicator (i.e. Muss/M Soll/S Kann/K, X, O, U) from the condition expression
     and also several expression with modal marks if there are more than one.
     Whitespaces are ignored.
 
