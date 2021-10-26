@@ -10,7 +10,7 @@ AHB Condition Expression Parser (AHBicht)
    :alt: ahbicht logo
    :width: 150px
 
-A python package that parses condition expressions from EDI@Energy
+A python package that parses condition expressions from EDI\@Energy
 Anwendungshandbücher (AHB). Since it's based on lark, we named the
 module AHBicht.
 
@@ -32,10 +32,10 @@ EDIFACT messages are written in
 According to the legislation for the German energy market, the
 organisations in charge of maintaining the documents described above
 (AHB and MIGs) are the
-**B**\ undesverband **d**\ er*\ **E**\ nergie-
-und*\ **W**\ *\ asserwirtschaft* (BDEW) and the
+**B**\ undesverband **d**\ er **E**\ nergie-
+und **W**\ asserwirtschaft (BDEW) and the
 **B**\ undes\ **netza**\ gentur (BNetzA). They form a working
-group named "Arbeitsgruppe EDI@Energy". This work group publishes the
+group named "Arbeitsgruppe EDI\@Energy". This work group publishes the
 MIGs and AHBs on `edi-energy.de <https://edi-energy.de/>`__. The
 documents are published as PDFs which is better than faxing them but far
 from ideal.
