@@ -30,7 +30,7 @@ def parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_express
     prefix_operator_expression: PREFIX_OPERATOR CONDITION_EXPRESSION -> single_requirement_indicator_expression
     requirement_indicator: PREFIX_OPERATOR | MODAL_MARK
     PREFIX_OPERATOR: "X" | "O" | "U"
-    MODAL_MARK: "Muss" | "M" | "Kann" | "K" | "Soll" | "S"
+    MODAL_MARK: /M(uss)?|S(oll)?|K(ann)?/i
     // Matches if it looks like a condition expression, but does not yet check if it is a syntactically valid one:
     CONDITION_EXPRESSION: /[\[\]\(\)U∧O∨X⊻\d\s]+/
     """
