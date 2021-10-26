@@ -6,15 +6,13 @@ of the condition expression tree are handled.
 The used terms are defined in the README_conditions.md.
 """
 
-from typing import Dict, List
+from typing import List, Literal, Mapping, Type
 
-import inject
 from lark import Token, Tree, v_args
 from lark.exceptions import VisitError
 
 from ahbicht.condition_check_results import RequirementConstraintEvaluationResult
-from ahbicht.condition_node_builder import ConditionNodeBuilder
-from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
+from ahbicht.condition_node_builder import ConditionNodeBuilder, TRCTransformerArgument
 from ahbicht.expressions.base_transformer import BaseTransformer
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.condition_nodes import (
@@ -31,21 +29,21 @@ from ahbicht.expressions.expression_builder import FormatConstraintExpressionBui
 
 # pylint: disable=no-self-use
 @v_args(inline=True)  # Children are provided as *args instead of a list argument
-class RequirementConstraintTransformer(BaseTransformer):
+# pylint:disable=inherit-non-class
+class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, EvaluatedComposition]):
     """
     Transformer that evaluates the trees built from the condition expressions regarding the requirement constraints.
     The input are the conditions as defined in the AHBs in the form of ConditionNodes.
     In the case of a Bedingung/RequirementConstraint already evaluated for the single condition.
     Hints are evaluated as neutral element in the boolean logic: and_composition: True, or_composition: False.
 
-    The possible input types are RequirementConstraint, Hint and FormatConstraint.
     After two nodes are evaluated in a composition, the resulting node has the node type EvalutatedComposition.
     The return value is a ConditionNode whose attribute `conditions_fulfilled` describes whether it is a required field,
     its hints are the gathered hints and its `format_constraint_expression` contains the gathered format constraints
     for the field in a newly build expression.
     """
 
-    def and_composition(self, left: ConditionNode, right: ConditionNode) -> EvaluatedComposition:
+    def and_composition(self, left: TRCTransformerArgument, right: TRCTransformerArgument) -> EvaluatedComposition:
         """Evaluates logical and_composition"""
 
         # if one of the nodes is neutral the condition_fulfilled.value of the other one is the resulting one
@@ -54,10 +52,10 @@ class RequirementConstraintTransformer(BaseTransformer):
         elif right.conditions_fulfilled == ConditionFulfilledValue.NEUTRAL:
             evaluated_composition = EvaluatedComposition(conditions_fulfilled=left.conditions_fulfilled)
 
-        # in Python 'False and None' results in False the way we expect it,
-        # but 'None and False' results in None, so we have to set it to False manually
+        # in Python 'False and None' results in 'False' in the way we expect it,
+        # but 'None and False' results in 'None', so we have to set it to False manually
         elif left.conditions_fulfilled.value is None and right.conditions_fulfilled.value is False:
-            evaluated_composition = EvaluatedComposition(conditions_fulfilled=ConditionFulfilledValue.UNFULFILLED)
+            evaluated_composition = EvaluatedComposition(conditions_fulfilled=ConditionFulfilledValue(False))
 
         elif isinstance(left.conditions_fulfilled.value, (bool, type(None))) and isinstance(
             right.conditions_fulfilled.value, (bool, type(None))
@@ -68,6 +66,7 @@ class RequirementConstraintTransformer(BaseTransformer):
             )
 
         # Hints are added if the branch is true or neutral
+        # todo: evaluated_composition might be referenced before assignment
         if evaluated_composition.conditions_fulfilled != ConditionFulfilledValue.UNFULFILLED:
             evaluated_composition.hint = (
                 HintExpressionBuilder(getattr(left, "hint", None)).land(getattr(right, "hint", None)).get_expression()
@@ -78,7 +77,9 @@ class RequirementConstraintTransformer(BaseTransformer):
 
         return evaluated_composition
 
-    def _or_xor_composition(self, left: ConditionNode, right: ConditionNode, composition: str):
+    def _or_xor_composition(
+        self, left: ConditionNode, right: ConditionNode, composition: Literal["or_composition", "xor_composition"]
+    ):
         """
         Determine the condition_fulfilled attribute for or_/xor_compostions.
         """
@@ -110,28 +111,35 @@ class RequirementConstraintTransformer(BaseTransformer):
             left.conditions_fulfilled == ConditionFulfilledValue.NEUTRAL
             and right.conditions_fulfilled == ConditionFulfilledValue.NEUTRAL
         ):
-            evaluated_composition = EvaluatedComposition(
-                conditions_fulfilled=ConditionFulfilledValue(ConditionFulfilledValue.NEUTRAL)
-            )
+            evaluated_composition = EvaluatedComposition(conditions_fulfilled=ConditionFulfilledValue("Neutral"))
 
         # in Python 'False or None' results in None the way we expect it,
         # but 'None or False' results in False, so we have to set it to None manually
         elif left.conditions_fulfilled.value is None and right.conditions_fulfilled.value is False:
-            evaluated_composition = EvaluatedComposition(conditions_fulfilled=ConditionFulfilledValue.UNKNOWN)
+            evaluated_composition = EvaluatedComposition(conditions_fulfilled=ConditionFulfilledValue(None))
 
         elif isinstance(left.conditions_fulfilled.value, (bool, type(None))) and isinstance(
             right.conditions_fulfilled.value, (bool, type(None))
         ):
             if composition == "or_composition":
-                resulting_conditions_fulfilled = left.conditions_fulfilled.value or right.conditions_fulfilled.value
+                # todo: think of overload __or(self, ConditionFulfilledValue)__
+                resulting_conditions_fulfilled = (
+                    left.conditions_fulfilled.value or right.conditions_fulfilled.value
+                )  # type:ignore[operator]
             elif composition == "xor_composition":
                 try:
-                    resulting_conditions_fulfilled = left.conditions_fulfilled.value ^ right.conditions_fulfilled.value
+                    # todo: think of overload __xor(self, ConditionFulfilledValue)__
+                    resulting_conditions_fulfilled = (
+                        left.conditions_fulfilled.value ^ right.conditions_fulfilled.value  # type:ignore[operator]
+                    )
                 except TypeError:  # when one of the nodes is unknown because ^ does not support None
-                    resulting_conditions_fulfilled = ConditionFulfilledValue.UNKNOWN
+                    resulting_conditions_fulfilled = ConditionFulfilledValue(None)
+            # todo: resulting_conditions_fulfilled might be referenced before assignment.
+            # maybe throw not implemented exception in else branch
             evaluated_composition = EvaluatedComposition(
                 conditions_fulfilled=ConditionFulfilledValue(resulting_conditions_fulfilled)
             )
+        # todo: evaluated_composiiton might be referenced before assignment
         return evaluated_composition
 
     def or_composition(self, left: ConditionNode, right: ConditionNode) -> EvaluatedComposition:
@@ -140,7 +148,10 @@ class RequirementConstraintTransformer(BaseTransformer):
         evaluated_composition = self._or_xor_composition(left, right, "or_composition")
 
         evaluated_composition.format_constraints_expression = (
-            FormatConstraintExpressionBuilder(left).lor(right).get_expression()
+            # todo: ask annika why the case of "invalid arguments" never happens here...
+            FormatConstraintExpressionBuilder(left)  # type:ignore[arg-type]
+            .lor(right)  # type:ignore[arg-type]
+            .get_expression()
         )
         evaluated_composition.hint = (
             HintExpressionBuilder(getattr(left, "hint", None)).lor(getattr(right, "hint", None)).get_expression()
@@ -154,7 +165,10 @@ class RequirementConstraintTransformer(BaseTransformer):
         evaluated_composition = self._or_xor_composition(left, right, "xor_composition")
 
         evaluated_composition.format_constraints_expression = (
-            FormatConstraintExpressionBuilder(left).xor(right).get_expression()
+            # todo: ask annika why the case of "invalid arguments" never happens here...
+            FormatConstraintExpressionBuilder(left)  # type:ignore[arg-type]
+            .xor(right)  # type:ignore[arg-type]
+            .get_expression()
         )
         evaluated_composition.hint = (
             HintExpressionBuilder(getattr(left, "hint", None)).xor(getattr(right, "hint", None)).get_expression()
@@ -165,7 +179,7 @@ class RequirementConstraintTransformer(BaseTransformer):
     def _then_also(
         self,
         format_constraint: UnevaluatedFormatConstraint,
-        other_condition: ConditionNode,
+        other_condition: Type[ConditionNode],
     ) -> EvaluatedComposition:
         """
         Evaluates a boolean condition with a format constraint. The functions name indicates its behaviour:
@@ -184,7 +198,7 @@ class RequirementConstraintTransformer(BaseTransformer):
             format_constraint_is_required = other_condition.conditions_fulfilled.value
         elif isinstance(other_condition, Hint):
             evaluated_composition = EvaluatedComposition(
-                conditions_fulfilled=ConditionFulfilledValue.NEUTRAL, hint=other_condition.hint
+                conditions_fulfilled=ConditionFulfilledValue("Neutral"), hint=other_condition.hint
             )
             format_constraint_is_required = True
         else:
@@ -196,9 +210,10 @@ class RequirementConstraintTransformer(BaseTransformer):
             evaluated_composition.format_constraints_expression = (
                 FormatConstraintExpressionBuilder(format_constraint).land(other_condition).get_expression()
             )
+
         return evaluated_composition
 
-    def then_also_composition(self, left: ConditionNode, right: ConditionNode) -> EvaluatedComposition:
+    def then_also_composition(self, left: Type[ConditionNode], right: Type[ConditionNode]) -> EvaluatedComposition:
         """
         A "then also" composition is typically used for format constraints.
         It connects an evaluable expression with a format constraint.
@@ -209,11 +224,15 @@ class RequirementConstraintTransformer(BaseTransformer):
         if isinstance(left, UnevaluatedFormatConstraint):
             return self._then_also(format_constraint=left, other_condition=right)
         return self._then_also(
-            format_constraint=right, other_condition=left
+            format_constraint=right,  # type:ignore[arg-type]
+            # #because typically format constraints are "attached" to the right side of an expression
+            other_condition=left,
         )  # this might raise the NotImplementedError
 
 
-def evaluate_requirement_constraint_tree(parsed_tree: Tree, input_values: Dict[str, ConditionNode]) -> ConditionNode:
+def evaluate_requirement_constraint_tree(
+    parsed_tree: Tree, input_values: Mapping[str, TRCTransformerArgument]
+) -> EvaluatedComposition:
     """
     Evaluates the tree built from the expressions with the help of the ConditionsTransformer.
 
@@ -244,23 +263,23 @@ def requirement_constraint_evaluation(condition_expression: str) -> RequirementC
     Evaluation of the condition expression in regard to the requirement conditions (rc).
     """
 
-    rc_evaluator = inject.instance(RcEvaluator)
-
     parsed_tree_rc: Tree = parse_condition_expression_to_tree(condition_expression)
 
     # get all condition keys from tree
-    all_condition_keys: List[str] = [t.value for t in parsed_tree_rc.scan_values(lambda v: isinstance(v, Token))]
-    condition_node_builder = ConditionNodeBuilder(all_condition_keys, rc_evaluator)
-    input_nodes: List[ConditionNode] = condition_node_builder.requirement_content_evaluation_for_all_condition_keys()
+    all_condition_keys: List[str] = [
+        t.value for t in parsed_tree_rc.scan_values(lambda v: isinstance(v, Token))  # type: ignore[attr-defined]
+    ]
+    condition_node_builder = ConditionNodeBuilder(all_condition_keys)
+    input_nodes = condition_node_builder.requirement_content_evaluation_for_all_condition_keys()
 
     resulting_condition_node: ConditionNode = evaluate_requirement_constraint_tree(parsed_tree_rc, input_nodes)
 
     requirement_constraints_fulfilled = resulting_condition_node.conditions_fulfilled.value
     requirement_is_conditional = True
-    if resulting_condition_node.conditions_fulfilled == ConditionFulfilledValue.NEUTRAL:
+    if resulting_condition_node.conditions_fulfilled == ConditionFulfilledValue("Neutral"):  # pylint:disable=no-member
         requirement_constraints_fulfilled = True
         requirement_is_conditional = False
-    if resulting_condition_node.conditions_fulfilled == ConditionFulfilledValue.UNKNOWN:
+    if resulting_condition_node.conditions_fulfilled == ConditionFulfilledValue(None):  # pylint:disable=no-member
         raise NotImplementedError("It is unknown if the conditions are fulfilled due to missing information.")
 
     format_constraints_expression = getattr(resulting_condition_node, "format_constraints_expression", None)

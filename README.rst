@@ -4,17 +4,14 @@ AHB Condition Expression Parser (AHBicht)
 |Unittests status badge| |Coverage status badge| |Linting status badge|
 |Black status badge|
 
-.. raw:: html
-
-   <a href="https://ahbicht.readthedocs.io">
-       <img src="./docs/_static/ahbicht-logo.png"
-            alt="ahbicht logo"
-            height="150px"
-            align="right">
-   </a>
+.. image:: ./docs/_static/ahbicht-logo.png
+   :target: https://ahbicht.readthedocs.io
+   :align: right
+   :alt: ahbicht logo
+   :width: 150px
 
 A python package that parses condition expressions from EDI@Energy
-Anwendungshandbücher (AHB). Since it’s based on lark, we named the
+Anwendungshandbücher (AHB). Since it's based on lark, we named the
 module AHBicht.
 
 What is this all about?
@@ -38,7 +35,7 @@ organisations in charge of maintaining the documents described above
 **B**\ undesverband **d**\ er*\ **E**\ nergie-
 und*\ **W**\ *\ asserwirtschaft* (BDEW) and the
 **B**\ undes\ **netza**\ gentur (BNetzA). They form a working
-group named “Arbeitsgruppe EDI@Energy”. This work group publishes the
+group named "Arbeitsgruppe EDI@Energy". This work group publishes the
 MIGs and AHBs on `edi-energy.de <https://edi-energy.de/>`__. The
 documents are published as PDFs which is better than faxing them but far
 from ideal.
@@ -57,6 +54,10 @@ this “expression evaluation”.
 Note that determining the individual status of ``[210]``, ``[182]``,
 ``[90]`` and ``[183]`` itself (the so called “content evaluation”, see
 below) is **not** within the scope of this parsing library.
+
+Note also, that this library also parses the new convention using logical operators that becomes effective 2022-04-01 ("MaKo2022").
+``Muss [210] ∧ ([182] ⊻ ([90] ∧ [183]))``.
+
 
 Usage and Examples
 ------------------
@@ -100,7 +101,7 @@ Functionality
 ~~~~~~~~~~~~~
 
 -  Expressions can contain single numbers e.g. ``[47]`` or numbers
-   combined with ``U``/``O``/``X`` which are translated to boolean
+   combined with ``U``/``O``/``X`` or ``∧``/``∨``/``⊻`` respectivly which are translated to boolean
    operators ``and``/``or``/``exclusive or``, e.g. ``[45]U[2]`` or they
    can be combined **without** an operator, e.g. ``[930][5]`` in the
    case of FormatConstraints.
@@ -377,11 +378,8 @@ an otherwise stable message.
 .. figure:: src/ahbicht/content_evaluation/EvaluatingConditions.png
    :alt: grafik
 
-   grafik
-
-.. raw:: html
-
-   <!-- The raw and updated data for this diagram can be found in the [draw_io_charts repository](https://github.com/Hochfrequenz/draw_io_charts/tree/main/wimbee/) and edited under [app.diagrams.net](https://app.diagrams.net/#HHochfrequenz%2Fdraw_io_charts%2Fmain%2Fwimbee%2FEvaluatingConditions.drawio) with your Hochfrequenz GitHub Account. -->
+..
+    The raw and updated data for this diagram can be found in the [draw_io_charts repository](https://github.com/Hochfrequenz/draw_io_charts/tree/main/wimbee/) and edited under [app.diagrams.net](https://app.diagrams.net/#HHochfrequenz%2Fdraw_io_charts%2Fmain%2Fwimbee%2FEvaluatingConditions.drawio) with your Hochfrequenz GitHub Account. -->
 
 Releasing
 ---------

@@ -20,8 +20,10 @@ class RequirementConstraintEvaluationResult:
     requirement_constraints_fulfilled: bool  # true if condition expression in regard to
     # requirement constraints evaluates to true
     requirement_is_conditional: bool  # true if it is dependent on requirement constraints
-    format_constraints_expression: str
-    hints: str  # Hint text that should be displayed in the frontend, e.g. "[501] Hinweis: 'ID der Messlokation'"
+    format_constraints_expression: Optional[str]
+    hints: Optional[
+        str
+    ]  # Hint text that should be displayed in the frontend, e.g. "[501] Hinweis: 'ID der Messlokation'"
 
 
 class RequirementConstraintEvaluationResultSchema(Schema):

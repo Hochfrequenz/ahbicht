@@ -32,7 +32,7 @@ def parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_express
     PREFIX_OPERATOR: "X" | "O" | "U"
     MODAL_MARK: "Muss" | "M" | "Kann" | "K" | "Soll" | "S"
     // Matches if it looks like a condition expression, but does not yet check if it is a syntactically valid one:
-    CONDITION_EXPRESSION: /[\[\]\(\)UOX\d\s]+/
+    CONDITION_EXPRESSION: /[\[\]\(\)U∧O∨X⊻\d\s]+/
     """
 
     parser = Lark(grammar, start="ahb_expression")
@@ -42,7 +42,7 @@ def parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_express
         raise SyntaxError(
             """Please make sure that the ahb_expression starts with a requirement indicator \
 (i.e Muss/M, Soll/S, Kann/K, X, O, U) and the condition expressions consist of only \
-the following characters: [ ] ( ) U O X and digits."""
+the following characters: [ ] ( ) U ∧ O ∨ X ⊻ and digits."""
         ) from eof
 
     return parsed_tree

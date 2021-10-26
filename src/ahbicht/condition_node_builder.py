@@ -11,8 +11,15 @@ from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.expressions.condition_nodes import Hint, RequirementConstraint, UnevaluatedFormatConstraint
 from ahbicht.expressions.hints_provider import HintsProvider
 
+# TRCTransformerArgument is a union of nodes that are already evaluated from a Requirement Constraint (RC) perspective.
+# The Format Constraints (FC) might still be unevaluated. That's why the return type used in the
+# RequirementConstraintTransformer is always an EvaluatedComposition.
+TRCTransformerArgument = Union[RequirementConstraint, UnevaluatedFormatConstraint, Hint]
+
 
 # pylint: disable=no-member, too-few-public-methods
+
+
 class ConditionNodeBuilder:
     """
     Builds ConditionNodes for the given condition_keys by separating them into their respective types
@@ -20,9 +27,9 @@ class ConditionNodeBuilder:
     It distinguishes between requirement constraint evaluation and format constraint evaluation.
     """
 
-    def __init__(self, condition_keys: List[str], rc_evaluator: RcEvaluator):
-        self.hints_provider = inject.instance(HintsProvider)
-        self.rc_evaluator = rc_evaluator
+    def __init__(self, condition_keys: List[str]):
+        self.hints_provider: HintsProvider = inject.instance(HintsProvider)  # type:ignore[assignment]
+        self.rc_evaluator: RcEvaluator = inject.instance(RcEvaluator)  # type:ignore[assignment]
         self.condition_keys = condition_keys
         (
             self.requirement_constraints_condition_keys,
@@ -85,10 +92,14 @@ class ConditionNodeBuilder:
 
     def requirement_content_evaluation_for_all_condition_keys(
         self,
-    ) -> Dict[str, Union[RequirementConstraint, UnevaluatedFormatConstraint, Hint]]:
+    ) -> Dict[str, TRCTransformerArgument]:
         """Gets input nodes for all condition keys."""
         requirement_constraint_nodes = self._build_requirement_constraint_nodes()
         hint_nodes = self._build_hint_nodes()
         unevaluated_format_constraint_nodes = self._build_unevaluated_format_constraint_nodes()
-        input_nodes = {**requirement_constraint_nodes, **hint_nodes, **unevaluated_format_constraint_nodes}
+        input_nodes: Dict[str, TRCTransformerArgument] = {
+            **requirement_constraint_nodes,
+            **hint_nodes,
+            **unevaluated_format_constraint_nodes,
+        }
         return input_nodes

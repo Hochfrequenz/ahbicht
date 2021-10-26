@@ -3,10 +3,11 @@ Tests that the parsed trees are JSON serializable
 """
 import json
 import uuid
+from typing import TypeVar
 
 import pytest
 from lark import Token, Tree
-from marshmallow import Schema
+from marshmallow import Schema, ValidationError
 
 from ahbicht.condition_check_results import (
     ConditionCheckResult,
@@ -23,12 +24,15 @@ from ahbicht.expressions.condition_nodes import (
 )
 from ahbicht.json_serialization.tree_schema import TreeSchema
 
+T = TypeVar("T")
 
-def _test_serialization_roundtrip(serializable_object, schema: Schema, expected_json_dict: dict):
+
+def _test_serialization_roundtrip(serializable_object: T, schema: Schema, expected_json_dict: dict) -> T:
     """
     Serializes the serializable_object using the provided schema,
     asserts, that the result is equal to the expected_json_dict
     then deserializes it again and asserts on equality with the original serializable_object
+    :returns the deserialized_object
     """
     json_string = schema.dumps(serializable_object)
     assert json_string is not None
@@ -37,6 +41,7 @@ def _test_serialization_roundtrip(serializable_object, schema: Schema, expected_
     deserialized_object = schema.loads(json_data=json_string)
     assert isinstance(deserialized_object, type(serializable_object))
     assert deserialized_object == serializable_object
+    return deserialized_object
 
 
 class TestJsonSerialization:
@@ -150,6 +155,21 @@ class TestJsonSerialization:
         )
 
     @pytest.mark.parametrize(
+        "invalid_content_evaluation_result_dict",
+        [
+            pytest.param({}, id="empty dict"),
+            pytest.param({"format_constraints": {}, "hints": {}}, id="missing requirement constraints"),
+            pytest.param({"requirement_constraints": {}, "hints": {}}, id="missing format_constraints"),
+        ],
+    )
+    def test_validation_errors_on_content_evaluation_result_deserialization(
+        self, invalid_content_evaluation_result_dict: dict
+    ):
+        schema = ContentEvaluationResultSchema()
+        with pytest.raises(ValidationError):
+            schema.load(invalid_content_evaluation_result_dict)
+
+    @pytest.mark.parametrize(
         "content_evaluation_result, expected_json_dict",
         [
             pytest.param(
@@ -184,7 +204,15 @@ class TestJsonSerialization:
     def test_content_evaluation_result_serialization(
         self, content_evaluation_result: ContentEvaluationResult, expected_json_dict: dict
     ):
-        _test_serialization_roundtrip(content_evaluation_result, ContentEvaluationResultSchema(), expected_json_dict)
+        for rc_evaluation_result in content_evaluation_result.requirement_constraints.values():
+            assert isinstance(rc_evaluation_result, ConditionFulfilledValue)
+        deserialized_object = _test_serialization_roundtrip(
+            content_evaluation_result, ContentEvaluationResultSchema(), expected_json_dict
+        )
+        for rc_evaluation_result in deserialized_object.requirement_constraints.values():
+            assert isinstance(rc_evaluation_result, ConditionFulfilledValue)
+        for rc_evaluation_result in content_evaluation_result.requirement_constraints.values():
+            assert isinstance(rc_evaluation_result, ConditionFulfilledValue)
 
     @pytest.mark.parametrize(
         "condition_check_result, expected_json_dict",

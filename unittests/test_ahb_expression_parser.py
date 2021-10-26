@@ -86,6 +86,21 @@ class TestAhbExpressionParser:
                 ),
             ),
             pytest.param(
+                "Kann([1]∨[5])∧[904]",
+                Tree(
+                    "ahb_expression",
+                    [
+                        Tree(
+                            "single_requirement_indicator_expression",
+                            [
+                                Token("MODAL_MARK", "Kann"),
+                                Token("CONDITION_EXPRESSION", "([1]∨[5])∧[904]"),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            pytest.param(
                 "X[1]O[5]",
                 Tree(
                     "ahb_expression",
@@ -140,6 +155,21 @@ class TestAhbExpressionParser:
                             [
                                 Token("MODAL_MARK", "Kann"),
                                 Token("CONDITION_EXPRESSION", "([1]U[5])U[905]"),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            pytest.param(
+                "Kann([1]∧[5])∧[905]",
+                Tree(
+                    "ahb_expression",
+                    [
+                        Tree(
+                            "single_requirement_indicator_expression",
+                            [
+                                Token("MODAL_MARK", "Kann"),
+                                Token("CONDITION_EXPRESSION", "([1]∧[5])∧[905]"),
                             ],
                         ),
                     ],
@@ -250,6 +280,6 @@ class TestAhbExpressionParser:
 
         assert """Please make sure that the ahb_expression starts with a requirement indicator \
 (i.e Muss/M, Soll/S, Kann/K, X, O, U) and the condition expressions consist of only \
-the following characters: [ ] ( ) U O X and digits.""" in str(
+the following characters: [ ] ( ) U ∧ O ∨ X ⊻ and digits.""" in str(
             excinfo.value
         )

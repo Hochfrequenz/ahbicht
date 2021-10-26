@@ -7,7 +7,7 @@ The used terms are defined in the README_conditions.md.
 """
 
 import asyncio
-from typing import Dict, List, Optional
+from typing import Dict, List, Mapping, Optional
 
 import inject
 from lark import Token, Tree, v_args
@@ -23,7 +23,8 @@ from ahbicht.expressions.expression_builder import FormatErrorMessageExpressionB
 
 # pylint: disable=no-self-use
 @v_args(inline=True)  # Children are provided as *args instead of a list argument
-class FormatConstraintTransformer(BaseTransformer):
+# pylint:disable=inherit-non-class
+class FormatConstraintTransformer(BaseTransformer[EvaluatedFormatConstraint, EvaluatedFormatConstraint]):
     """
     Transformer that evaluates the trees built from the format constraint expressions.
     The input are the evaluated format constraint conditions in the form of EvaluatedFormatConstraints.
@@ -69,7 +70,7 @@ class FormatConstraintTransformer(BaseTransformer):
 
 
 def evaluate_format_constraint_tree(
-    parsed_tree: Tree, input_values: Dict[str, EvaluatedFormatConstraint]
+    parsed_tree: Tree, input_values: Mapping[str, EvaluatedFormatConstraint]
 ) -> EvaluatedFormatConstraint:
     """
     Evaluates the tree built from the format constraint expressions with the help of the FormatConstraintTransformer.
@@ -89,17 +90,19 @@ def evaluate_format_constraint_tree(
 
 
 def format_constraint_evaluation(
-    format_constraints_expression: str, entered_input: str
+    format_constraints_expression: Optional[str], entered_input: str
 ) -> FormatConstraintEvaluationResult:
     """
     Evaluation of the format constraint expression.
     """
+    error_message: Optional[str] = None
+    format_constraints_fulfilled: bool
     if not format_constraints_expression:
         format_constraints_fulfilled = True
     else:
         parsed_tree_fc: Tree = parse_condition_expression_to_tree(format_constraints_expression)
         all_evaluatable_format_constraint_keys: List[str] = [
-            t.value for t in parsed_tree_fc.scan_values(lambda v: isinstance(v, Token))
+            t.value for t in parsed_tree_fc.scan_values(lambda v: isinstance(v, Token))  # type:ignore[attr-defined]
         ]
         input_values: Dict[str, EvaluatedFormatConstraint] = _build_evaluated_format_constraint_nodes(
             all_evaluatable_format_constraint_keys, entered_input
@@ -107,8 +110,8 @@ def format_constraint_evaluation(
         resulting_evaluated_format_constraint_node: EvaluatedFormatConstraint = evaluate_format_constraint_tree(
             parsed_tree_fc, input_values
         )
-        format_constraints_fulfilled: bool = resulting_evaluated_format_constraint_node.format_constraint_fulfilled
-        error_message: List[Optional[str]] = resulting_evaluated_format_constraint_node.error_message
+        format_constraints_fulfilled = resulting_evaluated_format_constraint_node.format_constraint_fulfilled
+        error_message = resulting_evaluated_format_constraint_node.error_message  # pylint:disable=no-member
 
     return FormatConstraintEvaluationResult(
         format_constraints_fulfilled=format_constraints_fulfilled, error_message=error_message
