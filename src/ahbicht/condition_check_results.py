@@ -82,7 +82,7 @@ class ConditionCheckResult:
     A class for the result of the overall condition check.
     """
 
-    requirement_indicator: str  # i.e. "Muss", "M", "Soll", "S" "Kann", "K", "X", "O", "U"
+    requirement_indicator: str  # i.e. "Muss", "M", "Soll", "S", "Kann", "K", "X", "O", "U"
     requirement_constraint_evaluation_result: RequirementConstraintEvaluationResult
     format_constraint_evaluation_result: FormatConstraintEvaluationResult
 
