@@ -42,6 +42,7 @@ class TestAHBExpressionEvaluation:
             pytest.param("U[1]U[2]", "U", False, True, None, None),
             pytest.param("X[1]U[2]U[3]O[4]", "X", False, True, None, None),
             pytest.param("Muss([1]O[2])U[3]Soll[2]Kann[2]O[4]", "Muss", True, True, None, None),
+            pytest.param("muss([1]o[2])u[3]soll[2]kann[2]O[4]", "muss", True, True, None, None),
             pytest.param("Muss[2]Soll[2]", "Soll", False, True, None, None),
             # Neutral value
             pytest.param("Muss[503]", "Muss", True, False, None, "[503]"),
@@ -68,28 +69,36 @@ class TestAHBExpressionEvaluation:
         """
 
         def side_effect_rc_evaluation(condition_expression):
-            if condition_expression in ["[1]", " [ 1]  ", "[3]", "([1]O[2])U[3]"]:
+            if condition_expression.lower() in ["[1]", " [ 1]  ", "[3]", "([1]o[2])u[3]"]:
                 return RequirementConstraintEvaluationResult(
                     requirement_constraints_fulfilled=True,
                     requirement_is_conditional=True,
                     format_constraints_expression=None,
                     hints=None,
                 )
-            if condition_expression in ["[2]", "[2]\t", "[4]", "[4\t]", "[1]U[2]", "[1]U[2]U[3]O[4]", "[2]O[4]"]:
+            if condition_expression.lower() in [
+                "[2]",
+                "[2]\t",
+                "[4]",
+                "[4\t]",
+                "[1]u[2]",
+                "[1]u[2]u[3]o[4]",
+                "[2]o[4]",
+            ]:
                 return RequirementConstraintEvaluationResult(
                     requirement_constraints_fulfilled=False,
                     requirement_is_conditional=True,
                     format_constraints_expression=None,
                     hints=None,
                 )
-            if condition_expression in ["[503]", "[503]U[504]"]:
+            if condition_expression.lower() in ["[503]", "[503]u[504]"]:
                 return RequirementConstraintEvaluationResult(
                     requirement_constraints_fulfilled=True,
                     requirement_is_conditional=False,
                     format_constraints_expression=None,
                     hints=condition_expression,
                 )
-            if condition_expression in ["[902]"]:
+            if condition_expression.lower() in ["[902]"]:
                 return RequirementConstraintEvaluationResult(
                     requirement_constraints_fulfilled=True,
                     requirement_is_conditional=False,
