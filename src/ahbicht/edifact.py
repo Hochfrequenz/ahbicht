@@ -17,16 +17,19 @@ class EdifactFormat(aenum.Enum):
 
     _init_ = "value string"
     APERAK = 99, "APERAK"
+    COMDIS = 29, "COMDIS"  # communication dispute
     IFTSTA = 21, "IFTSTA"  # Multimodaler Statusbericht
     INSRPT = 23, "INSRPT"  # Prüfbericht
     INVOIC = 31, "INVOIC"  # invoice
     MSCONS = 13, "MSCONS"  # meter readings
+    ORDCHG = 39, "ORDCHG"  # chaning an order
     ORDERS = 17, "ORDERS"  # orders
     ORDRSP = 19, "ORDRSP"  # orders response
     PRICAT = 21, "PRICAT"  # price catalogue
     QUOTES = 15, "QUOTES"  # quotes
     REMADV = 33, "REMADV"  # zahlungsavis
     REQOTE = 35, "REQOTE"  # request quote
+    PARTIN = 37, "PARTIN"  # market partner data
     UTILMD = 11, "UTILMD"  # utilities master data
     UTILTS = 25, "UTILTS"  # formula
 
