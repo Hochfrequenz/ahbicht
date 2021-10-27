@@ -71,6 +71,21 @@ class TestAhbExpressionParser:
                 ),
             ),
             pytest.param(
+                "soll[1]u[5]",
+                Tree(
+                    "ahb_expression",
+                    [
+                        Tree(
+                            "single_requirement_indicator_expression",
+                            [
+                                Token("MODAL_MARK", "soll"),
+                                Token("CONDITION_EXPRESSION", "[1]u[5]"),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            pytest.param(
                 "Kann([1]O[5])U[904]",
                 Tree(
                     "ahb_expression",
@@ -176,6 +191,21 @@ class TestAhbExpressionParser:
                 ),
             ),
             pytest.param(
+                "kann([1]∧[5])∧[905]",
+                Tree(
+                    "ahb_expression",
+                    [
+                        Tree(
+                            "single_requirement_indicator_expression",
+                            [
+                                Token("MODAL_MARK", "kann"),
+                                Token("CONDITION_EXPRESSION", "([1]∧[5])∧[905]"),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            pytest.param(
                 "Muss[3]U[4]Soll[5]    Kann[502]",
                 Tree(
                     "ahb_expression",
@@ -234,6 +264,35 @@ class TestAhbExpressionParser:
                 ),
             ),
             pytest.param(
+                "m[3]u[4]s[5]    k[502]",
+                Tree(
+                    "ahb_expression",
+                    [
+                        Tree(
+                            "single_requirement_indicator_expression",
+                            [
+                                Token("MODAL_MARK", "m"),
+                                Token("CONDITION_EXPRESSION", "[3]u[4]"),
+                            ],
+                        ),
+                        Tree(
+                            "single_requirement_indicator_expression",
+                            [
+                                Token("MODAL_MARK", "s"),
+                                Token("CONDITION_EXPRESSION", "[5]    "),
+                            ],
+                        ),
+                        Tree(
+                            "single_requirement_indicator_expression",
+                            [
+                                Token("MODAL_MARK", "k"),
+                                Token("CONDITION_EXPRESSION", "[502]"),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            pytest.param(
                 "U[1]O[5]",
                 Tree(
                     "ahb_expression",
@@ -242,6 +301,21 @@ class TestAhbExpressionParser:
                             "single_requirement_indicator_expression",
                             [
                                 Token("PREFIX_OPERATOR", "U"),
+                                Token("CONDITION_EXPRESSION", "[1]O[5]"),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            pytest.param(
+                "u[1]O[5]",  # lower case "u"
+                Tree(
+                    "ahb_expression",
+                    [
+                        Tree(
+                            "single_requirement_indicator_expression",
+                            [
+                                Token("PREFIX_OPERATOR", "u"),
                                 Token("CONDITION_EXPRESSION", "[1]O[5]"),
                             ],
                         ),
