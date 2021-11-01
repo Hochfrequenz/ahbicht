@@ -256,14 +256,16 @@ def requirement_constraint_evaluation(condition_expression: str) -> RequirementC
     condition_node_builder = ConditionNodeBuilder(all_condition_keys)
     input_nodes = condition_node_builder.requirement_content_evaluation_for_all_condition_keys()
 
-    resulting_condition_node: ConditionNode = evaluate_requirement_constraint_tree(parsed_tree_rc, input_nodes)
+    resulting_condition_node: EvaluatedComposition = evaluate_requirement_constraint_tree(parsed_tree_rc, input_nodes)
 
-    requirement_constraints_fulfilled: bool = resulting_condition_node.conditions_fulfilled._to_boolean() is True
+    requirement_constraints_fulfilled: bool = (
+        resulting_condition_node.conditions_fulfilled == ConditionFulfilledValue.FULFILLED
+    )
     requirement_is_conditional = True
-    if resulting_condition_node.conditions_fulfilled == ConditionFulfilledValue.NEUTRAL:
+    if resulting_condition_node.conditions_fulfilled == ConditionFulfilledValue.NEUTRAL:  # pylint:disable=no-member
         requirement_constraints_fulfilled = True
         requirement_is_conditional = False
-    if resulting_condition_node.conditions_fulfilled == ConditionFulfilledValue.UNKNOWN:
+    if resulting_condition_node.conditions_fulfilled == ConditionFulfilledValue.UNKNOWN:  # pylint:disable=no-member
         raise NotImplementedError("It is unknown if the conditions are fulfilled due to missing information.")
 
     format_constraints_expression = getattr(resulting_condition_node, "format_constraints_expression", None)

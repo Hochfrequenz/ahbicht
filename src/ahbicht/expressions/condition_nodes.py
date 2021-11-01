@@ -30,6 +30,9 @@ class ConditionFulfilledValue(str, Enum):
         "NEUTRAL"  # a hint or unevaluated format constraint which does not have a status of being fulfilled or not
     )
 
+    def __str__(self):
+        return self.value
+
     @staticmethod
     def from_boolean(boolean: Union[Optional[bool], Type[Enum]]):
         """
