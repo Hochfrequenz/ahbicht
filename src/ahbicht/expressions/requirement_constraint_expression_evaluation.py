@@ -52,7 +52,7 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
         elif right.conditions_fulfilled == ConditionFulfilledValue.NEUTRAL:
             evaluated_composition = EvaluatedComposition(conditions_fulfilled=left.conditions_fulfilled)
         else:
-            resulting_conditions_fulfilled = left.conditions_fulfilled.__and__(right.conditions_fulfilled)
+            resulting_conditions_fulfilled = left.conditions_fulfilled & right.conditions_fulfilled
             evaluated_composition = EvaluatedComposition(
                 conditions_fulfilled=ConditionFulfilledValue.from_boolean(resulting_conditions_fulfilled)
             )
@@ -115,9 +115,9 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
         else:
             resulting_conditions_fulfilled: ConditionFulfilledValue
             if composition == "or_composition":
-                resulting_conditions_fulfilled = left.conditions_fulfilled.__or__(right.conditions_fulfilled)
+                resulting_conditions_fulfilled = left.conditions_fulfilled | right.conditions_fulfilled
             elif composition == "xor_composition":
-                resulting_conditions_fulfilled = left.conditions_fulfilled.__xor__(right.conditions_fulfilled)
+                resulting_conditions_fulfilled = left.conditions_fulfilled ^ right.conditions_fulfilled
             # todo: resulting_conditions_fulfilled might be referenced before assignment.
             # maybe throw not implemented exception in else branch
             evaluated_composition = EvaluatedComposition(

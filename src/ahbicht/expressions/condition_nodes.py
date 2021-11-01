@@ -66,7 +66,7 @@ class ConditionFulfilledValue(str, Enum):
     def __or__(self, other):
         if not isinstance(other, ConditionFulfilledValue):
             raise ValueError("Must not use __or__ with other instances than ConditionFulfilledValue")
-        if other == ConditionFulfilledValue.NEUTRAL:
+        if other == ConditionFulfilledValue.NEUTRAL:  # todo: the next 8 lines are nearly identical with __and__
             return self
         if self == ConditionFulfilledValue.NEUTRAL:
             return other
@@ -79,7 +79,7 @@ class ConditionFulfilledValue(str, Enum):
     def __and__(self, other):
         if not isinstance(other, ConditionFulfilledValue):
             raise ValueError("Must not use __and__ with other instances than ConditionFulfilledValue")
-        if other == ConditionFulfilledValue.NEUTRAL:
+        if other == ConditionFulfilledValue.NEUTRAL:  # todo: the next 8 lines are nearly identical with __or__
             return self
         if self == ConditionFulfilledValue.NEUTRAL:
             return other
