@@ -179,7 +179,7 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
         """
         if other_condition.conditions_fulfilled != ConditionFulfilledValue.NEUTRAL:
             evaluated_composition = EvaluatedComposition(conditions_fulfilled=other_condition.conditions_fulfilled)
-            format_constraint_is_required = other_condition.conditions_fulfilled._to_boolean() is True
+            format_constraint_is_required = other_condition.conditions_fulfilled == ConditionFulfilledValue.FULFILLED
         elif isinstance(other_condition, Hint):
             evaluated_composition = EvaluatedComposition(
                 conditions_fulfilled=ConditionFulfilledValue.NEUTRAL, hint=other_condition.hint
