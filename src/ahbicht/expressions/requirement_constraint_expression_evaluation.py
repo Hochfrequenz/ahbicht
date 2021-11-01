@@ -47,18 +47,13 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
         """Evaluates logical and_composition"""
 
         # if one of the nodes is neutral the condition_fulfilled.value of the other one is the resulting one
-        if left.conditions_fulfilled == ConditionFulfilledValue.NEUTRAL:
-            evaluated_composition = EvaluatedComposition(conditions_fulfilled=right.conditions_fulfilled)
-        elif right.conditions_fulfilled == ConditionFulfilledValue.NEUTRAL:
-            evaluated_composition = EvaluatedComposition(conditions_fulfilled=left.conditions_fulfilled)
-        else:
-            resulting_conditions_fulfilled = left.conditions_fulfilled & right.conditions_fulfilled
-            evaluated_composition = EvaluatedComposition(
-                conditions_fulfilled=ConditionFulfilledValue.from_boolean(resulting_conditions_fulfilled)
+        evaluated_composition = EvaluatedComposition(
+            conditions_fulfilled=ConditionFulfilledValue.from_boolean(
+                left.conditions_fulfilled & right.conditions_fulfilled
             )
+        )
 
         # Hints are added if the branch is true or neutral
-        # todo: evaluated_composition might be referenced before assignment
         if evaluated_composition.conditions_fulfilled != ConditionFulfilledValue.UNFULFILLED:
             evaluated_composition.hint = (
                 HintExpressionBuilder(getattr(left, "hint", None)).land(getattr(right, "hint", None)).get_expression()
