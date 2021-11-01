@@ -76,7 +76,9 @@ class TestRequirementConstraintEvaluation:
         parsed_tree = parse_condition_expression_to_tree(expression)
 
         result: ConditionNode = evaluate_requirement_constraint_tree(parsed_tree, input_values)
-        assert result.conditions_fulfilled.value == expected_resulting_conditions_fulfilled
+        assert result.conditions_fulfilled == ConditionFulfilledValue.from_boolean(
+            expected_resulting_conditions_fulfilled
+        )
 
     @pytest.mark.parametrize(
         "expression, input_values, expected_error",
@@ -153,7 +155,9 @@ class TestRequirementConstraintEvaluation:
         parsed_tree = parse_condition_expression_to_tree(expression)
         result: ConditionNode = evaluate_requirement_constraint_tree(parsed_tree, input_values)
 
-        assert result.conditions_fulfilled.value == expected_resulting_conditions_fulfilled
+        assert result.conditions_fulfilled == ConditionFulfilledValue.from_boolean(
+            expected_resulting_conditions_fulfilled
+        )
         assert getattr(result, "hint", None) == expected_resulting_hint
 
     @pytest.mark.parametrize(
@@ -179,7 +183,7 @@ class TestRequirementConstraintEvaluation:
     def test_format_constraints(
         self,
         expression: str,
-        expected_resulting_conditions_fulfilled: bool,
+        expected_resulting_conditions_fulfilled: Optional[bool],
         expected_format_constraint_expression: Optional[str],
         expected_hint_text: Optional[str],
     ):
@@ -195,7 +199,9 @@ class TestRequirementConstraintEvaluation:
         parsed_tree = parse_condition_expression_to_tree(expression)
         result: EvaluatedComposition = evaluate_requirement_constraint_tree(parsed_tree, input_values)
         assert isinstance(result, EvaluatedComposition)
-        assert result.conditions_fulfilled.value == expected_resulting_conditions_fulfilled
+        assert result.conditions_fulfilled == ConditionFulfilledValue.from_boolean(
+            expected_resulting_conditions_fulfilled
+        )
         assert result.hint == expected_hint_text
         assert result.format_constraints_expression == expected_format_constraint_expression
 
@@ -204,8 +210,8 @@ class TestRequirementConstraintEvaluation:
         [
             # and_composition
             pytest.param("[101]", ConditionFulfilledValue.UNKNOWN),
-            pytest.param("[1]U[101]", ConditionFulfilledValue.UNKNOWN),
-            pytest.param("[101]U[1]", ConditionFulfilledValue.UNKNOWN),
+            pytest.param("[1]U[101]", ConditionFulfilledValue.UNKNOWN, id="fulfilled and unknown => unknown"),
+            pytest.param("[101]U[1]", ConditionFulfilledValue.UNKNOWN, id="unknown and fulfilled => unknown"),
             pytest.param("[2]U[101]", ConditionFulfilledValue.UNFULFILLED),
             pytest.param("[101]U[2]", ConditionFulfilledValue.UNFULFILLED),
             pytest.param("[501]U[101]", ConditionFulfilledValue.UNKNOWN),
@@ -214,7 +220,7 @@ class TestRequirementConstraintEvaluation:
             # or_composition
             pytest.param("[1]O[101]", ConditionFulfilledValue.FULFILLED),
             pytest.param("[101]O[1]", ConditionFulfilledValue.FULFILLED),
-            pytest.param("[2]O[101]", ConditionFulfilledValue.UNKNOWN),
+            pytest.param("[2]O[101]", ConditionFulfilledValue.UNKNOWN, id="unfulfilled or unknown => unknown"),
             pytest.param("[101]O[2]", ConditionFulfilledValue.UNKNOWN),
             pytest.param("[101]O[102]", ConditionFulfilledValue.UNKNOWN),
             # xor_composition
@@ -225,7 +231,9 @@ class TestRequirementConstraintEvaluation:
             pytest.param("[101]X[102]", ConditionFulfilledValue.UNKNOWN),
         ],
     )
-    def test_unknown_requirement_constraints(self, expression: str, expected_resulting_conditions_fulfilled: bool):
+    def test_unknown_requirement_constraints(
+        self, expression: str, expected_resulting_conditions_fulfilled: ConditionFulfilledValue
+    ):
         """Test valid expressions with unnkown requirement constraints"""
 
         input_values = {

@@ -8,34 +8,94 @@ the EvaluatedComposition node which results from a combination of two nodes (of 
 The used terms are defined in the README_conditions.md.
 """
 from abc import ABC
-from typing import Optional, TypeVar
+from enum import Enum
+from typing import Optional, Type, TypeVar, Union
 
-import aenum  # type:ignore[import]
 import attr
 
 # pylint: disable=too-few-public-methods
 from marshmallow import Schema, fields, post_load
 
-aenum.Enum("ConditionFulfilledValue", {})
 
-
-class ConditionFulfilledValue(aenum.Enum):
+class ConditionFulfilledValue(str, Enum):
     """
     Possible values to describe the state of a condition
     in the condition_fulfilled attribute of the ConditionNodes.
     """
 
-    _init_ = "value string"
-    FULFILLED = True, "FULFILLED"  # if condition is fulfilled
-    UNFULFILLED = False, "UNFULFILLED"  # if condition is not fulfilled
-    UNKNOWN = None, "UNKNOWN"  # if it cannot be checked if condition is fulfilled (e.g. "Wenn vorhanden")
+    UNKNOWN = "UNKNOWN"  # if it cannot be checked if condition is fulfilled (e.g. "Wenn vorhanden")
+    FULFILLED = "FULFILLED"  # if condition is fulfilled
+    UNFULFILLED = "UNFULFILLED"  # if condition is not fulfilled
     NEUTRAL = (
-        "Neutral",
-        "NEUTRAL",
-    )  # a hint or unevaluated format constraint which do not have a status of being fulfilled or not
+        "NEUTRAL"  # a hint or unevaluated format constraint which does not have a status of being fulfilled or not
+    )
 
-    def __str__(self):
-        return self.string
+    @staticmethod
+    def from_boolean(boolean: Union[Optional[bool], Type[Enum]]):
+        """
+        Creates a new instance of ConditionFulfilledValue from boolean
+        :param boolean:
+        :return:
+        """
+        if isinstance(boolean, ConditionFulfilledValue):
+            return boolean
+        if boolean is None:
+            return ConditionFulfilledValue.UNKNOWN
+        if boolean is True:
+            return ConditionFulfilledValue.FULFILLED
+        if boolean is False:
+            return ConditionFulfilledValue.UNFULFILLED
+        return ConditionFulfilledValue.NEUTRAL
+
+    def _to_boolean(self) -> Optional[bool]:
+        """
+        converts the ConditionFulfilledValue to a boolean
+        :return:
+        """
+        if self.value == ConditionFulfilledValue.FULFILLED:
+            return True
+        if self.value == ConditionFulfilledValue.UNFULFILLED:
+            return False
+        if self.value == ConditionFulfilledValue.UNKNOWN:
+            return None
+        raise ValueError("Neutral must not be used as boolean.")
+
+    def __or__(self, other):
+        if not isinstance(other, ConditionFulfilledValue):
+            raise ValueError("Must not use __or__ with other instances than ConditionFulfilledValue")
+        if other == ConditionFulfilledValue.NEUTRAL:
+            return self
+        if self == ConditionFulfilledValue.NEUTRAL:
+            return other
+        if self == ConditionFulfilledValue.FULFILLED or other == ConditionFulfilledValue.FULFILLED:
+            return ConditionFulfilledValue.FULFILLED
+        if self == ConditionFulfilledValue.UNKNOWN or other == ConditionFulfilledValue.UNKNOWN:
+            return ConditionFulfilledValue.UNKNOWN
+        return self._to_boolean() is True or other._to_boolean() is True
+
+    def __and__(self, other):
+        if not isinstance(other, ConditionFulfilledValue):
+            raise ValueError("Must not use __and__ with other instances than ConditionFulfilledValue")
+        if other == ConditionFulfilledValue.NEUTRAL:
+            return self
+        if self == ConditionFulfilledValue.NEUTRAL:
+            return other
+        if self == ConditionFulfilledValue.UNFULFILLED or other == ConditionFulfilledValue.UNFULFILLED:
+            return ConditionFulfilledValue.UNFULFILLED
+        if self == ConditionFulfilledValue.UNKNOWN or other == ConditionFulfilledValue.UNKNOWN:
+            return ConditionFulfilledValue.UNKNOWN
+        return self == ConditionFulfilledValue.FULFILLED and other == ConditionFulfilledValue.FULFILLED
+
+    def __xor__(self, other):
+        if not isinstance(other, ConditionFulfilledValue):
+            raise ValueError("Must not use __xor__ with other instances than ConditionFulfilledValue")
+        if other == ConditionFulfilledValue.NEUTRAL:
+            return self
+        if self == ConditionFulfilledValue.NEUTRAL:
+            return other
+        if self == ConditionFulfilledValue.UNKNOWN or other == ConditionFulfilledValue.UNKNOWN:
+            return ConditionFulfilledValue.UNKNOWN
+        return self._to_boolean() ^ other._to_boolean()
 
 
 @attr.s(auto_attribs=True, kw_only=True)
@@ -78,7 +138,7 @@ class Hint(ConditionNode, ConditionKeyNodeMixin):
     e.g. "Hinweis: 'Es ist der alte MSB zu verwenden'"
     """
 
-    conditions_fulfilled: ConditionFulfilledValue = ConditionFulfilledValue("Neutral")
+    conditions_fulfilled: ConditionFulfilledValue = ConditionFulfilledValue.NEUTRAL
     hint: str = attr.ib(validator=attr.validators.instance_of(str))  # an informatory text
 
 
@@ -98,7 +158,7 @@ class UnevaluatedFormatConstraint(FormatConstraint):
     Mussfeldprüfung where the constraints are collected but not evaluated yet.
     """
 
-    conditions_fulfilled: ConditionFulfilledValue = ConditionFulfilledValue("Neutral")
+    conditions_fulfilled: ConditionFulfilledValue = ConditionFulfilledValue.NEUTRAL
 
 
 @attr.s(auto_attribs=True)
