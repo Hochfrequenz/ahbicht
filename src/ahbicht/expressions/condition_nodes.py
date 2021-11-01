@@ -9,7 +9,7 @@ The used terms are defined in the README_conditions.md.
 """
 from abc import ABC
 from enum import Enum
-from typing import Optional, Type, TypeVar, Union
+from typing import Optional, TypeVar, Union
 
 import attr
 
