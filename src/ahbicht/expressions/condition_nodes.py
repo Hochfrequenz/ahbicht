@@ -34,7 +34,7 @@ class ConditionFulfilledValue(str, Enum):
         return self.value
 
     @staticmethod
-    def from_boolean(boolean: Union[Optional[bool], Type[Enum]]):
+    def from_boolean(boolean: Union[Optional[bool], "ConditionFulfilledValue"]):
         """
         Creates a new instance of ConditionFulfilledValue from boolean
         :param boolean:
