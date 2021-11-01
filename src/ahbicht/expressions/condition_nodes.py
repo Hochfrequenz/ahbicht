@@ -70,9 +70,9 @@ class ConditionFulfilledValue(str, Enum):
             return self
         if self == ConditionFulfilledValue.NEUTRAL:
             return other
-        if self == ConditionFulfilledValue.FULFILLED or other == ConditionFulfilledValue.FULFILLED:
+        if ConditionFulfilledValue.FULFILLED in (self, other):
             return ConditionFulfilledValue.FULFILLED
-        if self == ConditionFulfilledValue.UNKNOWN or other == ConditionFulfilledValue.UNKNOWN:
+        if ConditionFulfilledValue.UNKNOWN in (self, other):
             return ConditionFulfilledValue.UNKNOWN
         return self._to_boolean() is True or other._to_boolean() is True
 
@@ -83,9 +83,9 @@ class ConditionFulfilledValue(str, Enum):
             return self
         if self == ConditionFulfilledValue.NEUTRAL:
             return other
-        if self == ConditionFulfilledValue.UNFULFILLED or other == ConditionFulfilledValue.UNFULFILLED:
+        if ConditionFulfilledValue.UNFULFILLED in (self, other):
             return ConditionFulfilledValue.UNFULFILLED
-        if self == ConditionFulfilledValue.UNKNOWN or other == ConditionFulfilledValue.UNKNOWN:
+        if ConditionFulfilledValue.UNKNOWN in (self, other):
             return ConditionFulfilledValue.UNKNOWN
         return self == ConditionFulfilledValue.FULFILLED and other == ConditionFulfilledValue.FULFILLED
 
@@ -96,7 +96,7 @@ class ConditionFulfilledValue(str, Enum):
             return self
         if self == ConditionFulfilledValue.NEUTRAL:
             return other
-        if self == ConditionFulfilledValue.UNKNOWN or other == ConditionFulfilledValue.UNKNOWN:
+        if ConditionFulfilledValue.UNKNOWN in (self, other):
             return ConditionFulfilledValue.UNKNOWN
         return self._to_boolean() ^ other._to_boolean()
 
