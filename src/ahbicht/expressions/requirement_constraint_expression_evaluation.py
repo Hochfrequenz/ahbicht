@@ -92,33 +92,13 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
                 "Combining a neutral element with a boolean value in an"
                 f"{composition} is not implemented as it has no useful result."
             )
-
-        # if both nodes are neutral, the resulting one is neutral
-        if (
-            left.conditions_fulfilled == ConditionFulfilledValue.NEUTRAL
-            and right.conditions_fulfilled == ConditionFulfilledValue.NEUTRAL
-        ):
-            evaluated_composition = EvaluatedComposition(conditions_fulfilled=ConditionFulfilledValue.NEUTRAL)
-
-        # in Python 'False or None' results in None the way we expect it,
-        # but 'None or False' results in False, so we have to set it to None manually
-        elif (
-            left.conditions_fulfilled == ConditionFulfilledValue.UNKNOWN
-            and right.conditions_fulfilled == ConditionFulfilledValue.UNFULFILLED
-        ):
-            evaluated_composition = EvaluatedComposition(conditions_fulfilled=ConditionFulfilledValue.UNKNOWN)
-        else:
-            resulting_conditions_fulfilled: ConditionFulfilledValue
-            if composition == "or_composition":
-                resulting_conditions_fulfilled = left.conditions_fulfilled | right.conditions_fulfilled
-            elif composition == "xor_composition":
-                resulting_conditions_fulfilled = left.conditions_fulfilled ^ right.conditions_fulfilled
-            # todo: resulting_conditions_fulfilled might be referenced before assignment.
-            # maybe throw not implemented exception in else branch
-            evaluated_composition = EvaluatedComposition(
-                conditions_fulfilled=ConditionFulfilledValue.from_boolean(resulting_conditions_fulfilled)
-            )
-        # todo: evaluated_composiiton might be referenced before assignment
+        if composition == "or_composition":
+            resulting_conditions_fulfilled = left.conditions_fulfilled | right.conditions_fulfilled
+        elif composition == "xor_composition":
+            resulting_conditions_fulfilled = left.conditions_fulfilled ^ right.conditions_fulfilled
+        evaluated_composition = EvaluatedComposition(
+            conditions_fulfilled=ConditionFulfilledValue.from_boolean(resulting_conditions_fulfilled)
+        )
         return evaluated_composition
 
     def or_composition(self, left: ConditionNode, right: ConditionNode) -> EvaluatedComposition:
