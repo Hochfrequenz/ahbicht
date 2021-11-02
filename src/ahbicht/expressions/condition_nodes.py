@@ -9,7 +9,7 @@ The used terms are defined in the README_conditions.md.
 """
 from abc import ABC
 from enum import Enum
-from typing import Optional, TypeVar, Union
+from typing import Optional, TypeVar
 
 import attr
 
@@ -33,39 +33,7 @@ class ConditionFulfilledValue(str, Enum):
     def __str__(self):
         return self.value
 
-    @staticmethod
-    def from_boolean(boolean: Union[Optional[bool], "ConditionFulfilledValue"]):
-        """
-        Creates a new instance of ConditionFulfilledValue from boolean
-        :param boolean:
-        :return:
-        """
-        if isinstance(boolean, ConditionFulfilledValue):
-            return boolean
-        if boolean is None:
-            return ConditionFulfilledValue.UNKNOWN
-        if boolean is True:
-            return ConditionFulfilledValue.FULFILLED
-        if boolean is False:
-            return ConditionFulfilledValue.UNFULFILLED
-        return ConditionFulfilledValue.NEUTRAL
-
-    def _to_boolean(self) -> Optional[bool]:
-        """
-        converts the ConditionFulfilledValue to a boolean
-        :return:
-        """
-        if self.value == ConditionFulfilledValue.FULFILLED:
-            return True
-        if self.value == ConditionFulfilledValue.UNFULFILLED:
-            return False
-        if self.value == ConditionFulfilledValue.UNKNOWN:
-            return None
-        raise ValueError("Neutral must not be used as boolean.")
-
     def __or__(self, other):
-        if not isinstance(other, ConditionFulfilledValue):
-            raise ValueError("Must not use __or__ with other instances than ConditionFulfilledValue")
         if other == ConditionFulfilledValue.NEUTRAL:  # todo: the next 8 lines are nearly identical with __and__
             return self
         if self == ConditionFulfilledValue.NEUTRAL:
@@ -74,11 +42,11 @@ class ConditionFulfilledValue(str, Enum):
             return ConditionFulfilledValue.FULFILLED
         if ConditionFulfilledValue.UNKNOWN in (self, other):
             return ConditionFulfilledValue.UNKNOWN
-        return self._to_boolean() is True or other._to_boolean() is True
+        if ConditionFulfilledValue.FULFILLED in (self, other):
+            return ConditionFulfilledValue.FULFILLED
+        return ConditionFulfilledValue.UNFULFILLED
 
     def __and__(self, other):
-        if not isinstance(other, ConditionFulfilledValue):
-            raise ValueError("Must not use __and__ with other instances than ConditionFulfilledValue")
         if other == ConditionFulfilledValue.NEUTRAL:  # todo: the next 8 lines are nearly identical with __or__
             return self
         if self == ConditionFulfilledValue.NEUTRAL:
@@ -87,18 +55,22 @@ class ConditionFulfilledValue(str, Enum):
             return ConditionFulfilledValue.UNFULFILLED
         if ConditionFulfilledValue.UNKNOWN in (self, other):
             return ConditionFulfilledValue.UNKNOWN
-        return self == ConditionFulfilledValue.FULFILLED and other == ConditionFulfilledValue.FULFILLED
+        if self == ConditionFulfilledValue.FULFILLED and other == ConditionFulfilledValue.FULFILLED:
+            return ConditionFulfilledValue.FULFILLED
+        return ConditionFulfilledValue.UNFULFILLED
 
     def __xor__(self, other):
-        if not isinstance(other, ConditionFulfilledValue):
-            raise ValueError("Must not use __xor__ with other instances than ConditionFulfilledValue")
         if other == ConditionFulfilledValue.NEUTRAL:
             return self
         if self == ConditionFulfilledValue.NEUTRAL:
             return other
         if ConditionFulfilledValue.UNKNOWN in (self, other):
             return ConditionFulfilledValue.UNKNOWN
-        return self._to_boolean() ^ other._to_boolean()
+        if self == ConditionFulfilledValue.FULFILLED and other == ConditionFulfilledValue.FULFILLED:
+            return ConditionFulfilledValue.UNFULFILLED
+        if ConditionFulfilledValue.FULFILLED in (self, other):
+            return ConditionFulfilledValue.FULFILLED
+        return ConditionFulfilledValue.UNFULFILLED
 
 
 @attr.s(auto_attribs=True, kw_only=True)

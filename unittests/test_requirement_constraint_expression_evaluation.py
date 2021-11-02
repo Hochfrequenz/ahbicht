@@ -15,6 +15,21 @@ from ahbicht.expressions.condition_nodes import (
 from ahbicht.expressions.requirement_constraint_expression_evaluation import evaluate_requirement_constraint_tree
 
 
+def from_boolean(boolean: Optional[bool]) -> ConditionFulfilledValue:
+    """
+    Creates a new instance of ConditionFulfilledValue from an boolean
+    :param boolean:
+    :return:
+    """
+    if boolean is None:
+        return ConditionFulfilledValue.UNKNOWN
+    if boolean is True:
+        return ConditionFulfilledValue.FULFILLED
+    if boolean is False:
+        return ConditionFulfilledValue.UNFULFILLED
+    return ConditionFulfilledValue.NEUTRAL
+
+
 class TestRequirementConstraintEvaluation:
     """Test for the evaluation of the conditions tests (Mussfeldprüfung)"""
 
@@ -76,9 +91,7 @@ class TestRequirementConstraintEvaluation:
         parsed_tree = parse_condition_expression_to_tree(expression)
 
         result: ConditionNode = evaluate_requirement_constraint_tree(parsed_tree, input_values)
-        assert result.conditions_fulfilled == ConditionFulfilledValue.from_boolean(
-            expected_resulting_conditions_fulfilled
-        )
+        assert result.conditions_fulfilled == from_boolean(expected_resulting_conditions_fulfilled)
 
     @pytest.mark.parametrize(
         "expression, input_values, expected_error",
@@ -155,9 +168,7 @@ class TestRequirementConstraintEvaluation:
         parsed_tree = parse_condition_expression_to_tree(expression)
         result: ConditionNode = evaluate_requirement_constraint_tree(parsed_tree, input_values)
 
-        assert result.conditions_fulfilled == ConditionFulfilledValue.from_boolean(
-            expected_resulting_conditions_fulfilled
-        )
+        assert result.conditions_fulfilled == from_boolean(expected_resulting_conditions_fulfilled)
         assert getattr(result, "hint", None) == expected_resulting_hint
 
     @pytest.mark.parametrize(
@@ -199,9 +210,7 @@ class TestRequirementConstraintEvaluation:
         parsed_tree = parse_condition_expression_to_tree(expression)
         result: EvaluatedComposition = evaluate_requirement_constraint_tree(parsed_tree, input_values)
         assert isinstance(result, EvaluatedComposition)
-        assert result.conditions_fulfilled == ConditionFulfilledValue.from_boolean(
-            expected_resulting_conditions_fulfilled
-        )
+        assert result.conditions_fulfilled == from_boolean(expected_resulting_conditions_fulfilled)
         assert result.hint == expected_hint_text
         assert result.format_constraints_expression == expected_format_constraint_expression
 

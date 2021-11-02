@@ -48,9 +48,7 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
 
         # if one of the nodes is neutral the condition_fulfilled.value of the other one is the resulting one
         evaluated_composition = EvaluatedComposition(
-            conditions_fulfilled=ConditionFulfilledValue.from_boolean(
-                left.conditions_fulfilled & right.conditions_fulfilled
-            )
+            conditions_fulfilled=left.conditions_fulfilled & right.conditions_fulfilled
         )
 
         # Hints are added if the branch is true or neutral
@@ -96,9 +94,7 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
             resulting_conditions_fulfilled = left.conditions_fulfilled | right.conditions_fulfilled
         elif composition == "xor_composition":
             resulting_conditions_fulfilled = left.conditions_fulfilled ^ right.conditions_fulfilled
-        evaluated_composition = EvaluatedComposition(
-            conditions_fulfilled=ConditionFulfilledValue.from_boolean(resulting_conditions_fulfilled)
-        )
+        evaluated_composition = EvaluatedComposition(conditions_fulfilled=resulting_conditions_fulfilled)
         return evaluated_composition
 
     def or_composition(self, left: ConditionNode, right: ConditionNode) -> EvaluatedComposition:
