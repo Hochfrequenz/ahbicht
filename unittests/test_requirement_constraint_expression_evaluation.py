@@ -219,8 +219,8 @@ class TestRequirementConstraintEvaluation:
         [
             # and_composition
             pytest.param("[101]", ConditionFulfilledValue.UNKNOWN),
-            pytest.param("[1]U[101]", ConditionFulfilledValue.UNKNOWN, id="fulfilled and unknown => unknown"),
-            pytest.param("[101]U[1]", ConditionFulfilledValue.UNKNOWN, id="unknown and fulfilled => unknown"),
+            pytest.param("[1]U[101]", ConditionFulfilledValue.UNKNOWN),
+            pytest.param("[101]U[1]", ConditionFulfilledValue.UNKNOWN),
             pytest.param("[2]U[101]", ConditionFulfilledValue.UNFULFILLED),
             pytest.param("[101]U[2]", ConditionFulfilledValue.UNFULFILLED),
             pytest.param("[501]U[101]", ConditionFulfilledValue.UNKNOWN),
@@ -229,7 +229,7 @@ class TestRequirementConstraintEvaluation:
             # or_composition
             pytest.param("[1]O[101]", ConditionFulfilledValue.FULFILLED),
             pytest.param("[101]O[1]", ConditionFulfilledValue.FULFILLED),
-            pytest.param("[2]O[101]", ConditionFulfilledValue.UNKNOWN, id="unfulfilled or unknown => unknown"),
+            pytest.param("[2]O[101]", ConditionFulfilledValue.UNKNOWN),
             pytest.param("[101]O[2]", ConditionFulfilledValue.UNKNOWN),
             pytest.param("[101]O[102]", ConditionFulfilledValue.UNKNOWN),
             # xor_composition
