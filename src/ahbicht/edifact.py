@@ -32,7 +32,7 @@ class EdifactFormat(str, Enum):
     UTILTS = "UTILTS"  # formula
 
     def __str__(self):
-        return self.string
+        return self.value
 
 
 _edifact_mapping: Dict[str, EdifactFormat] = {
@@ -64,7 +64,7 @@ class EdifactFormatVersion(str, Enum):
     FV2204 = "FV2204"  # valid from 2022-04-01 onwards ("MaKo 2022")
 
     def __str__(self):
-        return self.string
+        return self.value
 
 
 def pruefidentifikator_to_format(pruefidentifikator: str) -> Optional[EdifactFormat]:
