@@ -15,21 +15,6 @@ from ahbicht.expressions.condition_nodes import (
 from ahbicht.expressions.requirement_constraint_expression_evaluation import evaluate_requirement_constraint_tree
 
 
-def from_boolean(boolean: Optional[bool]) -> ConditionFulfilledValue:
-    """
-    Creates a new instance of ConditionFulfilledValue from an boolean
-    :param boolean:
-    :return:
-    """
-    if boolean is None:
-        return ConditionFulfilledValue.UNKNOWN
-    if boolean is True:
-        return ConditionFulfilledValue.FULFILLED
-    if boolean is False:
-        return ConditionFulfilledValue.UNFULFILLED
-    return ConditionFulfilledValue.NEUTRAL
-
-
 class TestRequirementConstraintEvaluation:
     """Test for the evaluation of the conditions tests (Mussfeldprüfung)"""
 
@@ -50,37 +35,37 @@ class TestRequirementConstraintEvaluation:
     @pytest.mark.parametrize(
         "expression, expected_resulting_conditions_fulfilled",
         [
-            pytest.param("[1]", True),
-            pytest.param("[2]", False),
-            pytest.param("[1]U[3]", True),
-            pytest.param("[1]U[2]", False),
-            pytest.param("[2]U[1]", False),
-            pytest.param("[2]U[4]", False),
-            pytest.param("[1]O[3]", True),
-            pytest.param("[1]O[2]", True),
-            pytest.param("[2]O[1]", True),
-            pytest.param("[2]O[4]", False),
-            pytest.param("[1]X[3]", False),
-            pytest.param("[1]X[2]", True),
-            pytest.param("[2]X[1]", True),
-            pytest.param("[2]X[4]", False),
+            pytest.param("[1]", ConditionFulfilledValue.FULFILLED),
+            pytest.param("[2]", ConditionFulfilledValue.UNFULFILLED),
+            pytest.param("[1]U[3]", ConditionFulfilledValue.FULFILLED),
+            pytest.param("[1]U[2]", ConditionFulfilledValue.UNFULFILLED),
+            pytest.param("[2]U[1]", ConditionFulfilledValue.UNFULFILLED),
+            pytest.param("[2]U[4]", ConditionFulfilledValue.UNFULFILLED),
+            pytest.param("[1]O[3]", ConditionFulfilledValue.FULFILLED),
+            pytest.param("[1]O[2]", ConditionFulfilledValue.FULFILLED),
+            pytest.param("[2]O[1]", ConditionFulfilledValue.FULFILLED),
+            pytest.param("[2]O[4]", ConditionFulfilledValue.UNFULFILLED),
+            pytest.param("[1]X[3]", ConditionFulfilledValue.UNFULFILLED),
+            pytest.param("[1]X[2]", ConditionFulfilledValue.FULFILLED),
+            pytest.param("[2]X[1]", ConditionFulfilledValue.FULFILLED),
+            pytest.param("[2]X[4]", ConditionFulfilledValue.UNFULFILLED),
             # Tests 'and before or'
-            pytest.param("[2]U[4]O[1]", True),
-            pytest.param("[1]O[2]U[4]", True),
-            pytest.param("[2]U[1]O[3]", True),
-            pytest.param("[2]O[1]U[3]", True),
-            pytest.param("[2]O[1]U[4]", False),
-            pytest.param("[1]U[2]U[3]U[1]", False),
-            pytest.param("[1]U[3]U[2]U[1]", False),
+            pytest.param("[2]U[4]O[1]", ConditionFulfilledValue.FULFILLED),
+            pytest.param("[1]O[2]U[4]", ConditionFulfilledValue.FULFILLED),
+            pytest.param("[2]U[1]O[3]", ConditionFulfilledValue.FULFILLED),
+            pytest.param("[2]O[1]U[3]", ConditionFulfilledValue.FULFILLED),
+            pytest.param("[2]O[1]U[4]", ConditionFulfilledValue.UNFULFILLED),
+            pytest.param("[1]U[2]U[3]U[1]", ConditionFulfilledValue.UNFULFILLED),
+            pytest.param("[1]U[3]U[2]U[1]", ConditionFulfilledValue.UNFULFILLED),
             # a very long one
-            pytest.param("[1]U[2]O[1]U[1]U[2]O[2]O[1]", True),
+            pytest.param("[1]U[2]O[1]U[1]U[2]O[2]O[1]", ConditionFulfilledValue.FULFILLED),
             # with brackets
-            pytest.param("([2]U[4])O[1]", True),
-            pytest.param("[2]U([4]O[1])", False),
+            pytest.param("([2]U[4])O[1]", ConditionFulfilledValue.FULFILLED),
+            pytest.param("[2]U([4]O[1])", ConditionFulfilledValue.UNFULFILLED),
         ],
     )
     def test_evaluate_condition_expression_with_valid_conditions_fulfilled(
-        self, expression: str, expected_resulting_conditions_fulfilled: bool
+        self, expression: str, expected_resulting_conditions_fulfilled: ConditionFulfilledValue
     ):
         """
         Tests that valid strings are parsed as expected.
@@ -91,7 +76,7 @@ class TestRequirementConstraintEvaluation:
         parsed_tree = parse_condition_expression_to_tree(expression)
 
         result: ConditionNode = evaluate_requirement_constraint_tree(parsed_tree, input_values)
-        assert result.conditions_fulfilled == from_boolean(expected_resulting_conditions_fulfilled)
+        assert result.conditions_fulfilled == expected_resulting_conditions_fulfilled
 
     @pytest.mark.parametrize(
         "expression, input_values, expected_error",
@@ -130,30 +115,47 @@ class TestRequirementConstraintEvaluation:
     @pytest.mark.parametrize(
         "expression, expected_resulting_conditions_fulfilled, expected_resulting_hint",
         [
-            pytest.param("[1]", True, None),
+            pytest.param("[1]", ConditionFulfilledValue.FULFILLED, None),
             pytest.param(
-                "[1]U[501]", True, "[501] Hinweis: Foo"
+                "[1]U[501]", ConditionFulfilledValue.FULFILLED, "[501] Hinweis: Foo"
             ),  # e.g. [1] Segment ist genau einmal je Vorgang anzugeben,
             # dann mit [501] Hinweis: "Verwendung der ID der Messlokation"
-            pytest.param("[501]U[1]", True, "[501] Hinweis: Foo"),
-            pytest.param("[2]U[501]", False, None),
-            pytest.param("[501]U[502]", "Neutral", "[501] Hinweis: Foo und [502] Hinweis: Bar"),
-            pytest.param("[501]O[502]", "Neutral", "[501] Hinweis: Foo oder [502] Hinweis: Bar"),
-            pytest.param("[501]X[502]", "Neutral", "Entweder ([501] Hinweis: Foo) oder ([502] Hinweis: Bar)"),
-            pytest.param("[1]U[501]O[2]U[502]", True, "[501] Hinweis: Foo"),
-            pytest.param("[1]U[501]U[2]U[502]", False, None),
-            pytest.param("[1]U[501]U[3]U[502]", True, "[501] Hinweis: Foo und [502] Hinweis: Bar"),
+            pytest.param("[501]U[1]", ConditionFulfilledValue.FULFILLED, "[501] Hinweis: Foo"),
+            pytest.param("[2]U[501]", ConditionFulfilledValue.UNFULFILLED, None),
+            pytest.param("[501]U[502]", ConditionFulfilledValue.NEUTRAL, "[501] Hinweis: Foo und [502] Hinweis: Bar"),
+            pytest.param("[501]O[502]", ConditionFulfilledValue.NEUTRAL, "[501] Hinweis: Foo oder [502] Hinweis: Bar"),
+            pytest.param(
+                "[501]X[502]",
+                ConditionFulfilledValue.NEUTRAL,
+                "Entweder ([501] Hinweis: Foo) oder ([502] Hinweis: Bar)",
+            ),
+            pytest.param("[1]U[501]O[2]U[502]", ConditionFulfilledValue.FULFILLED, "[501] Hinweis: Foo"),
+            pytest.param("[1]U[501]U[2]U[502]", ConditionFulfilledValue.UNFULFILLED, None),
+            pytest.param(
+                "[1]U[501]U[3]U[502]", ConditionFulfilledValue.FULFILLED, "[501] Hinweis: Foo und [502] Hinweis: Bar"
+            ),
             # two neutral elements combined
-            pytest.param("[1]U([501]O[502])", True, "[501] Hinweis: Foo oder [502] Hinweis: Bar"),
-            pytest.param("[1]U([501]X[502])", True, "Entweder ([501] Hinweis: Foo) oder ([502] Hinweis: Bar)"),
-            pytest.param("[1]U([501]U[502])", True, "[501] Hinweis: Foo und [502] Hinweis: Bar"),
-            pytest.param("[2]U([501]O[502])", False, None),
-            pytest.param("[2]U([501]X[502])", False, None),
-            pytest.param("[2]U([501]U[502])", False, None),
+            pytest.param(
+                "[1]U([501]O[502])", ConditionFulfilledValue.FULFILLED, "[501] Hinweis: Foo oder [502] Hinweis: Bar"
+            ),
+            pytest.param(
+                "[1]U([501]X[502])",
+                ConditionFulfilledValue.FULFILLED,
+                "Entweder ([501] Hinweis: Foo) oder ([502] Hinweis: Bar)",
+            ),
+            pytest.param(
+                "[1]U([501]U[502])", ConditionFulfilledValue.FULFILLED, "[501] Hinweis: Foo und [502] Hinweis: Bar"
+            ),
+            pytest.param("[2]U([501]O[502])", ConditionFulfilledValue.UNFULFILLED, None),
+            pytest.param("[2]U([501]X[502])", ConditionFulfilledValue.UNFULFILLED, None),
+            pytest.param("[2]U([501]U[502])", ConditionFulfilledValue.UNFULFILLED, None),
         ],
     )
     def test_hints_with_valid_values(
-        self, expression: str, expected_resulting_conditions_fulfilled: bool, expected_resulting_hint: str
+        self,
+        expression: str,
+        expected_resulting_conditions_fulfilled: ConditionFulfilledValue,
+        expected_resulting_hint: str,
     ):
         """Test valid expressions with Hints/Hinweise."""
 
@@ -168,33 +170,55 @@ class TestRequirementConstraintEvaluation:
         parsed_tree = parse_condition_expression_to_tree(expression)
         result: ConditionNode = evaluate_requirement_constraint_tree(parsed_tree, input_values)
 
-        assert result.conditions_fulfilled == from_boolean(expected_resulting_conditions_fulfilled)
+        assert result.conditions_fulfilled == expected_resulting_conditions_fulfilled
         assert getattr(result, "hint", None) == expected_resulting_hint
 
     @pytest.mark.parametrize(
         """expression, expected_resulting_conditions_fulfilled,
         expected_format_constraint_expression, expected_hint_text""",
         [
-            pytest.param("[1][987]", True, "[987]", None),  # true boolean + format constraint
-            pytest.param("[987][1]", True, "[987]", None),  # format constraint + true boolean
+            pytest.param(
+                "[1][987]", ConditionFulfilledValue.FULFILLED, "[987]", None
+            ),  # true boolean + format constraint
+            pytest.param(
+                "[987][1]", ConditionFulfilledValue.FULFILLED, "[987]", None
+            ),  # format constraint + true boolean
             # true boolean and unfulfilled constraint
-            pytest.param("[2][987]", False, None, None),  # false boolean + format constraint
-            pytest.param("[987][2]", False, None, None),  # format constraint + false boolean
-            pytest.param("([1]O[2])[987]", True, "[987]", None),  # true boolean + format constraint
-            pytest.param("[987]([1]O[2])", True, "[987]", None),  # format constraint + true boolean
-            pytest.param("[501][987]", "Neutral", "[987]", "[501] Hinweis: Foo"),  # hint + format constraint
-            pytest.param("[987][501]", "Neutral", "[987]", "[501] Hinweis: Foo"),  # format constraint + hint
-            pytest.param("[987]U[988]", "Neutral", "[987] U [988]", None),  # format constraint U format constraint
-            pytest.param("[987]O[988]", "Neutral", "[987] O [988]", None),  # format constraint O format constraint
-            pytest.param("[987]X[988]", "Neutral", "[987] X [988]", None),  # format constraint X format constraint
+            pytest.param(
+                "[2][987]", ConditionFulfilledValue.UNFULFILLED, None, None
+            ),  # false boolean + format constraint
+            pytest.param(
+                "[987][2]", ConditionFulfilledValue.UNFULFILLED, None, None
+            ),  # format constraint + false boolean
+            pytest.param(
+                "([1]O[2])[987]", ConditionFulfilledValue.FULFILLED, "[987]", None
+            ),  # true boolean + format constraint
+            pytest.param(
+                "[987]([1]O[2])", ConditionFulfilledValue.FULFILLED, "[987]", None
+            ),  # format constraint + true boolean
+            pytest.param(
+                "[501][987]", ConditionFulfilledValue.NEUTRAL, "[987]", "[501] Hinweis: Foo"
+            ),  # hint + format constraint
+            pytest.param(
+                "[987][501]", ConditionFulfilledValue.NEUTRAL, "[987]", "[501] Hinweis: Foo"
+            ),  # format constraint + hint
+            pytest.param(
+                "[987]U[988]", ConditionFulfilledValue.NEUTRAL, "[987] U [988]", None
+            ),  # format constraint U format constraint
+            pytest.param(
+                "[987]O[988]", ConditionFulfilledValue.NEUTRAL, "[987] O [988]", None
+            ),  # format constraint O format constraint
+            pytest.param(
+                "[987]X[988]", ConditionFulfilledValue.NEUTRAL, "[987] X [988]", None
+            ),  # format constraint X format constraint
             # two neutral elements combined
-            pytest.param("[1]U([987]O[988])", True, "([987] O [988])", None),
+            pytest.param("[1]U([987]O[988])", ConditionFulfilledValue.FULFILLED, "([987] O [988])", None),
         ],
     )
     def test_format_constraints(
         self,
         expression: str,
-        expected_resulting_conditions_fulfilled: Optional[bool],
+        expected_resulting_conditions_fulfilled: ConditionFulfilledValue,
         expected_format_constraint_expression: Optional[str],
         expected_hint_text: Optional[str],
     ):
@@ -210,7 +234,7 @@ class TestRequirementConstraintEvaluation:
         parsed_tree = parse_condition_expression_to_tree(expression)
         result: EvaluatedComposition = evaluate_requirement_constraint_tree(parsed_tree, input_values)
         assert isinstance(result, EvaluatedComposition)
-        assert result.conditions_fulfilled == from_boolean(expected_resulting_conditions_fulfilled)
+        assert result.conditions_fulfilled == expected_resulting_conditions_fulfilled
         assert result.hint == expected_hint_text
         assert result.format_constraints_expression == expected_format_constraint_expression
 
