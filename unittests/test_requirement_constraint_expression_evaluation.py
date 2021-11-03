@@ -26,7 +26,7 @@ class TestRequirementConstraintEvaluation:
     _rc_101 = RequirementConstraint(condition_key="101", conditions_fulfilled=cfv.UNKNOWN)
     _rc_102 = RequirementConstraint(condition_key="102", conditions_fulfilled=cfv.UNKNOWN)
     _h_501 = Hint(condition_key="501", hint="[501] Hinweis: Foo")
-    _h_502 = Hint(condition_key="502", hint="[502] Hinw" "eis: Bar")
+    _h_502 = Hint(condition_key="502", hint="[502] Hinweis: Bar")
     _fc_950 = UnevaluatedFormatConstraint(condition_key="950")
     _fc_951 = UnevaluatedFormatConstraint(condition_key="951")
     _fc_987 = UnevaluatedFormatConstraint(condition_key="987")
