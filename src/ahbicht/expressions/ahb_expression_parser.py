@@ -29,12 +29,13 @@ def parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_express
     modal_mark_expression: (MODAL_MARK CONDITION_EXPRESSION) -> single_requirement_indicator_expression
     prefix_operator_expression: PREFIX_OPERATOR CONDITION_EXPRESSION -> single_requirement_indicator_expression
     requirement_indicator: PREFIX_OPERATOR | MODAL_MARK
-    PREFIX_OPERATOR: "X" | "O" | "U"
-    MODAL_MARK: /M(uss)?|S(oll)?|K(ann)?/
+    PREFIX_OPERATOR: "X"i | "O"i | "U"i
+    MODAL_MARK: /M(uss)?|S(oll)?|K(ann)?/i
     // Matches if it looks like a condition expression, but does not yet check if it is a syntactically valid one:
-    CONDITION_EXPRESSION: /[\[\]\(\)U∧O∨X⊻\d\sP]+/
+    CONDITION_EXPRESSION: /(?!\BU\B)[\[\]\(\)U∧O∨X⊻\d\sP]+/i
     """
-
+    # Regarding the negative lookahead in the condition expression regex see examples https://regex101.com/r/6fFHD4/1
+    # and CTRL+F for "Mus[2]" in the unittest that fails if you remove the lookahead.
     parser = Lark(grammar, start="ahb_expression")
     try:
         parsed_tree = parser.parse(ahb_expression)

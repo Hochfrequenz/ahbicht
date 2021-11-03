@@ -31,6 +31,22 @@ class TestConditionParser:
                 ),
             ),
             pytest.param(
+                # simple or_composition with lower case "o"
+                "[1]o[2]",
+                Tree(
+                    "or_composition",
+                    [Tree("condition_key", [Token("INT", "1")]), Tree("condition_key", [Token("INT", "2")])],
+                ),
+            ),
+            pytest.param(
+                # simple and_composition with lower case "u"
+                "[1]u[2]",
+                Tree(
+                    "and_composition",
+                    [Tree("condition_key", [Token("INT", "1")]), Tree("condition_key", [Token("INT", "2")])],
+                ),
+            ),
+            pytest.param(
                 # simple or_composition with whitespace
                 " [1] O[ 2]",
                 Tree(
@@ -77,6 +93,14 @@ class TestConditionParser:
             pytest.param(
                 # xor_composition
                 "[1]X[2]",
+                Tree(
+                    "xor_composition",
+                    [Tree("condition_key", [Token("INT", "1")]), Tree("condition_key", [Token("INT", "2")])],
+                ),
+            ),
+            pytest.param(
+                # xor_composition with lower case "x"
+                "[1]x[2]",
                 Tree(
                     "xor_composition",
                     [Tree("condition_key", [Token("INT", "1")]), Tree("condition_key", [Token("INT", "2")])],

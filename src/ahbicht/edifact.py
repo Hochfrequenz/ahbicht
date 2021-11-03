@@ -2,53 +2,69 @@
 This module manages EDIFACT related stuff. It's basically a helper module to avoid stringly typed parameters.
 """
 import re
-from typing import Optional
-
-import aenum  # type: ignore[import]
+from enum import Enum
+from typing import Dict, Optional
 
 pruefidentifikator_pattern = re.compile(r"^[1-9]\d{4}$")
 
 
 # pylint: disable=too-few-public-methods
-class EdifactFormat(aenum.Enum):
+class EdifactFormat(str, Enum):
     """
     existing EDIFACT formats
     """
 
-    _init_ = "value string"
-    APERAK = 99, "APERAK"
-    COMDIS = 29, "COMDIS"  # communication dispute
-    IFTSTA = 21, "IFTSTA"  # Multimodaler Statusbericht
-    INSRPT = 23, "INSRPT"  # Prüfbericht
-    INVOIC = 31, "INVOIC"  # invoice
-    MSCONS = 13, "MSCONS"  # meter readings
-    ORDCHG = 39, "ORDCHG"  # chaning an order
-    ORDERS = 17, "ORDERS"  # orders
-    ORDRSP = 19, "ORDRSP"  # orders response
-    PRICAT = 21, "PRICAT"  # price catalogue
-    QUOTES = 15, "QUOTES"  # quotes
-    REMADV = 33, "REMADV"  # zahlungsavis
-    REQOTE = 35, "REQOTE"  # request quote
-    PARTIN = 37, "PARTIN"  # market partner data
-    UTILMD = 11, "UTILMD"  # utilities master data
-    UTILTS = 25, "UTILTS"  # formula
+    APERAK = "APERAK"
+    COMDIS = "COMDIS"  # communication dispute
+    IFTSTA = "IFTSTA"  # Multimodaler Statusbericht
+    INSRPT = "INSRPT"  # Prüfbericht
+    INVOIC = "INVOIC"  # invoice
+    MSCONS = "MSCONS"  # meter readings
+    ORDCHG = "ORDCHG"  # chaning an order
+    ORDERS = "ORDERS"  # orders
+    ORDRSP = "ORDRSP"  # orders response
+    PRICAT = "PRICAT"  # price catalogue
+    QUOTES = "QUOTES"  # quotes
+    REMADV = "REMADV"  # zahlungsavis
+    REQOTE = "REQOTE"  # request quote
+    PARTIN = "PARTIN"  # market partner data
+    UTILMD = "UTILMD"  # utilities master data
+    UTILTS = "UTILTS"  # formula
 
     def __str__(self):
-        return self.string
+        return self.value
 
 
-class EdifactFormatVersion(aenum.Enum):
+_edifact_mapping: Dict[str, EdifactFormat] = {
+    "99": EdifactFormat.APERAK,
+    "29": EdifactFormat.COMDIS,
+    "21": EdifactFormat.IFTSTA,
+    "23": EdifactFormat.INSRPT,
+    "31": EdifactFormat.INVOIC,
+    "13": EdifactFormat.MSCONS,
+    "39": EdifactFormat.ORDCHG,
+    "17": EdifactFormat.ORDERS,
+    "19": EdifactFormat.ORDRSP,
+    "27": EdifactFormat.PRICAT,
+    "15": EdifactFormat.QUOTES,
+    "33": EdifactFormat.REMADV,
+    "37": EdifactFormat.PARTIN,
+    "11": EdifactFormat.UTILMD,
+    "25": EdifactFormat.UTILTS,
+}
+
+
+class EdifactFormatVersion(str, Enum):
     """
     One format version refers to the period in which an AHB is valid.
     """
 
-    _init_ = "value string"
-    FV2104 = 2104, "FV2104"  # valid since 2021-04-01
-    FV2110 = 2110, "FV2110"  # valid from 2021-10-01 onwards
-    FV2204 = 2204, "FV2204"  # valid from 2022-04-01 onwards ("MaKo 2022")
+    FV2104 = "FV2104"  # valid since 2021-04-01
+    FV2110 = "FV2110"  # valid from 2021-10-01 onwards
+    FV2204 = "FV2204"  # valid from 2022-04-01 onwards ("MaKo 2022")
 
     def __str__(self):
-        return self.string
+        return self.value
 
 
 def pruefidentifikator_to_format(pruefidentifikator: str) -> Optional[EdifactFormat]:
@@ -62,7 +78,6 @@ def pruefidentifikator_to_format(pruefidentifikator: str) -> Optional[EdifactFor
     if not pruefidentifikator_pattern.match(pruefidentifikator):
         raise ValueError(f"The pruefidentifikator '{pruefidentifikator}' is invalid.")
     try:
-        result: EdifactFormat = EdifactFormat(int(pruefidentifikator[:2]))
-        return result
-    except ValueError:
+        return _edifact_mapping[pruefidentifikator[:2]]
+    except KeyError:
         return None

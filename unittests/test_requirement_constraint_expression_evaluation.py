@@ -4,8 +4,8 @@ from typing import Dict, Optional
 import pytest
 
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
+from ahbicht.expressions.condition_nodes import ConditionFulfilledValue as cfv
 from ahbicht.expressions.condition_nodes import (
-    ConditionFulfilledValue,
     ConditionNode,
     EvaluatedComposition,
     Hint,
@@ -19,12 +19,12 @@ class TestRequirementConstraintEvaluation:
     """Test for the evaluation of the conditions tests (Mussfeldprüfung)"""
 
     # some valid nodes for easier referencing
-    _rc_1 = RequirementConstraint(condition_key="1", conditions_fulfilled=ConditionFulfilledValue.FULFILLED)
-    _rc_2 = RequirementConstraint(condition_key="2", conditions_fulfilled=ConditionFulfilledValue.UNFULFILLED)
-    _rc_3 = RequirementConstraint(condition_key="3", conditions_fulfilled=ConditionFulfilledValue.FULFILLED)
-    _rc_4 = RequirementConstraint(condition_key="4", conditions_fulfilled=ConditionFulfilledValue.UNFULFILLED)
-    _rc_101 = RequirementConstraint(condition_key="101", conditions_fulfilled=ConditionFulfilledValue.UNKNOWN)
-    _rc_102 = RequirementConstraint(condition_key="102", conditions_fulfilled=ConditionFulfilledValue.UNKNOWN)
+    _rc_1 = RequirementConstraint(condition_key="1", conditions_fulfilled=cfv.FULFILLED)
+    _rc_2 = RequirementConstraint(condition_key="2", conditions_fulfilled=cfv.UNFULFILLED)
+    _rc_3 = RequirementConstraint(condition_key="3", conditions_fulfilled=cfv.FULFILLED)
+    _rc_4 = RequirementConstraint(condition_key="4", conditions_fulfilled=cfv.UNFULFILLED)
+    _rc_101 = RequirementConstraint(condition_key="101", conditions_fulfilled=cfv.UNKNOWN)
+    _rc_102 = RequirementConstraint(condition_key="102", conditions_fulfilled=cfv.UNKNOWN)
     _h_501 = Hint(condition_key="501", hint="[501] Hinweis: Foo")
     _h_502 = Hint(condition_key="502", hint="[502] Hinweis: Bar")
     _fc_950 = UnevaluatedFormatConstraint(condition_key="950")
@@ -35,37 +35,37 @@ class TestRequirementConstraintEvaluation:
     @pytest.mark.parametrize(
         "expression, expected_resulting_conditions_fulfilled",
         [
-            pytest.param("[1]", True),
-            pytest.param("[2]", False),
-            pytest.param("[1]U[3]", True),
-            pytest.param("[1]U[2]", False),
-            pytest.param("[2]U[1]", False),
-            pytest.param("[2]U[4]", False),
-            pytest.param("[1]O[3]", True),
-            pytest.param("[1]O[2]", True),
-            pytest.param("[2]O[1]", True),
-            pytest.param("[2]O[4]", False),
-            pytest.param("[1]X[3]", False),
-            pytest.param("[1]X[2]", True),
-            pytest.param("[2]X[1]", True),
-            pytest.param("[2]X[4]", False),
+            pytest.param("[1]", cfv.FULFILLED),
+            pytest.param("[2]", cfv.UNFULFILLED),
+            pytest.param("[1]U[3]", cfv.FULFILLED),
+            pytest.param("[1]U[2]", cfv.UNFULFILLED),
+            pytest.param("[2]U[1]", cfv.UNFULFILLED),
+            pytest.param("[2]U[4]", cfv.UNFULFILLED),
+            pytest.param("[1]O[3]", cfv.FULFILLED),
+            pytest.param("[1]O[2]", cfv.FULFILLED),
+            pytest.param("[2]O[1]", cfv.FULFILLED),
+            pytest.param("[2]O[4]", cfv.UNFULFILLED),
+            pytest.param("[1]X[3]", cfv.UNFULFILLED),
+            pytest.param("[1]X[2]", cfv.FULFILLED),
+            pytest.param("[2]X[1]", cfv.FULFILLED),
+            pytest.param("[2]X[4]", cfv.UNFULFILLED),
             # Tests 'and before or'
-            pytest.param("[2]U[4]O[1]", True),
-            pytest.param("[1]O[2]U[4]", True),
-            pytest.param("[2]U[1]O[3]", True),
-            pytest.param("[2]O[1]U[3]", True),
-            pytest.param("[2]O[1]U[4]", False),
-            pytest.param("[1]U[2]U[3]U[1]", False),
-            pytest.param("[1]U[3]U[2]U[1]", False),
+            pytest.param("[2]U[4]O[1]", cfv.FULFILLED),
+            pytest.param("[1]O[2]U[4]", cfv.FULFILLED),
+            pytest.param("[2]U[1]O[3]", cfv.FULFILLED),
+            pytest.param("[2]O[1]U[3]", cfv.FULFILLED),
+            pytest.param("[2]O[1]U[4]", cfv.UNFULFILLED),
+            pytest.param("[1]U[2]U[3]U[1]", cfv.UNFULFILLED),
+            pytest.param("[1]U[3]U[2]U[1]", cfv.UNFULFILLED),
             # a very long one
-            pytest.param("[1]U[2]O[1]U[1]U[2]O[2]O[1]", True),
+            pytest.param("[1]U[2]O[1]U[1]U[2]O[2]O[1]", cfv.FULFILLED),
             # with brackets
-            pytest.param("([2]U[4])O[1]", True),
-            pytest.param("[2]U([4]O[1])", False),
+            pytest.param("([2]U[4])O[1]", cfv.FULFILLED),
+            pytest.param("[2]U([4]O[1])", cfv.UNFULFILLED),
         ],
     )
     def test_evaluate_condition_expression_with_valid_conditions_fulfilled(
-        self, expression: str, expected_resulting_conditions_fulfilled: bool
+        self, expression: str, expected_resulting_conditions_fulfilled: cfv
     ):
         """
         Tests that valid strings are parsed as expected.
@@ -76,7 +76,7 @@ class TestRequirementConstraintEvaluation:
         parsed_tree = parse_condition_expression_to_tree(expression)
 
         result: ConditionNode = evaluate_requirement_constraint_tree(parsed_tree, input_values)
-        assert result.conditions_fulfilled.value == expected_resulting_conditions_fulfilled
+        assert result.conditions_fulfilled == expected_resulting_conditions_fulfilled
 
     @pytest.mark.parametrize(
         "expression, input_values, expected_error",
@@ -89,14 +89,14 @@ class TestRequirementConstraintEvaluation:
             ),
             pytest.param(
                 "[1]",
-                {"1": EvaluatedComposition(conditions_fulfilled=ConditionFulfilledValue.FULFILLED)},
+                {"1": EvaluatedComposition(conditions_fulfilled=cfv.FULFILLED)},
                 "Please make sure that the passed values are ConditionNodes of the type RequirementConstraint, "
                 "Hint or FormatConstraint.",
             ),
             # no value for [2]
             pytest.param(
                 "[1]U[2]",
-                {"1": RequirementConstraint(condition_key="1", conditions_fulfilled=ConditionFulfilledValue.FULFILLED)},
+                {"1": RequirementConstraint(condition_key="1", conditions_fulfilled=cfv.FULFILLED)},
                 "Please make sure that the input values contain all necessary condition_keys.",
             ),
         ],
@@ -115,30 +115,41 @@ class TestRequirementConstraintEvaluation:
     @pytest.mark.parametrize(
         "expression, expected_resulting_conditions_fulfilled, expected_resulting_hint",
         [
-            pytest.param("[1]", True, None),
+            pytest.param("[1]", cfv.FULFILLED, None),
             pytest.param(
-                "[1]U[501]", True, "[501] Hinweis: Foo"
+                "[1]U[501]", cfv.FULFILLED, "[501] Hinweis: Foo"
             ),  # e.g. [1] Segment ist genau einmal je Vorgang anzugeben,
             # dann mit [501] Hinweis: "Verwendung der ID der Messlokation"
-            pytest.param("[501]U[1]", True, "[501] Hinweis: Foo"),
-            pytest.param("[2]U[501]", False, None),
-            pytest.param("[501]U[502]", "Neutral", "[501] Hinweis: Foo und [502] Hinweis: Bar"),
-            pytest.param("[501]O[502]", "Neutral", "[501] Hinweis: Foo oder [502] Hinweis: Bar"),
-            pytest.param("[501]X[502]", "Neutral", "Entweder ([501] Hinweis: Foo) oder ([502] Hinweis: Bar)"),
-            pytest.param("[1]U[501]O[2]U[502]", True, "[501] Hinweis: Foo"),
-            pytest.param("[1]U[501]U[2]U[502]", False, None),
-            pytest.param("[1]U[501]U[3]U[502]", True, "[501] Hinweis: Foo und [502] Hinweis: Bar"),
+            pytest.param("[501]U[1]", cfv.FULFILLED, "[501] Hinweis: Foo"),
+            pytest.param("[2]U[501]", cfv.UNFULFILLED, None),
+            pytest.param("[501]U[502]", cfv.NEUTRAL, "[501] Hinweis: Foo und [502] Hinweis: Bar"),
+            pytest.param("[501]O[502]", cfv.NEUTRAL, "[501] Hinweis: Foo oder [502] Hinweis: Bar"),
+            pytest.param(
+                "[501]X[502]",
+                cfv.NEUTRAL,
+                "Entweder ([501] Hinweis: Foo) oder ([502] Hinweis: Bar)",
+            ),
+            pytest.param("[1]U[501]O[2]U[502]", cfv.FULFILLED, "[501] Hinweis: Foo"),
+            pytest.param("[1]U[501]U[2]U[502]", cfv.UNFULFILLED, None),
+            pytest.param("[1]U[501]U[3]U[502]", cfv.FULFILLED, "[501] Hinweis: Foo und [502] Hinweis: Bar"),
             # two neutral elements combined
-            pytest.param("[1]U([501]O[502])", True, "[501] Hinweis: Foo oder [502] Hinweis: Bar"),
-            pytest.param("[1]U([501]X[502])", True, "Entweder ([501] Hinweis: Foo) oder ([502] Hinweis: Bar)"),
-            pytest.param("[1]U([501]U[502])", True, "[501] Hinweis: Foo und [502] Hinweis: Bar"),
-            pytest.param("[2]U([501]O[502])", False, None),
-            pytest.param("[2]U([501]X[502])", False, None),
-            pytest.param("[2]U([501]U[502])", False, None),
+            pytest.param("[1]U([501]O[502])", cfv.FULFILLED, "[501] Hinweis: Foo oder [502] Hinweis: Bar"),
+            pytest.param(
+                "[1]U([501]X[502])",
+                cfv.FULFILLED,
+                "Entweder ([501] Hinweis: Foo) oder ([502] Hinweis: Bar)",
+            ),
+            pytest.param("[1]U([501]U[502])", cfv.FULFILLED, "[501] Hinweis: Foo und [502] Hinweis: Bar"),
+            pytest.param("[2]U([501]O[502])", cfv.UNFULFILLED, None),
+            pytest.param("[2]U([501]X[502])", cfv.UNFULFILLED, None),
+            pytest.param("[2]U([501]U[502])", cfv.UNFULFILLED, None),
         ],
     )
     def test_hints_with_valid_values(
-        self, expression: str, expected_resulting_conditions_fulfilled: bool, expected_resulting_hint: str
+        self,
+        expression: str,
+        expected_resulting_conditions_fulfilled: cfv,
+        expected_resulting_hint: str,
     ):
         """Test valid expressions with Hints/Hinweise."""
 
@@ -153,33 +164,33 @@ class TestRequirementConstraintEvaluation:
         parsed_tree = parse_condition_expression_to_tree(expression)
         result: ConditionNode = evaluate_requirement_constraint_tree(parsed_tree, input_values)
 
-        assert result.conditions_fulfilled.value == expected_resulting_conditions_fulfilled
+        assert result.conditions_fulfilled == expected_resulting_conditions_fulfilled
         assert getattr(result, "hint", None) == expected_resulting_hint
 
     @pytest.mark.parametrize(
         """expression, expected_resulting_conditions_fulfilled,
         expected_format_constraint_expression, expected_hint_text""",
         [
-            pytest.param("[1][987]", True, "[987]", None),  # true boolean + format constraint
-            pytest.param("[987][1]", True, "[987]", None),  # format constraint + true boolean
+            pytest.param("[1][987]", cfv.FULFILLED, "[987]", None),  # true boolean + format constraint
+            pytest.param("[987][1]", cfv.FULFILLED, "[987]", None),  # format constraint + true boolean
             # true boolean and unfulfilled constraint
-            pytest.param("[2][987]", False, None, None),  # false boolean + format constraint
-            pytest.param("[987][2]", False, None, None),  # format constraint + false boolean
-            pytest.param("([1]O[2])[987]", True, "[987]", None),  # true boolean + format constraint
-            pytest.param("[987]([1]O[2])", True, "[987]", None),  # format constraint + true boolean
-            pytest.param("[501][987]", "Neutral", "[987]", "[501] Hinweis: Foo"),  # hint + format constraint
-            pytest.param("[987][501]", "Neutral", "[987]", "[501] Hinweis: Foo"),  # format constraint + hint
-            pytest.param("[987]U[988]", "Neutral", "[987] U [988]", None),  # format constraint U format constraint
-            pytest.param("[987]O[988]", "Neutral", "[987] O [988]", None),  # format constraint O format constraint
-            pytest.param("[987]X[988]", "Neutral", "[987] X [988]", None),  # format constraint X format constraint
+            pytest.param("[2][987]", cfv.UNFULFILLED, None, None),  # false boolean + format constraint
+            pytest.param("[987][2]", cfv.UNFULFILLED, None, None),  # format constraint + false boolean
+            pytest.param("([1]O[2])[987]", cfv.FULFILLED, "[987]", None),  # true boolean + format constraint
+            pytest.param("[987]([1]O[2])", cfv.FULFILLED, "[987]", None),  # format constraint + true boolean
+            pytest.param("[501][987]", cfv.NEUTRAL, "[987]", "[501] Hinweis: Foo"),  # hint + format constraint
+            pytest.param("[987][501]", cfv.NEUTRAL, "[987]", "[501] Hinweis: Foo"),  # format constraint + hint
+            pytest.param("[987]U[988]", cfv.NEUTRAL, "[987] U [988]", None),  # format constraint U format constraint
+            pytest.param("[987]O[988]", cfv.NEUTRAL, "[987] O [988]", None),  # format constraint O format constraint
+            pytest.param("[987]X[988]", cfv.NEUTRAL, "[987] X [988]", None),  # format constraint X format constraint
             # two neutral elements combined
-            pytest.param("[1]U([987]O[988])", True, "([987] O [988])", None),
+            pytest.param("[1]U([987]O[988])", cfv.FULFILLED, "([987] O [988])", None),
         ],
     )
     def test_format_constraints(
         self,
         expression: str,
-        expected_resulting_conditions_fulfilled: bool,
+        expected_resulting_conditions_fulfilled: cfv,
         expected_format_constraint_expression: Optional[str],
         expected_hint_text: Optional[str],
     ):
@@ -195,7 +206,7 @@ class TestRequirementConstraintEvaluation:
         parsed_tree = parse_condition_expression_to_tree(expression)
         result: EvaluatedComposition = evaluate_requirement_constraint_tree(parsed_tree, input_values)
         assert isinstance(result, EvaluatedComposition)
-        assert result.conditions_fulfilled.value == expected_resulting_conditions_fulfilled
+        assert result.conditions_fulfilled == expected_resulting_conditions_fulfilled
         assert result.hint == expected_hint_text
         assert result.format_constraints_expression == expected_format_constraint_expression
 
@@ -203,29 +214,29 @@ class TestRequirementConstraintEvaluation:
         """expression, expected_resulting_conditions_fulfilled""",
         [
             # and_composition
-            pytest.param("[101]", ConditionFulfilledValue.UNKNOWN),
-            pytest.param("[1]U[101]", ConditionFulfilledValue.UNKNOWN),
-            pytest.param("[101]U[1]", ConditionFulfilledValue.UNKNOWN),
-            pytest.param("[2]U[101]", ConditionFulfilledValue.UNFULFILLED),
-            pytest.param("[101]U[2]", ConditionFulfilledValue.UNFULFILLED),
-            pytest.param("[501]U[101]", ConditionFulfilledValue.UNKNOWN),
-            pytest.param("[101]U[987]", ConditionFulfilledValue.UNKNOWN),
-            pytest.param("[101]U[102]", ConditionFulfilledValue.UNKNOWN),
+            pytest.param("[101]", cfv.UNKNOWN),
+            pytest.param("[1]U[101]", cfv.UNKNOWN),
+            pytest.param("[101]U[1]", cfv.UNKNOWN),
+            pytest.param("[2]U[101]", cfv.UNFULFILLED),
+            pytest.param("[101]U[2]", cfv.UNFULFILLED),
+            pytest.param("[501]U[101]", cfv.UNKNOWN),
+            pytest.param("[101]U[987]", cfv.UNKNOWN),
+            pytest.param("[101]U[102]", cfv.UNKNOWN),
             # or_composition
-            pytest.param("[1]O[101]", ConditionFulfilledValue.FULFILLED),
-            pytest.param("[101]O[1]", ConditionFulfilledValue.FULFILLED),
-            pytest.param("[2]O[101]", ConditionFulfilledValue.UNKNOWN),
-            pytest.param("[101]O[2]", ConditionFulfilledValue.UNKNOWN),
-            pytest.param("[101]O[102]", ConditionFulfilledValue.UNKNOWN),
+            pytest.param("[1]O[101]", cfv.FULFILLED),
+            pytest.param("[101]O[1]", cfv.FULFILLED),
+            pytest.param("[2]O[101]", cfv.UNKNOWN),
+            pytest.param("[101]O[2]", cfv.UNKNOWN),
+            pytest.param("[101]O[102]", cfv.UNKNOWN),
             # xor_composition
-            pytest.param("[1]X[101]", ConditionFulfilledValue.UNKNOWN),
-            pytest.param("[101]X[1]", ConditionFulfilledValue.UNKNOWN),
-            pytest.param("[2]X[101]", ConditionFulfilledValue.UNKNOWN),
-            pytest.param("[101]X[2]", ConditionFulfilledValue.UNKNOWN),
-            pytest.param("[101]X[102]", ConditionFulfilledValue.UNKNOWN),
+            pytest.param("[1]X[101]", cfv.UNKNOWN),
+            pytest.param("[101]X[1]", cfv.UNKNOWN),
+            pytest.param("[2]X[101]", cfv.UNKNOWN),
+            pytest.param("[101]X[2]", cfv.UNKNOWN),
+            pytest.param("[101]X[102]", cfv.UNKNOWN),
         ],
     )
-    def test_unknown_requirement_constraints(self, expression: str, expected_resulting_conditions_fulfilled: bool):
+    def test_unknown_requirement_constraints(self, expression: str, expected_resulting_conditions_fulfilled: cfv):
         """Test valid expressions with unnkown requirement constraints"""
 
         input_values = {
@@ -309,80 +320,42 @@ class TestRequirementConstraintEvaluation:
         [
             pytest.param(
                 {
-                    "1": RequirementConstraint(
-                        condition_key="1", conditions_fulfilled=ConditionFulfilledValue.UNFULFILLED
-                    ),
-                    "2": RequirementConstraint(
-                        condition_key="2", conditions_fulfilled=ConditionFulfilledValue.FULFILLED
-                    ),
-                    "3": RequirementConstraint(
-                        condition_key="3", conditions_fulfilled=ConditionFulfilledValue.UNFULFILLED
-                    ),
-                    "4": RequirementConstraint(
-                        condition_key="4", conditions_fulfilled=ConditionFulfilledValue.FULFILLED
-                    ),
+                    "1": RequirementConstraint(condition_key="1", conditions_fulfilled=cfv.UNFULFILLED),
+                    "2": RequirementConstraint(condition_key="2", conditions_fulfilled=cfv.FULFILLED),
+                    "3": RequirementConstraint(condition_key="3", conditions_fulfilled=cfv.UNFULFILLED),
+                    "4": RequirementConstraint(condition_key="4", conditions_fulfilled=cfv.FULFILLED),
                 },
-                EvaluatedComposition(
-                    format_constraints_expression="[950]", conditions_fulfilled=ConditionFulfilledValue.FULFILLED
-                ),
+                EvaluatedComposition(format_constraints_expression="[950]", conditions_fulfilled=cfv.FULFILLED),
             ),
             pytest.param(
                 {
-                    "1": RequirementConstraint(
-                        condition_key="1", conditions_fulfilled=ConditionFulfilledValue.FULFILLED
-                    ),
-                    "2": RequirementConstraint(
-                        condition_key="2", conditions_fulfilled=ConditionFulfilledValue.UNFULFILLED
-                    ),
-                    "3": RequirementConstraint(
-                        condition_key="3", conditions_fulfilled=ConditionFulfilledValue.FULFILLED
-                    ),
-                    "4": RequirementConstraint(
-                        condition_key="4", conditions_fulfilled=ConditionFulfilledValue.UNFULFILLED
-                    ),
+                    "1": RequirementConstraint(condition_key="1", conditions_fulfilled=cfv.FULFILLED),
+                    "2": RequirementConstraint(condition_key="2", conditions_fulfilled=cfv.UNFULFILLED),
+                    "3": RequirementConstraint(condition_key="3", conditions_fulfilled=cfv.FULFILLED),
+                    "4": RequirementConstraint(condition_key="4", conditions_fulfilled=cfv.UNFULFILLED),
                 },
-                EvaluatedComposition(
-                    format_constraints_expression="[951]", conditions_fulfilled=ConditionFulfilledValue.FULFILLED
-                ),
+                EvaluatedComposition(format_constraints_expression="[951]", conditions_fulfilled=cfv.FULFILLED),
             ),
             pytest.param(
                 {
-                    "1": RequirementConstraint(
-                        condition_key="1", conditions_fulfilled=ConditionFulfilledValue.FULFILLED
-                    ),
-                    "2": RequirementConstraint(
-                        condition_key="2", conditions_fulfilled=ConditionFulfilledValue.FULFILLED
-                    ),
-                    "3": RequirementConstraint(
-                        condition_key="3", conditions_fulfilled=ConditionFulfilledValue.FULFILLED
-                    ),
-                    "4": RequirementConstraint(
-                        condition_key="4", conditions_fulfilled=ConditionFulfilledValue.FULFILLED
-                    ),
+                    "1": RequirementConstraint(condition_key="1", conditions_fulfilled=cfv.FULFILLED),
+                    "2": RequirementConstraint(condition_key="2", conditions_fulfilled=cfv.FULFILLED),
+                    "3": RequirementConstraint(condition_key="3", conditions_fulfilled=cfv.FULFILLED),
+                    "4": RequirementConstraint(condition_key="4", conditions_fulfilled=cfv.FULFILLED),
                 },
                 EvaluatedComposition(
                     format_constraints_expression="[950] O [951]",
-                    conditions_fulfilled=ConditionFulfilledValue.FULFILLED,
+                    conditions_fulfilled=cfv.FULFILLED,
                 ),
             ),
             pytest.param(
                 {
-                    "1": RequirementConstraint(
-                        condition_key="1", conditions_fulfilled=ConditionFulfilledValue.UNFULFILLED
-                    ),
-                    "2": RequirementConstraint(
-                        condition_key="2", conditions_fulfilled=ConditionFulfilledValue.UNFULFILLED
-                    ),
-                    "3": RequirementConstraint(
-                        condition_key="3", conditions_fulfilled=ConditionFulfilledValue.UNFULFILLED
-                    ),
-                    "4": RequirementConstraint(
-                        condition_key="4", conditions_fulfilled=ConditionFulfilledValue.UNFULFILLED
-                    ),
+                    "1": RequirementConstraint(condition_key="1", conditions_fulfilled=cfv.UNFULFILLED),
+                    "2": RequirementConstraint(condition_key="2", conditions_fulfilled=cfv.UNFULFILLED),
+                    "3": RequirementConstraint(condition_key="3", conditions_fulfilled=cfv.UNFULFILLED),
+                    "4": RequirementConstraint(condition_key="4", conditions_fulfilled=cfv.UNFULFILLED),
                 },
-                EvaluatedComposition(
-                    format_constraints_expression=None, conditions_fulfilled=ConditionFulfilledValue.UNFULFILLED
-                ),
+                EvaluatedComposition(format_constraints_expression=None, conditions_fulfilled=cfv.UNFULFILLED),
             ),
         ],
     )

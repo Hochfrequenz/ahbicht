@@ -61,7 +61,7 @@ class ContentEvaluationResultSchema(Schema):
         for rc_key, rc_value in result.requirement_constraints.items():
             if not isinstance(rc_value, ConditionFulfilledValue):
                 for enum_value in ConditionFulfilledValue:
-                    if str(rc_value).upper() == enum_value.name:
+                    if str(rc_value).upper() == enum_value.value:
                         result.requirement_constraints[rc_key] = ConditionFulfilledValue(enum_value.value)
                         break
         return result

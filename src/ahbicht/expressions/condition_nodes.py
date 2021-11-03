@@ -8,34 +8,72 @@ the EvaluatedComposition node which results from a combination of two nodes (of 
 The used terms are defined in the README_conditions.md.
 """
 from abc import ABC
+from enum import Enum
 from typing import Optional, TypeVar
 
-import aenum  # type:ignore[import]
 import attr
 
 # pylint: disable=too-few-public-methods
 from marshmallow import Schema, fields, post_load
 
-aenum.Enum("ConditionFulfilledValue", {})
 
-
-class ConditionFulfilledValue(aenum.Enum):
+class ConditionFulfilledValue(str, Enum):
     """
     Possible values to describe the state of a condition
     in the condition_fulfilled attribute of the ConditionNodes.
     """
 
-    _init_ = "value string"
-    FULFILLED = True, "FULFILLED"  # if condition is fulfilled
-    UNFULFILLED = False, "UNFULFILLED"  # if condition is not fulfilled
-    UNKNOWN = None, "UNKNOWN"  # if it cannot be checked if condition is fulfilled (e.g. "Wenn vorhanden")
+    FULFILLED = "FULFILLED"  # if condition is fulfilled
+    UNFULFILLED = "UNFULFILLED"  # if condition is not fulfilled
+    UNKNOWN = "UNKNOWN"  # if it cannot be checked if condition is fulfilled (e.g. "Wenn vorhanden")
     NEUTRAL = (
-        "Neutral",
-        "NEUTRAL",
-    )  # a hint or unevaluated format constraint which do not have a status of being fulfilled or not
+        "NEUTRAL"  # a hint or unevaluated format constraint which does not have a status of being fulfilled or not
+    )
 
     def __str__(self):
-        return self.string
+        return self.value
+
+    def __or__(self, other):
+        if other == ConditionFulfilledValue.NEUTRAL:  # todo: the next 8 lines are nearly identical with __and__
+            return self
+        if self == ConditionFulfilledValue.NEUTRAL:
+            return other
+        # if any single operand of the or composition is fulfilled, then the entire outcome is fulfilled, regardless
+        # of the other operand
+        if ConditionFulfilledValue.FULFILLED in (self, other):
+            return ConditionFulfilledValue.FULFILLED
+        # if no operand is fulfilled, then any single "unknown" leads to an unknown outcome
+        if ConditionFulfilledValue.UNKNOWN in (self, other):
+            return ConditionFulfilledValue.UNKNOWN
+        return ConditionFulfilledValue.UNFULFILLED
+
+    def __and__(self, other):
+        if other == ConditionFulfilledValue.NEUTRAL:  # todo: the next 8 lines are nearly identical with __or__
+            return self
+        if self == ConditionFulfilledValue.NEUTRAL:
+            return other
+        # if any single operand in the and composition is unfulfilled, then the entire outcome is unfulfilled,
+        # regardless of the other operand
+        if ConditionFulfilledValue.UNFULFILLED in (self, other):
+            return ConditionFulfilledValue.UNFULFILLED
+        if ConditionFulfilledValue.UNKNOWN in (self, other):
+            return ConditionFulfilledValue.UNKNOWN
+        if self == ConditionFulfilledValue.FULFILLED and other == ConditionFulfilledValue.FULFILLED:
+            return ConditionFulfilledValue.FULFILLED
+        return ConditionFulfilledValue.UNFULFILLED
+
+    def __xor__(self, other):
+        if other == ConditionFulfilledValue.NEUTRAL:
+            return self
+        if self == ConditionFulfilledValue.NEUTRAL:
+            return other
+        if ConditionFulfilledValue.UNKNOWN in (self, other):
+            return ConditionFulfilledValue.UNKNOWN
+        if self == ConditionFulfilledValue.FULFILLED and other == ConditionFulfilledValue.FULFILLED:
+            return ConditionFulfilledValue.UNFULFILLED
+        if ConditionFulfilledValue.FULFILLED in (self, other):
+            return ConditionFulfilledValue.FULFILLED
+        return ConditionFulfilledValue.UNFULFILLED
 
 
 @attr.s(auto_attribs=True, kw_only=True)
@@ -78,7 +116,7 @@ class Hint(ConditionNode, ConditionKeyNodeMixin):
     e.g. "Hinweis: 'Es ist der alte MSB zu verwenden'"
     """
 
-    conditions_fulfilled: ConditionFulfilledValue = ConditionFulfilledValue("Neutral")
+    conditions_fulfilled: ConditionFulfilledValue = ConditionFulfilledValue.NEUTRAL
     hint: str = attr.ib(validator=attr.validators.instance_of(str))  # an informatory text
 
 
@@ -98,7 +136,7 @@ class UnevaluatedFormatConstraint(FormatConstraint):
     Mussfeldprüfung where the constraints are collected but not evaluated yet.
     """
 
-    conditions_fulfilled: ConditionFulfilledValue = ConditionFulfilledValue("Neutral")
+    conditions_fulfilled: ConditionFulfilledValue = ConditionFulfilledValue.NEUTRAL
 
 
 @attr.s(auto_attribs=True)

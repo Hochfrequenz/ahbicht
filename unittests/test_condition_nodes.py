@@ -25,28 +25,7 @@ class TestConditionNodes:
     )
     def test_condition_fulfilled_value_equality(self, cfv: ConditionFulfilledValue, equivalent_string: str):
         """For mypy we had to replace some enum comparisons. This test is to ensure that everything works as expected"""
-        assert cfv == ConditionFulfilledValue(ConditionFulfilledValue.FULFILLED)
-
-    @pytest.mark.parametrize(
-        "conditions_fulfilled, conditions_fulfilled_expected_value",
-        [
-            pytest.param(ConditionFulfilledValue.FULFILLED, True),
-            pytest.param(ConditionFulfilledValue.UNFULFILLED, False),
-            pytest.param(ConditionFulfilledValue.NEUTRAL, "Neutral"),
-        ],
-    )
-    def test_valid_requirement_constraint(self, conditions_fulfilled, conditions_fulfilled_expected_value):
-        """Tests the creation of a valid requirement constraint node."""
-        actual_node = RequirementConstraint(
-            condition_key="1",
-            conditions_fulfilled=conditions_fulfilled,
-        )
-
-        assert isinstance(actual_node, ConditionNode)
-        assert isinstance(actual_node, RequirementConstraint)
-        assert actual_node.condition_key == "1"
-        assert actual_node.conditions_fulfilled is conditions_fulfilled
-        assert actual_node.conditions_fulfilled.value is conditions_fulfilled_expected_value
+        assert cfv == ConditionFulfilledValue.FULFILLED
 
     @pytest.mark.parametrize(
         "condition_node_arguments, expected_error_message",
@@ -68,7 +47,7 @@ class TestConditionNodes:
                     "condition_key": "1",
                     "conditions_fulfilled": "no_ConditionFulfilledValue",
                 },
-                f"'conditions_fulfilled' must be <aenum '{ConditionFulfilledValue.__name__}'>",
+                f"'conditions_fulfilled' must be <enum 'ConditionFulfilledValue'>",
             ),
         ],
     )
@@ -126,7 +105,7 @@ class TestConditionNodes:
 
         assert isinstance(minimal_node, ConditionNode)
         assert isinstance(minimal_node, EvaluatedComposition)
-        assert minimal_node.conditions_fulfilled.value is True
+        assert minimal_node.conditions_fulfilled == ConditionFulfilledValue.FULFILLED
 
         maximal_node = EvaluatedComposition(
             conditions_fulfilled=ConditionFulfilledValue.UNFULFILLED,
@@ -135,7 +114,7 @@ class TestConditionNodes:
 
         assert isinstance(maximal_node, ConditionNode)
         assert isinstance(maximal_node, EvaluatedComposition)
-        assert maximal_node.conditions_fulfilled.value is False
+        assert maximal_node.conditions_fulfilled == ConditionFulfilledValue.UNFULFILLED
         assert maximal_node.hint == "[501] Hinweis: Foo"
 
     @pytest.mark.parametrize(
@@ -156,7 +135,7 @@ class TestConditionNodes:
                 {
                     "conditions_fulfilled": "no_ConditionFulfilledValue",
                 },
-                f"'conditions_fulfilled' must be <aenum '{ConditionFulfilledValue.__name__}'>",
+                f"'conditions_fulfilled' must be <enum '{ConditionFulfilledValue.__name__}'>",
             ),
         ],
     )
