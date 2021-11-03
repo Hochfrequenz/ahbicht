@@ -2,7 +2,7 @@ AHB Condition Expression Parser (AHBicht)
 =========================================
 
 |Unittests status badge| |Coverage status badge| |Linting status badge|
-|Black status badge|
+|Black status badge| |pypy status badge| 
 
 .. image:: ./docs/_static/ahbicht-logo.png
    :target: https://ahbicht.readthedocs.io
@@ -453,4 +453,5 @@ How to use with VS Code
 .. |Coverage status badge| image:: https://github.com/Hochfrequenz/ahbicht/workflows/Coverage/badge.svg
 .. |Linting status badge| image:: https://github.com/Hochfrequenz/ahbicht/workflows/Linting/badge.svg
 .. |Black status badge| image:: https://github.com/Hochfrequenz/ahbicht/workflows/Black/badge.svg
+.. |pypy status badge| image:: https://img.shields.io/pypi/v/ahbicht
 .. |UTILMD_AHB_WiM_3_1b_20201016.pdf page 90| image:: ./docs/_static/wim_ahb_screenshot.png
