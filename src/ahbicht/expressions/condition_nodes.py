@@ -42,8 +42,6 @@ class ConditionFulfilledValue(str, Enum):
             return ConditionFulfilledValue.FULFILLED
         if ConditionFulfilledValue.UNKNOWN in (self, other):
             return ConditionFulfilledValue.UNKNOWN
-        if ConditionFulfilledValue.FULFILLED in (self, other):
-            return ConditionFulfilledValue.FULFILLED
         return ConditionFulfilledValue.UNFULFILLED
 
     def __and__(self, other):
