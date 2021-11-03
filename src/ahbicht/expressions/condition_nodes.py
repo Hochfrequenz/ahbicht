@@ -38,8 +38,11 @@ class ConditionFulfilledValue(str, Enum):
             return self
         if self == ConditionFulfilledValue.NEUTRAL:
             return other
+        # if any single operand of the or composition is fulfilled, then the entire outcome is fulfilled, regardless
+        # of the other operand
         if ConditionFulfilledValue.FULFILLED in (self, other):
             return ConditionFulfilledValue.FULFILLED
+        # if no operand is fulfilled, then any single "unknown" leads to an unknown outcome
         if ConditionFulfilledValue.UNKNOWN in (self, other):
             return ConditionFulfilledValue.UNKNOWN
         return ConditionFulfilledValue.UNFULFILLED
@@ -49,6 +52,8 @@ class ConditionFulfilledValue(str, Enum):
             return self
         if self == ConditionFulfilledValue.NEUTRAL:
             return other
+        # if any single operand in the and composition is unfulfilled, then the entire outcome is unfulfilled,
+        # regardless of the other operand
         if ConditionFulfilledValue.UNFULFILLED in (self, other):
             return ConditionFulfilledValue.UNFULFILLED
         if ConditionFulfilledValue.UNKNOWN in (self, other):
