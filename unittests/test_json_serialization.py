@@ -253,3 +253,67 @@ class TestJsonSerialization:
             ahb_expression_evaluation_result, AhbExpressionEvaluationResultSchema(), expected_json_dict
         )
 
+    @pytest.mark.parametrize(
+        "ahb_expression_evaluation_result, expected_json_dict",
+        [
+            pytest.param(
+                AhbExpressionEvaluationResult(
+                    requirement_indicator="Muss",
+                    format_constraint_evaluation_result=FormatConstraintEvaluationResult(
+                        error_message="hello", format_constraints_fulfilled=False
+                    ),
+                    requirement_constraint_evaluation_result=RequirementConstraintEvaluationResult(
+                        hints="foo bar",
+                        requirement_constraints_fulfilled=True,
+                        requirement_is_conditional=True,
+                        format_constraints_expression="[asd]",
+                    ),
+                ),
+                {
+                    "format_constraint_evaluation_result": {
+                        "error_message": "hello",
+                        "format_constraints_fulfilled": False,
+                    },
+                    "requirement_constraint_evaluation_result": {
+                        "format_constraints_expression": "[asd]",
+                        "hints": "foo bar",
+                        "requirement_constraints_fulfilled": True,
+                        "requirement_is_conditional": True,
+                    },
+                    "requirement_indicator": "Muss",
+                },
+            ),
+            pytest.param(
+                AhbExpressionEvaluationResult(
+                    requirement_indicator="Muss",
+                    format_constraint_evaluation_result=FormatConstraintEvaluationResult(
+                        format_constraints_fulfilled=False
+                    ),
+                    requirement_constraint_evaluation_result=RequirementConstraintEvaluationResult(
+                        requirement_constraints_fulfilled=True,
+                        requirement_is_conditional=True,
+                    ),
+                ),
+                {
+                    "format_constraint_evaluation_result": {
+                        "error_message": None,
+                        "format_constraints_fulfilled": False,
+                    },
+                    "requirement_constraint_evaluation_result": {
+                        "format_constraints_expression": None,
+                        "hints": None,
+                        "requirement_constraints_fulfilled": True,
+                        "requirement_is_conditional": True,
+                    },
+                    "requirement_indicator": "Muss",
+                },
+                id="Minimal example",
+            ),
+        ],
+    )
+    def test_ahb_expression_evaluation_result_serialization(
+        self, ahb_expression_evaluation_result: AhbExpressionEvaluationResult, expected_json_dict: dict
+    ):
+        _test_serialization_roundtrip(
+            ahb_expression_evaluation_result, AhbExpressionEvaluationResultSchema(), expected_json_dict
+        )

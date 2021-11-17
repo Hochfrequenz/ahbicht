@@ -20,10 +20,10 @@ class RequirementConstraintEvaluationResult:
     requirement_constraints_fulfilled: bool  # true if condition expression in regard to
     # requirement constraints evaluates to true
     requirement_is_conditional: bool  # true if it is dependent on requirement constraints
-    format_constraints_expression: Optional[str]
-    hints: Optional[
-        str
-    ]  # Hint text that should be displayed in the frontend, e.g. "[501] Hinweis: 'ID der Messlokation'"
+
+    format_constraints_expression: Optional[str] = attr.ib(default=None)
+    hints: Optional[str] = attr.ib(default=None)  # Hint text that should be displayed in the frontend,
+    # e.g. "[501] Hinweis: 'ID der Messlokation'"
 
 
 class RequirementConstraintEvaluationResultSchema(Schema):
@@ -33,8 +33,9 @@ class RequirementConstraintEvaluationResultSchema(Schema):
 
     requirement_constraints_fulfilled = fields.Boolean()
     requirement_is_conditional = fields.Boolean()
-    format_constraints_expression = fields.String()
-    hints = fields.String()
+
+    format_constraints_expression = fields.String(load_default=None)
+    hints = fields.String(load_default=None)
 
     @post_load
     def deserialize(self, data, **kwargs) -> RequirementConstraintEvaluationResult:
@@ -54,7 +55,10 @@ class FormatConstraintEvaluationResult:
     """
 
     format_constraints_fulfilled: bool  # true if data entered obey the format constraint expression
-    error_message: Optional[str]  # All error messages that lead to not fulfilling the format constraint expression
+
+    error_message: Optional[str] = attr.ib(
+        default=None
+    )  # All error messages that lead to not fulfilling the format constraint expression
 
 
 class FormatConstraintEvaluationResultSchema(Schema):
@@ -63,7 +67,7 @@ class FormatConstraintEvaluationResultSchema(Schema):
     """
 
     format_constraints_fulfilled = fields.Boolean()
-    error_message = fields.String(allow_none=True)
+    error_message = fields.String(allow_none=True, missing=None)
 
     @post_load
     def deserialize(self, data, **kwargs) -> FormatConstraintEvaluationResult:
