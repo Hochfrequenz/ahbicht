@@ -11,7 +11,7 @@ from typing import List, Literal, Mapping, Type
 from lark import Token, Tree, v_args
 from lark.exceptions import VisitError
 
-from ahbicht.condition_check_results import RequirementConstraintEvaluationResult
+from ahbicht.evaluation_results import RequirementConstraintEvaluationResult
 from ahbicht.condition_node_builder import ConditionNodeBuilder, TRCTransformerArgument
 from ahbicht.expressions.base_transformer import BaseTransformer
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree

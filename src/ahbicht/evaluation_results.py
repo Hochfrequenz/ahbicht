@@ -20,10 +20,10 @@ class RequirementConstraintEvaluationResult:
     requirement_constraints_fulfilled: bool  # true if condition expression in regard to
     # requirement constraints evaluates to true
     requirement_is_conditional: bool  # true if it is dependent on requirement constraints
-    format_constraints_expression: Optional[str]
-    hints: Optional[
-        str
-    ]  # Hint text that should be displayed in the frontend, e.g. "[501] Hinweis: 'ID der Messlokation'"
+
+    format_constraints_expression: Optional[str] = attr.ib(default=None)
+    hints: Optional[str] = attr.ib(default=None)  # Hint text that should be displayed in the frontend,
+    # e.g. "[501] Hinweis: 'ID der Messlokation'"
 
 
 class RequirementConstraintEvaluationResultSchema(Schema):
@@ -33,8 +33,9 @@ class RequirementConstraintEvaluationResultSchema(Schema):
 
     requirement_constraints_fulfilled = fields.Boolean()
     requirement_is_conditional = fields.Boolean()
-    format_constraints_expression = fields.String()
-    hints = fields.String()
+
+    format_constraints_expression = fields.String(load_default=None)
+    hints = fields.String(load_default=None)
 
     @post_load
     def deserialize(self, data, **kwargs) -> RequirementConstraintEvaluationResult:
@@ -54,7 +55,10 @@ class FormatConstraintEvaluationResult:
     """
 
     format_constraints_fulfilled: bool  # true if data entered obey the format constraint expression
-    error_message: Optional[str]  # All error messages that lead to not fulfilling the format constraint expression
+
+    error_message: Optional[str] = attr.ib(
+        default=None
+    )  # All error messages that lead to not fulfilling the format constraint expression
 
 
 class FormatConstraintEvaluationResultSchema(Schema):
@@ -63,7 +67,7 @@ class FormatConstraintEvaluationResultSchema(Schema):
     """
 
     format_constraints_fulfilled = fields.Boolean()
-    error_message = fields.String(allow_none=True)
+    error_message = fields.String(allow_none=True, missing=None)
 
     @post_load
     def deserialize(self, data, **kwargs) -> FormatConstraintEvaluationResult:
@@ -77,9 +81,9 @@ class FormatConstraintEvaluationResultSchema(Schema):
 
 
 @attr.s(auto_attribs=True, kw_only=True)
-class ConditionCheckResult:
+class AhbExpressionEvaluationResult:
     """
-    A class for the result of the overall condition check.
+    A class for the result of an ahb expression evaluation.
     """
 
     requirement_indicator: str  # i.e. "Muss", "M", "Soll", "S", "Kann", "K", "X", "O", "U"
@@ -87,9 +91,9 @@ class ConditionCheckResult:
     format_constraint_evaluation_result: FormatConstraintEvaluationResult
 
 
-class ConditionCheckResultSchema(Schema):
+class AhbExpressionEvaluationResultSchema(Schema):
     """
-    A schema to (de-)serialize ConditionCheckResults
+    A schema to (de-)serialize AhbExpressionEvaluationResults
     """
 
     requirement_indicator = fields.String(required=True, allow_none=True)
@@ -97,11 +101,11 @@ class ConditionCheckResultSchema(Schema):
     format_constraint_evaluation_result = fields.Nested(FormatConstraintEvaluationResultSchema())
 
     @post_load
-    def deserialize(self, data, **kwargs) -> ConditionCheckResult:
+    def deserialize(self, data, **kwargs) -> AhbExpressionEvaluationResult:
         """
-        Converts the barely typed data dictionary into an actual ConditionCheckResult
+        Converts the barely typed data dictionary into an actual AhbExpressionEvaluationResult
         :param data:
         :param kwargs:
         :return:
         """
-        return ConditionCheckResult(**data)
+        return AhbExpressionEvaluationResult(**data)

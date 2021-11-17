@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock
 import inject
 import pytest
 
-from ahbicht.condition_check_results import FormatConstraintEvaluationResult, RequirementConstraintEvaluationResult
+from ahbicht.evaluation_results import FormatConstraintEvaluationResult, RequirementConstraintEvaluationResult
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions

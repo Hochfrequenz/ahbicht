@@ -10,8 +10,8 @@ from typing import List
 from lark import Token, Transformer, Tree, v_args
 from lark.exceptions import VisitError
 
-from ahbicht.condition_check_results import (
-    ConditionCheckResult,
+from ahbicht.evaluation_results import (
+    AhbExpressionEvaluationResult,
     FormatConstraintEvaluationResult,
     RequirementConstraintEvaluationResult,
 )
@@ -51,7 +51,7 @@ class AhbExpressionTransformer(Transformer):
     @v_args(inline=True)  # Children are provided as *args instead of a list argument
     def single_requirement_indicator_expression(
         self, requirement_indicator, condition_expression
-    ) -> ConditionCheckResult:
+    ) -> AhbExpressionEvaluationResult:
         """
         Evaluates the condition expression of the respective requirement indicator expression
         and returns a list of the seperated requirement indicators with
@@ -64,21 +64,21 @@ class AhbExpressionTransformer(Transformer):
             requirement_constraint_evaluation_result.format_constraints_expression, self.entered_input
         )
 
-        result_of_condition_check: ConditionCheckResult = ConditionCheckResult(
+        result_of_ahb_expression_evaluation: AhbExpressionEvaluationResult = AhbExpressionEvaluationResult(
             requirement_indicator=requirement_indicator,
             requirement_constraint_evaluation_result=requirement_constraint_evaluation_result,
             format_constraint_evaluation_result=format_constraint_evaluation_result,
         )
 
-        return result_of_condition_check
+        return result_of_ahb_expression_evaluation
 
     @v_args(inline=True)  # Children are provided as *args instead of a list argument
-    def requirement_indicator(self, requirement_indicator) -> ConditionCheckResult:
+    def requirement_indicator(self, requirement_indicator) -> AhbExpressionEvaluationResult:
         """
         If there is no condition expression but only a requirement indicator,
         all evaluations are automatically set to True.
         """
-        return ConditionCheckResult(
+        return AhbExpressionEvaluationResult(
             requirement_indicator=requirement_indicator,
             requirement_constraint_evaluation_result=RequirementConstraintEvaluationResult(
                 requirement_constraints_fulfilled=True,
@@ -93,8 +93,8 @@ class AhbExpressionTransformer(Transformer):
 
     # pylint: disable=(line-too-long)
     def ahb_expression(
-        self, list_of_single_requirement_indicator_expressions: List[ConditionCheckResult]
-    ) -> ConditionCheckResult:
+        self, list_of_single_requirement_indicator_expressions: List[AhbExpressionEvaluationResult]
+    ) -> AhbExpressionEvaluationResult:
         """
         Returns the requirement indicator with its condition expressions already evaluated to booleans.
         If there are more than one modal mark the first whose conditions are fulfilled is returned or the
@@ -114,7 +114,7 @@ class AhbExpressionTransformer(Transformer):
         return list_of_single_requirement_indicator_expressions[-1]
 
 
-def evaluate_ahb_expression_tree(parsed_tree: Tree, entered_input: str) -> ConditionCheckResult:
+def evaluate_ahb_expression_tree(parsed_tree: Tree, entered_input: str) -> AhbExpressionEvaluationResult:
     """
     Evaluates the tree built from the ahb expressions with the help of the AhbExpressionTransformer.
 
