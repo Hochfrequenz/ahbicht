@@ -64,13 +64,13 @@ class AhbExpressionTransformer(Transformer):
             requirement_constraint_evaluation_result.format_constraints_expression, self.entered_input
         )
 
-        result_of_condition_check: AhbExpressionEvaluationResult = AhbExpressionEvaluationResult(
+        result_of_ahb_expression_evaluation: AhbExpressionEvaluationResult = AhbExpressionEvaluationResult(
             requirement_indicator=requirement_indicator,
             requirement_constraint_evaluation_result=requirement_constraint_evaluation_result,
             format_constraint_evaluation_result=format_constraint_evaluation_result,
         )
 
-        return result_of_condition_check
+        return result_of_ahb_expression_evaluation
 
     @v_args(inline=True)  # Children are provided as *args instead of a list argument
     def requirement_indicator(self, requirement_indicator) -> AhbExpressionEvaluationResult:
