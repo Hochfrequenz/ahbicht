@@ -83,7 +83,7 @@ class FormatConstraintEvaluationResultSchema(Schema):
 @attr.s(auto_attribs=True, kw_only=True)
 class AhbExpressionEvaluationResult:
     """
-    A class for the result of the overall condition check.
+    A class for the result of an ahb expression evaluation.
     """
 
     requirement_indicator: str  # i.e. "Muss", "M", "Soll", "S", "Kann", "K", "X", "O", "U"
