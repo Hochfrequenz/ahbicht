@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock
 import inject
 import pytest
 
-from ahbicht.condition_check_results import RequirementConstraintEvaluationResult
+from ahbicht.evaluation_results import RequirementConstraintEvaluationResult
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.expressions.condition_nodes import (
     ConditionFulfilledValue,

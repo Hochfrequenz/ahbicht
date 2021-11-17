@@ -9,9 +9,9 @@ import pytest
 from lark import Token, Tree
 from marshmallow import Schema, ValidationError
 
-from ahbicht.condition_check_results import (
-    ConditionCheckResult,
-    ConditionCheckResultSchema,
+from ahbicht.evaluation_results import (
+    AhbExpressionEvaluationResult,
+    AhbExpressionEvaluationResultSchema,
     FormatConstraintEvaluationResult,
     RequirementConstraintEvaluationResult,
 )
@@ -215,10 +215,10 @@ class TestJsonSerialization:
             assert isinstance(rc_evaluation_result, ConditionFulfilledValue)
 
     @pytest.mark.parametrize(
-        "condition_check_result, expected_json_dict",
+        "ahb_expression_evaluation_result, expected_json_dict",
         [
             pytest.param(
-                ConditionCheckResult(
+                AhbExpressionEvaluationResult(
                     requirement_indicator="Muss",
                     format_constraint_evaluation_result=FormatConstraintEvaluationResult(
                         error_message="hello", format_constraints_fulfilled=False
@@ -246,7 +246,10 @@ class TestJsonSerialization:
             ),
         ],
     )
-    def test_condition_check_result_serialization(
-        self, condition_check_result: ConditionCheckResult, expected_json_dict: dict
+    def test_ahb_expression_evaluation_result_serialization(
+        self, ahb_expression_evaluation_result: AhbExpressionEvaluationResult, expected_json_dict: dict
     ):
-        _test_serialization_roundtrip(condition_check_result, ConditionCheckResultSchema(), expected_json_dict)
+        _test_serialization_roundtrip(
+            ahb_expression_evaluation_result, AhbExpressionEvaluationResultSchema(), expected_json_dict
+        )
+

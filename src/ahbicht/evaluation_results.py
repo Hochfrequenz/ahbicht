@@ -77,7 +77,7 @@ class FormatConstraintEvaluationResultSchema(Schema):
 
 
 @attr.s(auto_attribs=True, kw_only=True)
-class ConditionCheckResult:
+class AhbExpressionEvaluationResult:
     """
     A class for the result of the overall condition check.
     """
@@ -87,9 +87,9 @@ class ConditionCheckResult:
     format_constraint_evaluation_result: FormatConstraintEvaluationResult
 
 
-class ConditionCheckResultSchema(Schema):
+class AhbExpressionEvaluationResultSchema(Schema):
     """
-    A schema to (de-)serialize ConditionCheckResults
+    A schema to (de-)serialize AhbExpressionEvaluationResults
     """
 
     requirement_indicator = fields.String(required=True, allow_none=True)
@@ -97,11 +97,11 @@ class ConditionCheckResultSchema(Schema):
     format_constraint_evaluation_result = fields.Nested(FormatConstraintEvaluationResultSchema())
 
     @post_load
-    def deserialize(self, data, **kwargs) -> ConditionCheckResult:
+    def deserialize(self, data, **kwargs) -> AhbExpressionEvaluationResult:
         """
-        Converts the barely typed data dictionary into an actual ConditionCheckResult
+        Converts the barely typed data dictionary into an actual AhbExpressionEvaluationResult
         :param data:
         :param kwargs:
         :return:
         """
-        return ConditionCheckResult(**data)
+        return AhbExpressionEvaluationResult(**data)
