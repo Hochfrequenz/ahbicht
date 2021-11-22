@@ -3,9 +3,9 @@
 import inject
 import pytest
 
-from ahbicht.evaluation_results import FormatConstraintEvaluationResult
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
 from ahbicht.edifact import EdifactFormat, EdifactFormatVersion
+from ahbicht.evaluation_results import FormatConstraintEvaluationResult
 from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
 from ahbicht.expressions.format_constraint_expression_evaluation import (
     _build_evaluated_format_constraint_nodes,
