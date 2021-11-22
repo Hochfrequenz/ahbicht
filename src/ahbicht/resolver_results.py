@@ -10,6 +10,7 @@ from marshmallow_enum import EnumField  # type:ignore[import]
 from ahbicht.edifact import EdifactFormat
 
 
+# pylint:disable=too-few-public-methods
 @attr.s(auto_attribs=True, kw_only=True)
 class ConditionTextMapping:
     """
@@ -24,6 +25,7 @@ class ConditionTextMapping:
     )  #: the key of the condition without square brackets; f.e. '78'
     condition_text: Optional[str] = attr.ib(
         default=None
+        # pylint:disable=line-too-long
     )  #: the description of the condition as in the AHB; None if unknown; f.e. 'Wenn SG4 STS+7++E02 (Transaktionsgrund: Einzug/Neuanlage)  nicht vorhanden'.
 
 
@@ -36,6 +38,7 @@ class ConditionTextMappingSchema(Schema):
     condition_key = fields.String()
     condition_text = fields.String(missing=None)
 
+    # pylint:disable=unused-argument,no-self-use
     @post_load
     def deserialize(self, data, **kwargs) -> ConditionTextMapping:
         """
@@ -44,6 +47,7 @@ class ConditionTextMappingSchema(Schema):
         return ConditionTextMapping(**data)
 
 
+# pylint:disable=too-few-public-methods
 @attr.s(auto_attribs=True, kw_only=True)
 class PackageConditionExpressionMapping:
     """
@@ -71,6 +75,7 @@ class PackageConditionExpressionMappingSchema(Schema):
     package_key = fields.String()
     package_expression = fields.String(missing=None)
 
+    # pylint:disable=unused-argument,no-self-use
     @post_load
     def deserialize(self, data, **kwargs) -> PackageConditionExpressionMapping:
         """

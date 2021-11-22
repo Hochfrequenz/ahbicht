@@ -10,6 +10,7 @@ from lark import Token, Tree
 from marshmallow import Schema, ValidationError
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
+from ahbicht.edifact import EdifactFormat
 from ahbicht.evaluation_results import (
     AhbExpressionEvaluationResult,
     AhbExpressionEvaluationResultSchema,
@@ -23,6 +24,12 @@ from ahbicht.expressions.condition_nodes import (
     EvaluatedFormatConstraintSchema,
 )
 from ahbicht.json_serialization.tree_schema import TreeSchema
+from ahbicht.resolver_results import (
+    ConditionTextMapping,
+    ConditionTextMappingSchema,
+    PackageConditionExpressionMapping,
+    PackageConditionExpressionMappingSchema,
+)
 
 T = TypeVar("T")
 
@@ -316,4 +323,42 @@ class TestJsonSerialization:
     ):
         _test_serialization_roundtrip(
             ahb_expression_evaluation_result, AhbExpressionEvaluationResultSchema(), expected_json_dict
+        )
+
+    @pytest.mark.parametrize(
+        "condition_text_mapping, expected_json_dict",
+        [
+            pytest.param(
+                ConditionTextMapping(
+                    edifact_format=EdifactFormat.UTILMD,
+                    condition_key="123",
+                    condition_text="Blablabla",
+                ),
+                {"edifact_format": "UTILMD", "condition_key": "123", "condition_text": "Blablabla"},
+            ),
+        ],
+    )
+    def test_condition_text_mapping_serialization(
+        self, condition_text_mapping: ConditionTextMapping, expected_json_dict: dict
+    ):
+        _test_serialization_roundtrip(condition_text_mapping, ConditionTextMappingSchema(), expected_json_dict)
+
+    @pytest.mark.parametrize(
+        "package_condition_expression_mapping, expected_json_dict",
+        [
+            pytest.param(
+                PackageConditionExpressionMapping(
+                    edifact_format=EdifactFormat.UTILMD,
+                    package_key="123P",
+                    package_expression="[1] U [2] O [3]",
+                ),
+                {"edifact_format": "UTILMD", "package_key": "123P", "package_expression": "[1] U [2] O [3]"},
+            ),
+        ],
+    )
+    def test_package_condition_expression_mapping_serialization(
+        self, package_condition_expression_mapping: PackageConditionExpressionMapping, expected_json_dict: dict
+    ):
+        _test_serialization_roundtrip(
+            package_condition_expression_mapping, PackageConditionExpressionMappingSchema(), expected_json_dict
         )
