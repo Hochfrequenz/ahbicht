@@ -12,7 +12,7 @@ from ahbicht.edifact import EdifactFormat
 
 # pylint:disable=too-few-public-methods
 @attr.s(auto_attribs=True, kw_only=True)
-class ConditionTextMapping:
+class ConditionKeyConditionTextMapping:
     """
     maps a condition from a specified EDIFACAT format onto a text as it is found in the AHB.
     """
@@ -29,9 +29,9 @@ class ConditionTextMapping:
     )  #: the description of the condition as in the AHB; None if unknown; f.e. 'Wenn SG4 STS+7++E02 (Transaktionsgrund: Einzug/Neuanlage)  nicht vorhanden'.
 
 
-class ConditionTextMappingSchema(Schema):
+class ConditionKeyConditionTextMappingSchema(Schema):
     """
-    A schema to (de-)serialize :class:`.ConditionTextMapping`s
+    A schema to (de-)serialize :class:`.ConditionKeyConditionTextMapping`s
     """
 
     edifact_format = EnumField(EdifactFormat)
@@ -40,16 +40,16 @@ class ConditionTextMappingSchema(Schema):
 
     # pylint:disable=unused-argument,no-self-use
     @post_load
-    def deserialize(self, data, **kwargs) -> ConditionTextMapping:
+    def deserialize(self, data, **kwargs) -> ConditionKeyConditionTextMapping:
         """
         Converts the barely typed data dictionary into an actual :class:`.ConditionTextMapping`
         """
-        return ConditionTextMapping(**data)
+        return ConditionKeyConditionTextMapping(**data)
 
 
 # pylint:disable=too-few-public-methods
 @attr.s(auto_attribs=True, kw_only=True)
-class PackageConditionExpressionMapping:
+class PackageKeyConditionExpressionMapping:
     """
     maps a package key from a specified EDIFACT format onto a (not yet parsed) condition expression as it is found in
     the AHB.
@@ -66,9 +66,9 @@ class PackageConditionExpressionMapping:
     )  #: the expression for which the package is a shortcut; None if unknown f.e. '[20] ∧ [244]'
 
 
-class PackageConditionExpressionMappingSchema(Schema):
+class PackageKeyConditionExpressionMappingSchema(Schema):
     """
-    A schema to (de-)serialize :class:`.ConditionTextMapping`s
+    A schema to (de-)serialize :class:`.PackageKeyConditionExpressionMapping`s
     """
 
     edifact_format = EnumField(EdifactFormat)
@@ -77,8 +77,8 @@ class PackageConditionExpressionMappingSchema(Schema):
 
     # pylint:disable=unused-argument,no-self-use
     @post_load
-    def deserialize(self, data, **kwargs) -> PackageConditionExpressionMapping:
+    def deserialize(self, data, **kwargs) -> PackageKeyConditionExpressionMapping:
         """
         Converts the barely typed data dictionary into an actual :class:`.ConditionTextMapping`
         """
-        return PackageConditionExpressionMapping(**data)
+        return PackageKeyConditionExpressionMapping(**data)

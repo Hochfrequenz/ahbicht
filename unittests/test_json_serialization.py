@@ -11,7 +11,6 @@ from marshmallow import Schema, ValidationError
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
 from ahbicht.edifact import EdifactFormat
-
 from ahbicht.evaluation_results import (
     AhbExpressionEvaluationResult,
     AhbExpressionEvaluationResultSchema,
@@ -25,11 +24,11 @@ from ahbicht.expressions.condition_nodes import (
     EvaluatedFormatConstraintSchema,
 )
 from ahbicht.json_serialization.tree_schema import TreeSchema
-from ahbicht.resolver_results import (
-    ConditionTextMapping,
-    ConditionTextMappingSchema,
-    PackageConditionExpressionMapping,
-    PackageConditionExpressionMappingSchema,
+from ahbicht.mapping_results import (
+    ConditionKeyConditionTextMapping,
+    ConditionKeyConditionTextMappingSchema,
+    PackageKeyConditionExpressionMapping,
+    PackageKeyConditionExpressionMappingSchema,
 )
 
 T = TypeVar("T")
@@ -327,10 +326,10 @@ class TestJsonSerialization:
         )
 
     @pytest.mark.parametrize(
-        "condition_text_mapping, expected_json_dict",
+        "condition_key_condition_text_mapping, expected_json_dict",
         [
             pytest.param(
-                ConditionTextMapping(
+                ConditionKeyConditionTextMapping(
                     edifact_format=EdifactFormat.UTILMD,
                     condition_key="123",
                     condition_text="Blablabla",
@@ -339,16 +338,18 @@ class TestJsonSerialization:
             ),
         ],
     )
-    def test_condition_text_mapping_serialization(
-        self, condition_text_mapping: ConditionTextMapping, expected_json_dict: dict
+    def test_condition_key_condition_text_mapping_serialization(
+        self, condition_key_condition_text_mapping: ConditionKeyConditionTextMapping, expected_json_dict: dict
     ):
-        _test_serialization_roundtrip(condition_text_mapping, ConditionTextMappingSchema(), expected_json_dict)
+        _test_serialization_roundtrip(
+            condition_key_condition_text_mapping, ConditionKeyConditionTextMappingSchema(), expected_json_dict
+        )
 
     @pytest.mark.parametrize(
-        "package_condition_expression_mapping, expected_json_dict",
+        "package_key_condition_expression_mapping, expected_json_dict",
         [
             pytest.param(
-                PackageConditionExpressionMapping(
+                PackageKeyConditionExpressionMapping(
                     edifact_format=EdifactFormat.UTILMD,
                     package_key="123P",
                     package_expression="[1] U [2] O [3]",
@@ -357,9 +358,9 @@ class TestJsonSerialization:
             ),
         ],
     )
-    def test_package_condition_expression_mapping_serialization(
-        self, package_condition_expression_mapping: PackageConditionExpressionMapping, expected_json_dict: dict
+    def test_package_key_condition_expression_mapping_serialization(
+        self, package_key_condition_expression_mapping: PackageKeyConditionExpressionMapping, expected_json_dict: dict
     ):
         _test_serialization_roundtrip(
-            package_condition_expression_mapping, PackageConditionExpressionMappingSchema(), expected_json_dict
+            package_key_condition_expression_mapping, PackageKeyConditionExpressionMappingSchema(), expected_json_dict
         )
