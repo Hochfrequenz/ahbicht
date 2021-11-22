@@ -1,5 +1,5 @@
 """
-This module contains classes that are returned by resolvers, meaning the contain a mapping.
+This module contains classes that are returned by mappers, meaning they contain a mapping.
 """
 from typing import Optional
 
