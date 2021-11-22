@@ -11,6 +11,7 @@ from marshmallow import Schema, ValidationError
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
 from ahbicht.edifact import EdifactFormat
+
 from ahbicht.evaluation_results import (
     AhbExpressionEvaluationResult,
     AhbExpressionEvaluationResultSchema,
