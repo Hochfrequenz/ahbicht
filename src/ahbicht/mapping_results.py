@@ -14,7 +14,7 @@ from ahbicht.edifact import EdifactFormat
 @attr.s(auto_attribs=True, kw_only=True)
 class ConditionKeyConditionTextMapping:
     """
-    maps a condition from a specified EDIFACAT format onto a text as it is found in the AHB.
+    maps a condition from a specified EDIFACT format onto a text as it is found in the AHB.
     """
 
     edifact_format: EdifactFormat = attr.ib(
@@ -31,7 +31,7 @@ class ConditionKeyConditionTextMapping:
 
 class ConditionKeyConditionTextMappingSchema(Schema):
     """
-    A schema to (de-)serialize :class:`.ConditionKeyConditionTextMapping`s
+    A schema to (de-)serialize :class:`.ConditionKeyConditionTextMapping` s
     """
 
     edifact_format = EnumField(EdifactFormat)
@@ -68,7 +68,7 @@ class PackageKeyConditionExpressionMapping:
 
 class PackageKeyConditionExpressionMappingSchema(Schema):
     """
-    A schema to (de-)serialize :class:`.PackageKeyConditionExpressionMapping`s
+    A schema to (de-)serialize :class:`.PackageKeyConditionExpressionMapping` s
     """
 
     edifact_format = EnumField(EdifactFormat)
