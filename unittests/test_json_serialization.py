@@ -9,13 +9,13 @@ import pytest
 from lark import Token, Tree
 from marshmallow import Schema, ValidationError
 
+from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
 from ahbicht.evaluation_results import (
     AhbExpressionEvaluationResult,
     AhbExpressionEvaluationResultSchema,
     FormatConstraintEvaluationResult,
     RequirementConstraintEvaluationResult,
 )
-from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 from ahbicht.expressions.condition_nodes import (
     ConditionFulfilledValue,
