@@ -127,6 +127,7 @@ class FormatConstraintExpressionBuilder(ExpressionBuilder[TSupportedFCExpression
     def _connect(self, operator_character: Literal["U", "O", "X"], other: TSupportedFCExpressionBuilderArguments):
         """
         Connect the existing expression and the other part.
+
         :param operator_character: "X", "U" or "O"
         :param other:
         :return:
