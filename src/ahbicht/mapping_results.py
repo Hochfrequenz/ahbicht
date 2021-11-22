@@ -42,7 +42,7 @@ class ConditionKeyConditionTextMappingSchema(Schema):
     @post_load
     def deserialize(self, data, **kwargs) -> ConditionKeyConditionTextMapping:
         """
-        Converts the barely typed data dictionary into an actual :class:`.ConditionTextMapping`
+        Converts the barely typed data dictionary into an actual :class:`.ConditionKeyConditionTextMapping`
         """
         return ConditionKeyConditionTextMapping(**data)
 
@@ -79,6 +79,6 @@ class PackageKeyConditionExpressionMappingSchema(Schema):
     @post_load
     def deserialize(self, data, **kwargs) -> PackageKeyConditionExpressionMapping:
         """
-        Converts the barely typed data dictionary into an actual :class:`.ConditionTextMapping`
+        Converts the barely typed data dictionary into an actual :class:`.PackageKeyConditionExpressionMapping`
         """
         return PackageKeyConditionExpressionMapping(**data)
