@@ -2,9 +2,9 @@ AHB Condition Expression Parser (AHBicht)
 =========================================
 
 |Unittests status badge| |Coverage status badge| |Linting status badge|
-|Black status badge| |pypy status badge| 
+|Black status badge| |pypy status badge|
 
-.. image:: ./docs/_static/ahbicht-logo.png
+.. image:: https://raw.githubusercontent.com/Hochfrequenz/ahbicht/main/docs/_static/ahbicht-logo.png
    :target: https://ahbicht.readthedocs.io
    :align: right
    :alt: ahbicht logo

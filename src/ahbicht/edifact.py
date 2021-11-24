@@ -15,21 +15,21 @@ class EdifactFormat(str, Enum):
     """
 
     APERAK = "APERAK"
-    COMDIS = "COMDIS"  # communication dispute
-    IFTSTA = "IFTSTA"  # Multimodaler Statusbericht
-    INSRPT = "INSRPT"  # Prüfbericht
-    INVOIC = "INVOIC"  # invoice
-    MSCONS = "MSCONS"  # meter readings
-    ORDCHG = "ORDCHG"  # chaning an order
-    ORDERS = "ORDERS"  # orders
-    ORDRSP = "ORDRSP"  # orders response
-    PRICAT = "PRICAT"  # price catalogue
-    QUOTES = "QUOTES"  # quotes
-    REMADV = "REMADV"  # zahlungsavis
-    REQOTE = "REQOTE"  # request quote
-    PARTIN = "PARTIN"  # market partner data
-    UTILMD = "UTILMD"  # utilities master data
-    UTILTS = "UTILTS"  # formula
+    COMDIS = "COMDIS"  #: communication dispute
+    IFTSTA = "IFTSTA"  #: Multimodaler Statusbericht
+    INSRPT = "INSRPT"  #: Prüfbericht
+    INVOIC = "INVOIC"  #: invoice
+    MSCONS = "MSCONS"  #: meter readings
+    ORDCHG = "ORDCHG"  #: changing an order
+    ORDERS = "ORDERS"  #: orders
+    ORDRSP = "ORDRSP"  #: orders response
+    PRICAT = "PRICAT"  #: price catalogue
+    QUOTES = "QUOTES"  #: quotes
+    REMADV = "REMADV"  #: zahlungsavis
+    REQOTE = "REQOTE"  #: request quote
+    PARTIN = "PARTIN"  #: market partner data
+    UTILMD = "UTILMD"  #: utilities master data
+    UTILTS = "UTILTS"  #: formula
 
     def __str__(self):
         return self.value
@@ -59,9 +59,9 @@ class EdifactFormatVersion(str, Enum):
     One format version refers to the period in which an AHB is valid.
     """
 
-    FV2104 = "FV2104"  # valid since 2021-04-01
-    FV2110 = "FV2110"  # valid from 2021-10-01 onwards
-    FV2204 = "FV2204"  # valid from 2022-04-01 onwards ("MaKo 2022")
+    FV2104 = "FV2104"  #: valid from 2021-04-01 until 2021-10-01
+    FV2110 = "FV2110"  #: valid from 2021-10-01 until 2022-04-01
+    FV2204 = "FV2204"  #: valid from 2022-04-01 onwards ("MaKo 2022")
 
     def __str__(self):
         return self.value
@@ -70,8 +70,6 @@ class EdifactFormatVersion(str, Enum):
 def pruefidentifikator_to_format(pruefidentifikator: str) -> Optional[EdifactFormat]:
     """
     returns the format corresponding to a given pruefi
-    :param pruefidentifikator:
-    :return: matching EDIFACT format or None
     """
     if not pruefidentifikator:
         raise ValueError("The pruefidentifikator must not be falsy")

@@ -23,11 +23,11 @@ class ConditionFulfilledValue(str, Enum):
     in the condition_fulfilled attribute of the ConditionNodes.
     """
 
-    FULFILLED = "FULFILLED"  # if condition is fulfilled
-    UNFULFILLED = "UNFULFILLED"  # if condition is not fulfilled
-    UNKNOWN = "UNKNOWN"  # if it cannot be checked if condition is fulfilled (e.g. "Wenn vorhanden")
+    FULFILLED = "FULFILLED"  #: if condition is fulfilled
+    UNFULFILLED = "UNFULFILLED"  #: if condition is not fulfilled
+    UNKNOWN = "UNKNOWN"  #: if it cannot be checked if condition is fulfilled (e.g. "Wenn vorhanden")
     NEUTRAL = (
-        "NEUTRAL"  # a hint or unevaluated format constraint which does not have a status of being fulfilled or not
+        "NEUTRAL"  #: a hint or unevaluated format constraint which does not have a status of being fulfilled or not
     )
 
     def __str__(self):
