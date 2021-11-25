@@ -2,7 +2,7 @@
 from pathlib import Path
 
 import inject
-import pytest
+import pytest  # type:ignore[import]
 
 from ahbicht.condition_node_builder import ConditionNodeBuilder
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluationContext

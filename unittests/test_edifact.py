@@ -1,6 +1,6 @@
 from typing import Optional, Tuple
 
-import pytest
+import pytest  # type:ignore[import]
 
 from ahbicht.edifact import EdifactFormat, pruefidentifikator_to_format
 

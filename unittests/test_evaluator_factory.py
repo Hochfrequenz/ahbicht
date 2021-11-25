@@ -2,7 +2,7 @@
 import uuid
 from typing import Optional
 
-import pytest
+import pytest  # type:ignore[import]
 from _pytest.fixtures import SubRequest
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult

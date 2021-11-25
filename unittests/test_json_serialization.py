@@ -5,7 +5,7 @@ import json
 import uuid
 from typing import TypeVar
 
-import pytest
+import pytest  # type:ignore[import]
 from lark import Token, Tree
 from marshmallow import Schema, ValidationError
 

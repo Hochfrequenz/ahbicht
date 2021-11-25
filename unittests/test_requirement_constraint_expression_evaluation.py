@@ -1,7 +1,7 @@
 """ Test for the evaluation of the conditions tests (Mussfeldprüfung) """
 from typing import Dict, Optional
 
-import pytest
+import pytest  # type:ignore[import]
 
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue as cfv

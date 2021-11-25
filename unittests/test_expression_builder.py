@@ -1,7 +1,7 @@
 """
 Tests the expression builder module.
 """
-import pytest
+import pytest  # type:ignore[import]
 
 from ahbicht.expressions.condition_nodes import Hint, UnevaluatedFormatConstraint
 from ahbicht.expressions.expression_builder import FormatConstraintExpressionBuilder, HintExpressionBuilder

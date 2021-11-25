@@ -1,7 +1,7 @@
 """ Test for the evaluation of the format constraint expression. """
 
 import inject
-import pytest
+import pytest  # type:ignore[import]
 
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
 from ahbicht.edifact import EdifactFormat, EdifactFormatVersion
