@@ -251,18 +251,6 @@ class TestJsonSerialization:
                     "requirement_indicator": "Muss",
                 },
             ),
-        ],
-    )
-    def test_ahb_expression_evaluation_result_serialization(
-        self, ahb_expression_evaluation_result: AhbExpressionEvaluationResult, expected_json_dict: dict
-    ):
-        _test_serialization_roundtrip(
-            ahb_expression_evaluation_result, AhbExpressionEvaluationResultSchema(), expected_json_dict
-        )
-
-    @pytest.mark.parametrize(
-        "ahb_expression_evaluation_result, expected_json_dict",
-        [
             pytest.param(
                 AhbExpressionEvaluationResult(
                     requirement_indicator="Muss",
