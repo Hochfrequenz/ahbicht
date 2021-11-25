@@ -1,7 +1,7 @@
 """
 Tests the hints provider module.
 """
-import pytest
+import pytest  # type:ignore[import]
 
 from ahbicht.edifact import EdifactFormat, EdifactFormatVersion
 from ahbicht.expressions.hints_provider import JsonFileHintsProvider

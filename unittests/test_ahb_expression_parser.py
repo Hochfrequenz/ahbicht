@@ -1,6 +1,6 @@
 """ Tests for the parsing of the ahb_expressions as they appear in the AHBs. """
 
-import pytest
+import pytest  # type:ignore[import]
 from lark import Token, Tree
 
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions

@@ -3,7 +3,7 @@
 from unittest.mock import AsyncMock
 
 import inject
-import pytest
+import pytest  # type:ignore[import]
 
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.evaluation_results import FormatConstraintEvaluationResult, RequirementConstraintEvaluationResult
@@ -161,6 +161,8 @@ class TestAHBExpressionEvaluation:
         parsed_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(expression)
 
         with pytest.raises(expected_error) as excinfo:
-            evaluate_ahb_expression_tree(parsed_tree, entered_input=None)
+            evaluate_ahb_expression_tree(
+                parsed_tree, entered_input=None  # type:ignore[arg-type] # ok because error test
+            )
 
         assert expected_error_message in str(excinfo.value)

@@ -1,6 +1,6 @@
 """ Tests for the parsing of the conditions tests (Mussfeldprüfung) """
 
-import pytest
+import pytest  # type:ignore[import]
 from lark import Token, Tree
 
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
