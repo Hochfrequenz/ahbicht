@@ -3,7 +3,7 @@ import uuid
 from typing import Optional
 
 import pytest  # type:ignore[import]
-from _pytest.fixtures import SubRequest
+from _pytest.fixtures import SubRequest  # type:ignore[import]
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.evaluator_factory import create_and_inject_hardcoded_evaluators
@@ -67,7 +67,10 @@ class TestEvaluatorFactory:
             expression_evaluation_result.format_constraint_evaluation_result.format_constraints_fulfilled
             is expected_format_constraint_result
         )
-        if expected_in_hints:
-            assert expected_in_hints in expression_evaluation_result.requirement_constraint_evaluation_result.hints
+        if expected_in_hints is not None:
+            assert (
+                expected_in_hints
+                in expression_evaluation_result.requirement_constraint_evaluation_result.hints  # type:ignore[operator]
+            )
         else:
             assert expression_evaluation_result.requirement_constraint_evaluation_result.hints is None

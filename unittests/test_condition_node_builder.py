@@ -23,7 +23,7 @@ class DummyRcEvaluator(RcEvaluator):
     """
 
     def _get_default_context(self) -> EvaluationContext:
-        return None
+        return None  # type:ignore[return-value]
 
     edifact_format = EdifactFormat.UTILMD
     edifact_format_version = EdifactFormatVersion.FV2104
