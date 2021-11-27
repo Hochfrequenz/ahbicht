@@ -73,7 +73,7 @@ You can also use our public REST API to parse condition expressions (other featu
 
 Easily Integrate AHBicht with Your Solution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-If you want to use AHBicht together with your own software, you can use the `JSON Sehema Files <json_schemas>`__ provided to kick start the integration.
+If you want to use AHBicht together with your own software, you can use the `JSON Schema files <json_schemas>`__ provided to kick start the integration.
 
 Code Quality / Production Readiness
 -----------------------------------
