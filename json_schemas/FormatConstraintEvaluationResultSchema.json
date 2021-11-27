@@ -1,7 +1,26 @@
 {
+    "$ref": "#/definitions/FormatConstraintEvaluationResultSchema",
     "$schema": "http://json-schema.org/draft-07/schema#",
     "definitions": {
+        "FormatConstraintEvaluationResultSchema": {
+            "additionalProperties": false,
+            "properties": {
+                "error_message": {
+                    "title": "error_message",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "format_constraints_fulfilled": {
+                    "title": "format_constraints_fulfilled",
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
+        },
         "RequirementConstraintEvaluationResultSchema": {
+            "additionalProperties": false,
             "properties": {
                 "format_constraints_expression": {
                     "title": "format_constraints_expression",
@@ -26,26 +45,7 @@
                     "type": "boolean"
                 }
             },
-            "type": "object",
-            "additionalProperties": false
-        },
-        "FormatConstraintEvaluationResultSchema": {
-            "properties": {
-                "error_message": {
-                    "title": "error_message",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "format_constraints_fulfilled": {
-                    "title": "format_constraints_fulfilled",
-                    "type": "boolean"
-                }
-            },
-            "type": "object",
-            "additionalProperties": false
+            "type": "object"
         }
-    },
-    "$ref": "#/definitions/FormatConstraintEvaluationResultSchema"
+    }
 }
