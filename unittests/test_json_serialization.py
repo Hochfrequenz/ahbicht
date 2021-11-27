@@ -9,7 +9,12 @@ import pytest  # type:ignore[import]
 from lark import Token, Tree
 from marshmallow import Schema, ValidationError
 
-from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
+from ahbicht.content_evaluation.content_evaluation_result import (
+    ContentEvaluationPrerequisites,
+    ContentEvaluationPrerequisitesSchema,
+    ContentEvaluationResult,
+    ContentEvaluationResultSchema,
+)
 from ahbicht.edifact import EdifactFormat
 from ahbicht.evaluation_results import (
     AhbExpressionEvaluationResult,
@@ -351,4 +356,30 @@ class TestJsonSerialization:
     ):
         _test_serialization_roundtrip(
             package_key_condition_expression_mapping, PackageKeyConditionExpressionMappingSchema(), expected_json_dict
+        )
+
+    @pytest.mark.parametrize(
+        "content_evaluation_prerequisites, expected_json_dict",
+        [
+            pytest.param(
+                ContentEvaluationPrerequisites(
+                    hint_keys=["501", "502", "503"],
+                    format_constraint_keys=["901", "902"],
+                    requirement_constraint_keys=["1", "2", "3", "4"],
+                    package_keys=["17P"],
+                ),
+                {
+                    "hint_keys": ["501", "502", "503"],
+                    "format_constraint_keys": ["901", "902"],
+                    "requirement_constraint_keys": ["1", "2", "3", "4"],
+                    "package_keys": ["17P"],
+                },
+            ),
+        ],
+    )
+    def test_content_evaluation_prerequisites_serialization(
+        self, content_evaluation_prerequisites: ContentEvaluationPrerequisites, expected_json_dict: dict
+    ):
+        _test_serialization_roundtrip(
+            content_evaluation_prerequisites, ContentEvaluationPrerequisitesSchema(), expected_json_dict
         )

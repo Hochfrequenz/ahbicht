@@ -1,7 +1,7 @@
 """
 This module contains a class to store _all_ kinds of content evaluation results.
 """
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 from uuid import UUID
 
 import attr
@@ -23,14 +23,14 @@ class ContentEvaluationResult:
     format constraints have been evaluated)
     """
 
-    hints: Dict[str, Optional[str]]  # maps the key of a hint (e.g. "501" to a hint text)
+    hints: Dict[str, Optional[str]]  #: maps the key of a hint (e.g. "501" to a hint text)
     format_constraints: Dict[
         str, EvaluatedFormatConstraint
-    ]  # maps the key of a format constraint to the respective evaluation result
+    ]  #: maps the key of a format constraint to the respective evaluation result
     requirement_constraints: Dict[
         str, ConditionFulfilledValue
-    ]  # maps the key of a requirement_constraint to the respective evaluation result
-    id: Optional[UUID] = None  # optional guid
+    ]  #: maps the key of a requirement_constraint to the respective evaluation result
+    id: Optional[UUID] = None  #: optional guid
 
 
 class ContentEvaluationResultSchema(Schema):
@@ -66,3 +66,60 @@ class ContentEvaluationResultSchema(Schema):
                         result.requirement_constraints[rc_key] = ConditionFulfilledValue(enum_value.value)
                         break
         return result
+
+
+@attr.s(auto_attribs=True)
+class ContentEvaluationPrerequisites:
+    """
+    For expressions (that do not contain any unresolved package) it's possible to pre-generate all possible outcomes of
+    a content evaluation. ContentEvaluationPrerequisites are the answer to the question:
+    'Which information do I need to provide in a ContentEvaluationResult in order to evaluation a given expression?'
+    """
+
+    hint_keys: List[str]  #: list of keys for which you'll need to provide hint texts in a ContentEvaluationResult
+    format_constraint_keys: List[str]  #: list of keys for which you'll need to provide EvaluatedFormatConstraints
+    requirement_constraint_keys: List[str]  #: list of keys for which you'll need to provide ConditionFulfilledValues
+    package_keys: List[str]  #: list of packages that need to be resolved (additionally)
+
+    def _remove_duplicates(self) -> None:
+        """
+        remove duplicates from all lists
+        """
+        self.hint_keys = [*set(self.hint_keys)]
+        self.format_constraint_keys = [*set(self.format_constraint_keys)]
+        self.requirement_constraint_keys = [*set(self.requirement_constraint_keys)]
+        self.package_keys = [*set(self.package_keys)]
+
+    def _sort_keys(self) -> None:
+        """
+        sort the keys in all lists in ascending order
+        """
+        self.hint_keys.sort(key=int)
+        self.format_constraint_keys.sort(key=int)
+        self.requirement_constraint_keys.sort(key=int)
+        self.package_keys.sort()
+
+    def sanitize(self) -> None:
+        """
+        Sanitize the result (remove duplicates, sort keys)
+        """
+        self._remove_duplicates()
+        self._sort_keys()
+
+
+class ContentEvaluationPrerequisitesSchema(Schema):
+    """
+    A schema to (de)serialize ContentEvaluationPrerequisites
+    """
+
+    hint_keys = fields.List(fields.String())
+    format_constraint_keys = fields.List(fields.String())
+    requirement_constraint_keys = fields.List(fields.String())
+    package_keys = fields.List(fields.String())
+
+    @post_load
+    def deserialize(self, data, **kwargs) -> ContentEvaluationPrerequisites:
+        """
+        Converts the barely typed data dictionary into an actual ContentEvaluationPrerequisites
+        """
+        return ContentEvaluationPrerequisites(**data)

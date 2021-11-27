@@ -8,6 +8,7 @@ from typing import Dict, List, Tuple, Union
 import inject
 
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
+from ahbicht.expressions.condition_expression_parser import find_prerequisites
 from ahbicht.expressions.condition_nodes import Hint, RequirementConstraint, UnevaluatedFormatConstraint
 from ahbicht.expressions.hints_provider import HintsProvider
 
@@ -40,22 +41,10 @@ class ConditionNodeBuilder:
     def _seperate_condition_keys_into_each_type(self) -> Tuple[List[str], List[str], List[str]]:
         """
         Separates the list of all condition keys into three lists of their respective types.
-        The types are differentiated by their number range.
-        See 'Allgemeine Festlegungen' from EDI@Energy.
         """
-        requirement_constraints: List[str] = []
-        hints: List[str] = []
-        format_constraints: List[str] = []
-        for condition_key in self.condition_keys:
-            if 1 <= int(condition_key) <= 499:
-                requirement_constraints.append(condition_key)
-            elif 500 <= int(condition_key) <= 900:
-                hints.append(condition_key)
-            elif 901 <= int(condition_key) <= 999:
-                format_constraints.append(condition_key)
-            else:
-                raise ValueError("Condition key is not in valid number range.")
-        return requirement_constraints, hints, format_constraints
+        prerequisites = find_prerequisites(self.condition_keys)
+        # note: if you remove duplicate keys or sort the keys inside find_prerequisites, you'll have failing tests
+        return prerequisites.requirement_constraint_keys, prerequisites.hint_keys, prerequisites.format_constraint_keys
 
     def _build_hint_nodes(self) -> Dict[str, Hint]:
         """Builds Hint nodes from their condition keys by getting all hint texts from the HintsProvider."""
