@@ -1,9 +1,11 @@
 """ Tests for the parsing of the conditions tests (Mussfeldprüfung) """
+from typing import List
 
 import pytest  # type:ignore[import]
 
-from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationPrerequisites
+from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationPrerequisites, ContentEvaluationResult
 from ahbicht.expressions.condition_expression_parser import get_prerequisites
+from ahbicht.expressions.condition_nodes import ConditionFulfilledValue
 
 
 class TestPreqrequisitesGeneration:
@@ -44,3 +46,37 @@ class TestPreqrequisitesGeneration:
         """
         actual = get_prerequisites(expression)
         assert actual == expected_prerequisites
+
+    @pytest.mark.parametrize(
+        "prerequisites, expected_cers",
+        [
+            pytest.param(
+                ContentEvaluationPrerequisites(
+                    hint_keys=[], requirement_constraint_keys=["1"], format_constraint_keys=[], package_keys=[]
+                ),
+                [
+                    ContentEvaluationResult(
+                        hints={},
+                        format_constraints={},
+                        requirement_constraints={"1": ConditionFulfilledValue.FULFILLED},
+                    ),
+                    ContentEvaluationResult(
+                        hints={},
+                        format_constraints={},
+                        requirement_constraints={"1": ConditionFulfilledValue.UNFULFILLED},
+                    ),
+                    ContentEvaluationResult(
+                        hints={}, format_constraints={}, requirement_constraints={"1": ConditionFulfilledValue.UNKNOWN}
+                    ),
+                    ContentEvaluationResult(
+                        hints={}, format_constraints={}, requirement_constraints={"1": ConditionFulfilledValue.NEUTRAL}
+                    ),
+                ],
+            )
+        ],
+    )
+    def test_possible_cer_generation(
+        self, prerequisites: ContentEvaluationPrerequisites, expected_cers: List[ContentEvaluationResult]
+    ):
+        actual = prerequisites.generate_possible_content_evaluation_results()
+        assert actual == expected_cers

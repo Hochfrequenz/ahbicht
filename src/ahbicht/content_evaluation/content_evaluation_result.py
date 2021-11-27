@@ -1,6 +1,7 @@
 """
 This module contains a class to store _all_ kinds of content evaluation results.
 """
+from itertools import product
 from typing import Dict, List, Optional
 from uuid import UUID
 
@@ -105,6 +106,31 @@ class ContentEvaluationPrerequisites:
         """
         self._remove_duplicates()
         self._sort_keys()
+
+    def generate_possible_content_evaluation_results(self) -> List[ContentEvaluationResult]:
+        """
+        A prerequisite allows to generate nearly all possible content evaluation results, except for hints, error
+        messages, resolving packages.
+        """
+        results: List[ContentEvaluationResult] = []
+        for rcfc_tuple in product(
+            [x for x in product(["dummy"] + self.requirement_constraint_keys, ConditionFulfilledValue)],
+            [x for x in product(["dummy"] + self.format_constraint_keys, [True, False])],
+        ):
+            # we need the dummys to run into this loop even if one of either fc_keys or rc_keys is empty
+            result = ContentEvaluationResult(
+                hints={hint_key: f"Hinweis {hint_key}" for hint_key in self.hint_keys},
+                requirement_constraints={
+                    rc_tuple[0][0]: rc_tuple[1] for rc_tuple in rcfc_tuple[0] if rc_tuple[0] != "dummy"
+                },
+                format_constraints={
+                    fc_tuple[0]: EvaluatedFormatConstraint(format_constraint_fulfilled=fc_tuple[1])
+                    for fc_tuple in rcfc_tuple[1]
+                    if fc_tuple[0] != "dummy"
+                },
+            )
+            result.append(result)
+        return results
 
 
 class ContentEvaluationPrerequisitesSchema(Schema):
