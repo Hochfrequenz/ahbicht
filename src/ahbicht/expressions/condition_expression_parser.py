@@ -95,7 +95,7 @@ def find_prerequisites(tree_or_list: Union[Tree, List[str]], sanitize: bool = Fa
     return result
 
 
-def get_prerequisites(condition_expression: str) -> ContentEvaluationPrerequisites:
+def collect_prerequisites(condition_expression: str) -> ContentEvaluationPrerequisites:
     """
     Parses the given condition expression and returns ContentEvaluationPrerequisites as a template for content
     evaluation.
