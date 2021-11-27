@@ -3,7 +3,7 @@
 import pytest  # type:ignore[import]
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationPrerequisites
-from ahbicht.expressions.condition_expression_parser import get_prerequisites
+from ahbicht.expressions.condition_expression_parser import collect_prerequisites
 
 
 class TestPreqrequisitesGeneration:
@@ -42,5 +42,5 @@ class TestPreqrequisitesGeneration:
         """
         Tests that the prerequisites are generated correctly.
         """
-        actual = get_prerequisites(expression)
+        actual = collect_prerequisites(expression)
         assert actual == expected_prerequisites
