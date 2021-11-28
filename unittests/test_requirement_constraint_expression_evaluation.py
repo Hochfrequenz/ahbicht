@@ -1,7 +1,7 @@
 """ Test for the evaluation of the conditions tests (Mussfeldprüfung) """
 from typing import Dict, Optional
 
-import pytest
+import pytest  # type:ignore[import]
 
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue as cfv
@@ -162,7 +162,7 @@ class TestRequirementConstraintEvaluation:
         }
 
         parsed_tree = parse_condition_expression_to_tree(expression)
-        result: ConditionNode = evaluate_requirement_constraint_tree(parsed_tree, input_values)
+        result: ConditionNode = evaluate_requirement_constraint_tree(parsed_tree, input_values)  # type:ignore[arg-type]
 
         assert result.conditions_fulfilled == expected_resulting_conditions_fulfilled
         assert getattr(result, "hint", None) == expected_resulting_hint
@@ -204,7 +204,9 @@ class TestRequirementConstraintEvaluation:
             "988": self._fc_988,
         }
         parsed_tree = parse_condition_expression_to_tree(expression)
-        result: EvaluatedComposition = evaluate_requirement_constraint_tree(parsed_tree, input_values)
+        result: EvaluatedComposition = evaluate_requirement_constraint_tree(
+            parsed_tree, input_values  # type:ignore[arg-type]
+        )
         assert isinstance(result, EvaluatedComposition)
         assert result.conditions_fulfilled == expected_resulting_conditions_fulfilled
         assert result.hint == expected_hint_text
@@ -248,7 +250,9 @@ class TestRequirementConstraintEvaluation:
             "987": self._fc_987,
         }
         parsed_tree = parse_condition_expression_to_tree(expression)
-        result: EvaluatedComposition = evaluate_requirement_constraint_tree(parsed_tree, input_values)
+        result: EvaluatedComposition = evaluate_requirement_constraint_tree(
+            parsed_tree, input_values  # type:ignore[arg-type]
+        )
         assert isinstance(result, ConditionNode)
         assert result.conditions_fulfilled == expected_resulting_conditions_fulfilled
 
@@ -311,7 +315,7 @@ class TestRequirementConstraintEvaluation:
         parsed_tree = parse_condition_expression_to_tree(expression)
 
         with pytest.raises(NotImplementedError) as excinfo:
-            evaluate_requirement_constraint_tree(parsed_tree, input_values)
+            evaluate_requirement_constraint_tree(parsed_tree, input_values)  # type:ignore[arg-type]
 
         assert """is not implemented as it has no useful result.""" in str(excinfo.value)
 
@@ -368,6 +372,8 @@ class TestRequirementConstraintEvaluation:
         input_values["950"] = self._fc_950
         input_values["951"] = self._fc_951
         parsed_tree = parse_condition_expression_to_tree("([950] ([2] U [4])) O ([951] ([1] U [3]))")
-        actual: EvaluatedComposition = evaluate_requirement_constraint_tree(parsed_tree, input_values)
+        actual: EvaluatedComposition = evaluate_requirement_constraint_tree(
+            parsed_tree, input_values  # type:ignore[arg-type]
+        )
         assert isinstance(actual, EvaluatedComposition)
         assert actual == expected_evaluated_result

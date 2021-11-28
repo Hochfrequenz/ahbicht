@@ -1,6 +1,6 @@
 """ Tests for creating different condition nodes that are used in the parsed tree. """
 
-import pytest
+import pytest  # type:ignore[import]
 
 from ahbicht.expressions.condition_nodes import (
     ConditionFulfilledValue,

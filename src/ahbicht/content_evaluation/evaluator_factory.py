@@ -24,6 +24,7 @@ def create_hardcoded_evaluators(
 ) -> Tuple[RcEvaluator, FcEvaluator, HintsProvider]:
     """
     Creates evaluators based on the given content_evaluation_result
+
     :param content_evaluation_result:
     :return:
     """
@@ -36,6 +37,7 @@ def create_hardcoded_evaluators(
 def create_and_inject_hardcoded_evaluators(content_evaluation_result: ContentEvaluationResult):
     """
     Creates evaluators from hardcoded content_evaluation result and injects them
+
     :param content_evaluation_result:
     :return:
     """

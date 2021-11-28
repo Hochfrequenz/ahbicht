@@ -2,7 +2,7 @@
 from pathlib import Path
 
 import inject
-import pytest
+import pytest  # type:ignore[import]
 
 from ahbicht.condition_node_builder import ConditionNodeBuilder
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluationContext
@@ -23,7 +23,7 @@ class DummyRcEvaluator(RcEvaluator):
     """
 
     def _get_default_context(self) -> EvaluationContext:
-        return None
+        return None  # type:ignore[return-value]
 
     edifact_format = EdifactFormat.UTILMD
     edifact_format_version = EdifactFormatVersion.FV2104
