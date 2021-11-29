@@ -41,4 +41,4 @@ for schema_type in schema_types:
     schema_instance = schema_type()
     json_schema_dict = json_schema.dump(schema_instance)
     with open(file_path, "w", encoding="utf-8") as json_schema_file:
-        json.dump(json_schema_dict, json_schema_file, ensure_ascii=False, sort_keys=False, indent=4)
+        json.dump(json_schema_dict, json_schema_file, ensure_ascii=False, sort_keys=True, indent=4)
