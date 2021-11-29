@@ -1,0 +1,72 @@
+{
+    "$ref": "#/definitions/EvaluatedFormatConstraintSchema",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+        "EvaluatedFormatConstraintSchema": {
+            "additionalProperties": false,
+            "properties": {
+                "error_message": {
+                    "default": true,
+                    "title": "error_message",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "format_constraint_fulfilled": {
+                    "title": "format_constraint_fulfilled",
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "format_constraint_fulfilled"
+            ],
+            "type": "object"
+        },
+        "FormatConstraintEvaluationResultSchema": {
+            "additionalProperties": false,
+            "properties": {
+                "error_message": {
+                    "title": "error_message",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "format_constraints_fulfilled": {
+                    "title": "format_constraints_fulfilled",
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
+        },
+        "RequirementConstraintEvaluationResultSchema": {
+            "additionalProperties": false,
+            "properties": {
+                "format_constraints_expression": {
+                    "title": "format_constraints_expression",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "hints": {
+                    "title": "hints",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "requirement_constraints_fulfilled": {
+                    "title": "requirement_constraints_fulfilled",
+                    "type": "boolean"
+                },
+                "requirement_is_conditional": {
+                    "title": "requirement_is_conditional",
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
+        }
+    }
+}
