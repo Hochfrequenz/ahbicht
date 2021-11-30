@@ -18,12 +18,13 @@ from ahbicht.evaluation_results import (
     RequirementConstraintEvaluationResult,
 )
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
+from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.condition_nodes import (
     ConditionFulfilledValue,
     EvaluatedFormatConstraint,
     EvaluatedFormatConstraintSchema,
 )
-from ahbicht.json_serialization.tree_schema import TreeSchema
+from ahbicht.json_serialization.tree_schema import CompactTreeSchema, TreeSchema
 from ahbicht.mapping_results import (
     ConditionKeyConditionTextMapping,
     ConditionKeyConditionTextMappingSchema,
@@ -352,3 +353,41 @@ class TestJsonSerialization:
         _test_serialization_roundtrip(
             package_key_condition_expression_mapping, PackageKeyConditionExpressionMappingSchema(), expected_json_dict
         )
+
+    @pytest.mark.parametrize(
+        "condition_expression, expected_compact_json_dict",
+        [
+            pytest.param(
+                "[1] U ([2] O [3])[901]",
+                {"and_composition": ["1", {"then_also_composition": [{"or_composition": ["2", "3"]}, "901"]}]},
+            ),
+            pytest.param(
+                "[3] U ([2] O [3] U [77] X [99][502])[901]",
+                {
+                    "and_composition": [
+                        "3",
+                        {
+                            "then_also_composition": [
+                                {
+                                    "or_composition": [
+                                        "2",
+                                        {
+                                            "xor_composition": [
+                                                {"and_composition": ["3", "77"]},
+                                                {"then_also_composition": ["99", "502"]},
+                                            ]
+                                        },
+                                    ]
+                                },
+                                "901",
+                            ]
+                        },
+                    ]
+                },
+            ),
+        ],
+    )
+    def test_compact_tree_serialization_behaviour(self, condition_expression: str, expected_compact_json_dict: dict):
+        tree = parse_condition_expression_to_tree(condition_expression)
+        json_dict = CompactTreeSchema().dump(tree)
+        assert json_dict == expected_compact_json_dict
