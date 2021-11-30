@@ -1,5 +1,5 @@
 """
-This module makes it possible to parse expressions with all its subexpressions
+This module makes it possible to parse expressions including all their subexpressions, if present.
 for example ahb_expressions with condition_expressions or condition_expressions with packages.
 """
 
