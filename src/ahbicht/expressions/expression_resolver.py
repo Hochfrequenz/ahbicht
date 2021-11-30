@@ -35,7 +35,7 @@ def parse_expression_including_unresolved_subexpressions(expression: str, resolv
 # pylint: disable=no-self-use, invalid-name
 class AhbExpressionResolverTransformer(Transformer):
     """
-    Resolves the condition_expressions of an ahb_expression.
+    Resolves the condition_expressions inside an ahb_expression.
     """
 
     def CONDITION_EXPRESSION(self, expression):
