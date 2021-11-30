@@ -362,7 +362,7 @@ class TestJsonSerialization:
                 {"and_composition": ["1", {"then_also_composition": [{"or_composition": ["2", "3"]}, "901"]}]},
             ),
             pytest.param(
-                "[3] U ([2] O [3] O [77] X [99][502])[901]",
+                "[3] U ([2] O [3] U [77] X [99][502])[901]",
                 {
                     "and_composition": [
                         "3",
@@ -370,8 +370,13 @@ class TestJsonSerialization:
                             "then_also_composition": [
                                 {
                                     "or_composition": [
-                                        {"or_composition": ["2", "3"]},
-                                        {"xor_composition": ["77", {"then_also_composition": ["99", "502"]}]},
+                                        "2",
+                                        {
+                                            "xor_composition": [
+                                                {"and_composition": ["3", "77"]},
+                                                {"then_also_composition": ["99", "502"]},
+                                            ]
+                                        },
                                     ]
                                 },
                                 "901",
