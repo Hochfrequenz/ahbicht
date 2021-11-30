@@ -74,7 +74,7 @@ class ContentEvaluationPrerequisites:
     """
     For expressions (that do not contain any unresolved package) it's possible to pre-generate all possible outcomes of
     a content evaluation. ContentEvaluationPrerequisites are the answer to the question:
-    'Which information do I need to provide in a ContentEvaluationResult in order to evaluation a given expression?'
+    'Which information do I need to provide in a ContentEvaluationResult in order to evaluate a given expression?'
     """
 
     hint_keys: List[str]  #: list of keys for which you'll need to provide hint texts in a ContentEvaluationResult
