@@ -80,13 +80,13 @@ def find_prerequisites(tree_or_list: Union[Tree, List[str]], sanitize: bool = Fa
         ]
     for condition_key in condition_keys:
         condition_node_type = derive_condition_node_type(condition_key)
-        if condition_node_type == ConditionNodeType.REQUIREMENT_CONSTRAINT:
+        if condition_node_type is ConditionNodeType.REQUIREMENT_CONSTRAINT:
             result.requirement_constraint_keys.append(condition_key)
-        elif condition_node_type == ConditionNodeType.HINT:
+        elif condition_node_type is ConditionNodeType.HINT:
             result.hint_keys.append(condition_key)
-        elif condition_node_type == ConditionNodeType.FORMAT_CONSTRAINT:
+        elif condition_node_type is ConditionNodeType.FORMAT_CONSTRAINT:
             result.format_constraint_keys.append(condition_key)
-        elif condition_node_type == ConditionNodeType.PACKAGE:
+        elif condition_node_type is ConditionNodeType.PACKAGE:
             result.package_keys.append(condition_key)
         else:
             raise NotImplementedError(f"The type '{condition_node_type}' is not implemented yet.")
