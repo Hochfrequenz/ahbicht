@@ -9,7 +9,7 @@ from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_si
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 
 
-def expression_resolver(expression: str, resolve_packages: bool = False) -> Tree:
+def parse_expression_including_unresolved_subexpressions(expression: str, resolve_packages: bool = False) -> Tree:
     """
     Parses expressions and resolves its subexpressions,
     for example condition_expressions in ahb_expressions or packages in condition_expressions.

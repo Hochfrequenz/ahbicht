@@ -2,7 +2,7 @@ import pytest  # type:ignore[import]
 
 from lark import Tree, Token
 
-from ahbicht.expressions.expression_resolver import expression_resolver
+from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 
 
 class TestExpressionResolver:
@@ -74,7 +74,7 @@ class TestExpressionResolver:
         ],
     )
     def test_expression_resolver_valid(self, expression: str, expected_tree: Tree):
-        actual_tree = expression_resolver(expression)
+        actual_tree = parse_expression_including_unresolved_subexpressions(expression)
         assert actual_tree == expected_tree
 
     @pytest.mark.parametrize(
@@ -87,7 +87,7 @@ class TestExpressionResolver:
     )
     def test_expression_resolver_failing(self, expression: str):
         with pytest.raises(SyntaxError) as excinfo:
-            expression_resolver(expression)
+            parse_expression_including_unresolved_subexpressions(expression)
 
         assert """Please make sure that the ahb_expression starts with a requirement indicator \
 (i.e Muss/M, Soll/S, Kann/K, X, O, U) and the condition expressions consist of only \
