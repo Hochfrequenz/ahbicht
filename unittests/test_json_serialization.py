@@ -384,9 +384,8 @@ class TestJsonSerialization:
         _test_serialization_roundtrip(
             content_evaluation_prerequisites, ContentEvaluationPrerequisitesSchema(), expected_json_dict
         )
-  
-  
-   @pytest.mark.parametrize(         
+
+    @pytest.mark.parametrize(
         "condition_expression, expected_compact_json_dict",
         [
             pytest.param(
