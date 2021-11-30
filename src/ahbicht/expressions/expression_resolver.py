@@ -1,6 +1,6 @@
 """
 This module makes it possible to parse expressions including all their subexpressions, if present.
-for example ahb_expressions with condition_expressions or condition_expressions with packages.
+for example ahb_expressions which contain condition_expressions or condition_expressions which contain packages.
 Parsing expressions that are nested into other expressions is refered to as "resolving".
 """
 
