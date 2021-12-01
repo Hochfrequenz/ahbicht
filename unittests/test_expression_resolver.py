@@ -1,6 +1,5 @@
 import pytest  # type:ignore[import]
-
-from lark import Tree, Token
+from lark import Token, Tree
 
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 
