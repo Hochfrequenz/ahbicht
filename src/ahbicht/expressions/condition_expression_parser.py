@@ -10,7 +10,7 @@ from lark import Lark, Tree
 from lark.exceptions import UnexpectedCharacters, UnexpectedEOF
 
 from ahbicht.condition_node_distinction import ConditionNodeType, derive_condition_node_type
-from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationPrerequisites
+from ahbicht.content_evaluation.content_evaluation_result import CategorizedKeyExtract
 
 
 def parse_condition_expression_to_tree(condition_expression: str) -> Tree:
@@ -59,13 +59,15 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree:
     return parsed_tree
 
 
-def find_prerequisites(tree_or_list: Union[Tree, List[str]], sanitize: bool = False) -> ContentEvaluationPrerequisites:
+def extract_categorized_keys_from_tree(
+    tree_or_list: Union[Tree, List[str]], sanitize: bool = False
+) -> CategorizedKeyExtract:
     """
     find different types of condition nodes inside the given tree or list of keys.
     The types are differentiated by their number range.
     See 'Allgemeine Festlegungen' from EDI@Energy.
     """
-    result = ContentEvaluationPrerequisites(
+    result = CategorizedKeyExtract(
         format_constraint_keys=[], requirement_constraint_keys=[], hint_keys=[], package_keys=[]
     )
     condition_keys: List[str]
@@ -95,10 +97,10 @@ def find_prerequisites(tree_or_list: Union[Tree, List[str]], sanitize: bool = Fa
     return result
 
 
-def collect_prerequisites(condition_expression: str) -> ContentEvaluationPrerequisites:
+def extract_categorized_keys(condition_expression: str) -> CategorizedKeyExtract:
     """
     Parses the given condition expression and returns ContentEvaluationPrerequisites as a template for content
     evaluation.
     """
     tree = parse_condition_expression_to_tree(condition_expression)
-    return find_prerequisites(tree, sanitize=True)
+    return extract_categorized_keys_from_tree(tree, sanitize=True)
