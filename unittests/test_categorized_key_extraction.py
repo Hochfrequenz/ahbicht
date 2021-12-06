@@ -1,4 +1,5 @@
 """ Tests for the parsing of the conditions tests (Mussfeldprüfung) """
+
 import json
 from typing import List
 
@@ -13,6 +14,11 @@ from ahbicht.content_evaluation.content_evaluation_result import (
 )
 from ahbicht.expressions.condition_expression_parser import collect_prerequisites, extract_categorized_keys
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
+
+import pytest  # type:ignore[import]
+
+from ahbicht.content_evaluation.content_evaluation_result import CategorizedKeyExtract
+from ahbicht.expressions.condition_expression_parser import extract_categorized_keys
 
 
 class TestCategorizedKeyExtraction:
@@ -53,6 +59,7 @@ class TestCategorizedKeyExtraction:
         """
         actual = extract_categorized_keys(expression)
         assert actual == expected_prerequisites
+
 
     @pytest.mark.parametrize(
         "prerequisites, expected_cers",
@@ -136,3 +143,4 @@ class TestCategorizedKeyExtraction:
         actual = prerequisites.generate_possible_content_evaluation_results()
         json_string = ContentEvaluationResultSchema(many=True).dumps(actual)
         assert actual == expected_result
+

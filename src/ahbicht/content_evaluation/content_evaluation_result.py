@@ -107,7 +107,7 @@ class CategorizedKeyExtract:
         """
         self._remove_duplicates()
         self._sort_keys()
-
+    
     def generate_possible_content_evaluation_results(self) -> List[ContentEvaluationResult]:
         """
         A prerequisite allows to generate nearly all possible content evaluation results, except for hints, error
