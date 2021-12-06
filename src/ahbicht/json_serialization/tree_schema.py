@@ -116,16 +116,24 @@ def _compress(data: dict) -> dict:
     The price we pay is that we loose the ability to easily deserialize the result.
     But if we're only interested in a simple tree that's fine.
     """
-    if "children" in data and "type" in data and data["type"].endswith("_composition"):
+    if (
+        "children" in data
+        and "type" in data
+        and (data["type"].endswith("_composition") or data["type"].endswith("_expression"))
+    ):
         return {data["type"]: [_compress(child) for child in data["children"]]}
     if "tree" in data and "token" in data and data["token"] is None:
         return _compress(data["tree"])
-    if "type" in data and data["type"] == "condition_key":
-        return data["children"][0]["token"]["value"]
+    if "tree" in data and "token" in data and data["tree"] is None:
+        return _compress(data["token"])
+    if "type" in data and "children" in data:  # and data["type"] in {"MODAL_MARK", "condition_key"}:
+        return _compress(data["children"][0]["token"]["value"])
+    if "type" in data and data["type"] in {"MODAL_MARK"}:
+        return data["value"]
     return data
 
 
-class CompactTreeSchema(TreeSchema):
+class ConciseTreeSchema(TreeSchema):
     """
     A tree schema that leads to significantly more compact output but can only be used for serialization
     (not deserialization)
@@ -134,7 +142,7 @@ class CompactTreeSchema(TreeSchema):
     @post_dump
     def serialize(self, data, **kwargs) -> dict:
         """
-        Serialize as compact tree
+        Serialize as compact/concise tree
         """
         return _compress(data)
 
