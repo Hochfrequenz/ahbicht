@@ -193,15 +193,12 @@ class TestAHBExpressionEvaluation:
     def test_all_serializations_work_similar(
         self, ahb_expression: str, content_evaluation_result: ContentEvaluationResult
     ):
-        tree_A = parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_expression)
-        tree_B = parse_expression_including_unresolved_subexpressions(ahb_expression)
+        tree_a = parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_expression)
+        tree_b = parse_expression_including_unresolved_subexpressions(ahb_expression)
         # it's OK/expected that the trees look different depending on whether sub expressions are resolved or not
         # but in any case the evaluation result should look the same
         create_and_inject_hardcoded_evaluators(content_evaluation_result)
-        evaluation_result_A = evaluate_ahb_expression_tree(
-            tree_A, entered_input="something has to be here but it's not important what"
-        )
-        evaluation_result_B = evaluate_ahb_expression_tree(
-            tree_B, entered_input="something has to be here but it's not important what"
-        )
-        assert evaluation_result_A == evaluation_result_B
+        evaluation_input = "something has to be here but it's not important what"
+        evaluation_result_a = evaluate_ahb_expression_tree(tree_a, entered_input=evaluation_input)
+        evaluation_result_b = evaluate_ahb_expression_tree(tree_b, entered_input=evaluation_input)
+        assert evaluation_result_a == evaluation_result_b
