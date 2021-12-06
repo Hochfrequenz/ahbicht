@@ -1,14 +1,18 @@
 """ Test for the evaluation of the ahb expression conditions tests (Mussfeldprüfung) """
-
+import uuid
 from unittest.mock import AsyncMock
 
 import inject
 import pytest  # type:ignore[import]
 
+from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
+from ahbicht.content_evaluation.evaluator_factory import create_and_inject_hardcoded_evaluators
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.evaluation_results import FormatConstraintEvaluationResult, RequirementConstraintEvaluationResult
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
+from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
+from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 from ahbicht.expressions.hints_provider import HintsProvider
 
 
@@ -166,3 +170,38 @@ class TestAHBExpressionEvaluation:
             )
 
         assert expected_error_message in str(excinfo.value)
+
+    @pytest.mark.parametrize(
+        "ahb_expression, content_evaluation_result",
+        [
+            pytest.param(
+                "Muss ([2]O[3])[902][501]",
+                ContentEvaluationResult(
+                    hints={"501": "foo"},
+                    format_constraints={
+                        "902": EvaluatedFormatConstraint(format_constraint_fulfilled=True, error_message=None),
+                    },
+                    requirement_constraints={
+                        "2": ConditionFulfilledValue.FULFILLED,
+                        "3": ConditionFulfilledValue.UNFULFILLED,
+                    },
+                    id=uuid.UUID("d106f335-f663-4d14-9636-4f43a883ad26"),
+                ),
+            )
+        ],
+    )
+    def test_all_serializations_work_similar(
+        self, ahb_expression: str, content_evaluation_result: ContentEvaluationResult
+    ):
+        tree_A = parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_expression)
+        tree_B = parse_expression_including_unresolved_subexpressions(ahb_expression)
+        # it's OK/expected that the trees look different depending on whether sub expressions are resolved or not
+        # but in any case the evaluation result should look the same
+        create_and_inject_hardcoded_evaluators(content_evaluation_result)
+        evaluation_result_A = evaluate_ahb_expression_tree(
+            tree_A, entered_input="something has to be here but it's not important what"
+        )
+        evaluation_result_B = evaluate_ahb_expression_tree(
+            tree_B, entered_input="something has to be here but it's not important what"
+        )
+        assert evaluation_result_A == evaluation_result_B
