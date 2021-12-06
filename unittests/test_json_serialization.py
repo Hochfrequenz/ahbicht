@@ -378,7 +378,7 @@ class TestJsonSerialization:
             ),
         ],
     )
-    def test_content_evaluation_prerequisites_serialization(
+    def test_categorized_key_extract_serialization(
         self, categorized_key_extract: CategorizedKeyExtract, expected_json_dict: dict
     ):
         _test_serialization_roundtrip(categorized_key_extract, CategorizedKeyExtractSchema(), expected_json_dict)

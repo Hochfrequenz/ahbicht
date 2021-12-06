@@ -17,7 +17,7 @@ from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, Evaluat
 
 class TestCategorizedKeyExtraction:
     @pytest.mark.parametrize(
-        "expression, expected_prerequisites",
+        "expression, expected_key_extract",
         [
             pytest.param(
                 "[1]",
@@ -46,16 +46,16 @@ class TestCategorizedKeyExtraction:
         ],
     )
     def test_extraction_of_categorized_keys_from_condition_expression(
-        self, expression: str, expected_prerequisites: CategorizedKeyExtract
+        self, expression: str, expected_key_extract: CategorizedKeyExtract
     ):
         """
-        Tests that the prerequisites are generated correctly.
+        Tests that the CategorizedKeyExtract is generated correctly.
         """
         actual = extract_categorized_keys(expression)
-        assert actual == expected_prerequisites
+        assert actual == expected_key_extract
 
     @pytest.mark.parametrize(
-        "prerequisites, expected_cers",
+        "key_extract, expected_cers",
         [
             pytest.param(
                 CategorizedKeyExtract(
@@ -109,9 +109,9 @@ class TestCategorizedKeyExtraction:
         ],
     )
     def test_possible_cer_generation_small_results(
-        self, prerequisites: CategorizedKeyExtract, expected_cers: List[ContentEvaluationResult]
+        self, key_extract: CategorizedKeyExtract, expected_cers: List[ContentEvaluationResult]
     ):
-        actual = prerequisites.generate_possible_content_evaluation_results()
+        actual = key_extract.generate_possible_content_evaluation_results()
         # We only test the small edge cases as real code.
         # This quickly gets super large. 2 FCs * 2 RCs is already 64 results
         assert actual == expected_cers
@@ -131,8 +131,8 @@ class TestCategorizedKeyExtraction:
     @ALL_LARGE_TEST_CASES
     def test_possible_cer_generation_large_results(self, test_file_path, datafiles):
         file_content = json.load(datafiles / test_file_path)
-        prerequisites = CategorizedKeyExtractSchema().load(file_content["prerequisite"])
+        categoried_keys = CategorizedKeyExtractSchema().load(file_content["categorizedKeyExtract"])
         expected_result = ContentEvaluationResultSchema(many=True).load(file_content["expected_result"])
-        actual = prerequisites.generate_possible_content_evaluation_results()
+        actual = categoried_keys.generate_possible_content_evaluation_results()
         json_string = ContentEvaluationResultSchema(many=True).dumps(actual)
         assert actual == expected_result

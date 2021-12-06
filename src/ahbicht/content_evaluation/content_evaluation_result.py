@@ -110,8 +110,8 @@ class CategorizedKeyExtract:
 
     def generate_possible_content_evaluation_results(self) -> List[ContentEvaluationResult]:
         """
-        A prerequisite allows to generate nearly all possible content evaluation results, except for hints, error
-        messages, resolving packages.
+        A categorized key extract allows to generate nearly all possible content evaluation results,
+        except for hints, error messages, resolving packages.
         """
         results: List[ContentEvaluationResult] = []
         if len(self.format_constraint_keys) == 0 and len(self.requirement_constraint_keys) == 0:
