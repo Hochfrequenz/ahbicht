@@ -8,7 +8,7 @@ from typing import Dict, List, Tuple, Union
 import inject
 
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
-from ahbicht.expressions.condition_expression_parser import find_prerequisites
+from ahbicht.expressions.condition_expression_parser import extract_categorized_keys_from_tree
 from ahbicht.expressions.condition_nodes import Hint, RequirementConstraint, UnevaluatedFormatConstraint
 from ahbicht.expressions.hints_provider import HintsProvider
 
@@ -42,7 +42,7 @@ class ConditionNodeBuilder:
         """
         Separates the list of all condition keys into three lists of their respective types.
         """
-        prerequisites = find_prerequisites(self.condition_keys)
+        prerequisites = extract_categorized_keys_from_tree(self.condition_keys)
         # note: if you remove duplicate keys or sort the keys inside find_prerequisites, you'll have failing tests
         return prerequisites.requirement_constraint_keys, prerequisites.hint_keys, prerequisites.format_constraint_keys
 

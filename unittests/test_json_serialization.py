@@ -10,8 +10,8 @@ from lark import Token, Tree
 from marshmallow import Schema, ValidationError
 
 from ahbicht.content_evaluation.content_evaluation_result import (
-    ContentEvaluationPrerequisites,
-    ContentEvaluationPrerequisitesSchema,
+    CategorizedKeyExtract,
+    CategorizedKeyExtractSchema,
     ContentEvaluationResult,
     ContentEvaluationResultSchema,
 )
@@ -360,10 +360,10 @@ class TestJsonSerialization:
         )
 
     @pytest.mark.parametrize(
-        "content_evaluation_prerequisites, expected_json_dict",
+        "categorized_key_extract, expected_json_dict",
         [
             pytest.param(
-                ContentEvaluationPrerequisites(
+                CategorizedKeyExtract(
                     hint_keys=["501", "502", "503"],
                     format_constraint_keys=["901", "902"],
                     requirement_constraint_keys=["1", "2", "3", "4"],
@@ -379,11 +379,9 @@ class TestJsonSerialization:
         ],
     )
     def test_content_evaluation_prerequisites_serialization(
-        self, content_evaluation_prerequisites: ContentEvaluationPrerequisites, expected_json_dict: dict
+        self, categorized_key_extract: CategorizedKeyExtract, expected_json_dict: dict
     ):
-        _test_serialization_roundtrip(
-            content_evaluation_prerequisites, ContentEvaluationPrerequisitesSchema(), expected_json_dict
-        )
+        _test_serialization_roundtrip(categorized_key_extract, CategorizedKeyExtractSchema(), expected_json_dict)
 
     @pytest.mark.parametrize(
         "condition_expression, expected_compact_json_dict",

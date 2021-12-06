@@ -70,10 +70,11 @@ class ContentEvaluationResultSchema(Schema):
 
 
 @attr.s(auto_attribs=True)
-class ContentEvaluationPrerequisites:
+class CategorizedKeyExtract:
     """
+    A Categorized Key Extract contains those condition keys that are contained inside an expression.
     For expressions (that do not contain any unresolved package) it's possible to pre-generate all possible outcomes of
-    a content evaluation. ContentEvaluationPrerequisites are the answer to the question:
+    a content evaluation. CategorizedKeyExtract is also the answer to the question:
     'Which information do I need to provide in a ContentEvaluationResult in order to evaluate a given expression?'
     """
 
@@ -154,9 +155,9 @@ class ContentEvaluationPrerequisites:
         return results
 
 
-class ContentEvaluationPrerequisitesSchema(Schema):
+class CategorizedKeyExtractSchema(Schema):
     """
-    A schema to (de)serialize ContentEvaluationPrerequisites
+    A schema to (de)serialize CategorizedKeyExtractSchema
     """
 
     hint_keys = fields.List(fields.String())
@@ -165,8 +166,8 @@ class ContentEvaluationPrerequisitesSchema(Schema):
     package_keys = fields.List(fields.String())
 
     @post_load
-    def deserialize(self, data, **kwargs) -> ContentEvaluationPrerequisites:
+    def deserialize(self, data, **kwargs) -> CategorizedKeyExtract:
         """
-        Converts the barely typed data dictionary into an actual ContentEvaluationPrerequisites
+        Converts the barely typed data dictionary into an actual CategorizedKeyExtractSchema
         """
-        return ContentEvaluationPrerequisites(**data)
+        return CategorizedKeyExtract(**data)
