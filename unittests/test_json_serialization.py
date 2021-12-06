@@ -24,7 +24,8 @@ from ahbicht.expressions.condition_nodes import (
     EvaluatedFormatConstraint,
     EvaluatedFormatConstraintSchema,
 )
-from ahbicht.json_serialization.tree_schema import CompactTreeSchema, TreeSchema
+from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
+from ahbicht.json_serialization.tree_schema import ConciseTreeSchema, TreeSchema
 from ahbicht.mapping_results import (
     ConditionKeyConditionTextMapping,
     ConditionKeyConditionTextMappingSchema,
@@ -387,7 +388,73 @@ class TestJsonSerialization:
             ),
         ],
     )
-    def test_compact_tree_serialization_behaviour(self, condition_expression: str, expected_compact_json_dict: dict):
+    def test_concise_tree_serialization_behaviour_for_condition_expressions(
+        self, condition_expression: str, expected_compact_json_dict: dict
+    ):
         tree = parse_condition_expression_to_tree(condition_expression)
-        json_dict = CompactTreeSchema().dump(tree)
+        json_dict = ConciseTreeSchema().dump(tree)
+        assert json_dict == expected_compact_json_dict
+
+    @pytest.mark.parametrize(
+        "ahb_expression, expected_compact_json_dict",
+        [
+            pytest.param(
+                "Muss [1] U ([2] O [3])[901]",
+                {
+                    "ahb_expression": [
+                        {
+                            "single_requirement_indicator_expression": [
+                                "Muss",
+                                {
+                                    "and_composition": [
+                                        "1",
+                                        {"then_also_composition": [{"or_composition": ["2", "3"]}, "901"]},
+                                    ]
+                                },
+                            ]
+                        }
+                    ]
+                },
+            ),
+            pytest.param(
+                "Soll [3] U ([2] O [3] U [77] X [99][502])[901] Kann [43]",
+                {
+                    "ahb_expression": [
+                        {
+                            "single_requirement_indicator_expression": [
+                                "Soll",
+                                {
+                                    "and_composition": [
+                                        "3",
+                                        {
+                                            "then_also_composition": [
+                                                {
+                                                    "or_composition": [
+                                                        "2",
+                                                        {
+                                                            "xor_composition": [
+                                                                {"and_composition": ["3", "77"]},
+                                                                {"then_also_composition": ["99", "502"]},
+                                                            ]
+                                                        },
+                                                    ]
+                                                },
+                                                "901",
+                                            ]
+                                        },
+                                    ]
+                                },
+                            ]
+                        },
+                        {"single_requirement_indicator_expression": ["Kann", "43"]},
+                    ]
+                },
+            ),
+        ],
+    )
+    def test_concise_tree_serialization_behaviour_for_ahb_expressions(
+        self, ahb_expression: str, expected_compact_json_dict: dict
+    ):
+        tree = parse_expression_including_unresolved_subexpressions(ahb_expression)
+        json_dict = ConciseTreeSchema().dump(tree)
         assert json_dict == expected_compact_json_dict
