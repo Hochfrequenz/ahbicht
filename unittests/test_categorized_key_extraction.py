@@ -7,12 +7,11 @@ import pytest  # type:ignore[import]
 
 from ahbicht.content_evaluation.content_evaluation_result import (
     CategorizedKeyExtract,
-    ContentEvaluationPrerequisites,
-    ContentEvaluationPrerequisitesSchema,
+    CategorizedKeyExtractSchema,
     ContentEvaluationResult,
     ContentEvaluationResultSchema,
 )
-from ahbicht.expressions.condition_expression_parser import collect_prerequisites, extract_categorized_keys
+from ahbicht.expressions.condition_expression_parser import extract_categorized_keys
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 
 
@@ -59,14 +58,14 @@ class TestCategorizedKeyExtraction:
         "prerequisites, expected_cers",
         [
             pytest.param(
-                ContentEvaluationPrerequisites(
+                CategorizedKeyExtract(
                     hint_keys=[], requirement_constraint_keys=[], format_constraint_keys=[], package_keys=[]
                 ),
                 [],
                 id="0 FC, 0 RC",
             ),
             pytest.param(
-                ContentEvaluationPrerequisites(
+                CategorizedKeyExtract(
                     hint_keys=[], requirement_constraint_keys=["1"], format_constraint_keys=[], package_keys=[]
                 ),
                 [
@@ -90,7 +89,7 @@ class TestCategorizedKeyExtraction:
                 id="0 FC, 1 RC",
             ),
             pytest.param(
-                ContentEvaluationPrerequisites(
+                CategorizedKeyExtract(
                     hint_keys=[], requirement_constraint_keys=[], format_constraint_keys=["901"], package_keys=[]
                 ),
                 [
@@ -110,7 +109,7 @@ class TestCategorizedKeyExtraction:
         ],
     )
     def test_possible_cer_generation_small_results(
-        self, prerequisites: ContentEvaluationPrerequisites, expected_cers: List[ContentEvaluationResult]
+        self, prerequisites: CategorizedKeyExtract, expected_cers: List[ContentEvaluationResult]
     ):
         actual = prerequisites.generate_possible_content_evaluation_results()
         # We only test the small edge cases as real code.
@@ -132,7 +131,7 @@ class TestCategorizedKeyExtraction:
     @ALL_LARGE_TEST_CASES
     def test_possible_cer_generation_large_results(self, test_file_path, datafiles):
         file_content = json.load(datafiles / test_file_path)
-        prerequisites = ContentEvaluationPrerequisitesSchema().load(file_content["prerequisite"])
+        prerequisites = CategorizedKeyExtractSchema().load(file_content["prerequisite"])
         expected_result = ContentEvaluationResultSchema(many=True).load(file_content["expected_result"])
         actual = prerequisites.generate_possible_content_evaluation_results()
         json_string = ContentEvaluationResultSchema(many=True).dumps(actual)
