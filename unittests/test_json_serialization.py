@@ -9,7 +9,12 @@ import pytest  # type:ignore[import]
 from lark import Token, Tree
 from marshmallow import Schema, ValidationError
 
-from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
+from ahbicht.content_evaluation.content_evaluation_result import (
+    CategorizedKeyExtract,
+    CategorizedKeyExtractSchema,
+    ContentEvaluationResult,
+    ContentEvaluationResultSchema,
+)
 from ahbicht.edifact import EdifactFormat
 from ahbicht.evaluation_results import (
     AhbExpressionEvaluationResult,
@@ -354,6 +359,30 @@ class TestJsonSerialization:
         _test_serialization_roundtrip(
             package_key_condition_expression_mapping, PackageKeyConditionExpressionMappingSchema(), expected_json_dict
         )
+
+    @pytest.mark.parametrize(
+        "categorized_key_extract, expected_json_dict",
+        [
+            pytest.param(
+                CategorizedKeyExtract(
+                    hint_keys=["501", "502", "503"],
+                    format_constraint_keys=["901", "902"],
+                    requirement_constraint_keys=["1", "2", "3", "4"],
+                    package_keys=["17P"],
+                ),
+                {
+                    "hint_keys": ["501", "502", "503"],
+                    "format_constraint_keys": ["901", "902"],
+                    "requirement_constraint_keys": ["1", "2", "3", "4"],
+                    "package_keys": ["17P"],
+                },
+            ),
+        ],
+    )
+    def test_content_evaluation_prerequisites_serialization(
+        self, categorized_key_extract: CategorizedKeyExtract, expected_json_dict: dict
+    ):
+        _test_serialization_roundtrip(categorized_key_extract, CategorizedKeyExtractSchema(), expected_json_dict)
 
     @pytest.mark.parametrize(
         "condition_expression, expected_compact_json_dict",

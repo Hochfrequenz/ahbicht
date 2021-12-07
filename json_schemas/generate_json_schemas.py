@@ -10,7 +10,10 @@ from typing import List, Type
 from marshmallow import Schema
 from marshmallow_jsonschema import JSONSchema  # type:ignore[import]
 
-from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResultSchema
+from ahbicht.content_evaluation.content_evaluation_result import (
+    CategorizedKeyExtractSchema,
+    ContentEvaluationResultSchema,
+)
 from ahbicht.evaluation_results import (
     AhbExpressionEvaluationResultSchema,
     FormatConstraintEvaluationResultSchema,
@@ -29,6 +32,7 @@ schema_types: List[Type[Schema]] = [
     PackageKeyConditionExpressionMappingSchema,
     ContentEvaluationResultSchema,
     TokenSchema,
+    CategorizedKeyExtractSchema,
     # TreeSchema
     # As of 2021-11 the TreeSchema fails, probably because of recursion or the lambda:
     # (<class 'AttributeError'>, AttributeError("'function' object has no attribute 'fields'"), ....)
