@@ -6,7 +6,7 @@ of the condition expression tree are handled.
 The used terms are defined in the README_conditions.md.
 """
 
-from typing import List, Literal, Mapping, Type
+from typing import List, Literal, Mapping, Type, Union
 
 from lark import Token, Tree, v_args
 from lark.exceptions import VisitError
@@ -214,12 +214,16 @@ of the type RequirementConstraint, Hint or FormatConstraint."""
     return result
 
 
-def requirement_constraint_evaluation(condition_expression: str) -> RequirementConstraintEvaluationResult:
+def requirement_constraint_evaluation(condition_expression: Union[str, Tree]) -> RequirementConstraintEvaluationResult:
     """
     Evaluation of the condition expression in regard to the requirement conditions (rc).
+    The condition expression can either be a string that still needs to be parsed as condition expression or a tree
+    that has already been parsed.
     """
-
-    parsed_tree_rc: Tree = parse_condition_expression_to_tree(condition_expression)
+    if isinstance(condition_expression, str):
+        parsed_tree_rc: Tree = parse_condition_expression_to_tree(condition_expression)
+    else:
+        parsed_tree_rc = condition_expression
 
     # get all condition keys from tree
     all_condition_keys: List[str] = [
