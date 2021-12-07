@@ -73,13 +73,15 @@ def extract_categorized_keys_from_tree(
     condition_keys: List[str]
     if isinstance(tree_or_list, list):
         condition_keys = tree_or_list
-    else:  # it's tree, hopefully
+    elif isinstance(tree_or_list, Tree):
         condition_keys = [
             x.value  # type:ignore[attr-defined]
             for x in tree_or_list.scan_values(
                 lambda token: token.type == "INT"  # type:ignore[union-attr]
             )
         ]
+    else:
+        raise ValueError(f"{tree_or_list} is neither a list nor a {Tree.__name__}")
     for condition_key in condition_keys:
         condition_node_type = derive_condition_node_type(condition_key)
         if condition_node_type is ConditionNodeType.REQUIREMENT_CONSTRAINT:
