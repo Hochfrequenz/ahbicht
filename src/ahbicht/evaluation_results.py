@@ -67,7 +67,7 @@ class FormatConstraintEvaluationResultSchema(Schema):
     """
 
     format_constraints_fulfilled = fields.Boolean()
-    error_message = fields.String(allow_none=True, missing=None)
+    error_message = fields.String(allow_none=True, load_default=None)
 
     @post_load
     def deserialize(self, data, **kwargs) -> FormatConstraintEvaluationResult:
