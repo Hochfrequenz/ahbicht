@@ -379,7 +379,6 @@ class TestJsonSerialization:
             ),
         ],
     )
-
     def test_categorized_key_extract_serialization(
         self, categorized_key_extract: CategorizedKeyExtract, expected_json_dict: dict
     ):

@@ -108,7 +108,6 @@ class CategorizedKeyExtract:
         self._remove_duplicates()
         self._sort_keys()
 
-    
     def generate_possible_content_evaluation_results(self) -> List[ContentEvaluationResult]:
         """
         A categorized key extract allows to generate nearly all possible content evaluation results,
