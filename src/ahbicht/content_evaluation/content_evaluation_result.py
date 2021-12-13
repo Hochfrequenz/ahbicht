@@ -144,6 +144,7 @@ class CategorizedKeyExtract:
             # In order to prevent 'results' to be empty if either the RC or FC list is empty, we added the the 'dummy's.
             result = ContentEvaluationResult(
                 hints={hint_key: f"Hinweis {hint_key}" for hint_key in self.hint_keys},
+                # kvp is short for key value pair
                 format_constraints={
                     fc_kvp[0]: EvaluatedFormatConstraint(format_constraint_fulfilled=fc_kvp[1])
                     for fc_kvp in fc_rc_tuple[0]
