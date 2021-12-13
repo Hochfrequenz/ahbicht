@@ -91,7 +91,10 @@
                     "default": false,
                     "format": "uuid",
                     "title": "id",
-                    "type": "string"
+                    "type": [
+                        "string",
+                        "null"
+                    ]
                 },
                 "requirement_constraints": {
                     "additionalProperties": {

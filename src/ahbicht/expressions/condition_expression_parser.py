@@ -101,7 +101,7 @@ def extract_categorized_keys_from_tree(
 
 def extract_categorized_keys(condition_expression: str) -> CategorizedKeyExtract:
     """
-    Parses the given condition expression and returns ContentEvaluationPrerequisites as a template for content
+    Parses the given condition expression and returns CategorizedKeyExtract as a template for content
     evaluation.
     """
     tree = parse_condition_expression_to_tree(condition_expression)

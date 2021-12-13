@@ -1,6 +1,7 @@
 """
 This module contains a class to store _all_ kinds of content evaluation results.
 """
+from itertools import combinations, product
 from typing import Dict, List, Optional
 from uuid import UUID
 
@@ -47,7 +48,7 @@ class ContentEvaluationResultSchema(Schema):
     requirement_constraints = fields.Dict(
         keys=fields.String(allow_none=False), values=fields.String(allow_none=True), required=True
     )
-    id = fields.UUID(required=False, dump_default=False)
+    id = fields.UUID(required=False, dump_default=False, missing=None)
 
     @post_load
     def deserialize(self, data, **kwargs) -> ContentEvaluationResult:
@@ -106,6 +107,59 @@ class CategorizedKeyExtract:
         """
         self._remove_duplicates()
         self._sort_keys()
+
+    def generate_possible_content_evaluation_results(self) -> List[ContentEvaluationResult]:
+        """
+        A categorized key extract allows to generate nearly all possible content evaluation results,
+        except for hints, error messages, resolving packages.
+        """
+        results: List[ContentEvaluationResult] = []
+        if len(self.format_constraint_keys) == 0 and len(self.requirement_constraint_keys) == 0:
+            return results
+        # for easier debugging below, replace the generators "(" with a materialized lists "["
+        if len(self.format_constraint_keys) > 0:
+            possible_fcs = (
+                z
+                for z in combinations(
+                    product(self.format_constraint_keys, [True, False]), len(self.format_constraint_keys)
+                )
+                # y[0] is the key (and y[1] is the value (true/false))
+                # We only want those combinations where the number of distinct keys == the number of keys present.
+                # To better understand this, try evaluating the following expression in your debugger:
+                #   list(combinations(product(["A", "B", "C"], [True, False]), len(["A", "B", "C"])))
+                # In this (unfiltered) result, you'll find entries with the keys: ('A', 'A', 'B') or ('A', 'B', 'B').
+                # These artefacts will be removed with the following if. Only the ('A', 'B', 'C') entries will pass.
+                if len({y[0] for y in z}) == len(self.format_constraint_keys)
+            )
+        else:
+            possible_fcs = [(("fc_dummy", True),)]  # type:ignore[assignment]
+
+        if len(self.requirement_constraint_keys) > 0:
+            possible_rcs = (
+                z
+                for z in combinations(
+                    product(self.requirement_constraint_keys, ConditionFulfilledValue),
+                    len(self.requirement_constraint_keys),
+                )
+                if len({y[0] for y in z}) == len(self.requirement_constraint_keys)
+            )
+        else:
+            possible_rcs = [(("rc_dummy", ConditionFulfilledValue.NEUTRAL),)]  # type:ignore[assignment]
+        for fc_rc_tuple in product(possible_fcs, possible_rcs):
+            # This product would have length 0 if one of the "factors" had length 0.
+            # In order to prevent 'results' to be empty if either the RC or FC list is empty, we added the the 'dummy's.
+            result = ContentEvaluationResult(
+                hints={hint_key: f"Hinweis {hint_key}" for hint_key in self.hint_keys},
+                # kvp is short for key value pair
+                format_constraints={
+                    fc_kvp[0]: EvaluatedFormatConstraint(format_constraint_fulfilled=fc_kvp[1])
+                    for fc_kvp in fc_rc_tuple[0]
+                    if fc_kvp[0] != "fc_dummy"
+                },
+                requirement_constraints={rc_kvp[0]: rc_kvp[1] for rc_kvp in fc_rc_tuple[1] if rc_kvp[0] != "rc_dummy"},
+            )
+            results.append(result)
+        return results
 
 
 class CategorizedKeyExtractSchema(Schema):

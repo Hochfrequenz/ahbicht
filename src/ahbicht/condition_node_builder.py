@@ -42,9 +42,13 @@ class ConditionNodeBuilder:
         """
         Separates the list of all condition keys into three lists of their respective types.
         """
-        prerequisites = extract_categorized_keys_from_tree(self.condition_keys)
-        # note: if you remove duplicate keys or sort the keys inside find_prerequisites, you'll have failing tests
-        return prerequisites.requirement_constraint_keys, prerequisites.hint_keys, prerequisites.format_constraint_keys
+        categorized_keys = extract_categorized_keys_from_tree(self.condition_keys)
+        # note: if you remove duplicate keys or sort the keys, you'll have failing tests
+        return (
+            categorized_keys.requirement_constraint_keys,
+            categorized_keys.hint_keys,
+            categorized_keys.format_constraint_keys,
+        )
 
     def _build_hint_nodes(self) -> Dict[str, Hint]:
         """Builds Hint nodes from their condition keys by getting all hint texts from the HintsProvider."""
