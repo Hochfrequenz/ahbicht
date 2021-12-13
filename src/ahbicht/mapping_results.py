@@ -36,7 +36,7 @@ class ConditionKeyConditionTextMappingSchema(Schema):
 
     edifact_format = EnumField(EdifactFormat)
     condition_key = fields.String()
-    condition_text = fields.String(missing=None)
+    condition_text = fields.String(load_default=None)
 
     # pylint:disable=unused-argument,no-self-use
     @post_load
@@ -73,7 +73,7 @@ class PackageKeyConditionExpressionMappingSchema(Schema):
 
     edifact_format = EnumField(EdifactFormat)
     package_key = fields.String()
-    package_expression = fields.String(missing=None)
+    package_expression = fields.String(load_default=None)
 
     # pylint:disable=unused-argument,no-self-use
     @post_load

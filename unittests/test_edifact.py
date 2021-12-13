@@ -1,6 +1,6 @@
 from typing import Optional, Tuple
 
-import pytest
+import pytest  # type:ignore[import]
 
 from ahbicht.edifact import EdifactFormat, pruefidentifikator_to_format
 
@@ -35,4 +35,4 @@ class TestEdifact:
         :return:
         """
         with pytest.raises(ValueError):
-            pruefidentifikator_to_format(illegal_pruefi)
+            pruefidentifikator_to_format(illegal_pruefi)  # type:ignore[arg-type] # ok, because this raises an error
