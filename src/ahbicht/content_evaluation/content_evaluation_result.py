@@ -123,6 +123,12 @@ class CategorizedKeyExtract:
                 for z in combinations(
                     product(self.format_constraint_keys, [True, False]), len(self.format_constraint_keys)
                 )
+                # y[0] is the key (and y[1] is the value (true/false))
+                # we only want those combinations where the number of key is exactly the number of keys present.
+                # to better understand this, try evaluating in your debugger:
+                # list(combinations(product(["A", "B", "C"], [True, False]), len(["A", "B", "C"])))
+                # in this (unfiltered) result, you'll find entries with the keys: ('A', 'A', 'B') or ('A', 'B', 'B')
+                # these artefacts will be removed with the following if. only the ('A', 'B', 'C') entries will pass.
                 if len({y[0] for y in z}) == len(self.format_constraint_keys)
             )
         else:
