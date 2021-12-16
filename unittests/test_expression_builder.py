@@ -41,7 +41,7 @@ class TestHintExpressionBuilder:
         ],
     )
     def test_logical_and(self, init, other, expected: Hint):
-        builder = HintExpressionBuilder(init)
+        builder: HintExpressionBuilder = HintExpressionBuilder(init)
         actual = builder.land(other).get_expression()
         assert actual == expected
 
@@ -57,7 +57,7 @@ class TestHintExpressionBuilder:
         ],
     )
     def test_logical_or(self, init, other, expected: Hint):
-        builder = HintExpressionBuilder(init)
+        builder: HintExpressionBuilder = HintExpressionBuilder(init)
         actual = builder.lor(other).get_expression()
         assert actual == expected
 
@@ -78,7 +78,7 @@ class TestHintExpressionBuilder:
         ],
     )
     def test_logical_xor(self, init, other, expected: Hint):
-        builder = HintExpressionBuilder(init)
+        builder: HintExpressionBuilder = HintExpressionBuilder(init)
         actual = builder.xor(other).get_expression()
         assert actual == expected
 
