@@ -5,12 +5,8 @@ from typing import List
 
 import pytest  # type:ignore[import]
 
-from ahbicht.content_evaluation.content_evaluation_result import (
-    CategorizedKeyExtract,
-    CategorizedKeyExtractSchema,
-    ContentEvaluationResult,
-    ContentEvaluationResultSchema,
-)
+from ahbicht.content_evaluation.categorized_key_extract import CategorizedKeyExtract, CategorizedKeyExtractSchema
+from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
 from ahbicht.expressions.condition_expression_parser import extract_categorized_keys
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 
