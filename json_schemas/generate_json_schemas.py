@@ -10,10 +10,8 @@ from typing import List, Type
 from marshmallow import Schema
 from marshmallow_jsonschema import JSONSchema  # type:ignore[import]
 
-from ahbicht.content_evaluation.content_evaluation_result import (
-    CategorizedKeyExtractSchema,
-    ContentEvaluationResultSchema,
-)
+from ahbicht.content_evaluation.categorized_key_extract import CategorizedKeyExtractSchema
+from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResultSchema
 from ahbicht.evaluation_results import (
     AhbExpressionEvaluationResultSchema,
     FormatConstraintEvaluationResultSchema,
