@@ -8,7 +8,8 @@ import pytest
 from _pytest.fixtures import SubRequest
 
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
-from ahbicht.expressions.package_expansion import DictBasedPackageResolver, PackageResolver, expand_packages
+from ahbicht.expressions.expression_resolver import expand_packages
+from ahbicht.expressions.package_expansion import DictBasedPackageResolver, PackageResolver
 
 pytestmark = pytest.mark.asyncio
 

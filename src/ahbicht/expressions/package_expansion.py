@@ -47,38 +47,3 @@ class DictBasedPackageResolver(PackageResolver):
         if package_key in self._all_packages:
             return self._all_packages[package_key]
         return None
-
-
-class PackageExpansionTransformer(BaseTransformer[Tree, Tree]):
-    """
-    The PackageExpansionTransformer expands packages inside a tree to condition expressions by using a PackageResolver.
-    """
-
-    def __init__(self):
-        super().__init__(input_values=None)
-        self._resolver: Type[PackageResolver] = inject.instance(PackageResolver)
-
-    def package(self, token: Token):
-        ce = self._resolver.get_condition_expression(token.value)
-        return parse_condition_expression_to_tree(ce)
-
-    def and_composition(self, left: Tree, right: Tree) -> Tree:
-        return left
-
-    def or_composition(self, left: Tree, right: Tree) -> Tree:
-        return left
-
-    def xor_composition(self, left: Tree, right: Tree) -> Tree:
-        return left
-
-
-async def expand_packages(parsed_tree: Tree) -> Tree:
-    """
-    Replaces all the "short" packages in parser_tree with the respective "long" condition expressions
-    """
-    try:
-        result = PackageExpansionTransformer().transform(parsed_tree)
-    except VisitError as visit_err:
-        raise visit_err.orig_exc
-
-    return result
