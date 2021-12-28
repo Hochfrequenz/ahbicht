@@ -187,6 +187,7 @@ class TestAHBExpressionEvaluation:
                         "3": ConditionFulfilledValue.UNFULFILLED,
                     },
                     id=uuid.UUID("d106f335-f663-4d14-9636-4f43a883ad26"),
+                    packages={},
                 ),
             )
         ],

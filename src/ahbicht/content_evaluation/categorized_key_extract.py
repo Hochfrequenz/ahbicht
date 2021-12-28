@@ -22,10 +22,32 @@ class CategorizedKeyExtract:
     'Which information do I need to provide in a ContentEvaluationResult in order to evaluate a given expression?'
     """
 
-    hint_keys: List[str]  #: list of keys for which you'll need to provide hint texts in a ContentEvaluationResult
-    format_constraint_keys: List[str]  #: list of keys for which you'll need to provide EvaluatedFormatConstraints
-    requirement_constraint_keys: List[str]  #: list of keys for which you'll need to provide ConditionFulfilledValues
-    package_keys: List[str]  #: list of packages that need to be resolved (additionally)
+    #: list of keys for which you'll need to provide hint texts in a ContentEvaluationResult
+    hint_keys: List[str] = attr.ib(
+        validator=attr.validators.deep_iterable(
+            member_validator=attr.validators.instance_of(str), iterable_validator=attr.validators.instance_of(list)
+        )
+    )
+    #: list of keys for which you'll need to provide EvaluatedFormatConstraints
+    format_constraint_keys: List[str] = attr.ib(
+        validator=attr.validators.deep_iterable(
+            member_validator=attr.validators.instance_of(str), iterable_validator=attr.validators.instance_of(list)
+        )
+    )
+
+    #: list of keys for which you'll need to provide ConditionFulfilledValues
+    requirement_constraint_keys: List[str] = attr.ib(
+        validator=attr.validators.deep_iterable(
+            member_validator=attr.validators.instance_of(str), iterable_validator=attr.validators.instance_of(list)
+        )
+    )
+
+    #: list of packages that need to be resolved (additionally)
+    package_keys: List[str] = attr.ib(
+        validator=attr.validators.deep_iterable(
+            member_validator=attr.validators.instance_of(str), iterable_validator=attr.validators.instance_of(list)
+        )
+    )
 
     def _remove_duplicates(self) -> None:
         """
@@ -101,6 +123,7 @@ class CategorizedKeyExtract:
                     if fc_kvp[0] != "fc_dummy"
                 },
                 requirement_constraints={rc_kvp[0]: rc_kvp[1] for rc_kvp in fc_rc_tuple[1] if rc_kvp[0] != "rc_dummy"},
+                packages={},
             )
             results.append(result)
         return results

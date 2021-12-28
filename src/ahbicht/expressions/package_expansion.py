@@ -34,15 +34,15 @@ class DictBasedPackageResolver(PackageResolver):
         :param results: maps the package key (e.g. '123') to the package expression (e.g. '[1] U [2]')
         """
         for key in results.keys():
-            if key.endswith("P"):
-                raise ValueError("The keys should not end with 'P'. Use '123' instead of '123P'.")
+            if not key.endswith("P"):
+                raise ValueError("The keys should end with 'P' to avoid ambiguities. Use '123P' instead of '123'.")
         self._all_packages: Mapping[str, Optional[str]] = results
 
     async def get_condition_expression(self, package_key: str) -> Optional[str]:
         if not package_key:
             raise ValueError(f"The package key must not be None/empty but was '{package_key}'")
-        if package_key.endswith("P"):
-            raise ValueError("The package key should be provided without a trailing 'P'.")
+        if not package_key.endswith("P"):
+            raise ValueError("The package key should be provided with a trailing 'P'.")
         if package_key in self._all_packages:
             return self._all_packages[package_key]
         return None

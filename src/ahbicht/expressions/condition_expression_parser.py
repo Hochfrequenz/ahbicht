@@ -4,6 +4,7 @@ the parsing library lark: https://lark-parser.readthedocs.io/en/latest/
 
 The used terms are defined in the README_conditions.md.
 """
+# pylint:disable=cyclic-import
 from typing import List, Union
 
 from lark import Lark, Tree
@@ -34,8 +35,8 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree:
                 | expression "∧" expression -> and_composition
                 | expression expression -> then_also_composition
                 | brackets
-                | condition_key
                 | package
+                | condition_key
     ?brackets: "(" expression ")"
     package: "[" INT "P]"
     condition_key: "[" INT "]"
@@ -102,10 +103,16 @@ def extract_categorized_keys_from_tree(
     return result
 
 
-def extract_categorized_keys(condition_expression: str) -> CategorizedKeyExtract:
+def extract_categorized_keys(condition_expression: str, resolve_packages: bool = False) -> CategorizedKeyExtract:
     """
     Parses the given condition expression and returns CategorizedKeyExtract as a template for content
     evaluation.
     """
-    tree = parse_condition_expression_to_tree(condition_expression)
+    # because of
+    # ImportError: cannot import name 'parse_condition_expression_to_tree' from partially initialized module
+    # 'ahbicht.expressions.condition_expression_parser' (most likely due to a circular import)
+    # pylint: disable=import-outside-toplevel
+    from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
+
+    tree = parse_expression_including_unresolved_subexpressions(condition_expression, resolve_packages=resolve_packages)
     return extract_categorized_keys_from_tree(tree, sanitize=True)

@@ -49,7 +49,7 @@ class ContentEvaluationResult:
         validator=attr.validators.deep_mapping(
             key_validator=attr.validators.and_(
                 attr.validators.instance_of(str),
-                attr.validators.matches_re(r"^\d+$"),  # this is to avoid someone passes '123P' instead of '123'
+                attr.validators.matches_re(r"^\d+P$"),  # this is to avoid someone passes '123' instead of '123P'
             ),
             value_validator=attr.validators.instance_of(str),
         ),

@@ -29,7 +29,7 @@ class TestPackageResolver:
 
     @pytest.mark.parametrize(
         "inject_package_resolver",
-        [{"123": "[1] U ([2] O [3])"}],
+        [{"123P": "[1] U ([2] O [3])"}],
         indirect=True,
     )
     @pytest.mark.parametrize(

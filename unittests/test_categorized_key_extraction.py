@@ -39,6 +39,15 @@ class TestCategorizedKeyExtraction:
                     package_keys=[],
                 ),
             ),
+            pytest.param(
+                "[100]U([2]U([53]O[4]))[999][502]U[123P]",
+                CategorizedKeyExtract(
+                    hint_keys=["502"],
+                    requirement_constraint_keys=["2", "4", "53", "100"],
+                    format_constraint_keys=["999"],
+                    package_keys=["123"],
+                ),
+            ),
         ],
     )
     def test_extraction_of_categorized_keys_from_condition_expression(
@@ -69,17 +78,25 @@ class TestCategorizedKeyExtraction:
                         hints={},
                         format_constraints={},
                         requirement_constraints={"1": ConditionFulfilledValue.FULFILLED},
+                        packages={},
                     ),
                     ContentEvaluationResult(
                         hints={},
                         format_constraints={},
                         requirement_constraints={"1": ConditionFulfilledValue.UNFULFILLED},
+                        packages={},
                     ),
                     ContentEvaluationResult(
-                        hints={}, format_constraints={}, requirement_constraints={"1": ConditionFulfilledValue.UNKNOWN}
+                        hints={},
+                        format_constraints={},
+                        requirement_constraints={"1": ConditionFulfilledValue.UNKNOWN},
+                        packages={},
                     ),
                     ContentEvaluationResult(
-                        hints={}, format_constraints={}, requirement_constraints={"1": ConditionFulfilledValue.NEUTRAL}
+                        hints={},
+                        format_constraints={},
+                        requirement_constraints={"1": ConditionFulfilledValue.NEUTRAL},
+                        packages={},
                     ),
                 ],
                 id="0 FC, 1 RC",
@@ -93,11 +110,13 @@ class TestCategorizedKeyExtraction:
                         hints={},
                         format_constraints={"901": EvaluatedFormatConstraint(format_constraint_fulfilled=True)},
                         requirement_constraints={},
+                        packages={},
                     ),
                     ContentEvaluationResult(
                         hints={},
                         format_constraints={"901": EvaluatedFormatConstraint(format_constraint_fulfilled=False)},
                         requirement_constraints={},
+                        packages={},
                     ),
                 ],
                 id="1 FC, 0 RC",

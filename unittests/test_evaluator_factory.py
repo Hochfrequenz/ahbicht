@@ -37,7 +37,7 @@ class TestEvaluatorFactory:
                     "2": ConditionFulfilledValue.FULFILLED,
                     "3": ConditionFulfilledValue.UNFULFILLED,
                 },
-                packages={"123": "[1]"},
+                packages={"123P": "[1]"},
                 id=uuid.UUID("d106f335-f663-4d14-9636-4f43a883ad26"),
             )
         ],
