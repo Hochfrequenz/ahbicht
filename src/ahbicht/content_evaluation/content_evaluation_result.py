@@ -1,7 +1,7 @@
 """
 This module contains a class to store _all_ kinds of content evaluation results.
 """
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 from uuid import UUID
 
 import attr
@@ -44,17 +44,22 @@ class ContentEvaluationResult:
             value_validator=attr.validators.instance_of(ConditionFulfilledValue),
         )
     )
-    #: maps the key of a package (e.g. '123') to the respective expression (e.g. '[1] U ([2] O [3])')
-    packages: Optional[Dict[str, str]] = attr.ib(
+
+    packages: Optional[Dict[str, Union[str, ConditionFulfilledValue]]] = attr.ib(
         validator=attr.validators.deep_mapping(
             key_validator=attr.validators.and_(
                 attr.validators.instance_of(str),
                 attr.validators.matches_re(r"^\d+P$"),  # this is to avoid someone passes '123' instead of '123P'
             ),
-            value_validator=attr.validators.instance_of(str),
+            value_validator=attr.validators.instance_of(Union[str, ConditionFulfilledValue]),
         ),
         default=None,
     )
+    """
+    maps the key of a package (e.g. '123') to the respective expression (e.g. '[1] U ([2] O [3])'
+    OR to a condition fulfilled value that applies to the entire package.
+    """
+
     # pylint:disable=invalid-name
     #: optional guid
     id: Optional[UUID] = attr.ib(validator=attr.validators.optional(attr.validators.instance_of(UUID)), default=None)
