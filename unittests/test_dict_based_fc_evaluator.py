@@ -1,7 +1,7 @@
 """ Tests the dictionary based FC evaluator"""
 from unittest import mock
 
-import pytest
+import pytest  # type:ignore[import]
 
 from ahbicht.content_evaluation.fc_evaluators import DictBasedFcEvaluator
 from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint

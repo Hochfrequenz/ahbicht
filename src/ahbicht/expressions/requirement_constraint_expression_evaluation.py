@@ -6,13 +6,13 @@ of the condition expression tree are handled.
 The used terms are defined in the README_conditions.md.
 """
 
-from typing import List, Literal, Mapping, Type
+from typing import List, Literal, Mapping, Type, Union
 
 from lark import Token, Tree, v_args
 from lark.exceptions import VisitError
 
-from ahbicht.condition_check_results import RequirementConstraintEvaluationResult
 from ahbicht.condition_node_builder import ConditionNodeBuilder, TRCTransformerArgument
+from ahbicht.evaluation_results import RequirementConstraintEvaluationResult
 from ahbicht.expressions.base_transformer import BaseTransformer
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.condition_nodes import (
@@ -144,6 +144,7 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
         that have been marked obligatory by the (previously run) Mussfeldprüfung but do not affect
         the result of the Mussfeldprüfung.
         (Things that are obligatory are obligatory regardless of the format constraints.)
+
         :param format_constraint: a format constraint
         :param other_condition: a requirement constraint or hint
         :return:
@@ -213,12 +214,16 @@ of the type RequirementConstraint, Hint or FormatConstraint."""
     return result
 
 
-def requirement_constraint_evaluation(condition_expression: str) -> RequirementConstraintEvaluationResult:
+def requirement_constraint_evaluation(condition_expression: Union[str, Tree]) -> RequirementConstraintEvaluationResult:
     """
     Evaluation of the condition expression in regard to the requirement conditions (rc).
+    The condition expression can either be a string that still needs to be parsed as condition expression or a tree
+    that has already been parsed.
     """
-
-    parsed_tree_rc: Tree = parse_condition_expression_to_tree(condition_expression)
+    if isinstance(condition_expression, str):
+        parsed_tree_rc: Tree = parse_condition_expression_to_tree(condition_expression)
+    else:
+        parsed_tree_rc = condition_expression
 
     # get all condition keys from tree
     all_condition_keys: List[str] = [

@@ -2,9 +2,9 @@ AHB Condition Expression Parser (AHBicht)
 =========================================
 
 |Unittests status badge| |Coverage status badge| |Linting status badge|
-|Black status badge| |pypy status badge| 
+|Black status badge| |pypy status badge|
 
-.. image:: ./docs/_static/ahbicht-logo.png
+.. image:: https://raw.githubusercontent.com/Hochfrequenz/ahbicht/main/docs/_static/ahbicht-logo.png
    :target: https://ahbicht.readthedocs.io
    :align: right
    :alt: ahbicht logo
@@ -70,6 +70,10 @@ Free to Use REST API
 ~~~~~~~~~~~~~~~~~~~~
 You can also use our public REST API to parse condition expressions (other features will follow). Simply send a GET request with the condition expression as query parameter to:
 `ahbicht.azurewebsites.net/api/ParseConditionExpression?condition_expression=[2] U ([3] O [4])[901] U [555] <https://ahbicht.azurewebsites.net/api/ParseConditionExpression?condition_expression=%5B2%5D%20U%20(%5B3%5D%20O%20%5B4%5D)%5B901%5D%20U%20%5B555%5D>`__
+
+Easily Integrate AHBicht with Your Solution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+If you want to use AHBicht together with your own software, you can use the `JSON Schema files <json_schemas>`__ provided to kick start the integration.
 
 Code Quality / Production Readiness
 -----------------------------------

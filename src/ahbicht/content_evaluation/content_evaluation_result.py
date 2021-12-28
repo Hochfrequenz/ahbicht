@@ -13,9 +13,8 @@ from ahbicht.expressions.condition_nodes import (
     EvaluatedFormatConstraintSchema,
 )
 
+
 # pylint: disable=too-few-public-methods, no-self-use, unused-argument
-
-
 @attr.s(auto_attribs=True)
 class ContentEvaluationResult:
     """
@@ -23,14 +22,14 @@ class ContentEvaluationResult:
     format constraints have been evaluated)
     """
 
-    hints: Dict[str, Optional[str]]  # maps the key of a hint (e.g. "501" to a hint text)
+    hints: Dict[str, Optional[str]]  #: maps the key of a hint (e.g. "501" to a hint text)
     format_constraints: Dict[
         str, EvaluatedFormatConstraint
-    ]  # maps the key of a format constraint to the respective evaluation result
+    ]  #: maps the key of a format constraint to the respective evaluation result
     requirement_constraints: Dict[
         str, ConditionFulfilledValue
-    ]  # maps the key of a requirement_constraint to the respective evaluation result
-    id: Optional[UUID] = None  # optional guid
+    ]  #: maps the key of a requirement_constraint to the respective evaluation result
+    id: Optional[UUID] = None  #: optional guid
 
 
 class ContentEvaluationResultSchema(Schema):
@@ -47,12 +46,13 @@ class ContentEvaluationResultSchema(Schema):
     requirement_constraints = fields.Dict(
         keys=fields.String(allow_none=False), values=fields.String(allow_none=True), required=True
     )
-    id = fields.UUID(required=False, dump_default=False)
+    id = fields.UUID(required=False, dump_default=False, missing=None)
 
     @post_load
     def deserialize(self, data, **kwargs) -> ContentEvaluationResult:
         """
         Converts the barely typed data dictionary into an actual ContentEvaluationResult
+
         :param data:
         :param kwargs:
         :return:

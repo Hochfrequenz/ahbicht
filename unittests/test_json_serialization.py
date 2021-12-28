@@ -5,24 +5,34 @@ import json
 import uuid
 from typing import TypeVar
 
-import pytest
+import pytest  # type:ignore[import]
 from lark import Token, Tree
 from marshmallow import Schema, ValidationError
 
-from ahbicht.condition_check_results import (
-    ConditionCheckResult,
-    ConditionCheckResultSchema,
+from ahbicht.content_evaluation.categorized_key_extract import CategorizedKeyExtract, CategorizedKeyExtractSchema
+from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
+from ahbicht.edifact import EdifactFormat
+from ahbicht.evaluation_results import (
+    AhbExpressionEvaluationResult,
+    AhbExpressionEvaluationResultSchema,
     FormatConstraintEvaluationResult,
     RequirementConstraintEvaluationResult,
 )
-from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
+from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.condition_nodes import (
     ConditionFulfilledValue,
     EvaluatedFormatConstraint,
     EvaluatedFormatConstraintSchema,
 )
-from ahbicht.json_serialization.tree_schema import TreeSchema
+from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
+from ahbicht.json_serialization.tree_schema import ConciseTreeSchema, TreeSchema
+from ahbicht.mapping_results import (
+    ConditionKeyConditionTextMapping,
+    ConditionKeyConditionTextMappingSchema,
+    PackageKeyConditionExpressionMapping,
+    PackageKeyConditionExpressionMappingSchema,
+)
 
 T = TypeVar("T")
 
@@ -215,10 +225,10 @@ class TestJsonSerialization:
             assert isinstance(rc_evaluation_result, ConditionFulfilledValue)
 
     @pytest.mark.parametrize(
-        "condition_check_result, expected_json_dict",
+        "ahb_expression_evaluation_result, expected_json_dict",
         [
             pytest.param(
-                ConditionCheckResult(
+                AhbExpressionEvaluationResult(
                     requirement_indicator="Muss",
                     format_constraint_evaluation_result=FormatConstraintEvaluationResult(
                         error_message="hello", format_constraints_fulfilled=False
@@ -244,9 +254,232 @@ class TestJsonSerialization:
                     "requirement_indicator": "Muss",
                 },
             ),
+            pytest.param(
+                AhbExpressionEvaluationResult(
+                    requirement_indicator="Muss",
+                    format_constraint_evaluation_result=FormatConstraintEvaluationResult(
+                        error_message="hello", format_constraints_fulfilled=False
+                    ),
+                    requirement_constraint_evaluation_result=RequirementConstraintEvaluationResult(
+                        hints="foo bar",
+                        requirement_constraints_fulfilled=True,
+                        requirement_is_conditional=True,
+                        format_constraints_expression="[asd]",
+                    ),
+                ),
+                {
+                    "format_constraint_evaluation_result": {
+                        "error_message": "hello",
+                        "format_constraints_fulfilled": False,
+                    },
+                    "requirement_constraint_evaluation_result": {
+                        "format_constraints_expression": "[asd]",
+                        "hints": "foo bar",
+                        "requirement_constraints_fulfilled": True,
+                        "requirement_is_conditional": True,
+                    },
+                    "requirement_indicator": "Muss",
+                },
+            ),
+            pytest.param(
+                AhbExpressionEvaluationResult(
+                    requirement_indicator="Muss",
+                    format_constraint_evaluation_result=FormatConstraintEvaluationResult(
+                        format_constraints_fulfilled=False
+                    ),
+                    requirement_constraint_evaluation_result=RequirementConstraintEvaluationResult(
+                        requirement_constraints_fulfilled=True,
+                        requirement_is_conditional=True,
+                    ),
+                ),
+                {
+                    "format_constraint_evaluation_result": {
+                        "error_message": None,
+                        "format_constraints_fulfilled": False,
+                    },
+                    "requirement_constraint_evaluation_result": {
+                        "format_constraints_expression": None,
+                        "hints": None,
+                        "requirement_constraints_fulfilled": True,
+                        "requirement_is_conditional": True,
+                    },
+                    "requirement_indicator": "Muss",
+                },
+                id="Minimal example",
+            ),
         ],
     )
-    def test_condition_check_result_serialization(
-        self, condition_check_result: ConditionCheckResult, expected_json_dict: dict
+    def test_ahb_expression_evaluation_result_serialization(
+        self, ahb_expression_evaluation_result: AhbExpressionEvaluationResult, expected_json_dict: dict
     ):
-        _test_serialization_roundtrip(condition_check_result, ConditionCheckResultSchema(), expected_json_dict)
+        _test_serialization_roundtrip(
+            ahb_expression_evaluation_result, AhbExpressionEvaluationResultSchema(), expected_json_dict
+        )
+
+    @pytest.mark.parametrize(
+        "condition_key_condition_text_mapping, expected_json_dict",
+        [
+            pytest.param(
+                ConditionKeyConditionTextMapping(
+                    edifact_format=EdifactFormat.UTILMD,
+                    condition_key="123",
+                    condition_text="Blablabla",
+                ),
+                {"edifact_format": "UTILMD", "condition_key": "123", "condition_text": "Blablabla"},
+            ),
+        ],
+    )
+    def test_condition_key_condition_text_mapping_serialization(
+        self, condition_key_condition_text_mapping: ConditionKeyConditionTextMapping, expected_json_dict: dict
+    ):
+        _test_serialization_roundtrip(
+            condition_key_condition_text_mapping, ConditionKeyConditionTextMappingSchema(), expected_json_dict
+        )
+
+    @pytest.mark.parametrize(
+        "package_key_condition_expression_mapping, expected_json_dict",
+        [
+            pytest.param(
+                PackageKeyConditionExpressionMapping(
+                    edifact_format=EdifactFormat.UTILMD,
+                    package_key="123P",
+                    package_expression="[1] U [2] O [3]",
+                ),
+                {"edifact_format": "UTILMD", "package_key": "123P", "package_expression": "[1] U [2] O [3]"},
+            ),
+        ],
+    )
+    def test_package_key_condition_expression_mapping_serialization(
+        self, package_key_condition_expression_mapping: PackageKeyConditionExpressionMapping, expected_json_dict: dict
+    ):
+        _test_serialization_roundtrip(
+            package_key_condition_expression_mapping, PackageKeyConditionExpressionMappingSchema(), expected_json_dict
+        )
+
+    @pytest.mark.parametrize(
+        "categorized_key_extract, expected_json_dict",
+        [
+            pytest.param(
+                CategorizedKeyExtract(
+                    hint_keys=["501", "502", "503"],
+                    format_constraint_keys=["901", "902"],
+                    requirement_constraint_keys=["1", "2", "3", "4"],
+                    package_keys=["17P"],
+                ),
+                {
+                    "hint_keys": ["501", "502", "503"],
+                    "format_constraint_keys": ["901", "902"],
+                    "requirement_constraint_keys": ["1", "2", "3", "4"],
+                    "package_keys": ["17P"],
+                },
+            ),
+        ],
+    )
+    def test_categorized_key_extract_serialization(
+        self, categorized_key_extract: CategorizedKeyExtract, expected_json_dict: dict
+    ):
+        _test_serialization_roundtrip(categorized_key_extract, CategorizedKeyExtractSchema(), expected_json_dict)
+
+    @pytest.mark.parametrize(
+        "condition_expression, expected_compact_json_dict",
+        [
+            pytest.param(
+                "[1] U ([2] O [3])[901]",
+                {"and_composition": ["1", {"then_also_composition": [{"or_composition": ["2", "3"]}, "901"]}]},
+            ),
+            pytest.param(
+                "[3] U ([2] O [3] U [77] X [99][502])[901]",
+                {
+                    "and_composition": [
+                        "3",
+                        {
+                            "then_also_composition": [
+                                {
+                                    "or_composition": [
+                                        "2",
+                                        {
+                                            "xor_composition": [
+                                                {"and_composition": ["3", "77"]},
+                                                {"then_also_composition": ["99", "502"]},
+                                            ]
+                                        },
+                                    ]
+                                },
+                                "901",
+                            ]
+                        },
+                    ]
+                },
+            ),
+        ],
+    )
+    def test_concise_tree_serialization_behaviour_for_condition_expressions(
+        self, condition_expression: str, expected_compact_json_dict: dict
+    ):
+        tree = parse_condition_expression_to_tree(condition_expression)
+        json_dict = ConciseTreeSchema().dump(tree)
+        assert json_dict == expected_compact_json_dict
+
+    @pytest.mark.parametrize(
+        "ahb_expression, expected_compact_json_dict",
+        [
+            pytest.param(
+                "Muss [1] U ([2] O [3])[901]",
+                {
+                    "ahb_expression": [
+                        {
+                            "single_requirement_indicator_expression": [
+                                "Muss",
+                                {
+                                    "and_composition": [
+                                        "1",
+                                        {"then_also_composition": [{"or_composition": ["2", "3"]}, "901"]},
+                                    ]
+                                },
+                            ]
+                        }
+                    ]
+                },
+            ),
+            pytest.param(
+                "Soll [3] U ([2] O [3] U [77] X [99][502])[901] Kann [43]",
+                {
+                    "ahb_expression": [
+                        {
+                            "single_requirement_indicator_expression": [
+                                "Soll",
+                                {
+                                    "and_composition": [
+                                        "3",
+                                        {
+                                            "then_also_composition": [
+                                                {
+                                                    "or_composition": [
+                                                        "2",
+                                                        {
+                                                            "xor_composition": [
+                                                                {"and_composition": ["3", "77"]},
+                                                                {"then_also_composition": ["99", "502"]},
+                                                            ]
+                                                        },
+                                                    ]
+                                                },
+                                                "901",
+                                            ]
+                                        },
+                                    ]
+                                },
+                            ]
+                        },
+                        {"single_requirement_indicator_expression": ["Kann", "43"]},
+                    ]
+                },
+            ),
+        ],
+    )
+    def test_concise_tree_serialization_behaviour_for_ahb_expressions(
+        self, ahb_expression: str, expected_compact_json_dict: dict
+    ):
+        tree = parse_expression_including_unresolved_subexpressions(ahb_expression)
+        json_dict = ConciseTreeSchema().dump(tree)
+        assert json_dict == expected_compact_json_dict

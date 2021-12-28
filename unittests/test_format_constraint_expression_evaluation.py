@@ -1,11 +1,11 @@
 """ Test for the evaluation of the format constraint expression. """
 
 import inject
-import pytest
+import pytest  # type:ignore[import]
 
-from ahbicht.condition_check_results import FormatConstraintEvaluationResult
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
 from ahbicht.edifact import EdifactFormat, EdifactFormatVersion
+from ahbicht.evaluation_results import FormatConstraintEvaluationResult
 from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
 from ahbicht.expressions.format_constraint_expression_evaluation import (
     _build_evaluated_format_constraint_nodes,
@@ -26,7 +26,7 @@ class DummyFcEvaluator(FcEvaluator):
         [950] Format: Marktlokations-ID
         """
         # this is just a minimal working example; we skip all the stuff like check digits and so on for simplicity
-        is_malo = entered_input and len(entered_input) == 11
+        is_malo: bool = entered_input and len(entered_input) == 11  # type:ignore[assignment]
         if is_malo:
             error_message = None
         else:
@@ -38,7 +38,7 @@ class DummyFcEvaluator(FcEvaluator):
         [951] Format: Zählpunktbezeichnung
         """
         # this is just a minimal working example; we skip regex matching and integrity checks for simplicity
-        is_zaehlpunkt = entered_input and len(entered_input) == 33
+        is_zaehlpunkt: bool = entered_input and len(entered_input) == 33  # type:ignore[assignment]
         if is_zaehlpunkt:
             error_message = None
         else:
@@ -143,7 +143,7 @@ class TestFormatConstraintExpressionEvaluation:
         )
 
         with pytest.raises(ValueError) as excinfo:
-            format_constraint_evaluation(format_constraints_expression, entered_input=None)
+            format_constraint_evaluation(format_constraints_expression, entered_input=None)  # type:ignore[arg-type]
 
         assert expected_error_message in str(excinfo.value)
 
