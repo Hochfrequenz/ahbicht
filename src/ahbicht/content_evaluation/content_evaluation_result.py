@@ -51,7 +51,9 @@ class ContentEvaluationResult:
                 attr.validators.instance_of(str),
                 attr.validators.matches_re(r"^\d+P$"),  # this is to avoid someone passes '123' instead of '123P'
             ),
-            value_validator=attr.validators.instance_of(Union[str, ConditionFulfilledValue]),
+            value_validator=attr.validators.instance_of(
+                type=Union[str, ConditionFulfilledValue]
+            ),  # type:ignore[call-overload]
         ),
         default=None,
     )
