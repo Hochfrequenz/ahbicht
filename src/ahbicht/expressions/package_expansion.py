@@ -15,9 +15,9 @@ class PackageResolver(ABC):
     @abstractmethod
     async def get_condition_expression(self, package_key: str) -> Optional[str]:
         """
-        Returns a condition expression (e.g. "[1] U ([2] O [3]) for the given package_key (e.g. "123P")
+        Returns a condition expression (e.g. "[1] U ([2] O [3]) for the given package_key (e.g. "123")
         Returns None if the package is unresolvable.
-        :param package_key:
+        :param package_key: The unique (integer) key of the package. Do not use the P suffix.
         :return:
         """
         raise NotImplementedError("The inheriting class has to implement this method.")
@@ -31,13 +31,18 @@ class DictBasedPackageResolver(PackageResolver):
     def __init__(self, results: Mapping[str, Optional[str]]):
         """
         Initialize with a dictionary that contains all the condition expressions.
-        :param results:
+        :param results: maps the package key (e.g. '123') to the package expression (e.g. '[1] U [2]')
         """
+        for key in results.keys():
+            if key.endswith("P"):
+                raise ValueError("The keys should not end with 'P'. Use '123' instead of '123P'.")
         self._all_packages: Mapping[str, Optional[str]] = results
 
     async def get_condition_expression(self, package_key: str) -> Optional[str]:
         if not package_key:
             raise ValueError(f"The package key must not be None/empty but was '{package_key}'")
+        if package_key.endswith("P"):
+            raise ValueError("The package key should be provided without a trailing 'P'.")
         if package_key in self._all_packages:
             return self._all_packages[package_key]
         return None

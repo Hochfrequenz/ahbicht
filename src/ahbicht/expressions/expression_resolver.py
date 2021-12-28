@@ -38,7 +38,7 @@ def parse_expression_including_unresolved_subexpressions(expression: str, resolv
     return resolved_expression_tree
 
 
-async def expand_packages(parsed_tree: Tree) -> Tree:
+def expand_packages(parsed_tree: Tree) -> Tree:
     """
     Replaces all the "short" packages in parser_tree with the respective "long" condition expressions
     """
@@ -80,5 +80,9 @@ class PackageExpansionTransformer(Transformer):
         :param token:
         :return:
         """
-        ce = asyncio.run(self._resolver.get_condition_expression(token[0].value))
-        return parse_condition_expression_to_tree(ce)
+        loop = asyncio.get_event_loop()
+        asyncio.set_event_loop(loop)
+        resolved_package = loop.run_until_complete(self._resolver.get_condition_expression(token[0].value))
+        if resolved_package is None:
+            raise NotImplementedError(f"The package '{token[0].value}' could not be resolved by {self._resolver}")
+        return parse_condition_expression_to_tree(resolved_package)
