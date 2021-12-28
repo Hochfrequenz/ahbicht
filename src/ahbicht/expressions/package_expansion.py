@@ -3,16 +3,10 @@ Package Expansion is the process of finding the condition expression which was a
 F.e. if inside a tree "[123P]" is replaced by "[1] U ([2] O [3])".
 """
 from abc import ABC, abstractmethod
-from typing import Mapping, Optional, Type
-
-import inject
-from lark import Token, Tree
-from lark.exceptions import VisitError
-
-from ahbicht.expressions.base_transformer import BaseTransformer
-from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
+from typing import Mapping, Optional
 
 
+# pylint:disable=too-few-public-methods
 class PackageResolver(ABC):
     """
     A package resolver provides condition expressions for given package keys.
@@ -41,7 +35,7 @@ class DictBasedPackageResolver(PackageResolver):
         """
         self._all_packages: Mapping[str, Optional[str]] = results
 
-    def get_condition_expression(self, package_key: str) -> Optional[str]:
+    async def get_condition_expression(self, package_key: str) -> Optional[str]:
         if not package_key:
             raise ValueError(f"The package key must not be None/empty but was '{package_key}'")
         if package_key in self._all_packages:

@@ -3,14 +3,14 @@ This module makes it possible to parse expressions including all their subexpres
 for example ahb_expressions which contain condition_expressions or condition_expressions which contain packages.
 Parsing expressions that are nested into other expressions is refered to as "resolving".
 """
-from typing import Type
+import asyncio
+from typing import List
 
 import inject
 from lark import Token, Transformer, Tree
 from lark.exceptions import VisitError
 
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
-from ahbicht.expressions.base_transformer import BaseTransformer
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.package_expansion import PackageResolver
 
@@ -74,6 +74,11 @@ class PackageExpansionTransformer(Transformer):
         super().__init__()
         self._resolver: PackageResolver = inject.instance(PackageResolver)
 
-    async def package(self, token: Token):
-        ce = await self._resolver.get_condition_expression(token.value)
+    def package(self, token: List[Token]):
+        """
+        try to resolve the package using the injected PackageResolver
+        :param token:
+        :return:
+        """
+        ce = asyncio.run(self._resolver.get_condition_expression(token[0].value))
         return parse_condition_expression_to_tree(ce)

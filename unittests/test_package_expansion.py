@@ -45,3 +45,5 @@ class TestPackageExpansion:
         unexpanded_tree = parse_condition_expression_to_tree(unexpanded_expression)
         tree = await expand_packages(parsed_tree=unexpanded_tree)
         assert tree is not None
+        expected_expanded_tree = parse_condition_expression_to_tree(expected_expanded_expression)
+        assert tree == expected_expanded_tree
