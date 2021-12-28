@@ -24,9 +24,10 @@ def parse_expression_including_unresolved_subexpressions(expression: str, resolv
     """
     try:
         expression_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(expression)
-        if resolve_packages:
-            expression_tree = expand_packages(expression_tree)
         resolved_expression_tree = AhbExpressionResolverTransformer().transform(expression_tree)
+        if resolve_packages:
+            # the condition expression inside the ahb expression has to be resolved before trying to resolve packages
+            resolved_expression_tree = expand_packages(resolved_expression_tree)
     except SyntaxError as ahb_syntax_error:
         try:
             resolved_expression_tree = parse_condition_expression_to_tree(expression)
