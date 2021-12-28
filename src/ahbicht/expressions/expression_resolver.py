@@ -22,11 +22,10 @@ def parse_expression_including_unresolved_subexpressions(expression: str, resolv
     :param expression: a syntactically valid ahb_expression or condition_expression
     :param resolve_packages: if true resolves also the packages in the condition_expressions
     """
-    # TOOD: implement packages
-    if resolve_packages:
-        raise NotImplementedError("Resolving Packages is not implemented yet.")
     try:
         expression_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(expression)
+        if resolve_packages:
+            expression_tree = expand_packages(expression_tree)
         resolved_expression_tree = AhbExpressionResolverTransformer().transform(expression_tree)
     except SyntaxError as ahb_syntax_error:
         try:
@@ -34,7 +33,6 @@ def parse_expression_including_unresolved_subexpressions(expression: str, resolv
         except SyntaxError as condition_syntax_error:
             # pylint: disable=raise-missing-from
             raise SyntaxError(f"{ahb_syntax_error.msg} {condition_syntax_error.msg}")
-
     return resolved_expression_tree
 
 
