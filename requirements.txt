@@ -4,15 +4,15 @@
 #
 #    pip-compile '.\requirements.in'
 #
-attrs==21.2.0
-    # via -r .\requirements.in
+attrs==21.3.0
+    # via -r requirements.in
 inject==4.3.1
-    # via -r .\requirements.in
+    # via -r requirements.in
 lark==1.0.0
-    # via -r .\requirements.in
+    # via -r requirements.in
 marshmallow==3.14.1
     # via
-    #   -r .\requirements.in
+    #   -r requirements.in
     #   marshmallow-enum
 marshmallow-enum==1.5.1
-    # via -r .\requirements.in
+    # via -r requirements.in
