@@ -73,15 +73,14 @@ class PackageExpansionTransformer(Transformer):
         super().__init__()
         self._resolver: PackageResolver = inject.instance(PackageResolver)
 
-    def package(self, token: List[Token]):
+    def package(self, tokens: List[Token]):
         """
         try to resolve the package using the injected PackageResolver
-        :param token:
-        :return:
         """
-        loop = asyncio.get_event_loop()
-        asyncio.set_event_loop(loop)
-        resolved_package = loop.run_until_complete(self._resolver.get_condition_expression(token[0].value + "P"))
+        return self._package_async(tokens)
+
+    async def _package_async(self, tokens: List[Token]):
+        resolved_package = await self._resolver.get_condition_expression(tokens[0].value + "P")
         if resolved_package is None:
-            raise NotImplementedError(f"The package '{token[0].value}' could not be resolved by {self._resolver}")
+            raise NotImplementedError(f"The package '{tokens[0].value}' could not be resolved by {self._resolver}")
         return parse_condition_expression_to_tree(resolved_package)
