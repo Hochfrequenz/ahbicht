@@ -48,14 +48,33 @@ class MixedSyncAsyncFcEvaluator(FcEvaluator):
 
 
 class TestMixedSyncAsyncEvaluation:
-    async def test_mixed_async_non_async(self):
+    @pytest.mark.parametrize(
+        "expression, expected_rc_fulfilled, expected_fc_fulfilled",
+        [
+            pytest.param("Muss ([1][901] X [2][902])", True, True),
+            pytest.param("Muss ([1][902] X [2][901])", True, True),
+            pytest.param("Muss ([2][902] X [2][901])", False, True),
+        ],
+    )
+    async def test_mixed_async_non_async(
+        self, expression: str, expected_rc_fulfilled: bool, expected_fc_fulfilled: bool
+    ):
+        fc_evaluator = MixedSyncAsyncFcEvaluator()
+        rc_evaluator = MixedSyncAsyncRcEvaluator(EvaluatableData(edifact_seed={}))
         inject.clear_and_configure(
-            lambda binder: binder.bind(RcEvaluator, MixedSyncAsyncRcEvaluator(EvaluatableData(edifact_seed={})))
-            .bind(FcEvaluator, MixedSyncAsyncFcEvaluator())
+            lambda binder: binder.bind(RcEvaluator, rc_evaluator)  # type:ignore[arg-type]
+            .bind(FcEvaluator, fc_evaluator)
             .bind(HintsProvider, DictBasedHintsProvider({}))
         )
         evaluation_input = "something has to be here but it's not important what"
-        tree = parse_expression_including_unresolved_subexpressions("Muss ([1] X [2])[901][902]")
+        tree = parse_expression_including_unresolved_subexpressions(expression)
         evaluation_result = await evaluate_ahb_expression_tree(tree, entered_input=evaluation_input)
-        assert evaluation_result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled is True
-        assert evaluation_result.format_constraint_evaluation_result.format_constraints_fulfilled is True
+        assert (
+            evaluation_result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled
+            is expected_rc_fulfilled
+        )
+        assert (
+            evaluation_result.format_constraint_evaluation_result.format_constraints_fulfilled is expected_fc_fulfilled
+        )
+        # When mocker.spy ing on the evaluate_... the inspection inside the rc/fc evaluator fails
+        # https://stackoverflow.com/questions/18869141/using-python-mock-to-spy-on-calls-to-an-existing-object
