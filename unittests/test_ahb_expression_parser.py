@@ -56,6 +56,21 @@ class TestAhbExpressionParser:
                 ),
             ),
             pytest.param(
+                "Muss[1][901][902]",
+                Tree(
+                    "ahb_expression",
+                    [
+                        Tree(
+                            "single_requirement_indicator_expression",
+                            [
+                                Token("MODAL_MARK", "Muss"),
+                                Token("CONDITION_EXPRESSION", "[1][901][902]"),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            pytest.param(
                 "Soll[1]U[5]",
                 Tree(
                     "ahb_expression",

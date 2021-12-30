@@ -30,6 +30,7 @@ class TestEvaluatorFactory:
                 hints={"501": "foo"},
                 format_constraints={
                     "902": EvaluatedFormatConstraint(format_constraint_fulfilled=True, error_message=None),
+                    "903": EvaluatedFormatConstraint(format_constraint_fulfilled=True, error_message=None),
                 },
                 requirement_constraints={
                     "2": ConditionFulfilledValue.FULFILLED,
@@ -45,6 +46,7 @@ class TestEvaluatorFactory:
         [
             pytest.param("Muss ([2] O [3])[902]U[501]", "Muss", True, "foo"),
             pytest.param("Muss [2] O [3][902]U[501]", "Muss", True, None),
+            pytest.param("Muss ([2] X [3])[902][903]", "Muss", True, None),
         ],
     )
     def test_correct_injection(
