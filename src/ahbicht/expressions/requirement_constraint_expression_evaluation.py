@@ -143,7 +143,7 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
         a strict separation of the Mussfeldprüfung itself and evaluation of format constraints on fields
         that have been marked obligatory by the (previously run) Mussfeldprüfung but do not affect
         the result of the Mussfeldprüfung.
-        (Things that are obligatory are obligatory regardless of the format constraints.)
+        (Things that are obligatory, are obligatory regardless of the format constraints.)
 
         :param format_constraint: a format constraint
         :param other_condition: a requirement constraint or hint
