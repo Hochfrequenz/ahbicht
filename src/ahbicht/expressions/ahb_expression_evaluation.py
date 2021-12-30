@@ -4,8 +4,7 @@ The AhbExpressionTransformer defines the rules how the different parts of the pa
 
 The used terms are defined in the README.md.
 """
-import asyncio
-from typing import Awaitable, List
+from typing import Awaitable, List, Union
 
 from lark import Token, Transformer, Tree, v_args
 from lark.exceptions import VisitError
@@ -18,8 +17,10 @@ from ahbicht.evaluation_results import (
 from ahbicht.expressions.format_constraint_expression_evaluation import format_constraint_evaluation
 from ahbicht.expressions.requirement_constraint_expression_evaluation import requirement_constraint_evaluation
 
-
 # pylint: disable=no-self-use, invalid-name
+from ahbicht.utility_functions import gather_if_necessary
+
+
 class AhbExpressionTransformer(Transformer):
     """
     Transformer, that evaluates the trees built from the ahb expressions.
@@ -102,7 +103,10 @@ class AhbExpressionTransformer(Transformer):
 
     # pylint: disable=(line-too-long)
     def ahb_expression(
-        self, list_of_single_requirement_indicator_expressions: List[Awaitable[AhbExpressionEvaluationResult]]
+        self,
+        list_of_single_requirement_indicator_expressions: List[
+            Union[AhbExpressionEvaluationResult, Awaitable[AhbExpressionEvaluationResult]]
+        ],
     ) -> Awaitable[AhbExpressionEvaluationResult]:
         """
         Returns the requirement indicator with its condition expressions already evaluated to booleans.
@@ -112,9 +116,15 @@ class AhbExpressionTransformer(Transformer):
         return self._ahb_expression_async(list_of_single_requirement_indicator_expressions)
 
     async def _ahb_expression_async(
-        self, list_of_single_requirement_indicator_expressions: List[Awaitable[AhbExpressionEvaluationResult]]
+        self,
+        list_of_single_requirement_indicator_expressions: List[
+            Union[AhbExpressionEvaluationResult, Awaitable[AhbExpressionEvaluationResult]]
+        ],
     ) -> AhbExpressionEvaluationResult:
-        results = await asyncio.gather(*list_of_single_requirement_indicator_expressions)
+        # the thing is that some user funcs (like f.e. 'requirement_indicator' are not async and there's no reason to
+        # make them async. So here we have a list that is mixed: It contains both evaluation results and awaitable
+        # evaluation results. The utility function 'gather_if_necessary' accounts for that (see its separate tests).
+        results = await gather_if_necessary(list_of_single_requirement_indicator_expressions)
         for single_requirement_indicator_expression in results:
             if (
                 single_requirement_indicator_expression.requirement_constraint_evaluation_result.requirement_constraints_fulfilled

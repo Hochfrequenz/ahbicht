@@ -114,11 +114,13 @@ class TestAHBExpressionEvaluation:
 
         mocker.patch(
             "ahbicht.expressions.ahb_expression_evaluation.requirement_constraint_evaluation",
-            side_effect=side_effect_rc_evaluation,
+            side_effect=AsyncMock(side_effect=side_effect_rc_evaluation),
         )
         mocker.patch(
             "ahbicht.expressions.ahb_expression_evaluation.format_constraint_evaluation",
-            return_value=FormatConstraintEvaluationResult(format_constraints_fulfilled=True, error_message=None),
+            return_value=AsyncMock(
+                side_effect=FormatConstraintEvaluationResult(format_constraints_fulfilled=True, error_message=None)
+            ),
         )
 
         parsed_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_expression)
