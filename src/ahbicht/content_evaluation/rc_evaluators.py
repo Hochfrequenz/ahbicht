@@ -5,6 +5,7 @@ Typical usecases are for example
 * you must only provide an Ausbaudatum if the meter is being removed f.e. 'Z02'
 """
 import asyncio
+import inspect
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional
 
@@ -12,8 +13,9 @@ from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, Eval
 from ahbicht.content_evaluation.evaluators import Evaluator
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue
 
-
 # pylint: disable=no-self-use
+
+
 class RcEvaluator(Evaluator, ABC):
     """
     Base class of all Requirement Constraint (RC) evaluators.
@@ -49,8 +51,9 @@ class RcEvaluator(Evaluator, ABC):
             raise NotImplementedError(f"There is no content_evaluation method for condition '{condition_key}'")
         if context is None:
             context = self._get_default_context()
-        result = await evaluation_method(context)
-        return result
+        if inspect.iscoroutinefunction(evaluation_method):
+            return await evaluation_method(context)
+        return evaluation_method(context)
 
     async def evaluate_conditions(
         self, condition_keys: List[str], condition_keys_with_context: Optional[Dict[str, EvaluationContext]] = None

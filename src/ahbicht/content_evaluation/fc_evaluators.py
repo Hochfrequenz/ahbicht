@@ -8,6 +8,7 @@ Other than requirement constraints format constraints do not affect if data are 
 validate already required data.
 """
 import asyncio
+import inspect
 from abc import ABC
 from typing import Coroutine, Dict, List
 
@@ -36,8 +37,11 @@ class FcEvaluator(Evaluator, ABC):
         evaluation_method = self.get_evaluation_method(condition_key)
         if evaluation_method is None:
             raise NotImplementedError(f"There is no content_evaluation method for format constraint '{condition_key}'")
-        result: EvaluatedFormatConstraint = await evaluation_method(entered_input)
-
+        result: EvaluatedFormatConstraint
+        if inspect.iscoroutinefunction(evaluation_method):
+            result = await evaluation_method(entered_input)
+        else:
+            result = evaluation_method(entered_input)
         # Fallback error message if there is no error message even though format constraint isn't fulfilled
         if result.format_constraint_fulfilled is False and result.error_message is None:
             result.error_message = f"Condition [{condition_key}] has to be fulfilled."

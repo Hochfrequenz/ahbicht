@@ -3,6 +3,7 @@ Module to provide the condition hints from their respective json file
 as dictionary with the condition keys as keys and the hint texts as values.
 """
 import asyncio
+import inspect
 import json
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -42,8 +43,12 @@ class HintsProvider(ABC):
         """
         Get Hints for given condition keys by asynchronously awaiting all self.get_hint_text at once
         """
-        tasks = [self.get_hint_text(ck) for ck in condition_keys]
-        results: List[Optional[str]] = await asyncio.gather(*tasks)
+        results: List[Optional[str]]
+        if inspect.iscoroutinefunction(self.get_hint_text):
+            tasks = [self.get_hint_text(ck) for ck in condition_keys]
+            results = await asyncio.gather(*tasks)
+        else:
+            results = [self.get_hint_text(ck) for ck in condition_keys]  # type:ignore[misc]
         result: Dict[str, Hint] = {}
         for key, value in zip(condition_keys, results):
             if value is None:

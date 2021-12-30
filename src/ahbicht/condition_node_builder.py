@@ -2,7 +2,6 @@
 Module for taking all the condition keys of a condition expression and building their respective ConditionNodes.
 If necessary it evaluates the needed attributes.
 """
-import asyncio
 from typing import Dict, List, Tuple, Union
 
 import inject
@@ -50,11 +49,9 @@ class ConditionNodeBuilder:
             categorized_keys.format_constraint_keys,
         )
 
-    def _build_hint_nodes(self) -> Dict[str, Hint]:
+    async def _build_hint_nodes(self) -> Dict[str, Hint]:
         """Builds Hint nodes from their condition keys by getting all hint texts from the HintsProvider."""
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        return loop.run_until_complete(self.hints_provider.get_hints(self.hints_condition_keys))
+        return await self.hints_provider.get_hints(self.hints_condition_keys)
 
     def _build_unevaluated_format_constraint_nodes(self) -> Dict[str, UnevaluatedFormatConstraint]:
         """Build unevaluated format constraint nodes."""
@@ -63,18 +60,15 @@ class ConditionNodeBuilder:
             unevaluated_format_constraints[condition_key] = UnevaluatedFormatConstraint(condition_key=condition_key)
         return unevaluated_format_constraints
 
-    def _build_requirement_constraint_nodes(self) -> Dict[str, RequirementConstraint]:
+    async def _build_requirement_constraint_nodes(self) -> Dict[str, RequirementConstraint]:
         """
         Build requirement constraint nodes by evaluating the constraints
         with the help of the respective Evaluator.
         """
 
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        evaluated_conditions_fulfilled_attribute: dict = loop.run_until_complete(
-            self.rc_evaluator.evaluate_conditions(self.requirement_constraints_condition_keys)
+        evaluated_conditions_fulfilled_attribute = await self.rc_evaluator.evaluate_conditions(
+            condition_keys=self.requirement_constraints_condition_keys
         )
-
         evaluated_requirement_constraints: Dict[str, RequirementConstraint] = {}
         for condition_key in self.requirement_constraints_condition_keys:
             evaluated_requirement_constraints[condition_key] = RequirementConstraint(
@@ -83,12 +77,12 @@ class ConditionNodeBuilder:
             )
         return evaluated_requirement_constraints
 
-    def requirement_content_evaluation_for_all_condition_keys(
+    async def requirement_content_evaluation_for_all_condition_keys(
         self,
     ) -> Dict[str, TRCTransformerArgument]:
         """Gets input nodes for all condition keys."""
-        requirement_constraint_nodes = self._build_requirement_constraint_nodes()
-        hint_nodes = self._build_hint_nodes()
+        requirement_constraint_nodes = await self._build_requirement_constraint_nodes()
+        hint_nodes = await self._build_hint_nodes()
         unevaluated_format_constraint_nodes = self._build_unevaluated_format_constraint_nodes()
         input_nodes: Dict[str, TRCTransformerArgument] = {
             **requirement_constraint_nodes,
