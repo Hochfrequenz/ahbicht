@@ -6,7 +6,6 @@ of the format constraint expression tree are handled.
 The used terms are defined in the README_conditions.md.
 """
 
-import asyncio
 from typing import Dict, List, Mapping, Optional
 
 import inject
@@ -89,7 +88,7 @@ def evaluate_format_constraint_tree(
     return result
 
 
-def format_constraint_evaluation(
+async def format_constraint_evaluation(
     format_constraints_expression: Optional[str], entered_input: str
 ) -> FormatConstraintEvaluationResult:
     """
@@ -104,7 +103,7 @@ def format_constraint_evaluation(
         all_evaluatable_format_constraint_keys: List[str] = [
             t.value for t in parsed_tree_fc.scan_values(lambda v: isinstance(v, Token))  # type:ignore[attr-defined]
         ]
-        input_values: Dict[str, EvaluatedFormatConstraint] = _build_evaluated_format_constraint_nodes(
+        input_values: Dict[str, EvaluatedFormatConstraint] = await _build_evaluated_format_constraint_nodes(
             all_evaluatable_format_constraint_keys, entered_input
         )
         resulting_evaluated_format_constraint_node: EvaluatedFormatConstraint = evaluate_format_constraint_tree(
@@ -118,16 +117,13 @@ def format_constraint_evaluation(
     )
 
 
-def _build_evaluated_format_constraint_nodes(
+async def _build_evaluated_format_constraint_nodes(
     evaluatable_format_constraint_keys: List[str], entered_input: str
 ) -> Dict[str, EvaluatedFormatConstraint]:
     """Build evaluated format constraint nodes."""
 
     evaluator: FcEvaluator = inject.instance(FcEvaluator)
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    evaluated_format_constraints: dict = loop.run_until_complete(
-        evaluator.evaluate_format_constraints(evaluatable_format_constraint_keys, entered_input)
+    evaluated_format_constraints = await evaluator.evaluate_format_constraints(
+        evaluatable_format_constraint_keys, entered_input
     )
-
     return evaluated_format_constraints

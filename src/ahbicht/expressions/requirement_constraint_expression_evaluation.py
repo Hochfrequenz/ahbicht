@@ -143,7 +143,7 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
         a strict separation of the Mussfeldprüfung itself and evaluation of format constraints on fields
         that have been marked obligatory by the (previously run) Mussfeldprüfung but do not affect
         the result of the Mussfeldprüfung.
-        (Things that are obligatory are obligatory regardless of the format constraints.)
+        (Things that are obligatory, are obligatory regardless of the format constraints.)
 
         :param format_constraint: a format constraint
         :param other_condition: a requirement constraint or hint
@@ -214,7 +214,9 @@ of the type RequirementConstraint, Hint or FormatConstraint."""
     return result
 
 
-def requirement_constraint_evaluation(condition_expression: Union[str, Tree]) -> RequirementConstraintEvaluationResult:
+async def requirement_constraint_evaluation(
+    condition_expression: Union[str, Tree]
+) -> RequirementConstraintEvaluationResult:
     """
     Evaluation of the condition expression in regard to the requirement conditions (rc).
     The condition expression can either be a string that still needs to be parsed as condition expression or a tree
@@ -230,7 +232,7 @@ def requirement_constraint_evaluation(condition_expression: Union[str, Tree]) ->
         t.value for t in parsed_tree_rc.scan_values(lambda v: isinstance(v, Token))  # type: ignore[attr-defined]
     ]
     condition_node_builder = ConditionNodeBuilder(all_condition_keys)
-    input_nodes = condition_node_builder.requirement_content_evaluation_for_all_condition_keys()
+    input_nodes = await condition_node_builder.requirement_content_evaluation_for_all_condition_keys()
 
     resulting_condition_node: EvaluatedComposition = evaluate_requirement_constraint_tree(parsed_tree_rc, input_nodes)
 
