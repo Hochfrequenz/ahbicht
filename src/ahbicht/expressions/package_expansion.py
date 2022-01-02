@@ -15,14 +15,13 @@ class PackageResolver(ABC):
     A package resolver provides condition expressions for given package keys.
     """
 
-    # define some common attributes. They will be needed to find the correct validator for each use case.
+    # define some common attributes. They will be needed to find the correct resolver for each use case.
     edifact_format: EdifactFormat = NotImplementedError(  # type:ignore[assignment]
-        "The inheriting class needs to define a format to which it is applicable."
-    )
-
+        "The inheriting package resolver needs to define a format to which it is applicable."
+    )  #: the format for which the resolver may be used
     edifact_format_version: EdifactFormatVersion = NotImplementedError(  # type:ignore[assignment]
-        "The inheriting class needs to define a format version."
-    )
+        "The inheriting package resolver needs to define a format version."
+    )  #: the format version for which the resolver may be used
 
     @abstractmethod
     async def get_condition_expression(self, package_key: str) -> PackageKeyConditionExpressionMapping:
