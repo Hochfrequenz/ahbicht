@@ -200,7 +200,7 @@ class TestAHBExpressionEvaluation:
         self, ahb_expression: str, content_evaluation_result: ContentEvaluationResult
     ):
         tree_a = parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_expression)
-        tree_b = parse_expression_including_unresolved_subexpressions(ahb_expression)
+        tree_b = await parse_expression_including_unresolved_subexpressions(ahb_expression)
         # it's OK/expected that the trees look different depending on whether sub expressions are resolved or not
         # but in any case the evaluation result should look the same
         create_and_inject_hardcoded_evaluators(content_evaluation_result)

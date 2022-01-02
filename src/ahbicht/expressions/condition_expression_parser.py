@@ -5,7 +5,8 @@ the parsing library lark: https://lark-parser.readthedocs.io/en/latest/
 The used terms are defined in the README_conditions.md.
 """
 # pylint:disable=cyclic-import
-from typing import List, Union
+import re
+from typing import List, Literal, Union
 
 from lark import Lark, Tree
 from lark.exceptions import UnexpectedCharacters, UnexpectedEOF
@@ -63,6 +64,23 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree:
     return parsed_tree
 
 
+def _get_rules(rule_name: Literal["package", "condition_key"], tree: Tree) -> List[str]:
+    """
+    This is an ugly workaround to extract all the rule tokens from the given tree.
+    There has to be a better way of doing this.
+    The rule name can either be "condition_key" or "package"
+    """
+    expr = r"^Tree\(Token\('RULE', 'rule_name'\), \[Token\('INT', '(?P<key>\d+)'\)\]\)$".replace("rule_name", rule_name)
+    pattern = re.compile(expr)  # https://regex101.com/r/R8IQRJ/1
+    result: List[str] = []
+    for stringified_sub_tree in (str(sub_tree) for sub_tree in tree.iter_subtrees_topdown()):
+        # todo: this is super ugly but I didn't find any better way to extract the data. todo: ask in lark issues.
+        match = pattern.match(stringified_sub_tree)
+        if match:
+            result.append(match.groupdict()["key"])
+    return result
+
+
 def extract_categorized_keys_from_tree(
     tree_or_list: Union[Tree, List[str]], sanitize: bool = False
 ) -> CategorizedKeyExtract:
@@ -78,12 +96,9 @@ def extract_categorized_keys_from_tree(
     if isinstance(tree_or_list, list):
         condition_keys = tree_or_list
     elif isinstance(tree_or_list, Tree):
-        condition_keys = [
-            x.value  # type:ignore[attr-defined]
-            for x in tree_or_list.scan_values(
-                lambda token: token.type == "INT"  # type:ignore[union-attr]
-            )
-        ]
+        condition_keys = _get_rules("condition_key", tree_or_list)
+        package_keys = [package_key + "P" for package_key in _get_rules("package", tree_or_list)]
+        result.package_keys = package_keys
     else:
         raise ValueError(f"{tree_or_list} is neither a list nor a {Tree.__name__}")
     for condition_key in condition_keys:
@@ -103,7 +118,7 @@ def extract_categorized_keys_from_tree(
     return result
 
 
-def extract_categorized_keys(condition_expression: str, resolve_packages: bool = False) -> CategorizedKeyExtract:
+async def extract_categorized_keys(condition_expression: str, resolve_packages: bool = False) -> CategorizedKeyExtract:
     """
     Parses the given condition expression and returns CategorizedKeyExtract as a template for content
     evaluation.
@@ -114,5 +129,7 @@ def extract_categorized_keys(condition_expression: str, resolve_packages: bool =
     # pylint: disable=import-outside-toplevel
     from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 
-    tree = parse_expression_including_unresolved_subexpressions(condition_expression, resolve_packages=resolve_packages)
+    tree = await parse_expression_including_unresolved_subexpressions(
+        condition_expression, resolve_packages=resolve_packages
+    )
     return extract_categorized_keys_from_tree(tree, sanitize=True)

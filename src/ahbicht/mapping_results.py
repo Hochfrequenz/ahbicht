@@ -65,6 +65,12 @@ class PackageKeyConditionExpressionMapping:
         default=None
     )  #: the expression for which the package is a shortcut; None if unknown f.e. '[20] ∧ [244]'
 
+    def has_been_resolved_successfully(self) -> bool:
+        """
+        return true iff the package has been resolved successfully
+        """
+        return self.package_expression is not None
+
 
 class PackageKeyConditionExpressionMappingSchema(Schema):
     """

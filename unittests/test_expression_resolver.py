@@ -3,6 +3,8 @@ from lark import Token, Tree
 
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 
+pytestmark = pytest.mark.asyncio
+
 
 class TestExpressionResolver:
     @pytest.mark.parametrize(
@@ -72,8 +74,8 @@ class TestExpressionResolver:
             ),
         ],
     )
-    def test_expression_resolver_valid(self, expression: str, expected_tree: Tree):
-        actual_tree = parse_expression_including_unresolved_subexpressions(expression)
+    async def test_expression_resolver_valid(self, expression: str, expected_tree: Tree):
+        actual_tree = await parse_expression_including_unresolved_subexpressions(expression)
         assert actual_tree == expected_tree
 
     @pytest.mark.parametrize(
@@ -84,9 +86,9 @@ class TestExpressionResolver:
             ),
         ],
     )
-    def test_expression_resolver_failing(self, expression: str):
+    async def test_expression_resolver_failing(self, expression: str):
         with pytest.raises(SyntaxError) as excinfo:
-            parse_expression_including_unresolved_subexpressions(expression)
+            await parse_expression_including_unresolved_subexpressions(expression)
 
         assert """Please make sure that the ahb_expression starts with a requirement indicator \
 (i.e Muss/M, Soll/S, Kann/K, X, O, U) and the condition expressions consist of only \

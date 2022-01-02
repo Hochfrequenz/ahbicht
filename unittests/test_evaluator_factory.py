@@ -59,7 +59,7 @@ class TestEvaluatorFactory:
         expected_format_constraint_result: bool,
         expected_in_hints: Optional[str],
     ):
-        tree = parse_expression_including_unresolved_subexpressions(expression=expression, resolve_packages=True)
+        tree = await parse_expression_including_unresolved_subexpressions(expression=expression, resolve_packages=True)
         assert tree is not None
         expression_evaluation_result = await evaluate_ahb_expression_tree(tree, entered_input="hello")
         assert (

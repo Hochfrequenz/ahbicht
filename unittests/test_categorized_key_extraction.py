@@ -10,6 +10,8 @@ from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluati
 from ahbicht.expressions.condition_expression_parser import extract_categorized_keys
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 
+pytestmark = pytest.mark.asyncio
+
 
 class TestCategorizedKeyExtraction:
     @pytest.mark.parametrize(
@@ -45,18 +47,18 @@ class TestCategorizedKeyExtraction:
                     hint_keys=["502"],
                     requirement_constraint_keys=["2", "4", "53", "100"],
                     format_constraint_keys=["999"],
-                    package_keys=["123"],
+                    package_keys=["123P"],
                 ),
             ),
         ],
     )
-    def test_extraction_of_categorized_keys_from_condition_expression(
+    async def test_extraction_of_categorized_keys_from_condition_expression(
         self, expression: str, expected_key_extract: CategorizedKeyExtract
     ):
         """
         Tests that the CategorizedKeyExtract is generated correctly.
         """
-        actual = extract_categorized_keys(expression)
+        actual = await extract_categorized_keys(expression)
         assert actual == expected_key_extract
 
     @pytest.mark.parametrize(
@@ -149,5 +151,5 @@ class TestCategorizedKeyExtraction:
         categoried_keys = CategorizedKeyExtractSchema().load(file_content["categorizedKeyExtract"])
         expected_result = ContentEvaluationResultSchema(many=True).load(file_content["expected_result"])
         actual = categoried_keys.generate_possible_content_evaluation_results()
-        json_string = ContentEvaluationResultSchema(many=True).dumps(actual)
+        # json_string = ContentEvaluationResultSchema(many=True).dumps(actual)
         assert actual == expected_result

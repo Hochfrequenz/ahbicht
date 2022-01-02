@@ -36,6 +36,8 @@ from ahbicht.mapping_results import (
 
 T = TypeVar("T")
 
+pytestmark = pytest.mark.asyncio
+
 
 def _test_serialization_roundtrip(serializable_object: T, schema: Schema, expected_json_dict: dict) -> T:
     """
@@ -479,9 +481,9 @@ class TestJsonSerialization:
             ),
         ],
     )
-    def test_concise_tree_serialization_behaviour_for_ahb_expressions(
+    async def test_concise_tree_serialization_behaviour_for_ahb_expressions(
         self, ahb_expression: str, expected_compact_json_dict: dict
     ):
-        tree = parse_expression_including_unresolved_subexpressions(ahb_expression)
+        tree = await parse_expression_including_unresolved_subexpressions(ahb_expression)
         json_dict = ConciseTreeSchema().dump(tree)
         assert json_dict == expected_compact_json_dict

@@ -16,10 +16,10 @@ class PackageResolver(ABC):
     """
 
     @abstractmethod
-    async def get_condition_expression(self, package_key: str) -> Optional[PackageKeyConditionExpressionMapping]:
+    async def get_condition_expression(self, package_key: str) -> PackageKeyConditionExpressionMapping:
         """
         Returns a condition expression (e.g. "[1] U ([2] O [3]) for the given package_key (e.g. "123")
-        Returns None if the package is unresolvable.
+        Returns None in the package_expression if the package is unresolvable (see 'has_been_resolved_successfully').
         :param package_key: The unique (integer) key of the package. Do not use the P suffix.
         :return:
         """
@@ -41,7 +41,7 @@ class DictBasedPackageResolver(PackageResolver):
                 raise ValueError("The keys should end with 'P' to avoid ambiguities. Use '123P' instead of '123'.")
         self._all_packages: Mapping[str, Optional[str]] = results
 
-    async def get_condition_expression(self, package_key: str) -> Optional[PackageKeyConditionExpressionMapping]:
+    async def get_condition_expression(self, package_key: str) -> PackageKeyConditionExpressionMapping:
         if not package_key:
             raise ValueError(f"The package key must not be None/empty but was '{package_key}'")
         if not package_key.endswith("P"):
@@ -52,4 +52,8 @@ class DictBasedPackageResolver(PackageResolver):
                 package_expression=self._all_packages[package_key],
                 edifact_format=EdifactFormat.UTILMD,
             )
-        return None
+        return PackageKeyConditionExpressionMapping(
+            package_key=package_key,
+            package_expression=None,
+            edifact_format=EdifactFormat.UTILMD,
+        )

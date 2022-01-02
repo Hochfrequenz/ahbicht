@@ -39,11 +39,11 @@ class TestPackageResolver:
             pytest.param("[17] U [123P]", "[17] U ([1] U ([2] O [3]))"),
         ],
     )
-    def test_correct_injection(
+    async def test_correct_injection(
         self, inject_package_resolver, unexpanded_expression: str, expected_expanded_expression: str
     ):
         unexpanded_tree = parse_condition_expression_to_tree(unexpanded_expression)
-        actual_tree = expand_packages(parsed_tree=unexpanded_tree)
+        actual_tree = await expand_packages(parsed_tree=unexpanded_tree)
         assert actual_tree is not None
         expected_expanded_tree = parse_condition_expression_to_tree(expected_expanded_expression)
         assert actual_tree == expected_expanded_tree
