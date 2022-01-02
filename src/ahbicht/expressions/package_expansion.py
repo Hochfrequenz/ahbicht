@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from typing import Mapping, Optional
 
 # pylint:disable=too-few-public-methods
-from ahbicht.edifact import EdifactFormat
+from ahbicht.edifact import EdifactFormat, EdifactFormatVersion
 from ahbicht.mapping_results import PackageKeyConditionExpressionMapping
 
 
@@ -14,6 +14,15 @@ class PackageResolver(ABC):
     """
     A package resolver provides condition expressions for given package keys.
     """
+
+    # define some common attributes. They will be needed to find the correct validator for each use case.
+    edifact_format: EdifactFormat = NotImplementedError(  # type:ignore[assignment]
+        "The inheriting class needs to define a format to which it is applicable."
+    )
+
+    edifact_format_version: EdifactFormatVersion = NotImplementedError(  # type:ignore[assignment]
+        "The inheriting class needs to define a format version."
+    )
 
     @abstractmethod
     async def get_condition_expression(self, package_key: str) -> PackageKeyConditionExpressionMapping:
