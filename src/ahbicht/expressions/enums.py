@@ -76,7 +76,7 @@ class PrefixOperator(str, Enum):
 
 RequirementIndicator = Union[PrefixOperator, ModalMark]
 """
-A Requirement Indicator is either the Merkmal/ :class:`ModalMark` or the :class:`PrefixOperator`of the
+A Requirement Indicator is either the Merkmal :class:`ModalMark` or the :class:`PrefixOperator` of the
 data element/data element group/segment/segment group at which it is used.
 """
 
