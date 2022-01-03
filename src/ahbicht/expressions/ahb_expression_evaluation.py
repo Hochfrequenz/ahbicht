@@ -4,6 +4,7 @@ The AhbExpressionTransformer defines the rules how the different parts of the pa
 
 The used terms are defined in the README.md.
 """
+from enum import Enum, unique
 from typing import Awaitable, List, Union
 
 from lark import Token, Transformer, Tree, v_args
@@ -16,11 +17,38 @@ from ahbicht.evaluation_results import (
 )
 from ahbicht.expressions.format_constraint_expression_evaluation import format_constraint_evaluation
 from ahbicht.expressions.requirement_constraint_expression_evaluation import requirement_constraint_evaluation
-
-# pylint: disable=no-self-use, invalid-name
 from ahbicht.utility_functions import gather_if_necessary
 
 
+@unique
+class ModalMark(str, Enum):
+    """
+    A modal mark describes if information are obligatory or not. The German term is "Merkmal".
+    The modal marks are defined by the EDI Energy group (see edi-energy.de → Dokumente → Allgemeine Festlegungen).
+    The modal mark stands alone or before a condition expression.
+    It can be the start of several requirement indicator expressions in one AHB expression.
+    """
+
+    Muss = "Muss"
+    """
+    German term for "Must". Is required for the correct structure of the message.
+    If the following condition is not fulfilled, the information must not be given ("must not")
+    """
+
+    Soll = "Soll"
+    """
+    German term for "Should". Is required for technical reasons.
+    Always followed by a condition.
+    If the following condition is not fulfilled, the information must not be given.
+    """
+
+    Kann = "Kann"
+    """
+    German term for "Can". Optional
+    """
+
+
+# pylint: disable=no-self-use, invalid-name
 class AhbExpressionTransformer(Transformer):
     """
     Transformer, that evaluates the trees built from the ahb expressions.
@@ -44,11 +72,18 @@ class AhbExpressionTransformer(Transformer):
 
     def PREFIX_OPERATOR(self, prefix_operator: Token) -> str:
         """Returns the prefix operator."""
-        return prefix_operator.value
+        return prefix_operator.value  # X, O, U,
 
-    def MODAL_MARK(self, modal_mark: Token) -> str:
+    def MODAL_MARK(self, modal_mark: Token) -> ModalMark:
         """Returns the modal mark."""
-        return modal_mark.value
+        try:
+            return ModalMark(modal_mark.value)
+        except ValueError:
+            # convert to title case and parse again
+            title_case = modal_mark.value.lower()
+            title_case = title_case[0].upper() + title_case[1:]
+            return ModalMark(title_case)
+        # return modal_mark.value # Muss, muss, Soll, soll, Kann, kann
 
     @v_args(inline=True)  # Children are provided as *args instead of a list argument
     def single_requirement_indicator_expression(

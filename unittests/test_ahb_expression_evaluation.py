@@ -48,7 +48,7 @@ class TestAHBExpressionEvaluation:
             pytest.param("U[1]U[2]", "U", False, True, None, None),
             pytest.param("X[1]U[2]U[3]O[4]", "X", False, True, None, None),
             pytest.param("Muss([1]O[2])U[3]Soll[2]Kann[2]O[4]", "Muss", True, True, None, None),
-            pytest.param("muss([1]o[2])u[3]soll[2]kann[2]O[4]", "muss", True, True, None, None),
+            pytest.param("muss([1]o[2])u[3]soll[2]kann[2]O[4]", "Muss", True, True, None, None),
             pytest.param("Muss[2]Soll[2]", "Soll", False, True, None, None),
             # Neutral value
             pytest.param("Muss[503]", "Muss", True, False, None, "[503]"),
