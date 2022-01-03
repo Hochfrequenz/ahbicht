@@ -14,16 +14,10 @@
                     "type": "object"
                 },
                 "requirement_indicator": {
-                    "title": "requirement_indicator",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
+                    "title": "",
+                    "type": "string"
                 }
             },
-            "required": [
-                "requirement_indicator"
-            ],
             "type": "object"
         },
         "CategorizedKeyExtractSchema": {
