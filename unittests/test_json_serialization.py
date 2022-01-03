@@ -25,6 +25,7 @@ from ahbicht.expressions.condition_nodes import (
     EvaluatedFormatConstraint,
     EvaluatedFormatConstraintSchema,
 )
+from ahbicht.expressions.enums import ModalMark, RequirementIndicator
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 from ahbicht.json_serialization.tree_schema import ConciseTreeSchema, TreeSchema
 from ahbicht.mapping_results import (
@@ -229,7 +230,34 @@ class TestJsonSerialization:
         [
             pytest.param(
                 AhbExpressionEvaluationResult(
-                    requirement_indicator="Muss",
+                    requirement_indicator=ModalMark.MUSS,
+                    format_constraint_evaluation_result=FormatConstraintEvaluationResult(
+                        error_message="hello", format_constraints_fulfilled=False
+                    ),
+                    requirement_constraint_evaluation_result=RequirementConstraintEvaluationResult(
+                        hints="foo bar",
+                        requirement_constraints_fulfilled=True,
+                        requirement_is_conditional=True,
+                        format_constraints_expression="[asd]",
+                    ),
+                ),
+                {
+                    "requirement_indicator": "MUSS",
+                    "format_constraint_evaluation_result": {
+                        "format_constraints_fulfilled": False,
+                        "error_message": "hello",
+                    },
+                    "requirement_constraint_evaluation_result": {
+                        "hints": "foo bar",
+                        "requirement_is_conditional": True,
+                        "requirement_constraints_fulfilled": True,
+                        "format_constraints_expression": "[asd]",
+                    },
+                },
+            ),
+            pytest.param(
+                AhbExpressionEvaluationResult(
+                    requirement_indicator=ModalMark.MUSS,
                     format_constraint_evaluation_result=FormatConstraintEvaluationResult(
                         error_message="hello", format_constraints_fulfilled=False
                     ),
@@ -251,39 +279,12 @@ class TestJsonSerialization:
                         "requirement_constraints_fulfilled": True,
                         "requirement_is_conditional": True,
                     },
-                    "requirement_indicator": "Muss",
+                    "requirement_indicator": "MUSS",
                 },
             ),
             pytest.param(
                 AhbExpressionEvaluationResult(
-                    requirement_indicator="Muss",
-                    format_constraint_evaluation_result=FormatConstraintEvaluationResult(
-                        error_message="hello", format_constraints_fulfilled=False
-                    ),
-                    requirement_constraint_evaluation_result=RequirementConstraintEvaluationResult(
-                        hints="foo bar",
-                        requirement_constraints_fulfilled=True,
-                        requirement_is_conditional=True,
-                        format_constraints_expression="[asd]",
-                    ),
-                ),
-                {
-                    "format_constraint_evaluation_result": {
-                        "error_message": "hello",
-                        "format_constraints_fulfilled": False,
-                    },
-                    "requirement_constraint_evaluation_result": {
-                        "format_constraints_expression": "[asd]",
-                        "hints": "foo bar",
-                        "requirement_constraints_fulfilled": True,
-                        "requirement_is_conditional": True,
-                    },
-                    "requirement_indicator": "Muss",
-                },
-            ),
-            pytest.param(
-                AhbExpressionEvaluationResult(
-                    requirement_indicator="Muss",
+                    requirement_indicator=ModalMark.MUSS,
                     format_constraint_evaluation_result=FormatConstraintEvaluationResult(
                         format_constraints_fulfilled=False
                     ),
@@ -303,7 +304,7 @@ class TestJsonSerialization:
                         "requirement_constraints_fulfilled": True,
                         "requirement_is_conditional": True,
                     },
-                    "requirement_indicator": "Muss",
+                    "requirement_indicator": "MUSS",
                 },
                 id="Minimal example",
             ),
