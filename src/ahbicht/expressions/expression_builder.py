@@ -3,7 +3,7 @@ Module to create expressions from scratch.
 """
 import re
 from abc import ABC, abstractmethod
-from typing import Generic, Literal, Optional, Protocol, Type, TypeVar, Union
+from typing import Generic, Optional, Protocol, Type, TypeVar, Union
 
 from ahbicht.expressions.condition_nodes import (
     ConditionNode,
@@ -13,6 +13,7 @@ from ahbicht.expressions.condition_nodes import (
     RequirementConstraint,
     UnevaluatedFormatConstraint,
 )
+from ahbicht.expressions.enums import LogicalOperator
 
 TSupportedNodes = TypeVar("TSupportedNodes")
 
@@ -116,21 +117,19 @@ class FormatConstraintExpressionBuilder(ExpressionBuilder[TSupportedFCExpression
         return self._expression
 
     def land(self, other: TSupportedFCExpressionBuilderArguments) -> ExpressionBuilder:
-        return self._connect("U", other)
+        return self._connect(LogicalOperator.LAND, other)
 
     def lor(self, other: TSupportedFCExpressionBuilderArguments) -> ExpressionBuilder:
-        return self._connect("O", other)
+        return self._connect(LogicalOperator.LOR, other)
 
     def xor(self, other: TSupportedFCExpressionBuilderArguments) -> ExpressionBuilder:
-        return self._connect("X", other)
+        return self._connect(LogicalOperator.XOR, other)
 
-    def _connect(self, operator_character: Literal["U", "O", "X"], other: TSupportedFCExpressionBuilderArguments):
+    def _connect(self, operator_character: LogicalOperator, other: TSupportedFCExpressionBuilderArguments):
         """
         Connect the existing expression and the other part.
 
         :param operator_character: "X", "U" or "O"
-        :param other:
-        :return:
         """
         if self._expression:
             prefix = f"({self._expression}) {operator_character}"

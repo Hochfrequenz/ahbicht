@@ -7,8 +7,7 @@ A "result" is the outcome of a evaluation. It requires actual data to be present
 from typing import Optional
 
 import attr
-from marshmallow import Schema, fields, post_dump, post_load
-from marshmallow_enum import EnumField  # type:ignore[import]
+from marshmallow import Schema, fields, post_load
 
 from ahbicht.expressions.enums import RequirementIndicator, RequirementIndicatorSchema
 

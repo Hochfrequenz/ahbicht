@@ -92,7 +92,7 @@ class AhbExpressionTransformer(Transformer):
         return result_of_ahb_expression_evaluation
 
     @v_args(inline=True)  # Children are provided as *args instead of a list argument
-    def requirement_indicator(self, requirement_indicator) -> AhbExpressionEvaluationResult:
+    def requirement_indicator(self, requirement_indicator: RequirementIndicator) -> AhbExpressionEvaluationResult:
         """
         If there is no condition expression but only a requirement indicator,
         all evaluations are automatically set to True.

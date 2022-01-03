@@ -81,6 +81,7 @@ data element/data element group/segment/segment group at which it is used.
 """
 
 
+# pylint:disable=no-self-use, unused-argument
 class RequirementIndicatorSchema(Schema):
     """
     a helper schema because marshmallow does not support something like fields.Union out of the box
@@ -107,3 +108,24 @@ class RequirementIndicatorSchema(Schema):
         returns the enum value as upper case
         """
         return data["value"].upper()
+
+
+class LogicalOperator(str, Enum):
+    """
+    Logical operators connect two tokens.
+    """
+
+    LAND = "U"
+    """
+    logical AND, also denoted as "∧", used in and_composition
+    """
+
+    LOR = "O"
+    """
+    logical OR, also denoted as "∨", used in or_composition
+    """
+
+    XOR = "X"
+    """
+    logical excluxive OR (XOR), also denoted as "⊻", used in xor_composition
+    """
