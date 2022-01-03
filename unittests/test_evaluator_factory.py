@@ -43,8 +43,8 @@ class TestEvaluatorFactory:
     @pytest.mark.parametrize(
         "expression, expected_requirement_indicator, expected_format_constraint_result, expected_in_hints",
         [
-            pytest.param("Muss ([2] O [3])[902]U[501]", "Muss", True, "foo"),
-            pytest.param("Muss [2] O [3][902]U[501]", "Muss", True, None),
+            pytest.param("Muss ([2] O [3])[902]U[501]", "MUSS", True, "foo"),
+            pytest.param("Muss [2] O [3][902]U[501]", "MUSS", True, None),
         ],
     )
     async def test_correct_injection(

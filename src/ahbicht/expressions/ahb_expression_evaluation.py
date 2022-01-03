@@ -4,7 +4,6 @@ The AhbExpressionTransformer defines the rules how the different parts of the pa
 
 The used terms are defined in the README.md.
 """
-from enum import Enum, unique
 from typing import Awaitable, Dict, List, Union
 
 from lark import Token, Transformer, Tree, v_args
@@ -15,38 +14,10 @@ from ahbicht.evaluation_results import (
     FormatConstraintEvaluationResult,
     RequirementConstraintEvaluationResult,
 )
+from ahbicht.expressions.enums import ModalMark, PrefixOperator, RequirementIndicator
 from ahbicht.expressions.format_constraint_expression_evaluation import format_constraint_evaluation
 from ahbicht.expressions.requirement_constraint_expression_evaluation import requirement_constraint_evaluation
 from ahbicht.utility_functions import gather_if_necessary
-
-
-@unique
-class ModalMark(str, Enum):
-    """
-    A modal mark describes if information are obligatory or not. The German term is "Merkmal".
-    The modal marks are defined by the EDI Energy group (see edi-energy.de → Dokumente → Allgemeine Festlegungen).
-    The modal mark stands alone or before a condition expression.
-    It can be the start of several requirement indicator expressions in one AHB expression.
-    """
-
-    MUSS = "Muss"
-    """
-    German term for "Must". Is required for the correct structure of the message.
-    If the following condition is not fulfilled, the information must not be given ("must not")
-    """
-
-    SOLL = "Soll"
-    """
-    German term for "Should". Is required for technical reasons.
-    Always followed by a condition.
-    If the following condition is not fulfilled, the information must not be given.
-    """
-
-    KANN = "Kann"
-    """
-    German term for "Can". Optional
-    """
-
 
 _str_to_modal_mark_mapping: Dict[str, ModalMark] = {
     "MUSS": ModalMark.MUSS,
@@ -56,45 +27,6 @@ _str_to_modal_mark_mapping: Dict[str, ModalMark] = {
     "SOLL": ModalMark.SOLL,
     "S": ModalMark.SOLL,
 }
-
-
-@unique
-class PrefixOperator(str, Enum):
-    """
-    Operator which does not function to combine conditions, but as requirement indicator.
-    It stands alone or in front of a condition expression. Please find detailed descriptions of the operators and their
-    usage in the "Allgemeine Festlegungen".
-    Note that with MaKo2022 introced 2022-04-01 the "O" and "U" prefix operators will be deprecated.
-    Refer to the "Allgemeine Festlegungen" valid up to 2022-04-01 for deprecated "O" and "U".
-    """
-
-    X = "X"
-    """
-    The "X" operator. See "Allgemeine Festlegungen" Kapitel 6.8.1. Usually this just means something is required
-    or required under circumstances defined in a trailing condition expression.
-    It shall be read as "exclusive or" regarding how qualifiers/codes shall be used from a finite set.
-    Note that "X" can also be used as "logical exclusive or" (aka "xor") operator in condition expressions.
-    The prefix operator works differently from the logical operator in condition expressions!
-    The usage of "X" as logical operator is deprecated since 2022-04-01. It will be replaced with the "⊻" symbol.
-    """
-    O = "O"
-    """
-    The "O" operator means that at least one out of multiple possible qualifiers/codes has to be given.
-    This is typically found when describing ways to contact a market partner (CTA): You can use email or phone or fax
-    but you have to provide at least one of the given possibilities.
-    The usage of "O" as a prefix operator is deprecated since 2022-04-01.
-    Note that "O" can also be used as a "logical or" (aka "lor") operator in condition expressions.
-    The prefix operator works differently from the logical operator in condition expressions!
-    The usage of "O" as logical operator is also deprecated since 2022-04-01. It will be replaced with the "∨" symbol.
-    """
-    U = "U"
-    """
-    The "U" operator means that all provided qualifiers/codes have to be used.
-    The usage of "U" as a prefix operator is deprecated since 2022-04-01.
-    Note that "U" can also be used as a "logical and" (aka "land") operator in condition expressions.
-    The prefix operator works differently from the logical operator in condition expressions!
-    The usage of "U" as logical operator is also deprecated since 2022-04-01. It will be replaced with the "∧" symbol.
-    """
 
 
 # pylint: disable=no-self-use, invalid-name
@@ -129,7 +61,7 @@ class AhbExpressionTransformer(Transformer):
 
     @v_args(inline=True)  # Children are provided as *args instead of a list argument
     def single_requirement_indicator_expression(
-        self, requirement_indicator, condition_expression
+        self, requirement_indicator: RequirementIndicator, condition_expression
     ) -> Awaitable[AhbExpressionEvaluationResult]:
         """
         Evaluates the condition expression of the respective requirement indicator expression and returns a list of the
@@ -138,7 +70,7 @@ class AhbExpressionTransformer(Transformer):
         return self._single_requirement_indicator_expression_async(requirement_indicator, condition_expression)
 
     async def _single_requirement_indicator_expression_async(
-        self, requirement_indicator, condition_expression
+        self, requirement_indicator: RequirementIndicator, condition_expression
     ) -> AhbExpressionEvaluationResult:
         """
         See :meth:`single_requirement_indicator_expression_async`
