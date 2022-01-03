@@ -4,7 +4,8 @@ The AhbExpressionTransformer defines the rules how the different parts of the pa
 
 The used terms are defined in the README.md.
 """
-from typing import Awaitable, List, Union
+from enum import Enum, unique
+from typing import Awaitable, Dict, List, Union
 
 from lark import Token, Transformer, Tree, v_args
 from lark.exceptions import VisitError
@@ -16,11 +17,48 @@ from ahbicht.evaluation_results import (
 )
 from ahbicht.expressions.format_constraint_expression_evaluation import format_constraint_evaluation
 from ahbicht.expressions.requirement_constraint_expression_evaluation import requirement_constraint_evaluation
-
-# pylint: disable=no-self-use, invalid-name
 from ahbicht.utility_functions import gather_if_necessary
 
 
+@unique
+class ModalMark(str, Enum):
+    """
+    A modal mark describes if information are obligatory or not. The German term is "Merkmal".
+    The modal marks are defined by the EDI Energy group (see edi-energy.de → Dokumente → Allgemeine Festlegungen).
+    The modal mark stands alone or before a condition expression.
+    It can be the start of several requirement indicator expressions in one AHB expression.
+    """
+
+    MUSS = "Muss"
+    """
+    German term for "Must". Is required for the correct structure of the message.
+    If the following condition is not fulfilled, the information must not be given ("must not")
+    """
+
+    SOLL = "Soll"
+    """
+    German term for "Should". Is required for technical reasons.
+    Always followed by a condition.
+    If the following condition is not fulfilled, the information must not be given.
+    """
+
+    KANN = "Kann"
+    """
+    German term for "Can". Optional
+    """
+
+
+_str_to_modal_mark_mapping: Dict[str, ModalMark] = {
+    "MUSS": ModalMark.MUSS,
+    "M": ModalMark.MUSS,
+    "KANN": ModalMark.KANN,
+    "K": ModalMark.KANN,
+    "SOLL": ModalMark.SOLL,
+    "S": ModalMark.SOLL,
+}
+
+
+# pylint: disable=no-self-use, invalid-name
 class AhbExpressionTransformer(Transformer):
     """
     Transformer, that evaluates the trees built from the ahb expressions.
@@ -44,11 +82,11 @@ class AhbExpressionTransformer(Transformer):
 
     def PREFIX_OPERATOR(self, prefix_operator: Token) -> str:
         """Returns the prefix operator."""
-        return prefix_operator.value
+        return prefix_operator.value  # X, O, U,
 
-    def MODAL_MARK(self, modal_mark: Token) -> str:
+    def MODAL_MARK(self, modal_mark: Token) -> ModalMark:
         """Returns the modal mark."""
-        return modal_mark.value
+        return _str_to_modal_mark_mapping[modal_mark.value.upper()]
 
     @v_args(inline=True)  # Children are provided as *args instead of a list argument
     def single_requirement_indicator_expression(
