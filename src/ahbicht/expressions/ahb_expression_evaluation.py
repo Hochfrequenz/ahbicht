@@ -4,7 +4,7 @@ The AhbExpressionTransformer defines the rules how the different parts of the pa
 
 The used terms are defined in the README.md.
 """
-from typing import Awaitable, List, Union
+from typing import Awaitable, Dict, List, Union
 
 from lark import Token, Transformer, Tree, v_args
 from lark.exceptions import VisitError
@@ -14,13 +14,22 @@ from ahbicht.evaluation_results import (
     FormatConstraintEvaluationResult,
     RequirementConstraintEvaluationResult,
 )
+from ahbicht.expressions.enums import ModalMark, PrefixOperator, RequirementIndicator
 from ahbicht.expressions.format_constraint_expression_evaluation import format_constraint_evaluation
 from ahbicht.expressions.requirement_constraint_expression_evaluation import requirement_constraint_evaluation
-
-# pylint: disable=no-self-use, invalid-name
 from ahbicht.utility_functions import gather_if_necessary
 
+_str_to_modal_mark_mapping: Dict[str, ModalMark] = {
+    "MUSS": ModalMark.MUSS,
+    "M": ModalMark.MUSS,
+    "KANN": ModalMark.KANN,
+    "K": ModalMark.KANN,
+    "SOLL": ModalMark.SOLL,
+    "S": ModalMark.SOLL,
+}
 
+
+# pylint: disable=no-self-use, invalid-name
 class AhbExpressionTransformer(Transformer):
     """
     Transformer, that evaluates the trees built from the ahb expressions.
@@ -42,17 +51,17 @@ class AhbExpressionTransformer(Transformer):
         """Returns the condition expression."""
         return condition_expression.value
 
-    def PREFIX_OPERATOR(self, prefix_operator: Token) -> str:
+    def PREFIX_OPERATOR(self, prefix_operator: Token) -> PrefixOperator:
         """Returns the prefix operator."""
-        return prefix_operator.value
+        return PrefixOperator(prefix_operator.value)
 
-    def MODAL_MARK(self, modal_mark: Token) -> str:
+    def MODAL_MARK(self, modal_mark: Token) -> ModalMark:
         """Returns the modal mark."""
-        return modal_mark.value
+        return _str_to_modal_mark_mapping[modal_mark.value.upper()]
 
     @v_args(inline=True)  # Children are provided as *args instead of a list argument
     def single_requirement_indicator_expression(
-        self, requirement_indicator, condition_expression
+        self, requirement_indicator: RequirementIndicator, condition_expression
     ) -> Awaitable[AhbExpressionEvaluationResult]:
         """
         Evaluates the condition expression of the respective requirement indicator expression and returns a list of the
@@ -61,7 +70,7 @@ class AhbExpressionTransformer(Transformer):
         return self._single_requirement_indicator_expression_async(requirement_indicator, condition_expression)
 
     async def _single_requirement_indicator_expression_async(
-        self, requirement_indicator, condition_expression
+        self, requirement_indicator: RequirementIndicator, condition_expression
     ) -> AhbExpressionEvaluationResult:
         """
         See :meth:`single_requirement_indicator_expression_async`
@@ -83,7 +92,7 @@ class AhbExpressionTransformer(Transformer):
         return result_of_ahb_expression_evaluation
 
     @v_args(inline=True)  # Children are provided as *args instead of a list argument
-    def requirement_indicator(self, requirement_indicator) -> AhbExpressionEvaluationResult:
+    def requirement_indicator(self, requirement_indicator: RequirementIndicator) -> AhbExpressionEvaluationResult:
         """
         If there is no condition expression but only a requirement indicator,
         all evaluations are automatically set to True.

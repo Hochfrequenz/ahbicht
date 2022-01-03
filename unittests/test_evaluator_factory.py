@@ -11,6 +11,7 @@ from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expressio
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
+from ahbicht.expressions.enums import ModalMark, RequirementIndicator
 
 pytestmark = pytest.mark.asyncio
 
@@ -46,16 +47,16 @@ class TestEvaluatorFactory:
     @pytest.mark.parametrize(
         "expression, expected_requirement_indicator, expected_format_constraint_result, expected_in_hints",
         [
-            pytest.param("Muss ([2] O [3])[902]U[501]", "Muss", True, "foo"),
-            pytest.param("Muss [2] O [3][902]U[501]", "Muss", True, None),
-            pytest.param("Muss [2] O [3][902]U[501]U[123P]", "Muss", True, None, id="with package"),
+            pytest.param("Muss ([2] O [3])[902]U[501]", ModalMark.MUSS, True, "foo"),
+            pytest.param("Muss [2] O [3][902]U[501]", ModalMark.MUSS, True, None),
+            pytest.param("Muss [2] O [3][902]U[501]U[123P]", ModalMark.MUSS, True, None, id="with package"),
         ],
     )
     async def test_correct_injection(
         self,
         inject_content_evaluation_result,
         expression: str,
-        expected_requirement_indicator: str,
+        expected_requirement_indicator: RequirementIndicator,
         expected_format_constraint_result: bool,
         expected_in_hints: Optional[str],
     ):
