@@ -29,32 +29,32 @@ class ModalMark(str, Enum):
     It can be the start of several requirement indicator expressions in one AHB expression.
     """
 
-    Muss = "Muss"
+    MUSS = "Muss"
     """
     German term for "Must". Is required for the correct structure of the message.
     If the following condition is not fulfilled, the information must not be given ("must not")
     """
 
-    Soll = "Soll"
+    SOLL = "Soll"
     """
     German term for "Should". Is required for technical reasons.
     Always followed by a condition.
     If the following condition is not fulfilled, the information must not be given.
     """
 
-    Kann = "Kann"
+    KANN = "Kann"
     """
     German term for "Can". Optional
     """
 
 
 _str_to_modal_mark_mapping: Dict[str, ModalMark] = {
-    "muss": ModalMark.Muss,
-    "m": ModalMark.Muss,
-    "kann": ModalMark.Kann,
-    "k": ModalMark.Kann,
-    "soll": ModalMark.Soll,
-    "s": ModalMark.Soll,
+    "MUSS": ModalMark.MUSS,
+    "M": ModalMark.MUSS,
+    "KANN": ModalMark.KANN,
+    "K": ModalMark.KANN,
+    "SOLL": ModalMark.SOLL,
+    "S": ModalMark.SOLL,
 }
 
 
@@ -86,10 +86,7 @@ class AhbExpressionTransformer(Transformer):
 
     def MODAL_MARK(self, modal_mark: Token) -> ModalMark:
         """Returns the modal mark."""
-        try:
-            return ModalMark(modal_mark.value)
-        except ValueError:
-            return _str_to_modal_mark_mapping[modal_mark.value.lower()]
+        return _str_to_modal_mark_mapping[modal_mark.value.upper()]
 
     @v_args(inline=True)  # Children are provided as *args instead of a list argument
     def single_requirement_indicator_expression(
