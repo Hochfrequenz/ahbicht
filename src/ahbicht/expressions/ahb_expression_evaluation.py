@@ -5,7 +5,7 @@ The AhbExpressionTransformer defines the rules how the different parts of the pa
 The used terms are defined in the README.md.
 """
 from enum import Enum, unique
-from typing import Awaitable, List, Union
+from typing import Awaitable, Dict, List, Union
 
 from lark import Token, Transformer, Tree, v_args
 from lark.exceptions import VisitError
@@ -48,6 +48,16 @@ class ModalMark(str, Enum):
     """
 
 
+_str_to_modal_mark_mapping: Dict[str, ModalMark] = {
+    "muss": ModalMark.Muss,
+    "m": ModalMark.Muss,
+    "kann": ModalMark.Kann,
+    "k": ModalMark.Kann,
+    "soll": ModalMark.Soll,
+    "s": ModalMark.Soll,
+}
+
+
 # pylint: disable=no-self-use, invalid-name
 class AhbExpressionTransformer(Transformer):
     """
@@ -79,11 +89,7 @@ class AhbExpressionTransformer(Transformer):
         try:
             return ModalMark(modal_mark.value)
         except ValueError:
-            # convert to title case and parse again
-            title_case = modal_mark.value.lower()
-            title_case = title_case[0].upper() + title_case[1:]
-            return ModalMark(title_case)
-        # return modal_mark.value # Muss, muss, Soll, soll, Kann, kann
+            return _str_to_modal_mark_mapping[modal_mark.value.lower()]
 
     @v_args(inline=True)  # Children are provided as *args instead of a list argument
     def single_requirement_indicator_expression(
