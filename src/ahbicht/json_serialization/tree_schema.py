@@ -133,6 +133,24 @@ def _compress(data: dict) -> dict:
     return data
 
 
+def _compress_condition_keys_only(data: dict) -> dict:
+    """
+    a function that merges a condition key node with its only child (a token that has an int value)
+    """
+    if "tree" in data and data["tree"] is not None and data["tree"]["type"] == "condition_key":
+        return {
+            "token": {"value": data["tree"]["children"][0]["token"]["value"], "type": "condition_key"},
+            "tree": None,
+        }  # passt für root level 53
+    if (
+        "type" in data and "children" in data and "type" in data and data["type"] is not None
+    ):  # and data["type"] in {"MODAL_MARK", "condition_key"}:
+        return {"children": [_compress_condition_keys_only(x) for x in data["children"]], "type": data["type"]}
+    # if "token" in data and data["token"] is None and "tree" in data and data["tree"] is not None:
+    #    return _compress_condition_keys_only(data["tree"])
+    return data
+
+
 class ConciseTreeSchema(TreeSchema):
     """
     A tree schema that leads to significantly more compact output but can only be used for serialization
@@ -145,6 +163,27 @@ class ConciseTreeSchema(TreeSchema):
         Serialize as compact/concise tree
         """
         return _compress(data)
+
+    @pre_load
+    def deserialize(self, data, **kwargs) -> Tree:
+        """
+        This is out of scope
+        """
+        raise NotImplementedError("Deserializing a compact tree is not supported.")
+
+
+class ConciseConditionKeySchema(TreeSchema):
+    """
+    A tree schema that merges condition key values and their single child
+    (not deserialization)
+    """
+
+    @post_dump
+    def serialize(self, data, **kwargs) -> dict:
+        """
+        Serialize as compact/concise tree
+        """
+        return _compress_condition_keys_only(data)
 
     @pre_load
     def deserialize(self, data, **kwargs) -> Tree:

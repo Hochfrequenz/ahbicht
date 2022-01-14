@@ -25,9 +25,9 @@ from ahbicht.expressions.condition_nodes import (
     EvaluatedFormatConstraint,
     EvaluatedFormatConstraintSchema,
 )
-from ahbicht.expressions.enums import ModalMark, RequirementIndicator
+from ahbicht.expressions.enums import ModalMark
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
-from ahbicht.json_serialization.tree_schema import ConciseTreeSchema, TreeSchema
+from ahbicht.json_serialization.tree_schema import ConciseConditionKeySchema, ConciseTreeSchema, TreeSchema
 from ahbicht.mapping_results import (
     ConditionKeyConditionTextMapping,
     ConditionKeyConditionTextMappingSchema,
@@ -483,4 +483,53 @@ class TestJsonSerialization:
     ):
         tree = parse_expression_including_unresolved_subexpressions(ahb_expression)
         json_dict = ConciseTreeSchema().dump(tree)
+        assert json_dict == expected_compact_json_dict
+
+    @pytest.mark.parametrize(
+        "expression, expected_compact_json_dict",
+        [
+            pytest.param(
+                "[53] O ([1] U [2])",
+                {
+                    "children": [
+                        {
+                            "token": {
+                                "value": "53",
+                                "type": "condition_key",
+                            },
+                            "tree": None,
+                        },
+                        {
+                            "token": None,
+                            "tree": {
+                                "children": [
+                                    {
+                                        "token": {
+                                            "value": "1",
+                                            "type": "condition_key",
+                                        },
+                                        "tree": None,
+                                    },
+                                    {
+                                        "token": {
+                                            "value": "2",
+                                            "type": "condition_key",
+                                        },
+                                        "tree": None,
+                                    },
+                                ],
+                                "type": "and_composition",
+                            },
+                        },
+                    ],
+                    "type": "or_composition",
+                },
+            )
+        ],
+    )
+    def test_concise_condition_key_tree_serialization_behaviour_for_condition_expressions(
+        self, expression: str, expected_compact_json_dict: dict
+    ):
+        tree = parse_condition_expression_to_tree(expression)
+        json_dict = ConciseConditionKeySchema().dump(tree)
         assert json_dict == expected_compact_json_dict
