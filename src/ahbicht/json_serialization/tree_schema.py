@@ -143,11 +143,15 @@ def _compress_condition_keys_only(data: dict) -> dict:
             "tree": None,
         }  # passt für root level 53
     if (
-        "type" in data and "children" in data and "type" in data and data["type"] is not None
-    ):  # and data["type"] in {"MODAL_MARK", "condition_key"}:
-        return {"children": [_compress_condition_keys_only(x) for x in data["children"]], "type": data["type"]}
-    # if "token" in data and data["token"] is None and "tree" in data and data["tree"] is not None:
-    #    return _compress_condition_keys_only(data["tree"])
+        "token" in data
+        and data["token"] is None
+        and "tree" in data
+        and data["tree"] is not None
+        and "children" in data["tree"]
+    ):
+        data["tree"]["children"] = [_compress_condition_keys_only(child) for child in data["tree"]["children"]]
+    if "type" in data and data["type"] is not None and "children" in data and data["children"] is not None:
+        data["children"] = [_compress_condition_keys_only(child) for child in data["children"]]
     return data
 
 
