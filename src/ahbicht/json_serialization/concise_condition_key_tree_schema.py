@@ -7,7 +7,7 @@ from marshmallow import post_dump, pre_load
 from ahbicht.json_serialization.tree_schema import TreeSchema
 
 
-class ConciseConditionKeySchema(TreeSchema):
+class ConciseConditionKeyTreeSchema(TreeSchema):
     """
     A tree schema that merges condition key values and their single child
     (not deserialization)

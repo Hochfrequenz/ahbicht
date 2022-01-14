@@ -11,7 +11,7 @@ from lark import Token, Tree
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
-from ahbicht.json_serialization.concise_condition_key_schema import ConciseConditionKeySchema
+from ahbicht.json_serialization.concise_condition_key_tree_schema import ConciseConditionKeyTreeSchema
 from ahbicht.json_serialization.concise_tree_schema import ConciseTreeSchema
 from ahbicht.json_serialization.tree_schema import TreeSchema
 from unittests.test_json_serialization import _test_serialization_roundtrip  # type:ignore[import]
@@ -262,7 +262,7 @@ class TestTreeSchemas:
         self, expression: str, expected_compact_json_dict: dict
     ):
         tree = parse_condition_expression_to_tree(expression)
-        json_dict = ConciseConditionKeySchema().dump(tree)
+        json_dict = ConciseConditionKeyTreeSchema().dump(tree)
         assert json_dict == expected_compact_json_dict
 
     @pytest.mark.parametrize(
@@ -449,5 +449,5 @@ class TestTreeSchemas:
         self, expression: str, expected_compact_json_dict: dict
     ):
         tree = parse_expression_including_unresolved_subexpressions(expression)
-        json_dict = ConciseConditionKeySchema().dump(tree)
+        json_dict = ConciseConditionKeyTreeSchema().dump(tree)
         assert json_dict == expected_compact_json_dict
