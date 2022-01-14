@@ -5,7 +5,7 @@ Schemata for the JSON serialization of expressions.
 from typing import Optional, Union
 
 from lark import Token, Tree
-from marshmallow import Schema, fields, post_dump, post_load, pre_dump, pre_load
+from marshmallow import Schema, fields, post_load, pre_dump
 
 # in the classes/schemata we don't care about if there aren't enough public versions.
 # We also don't care about unused kwargs, or no self-use.
@@ -108,92 +108,3 @@ class TreeSchema(Schema):
         :return:
         """
         return Tree(**data)
-
-
-def _compress(data: dict) -> dict:
-    """
-    a function that "throws away" unnecessary data.
-    The price we pay is that we loose the ability to easily deserialize the result.
-    But if we're only interested in a simple tree that's fine.
-    """
-    if (
-        "children" in data
-        and "type" in data
-        and (data["type"].endswith("_composition") or data["type"].endswith("_expression"))
-    ):
-        return {data["type"]: [_compress(child) for child in data["children"]]}
-    if "tree" in data and "token" in data and data["token"] is None:
-        return _compress(data["tree"])
-    if "tree" in data and "token" in data and data["tree"] is None:
-        return _compress(data["token"])
-    if "type" in data and "children" in data:  # and data["type"] in {"MODAL_MARK", "condition_key"}:
-        return _compress(data["children"][0]["token"]["value"])
-    if "type" in data and data["type"] in {"MODAL_MARK"}:
-        return data["value"]
-    return data
-
-
-def _compress_condition_keys_only(data: dict) -> dict:
-    """
-    a function that merges a condition key node with its only child (a token that has an int value)
-    """
-    # this has been found heuristically. There's no way to explain it, just follow the test cases.
-    # there's probably a much easier way, f.e. by using a separate token schema.
-    if "tree" in data and data["tree"] is not None and data["tree"]["type"] == "condition_key":
-        return {
-            "token": {"value": data["tree"]["children"][0]["token"]["value"], "type": "condition_key"},
-            "tree": None,
-        }
-    if (
-        "token" in data
-        and data["token"] is None
-        and "tree" in data
-        and data["tree"] is not None
-        and "children" in data["tree"]
-    ):
-        data["tree"]["children"] = [_compress_condition_keys_only(child) for child in data["tree"]["children"]]
-    if "type" in data and data["type"] is not None and "children" in data and data["children"] is not None:
-        data["children"] = [_compress_condition_keys_only(child) for child in data["children"]]
-    return data
-
-
-class ConciseTreeSchema(TreeSchema):
-    """
-    A tree schema that leads to significantly more compact output but can only be used for serialization
-    (not deserialization)
-    """
-
-    @post_dump
-    def serialize(self, data, **kwargs) -> dict:
-        """
-        Serialize as compact/concise tree
-        """
-        return _compress(data)
-
-    @pre_load
-    def deserialize(self, data, **kwargs) -> Tree:
-        """
-        This is out of scope
-        """
-        raise NotImplementedError("Deserializing a compact tree is not supported.")
-
-
-class ConciseConditionKeySchema(TreeSchema):
-    """
-    A tree schema that merges condition key values and their single child
-    (not deserialization)
-    """
-
-    @post_dump
-    def serialize(self, data, **kwargs) -> dict:
-        """
-        Serialize as compact/concise tree
-        """
-        return _compress_condition_keys_only(data)
-
-    @pre_load
-    def deserialize(self, data, **kwargs) -> Tree:
-        """
-        This is out of scope
-        """
-        raise NotImplementedError("Deserializing a compact tree is not supported.")

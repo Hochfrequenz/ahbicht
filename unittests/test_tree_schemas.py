@@ -1,7 +1,9 @@
+# type:ignore
+# MyPy will (reproducable) run in an infinite loop if you remove the type ignore in the test! We literally killed it 💀
 """
 Tests that the parsed trees are JSON serializable
 """
-from typing import TypeVar
+
 
 import pytest  # type:ignore[import]
 from lark import Token, Tree
@@ -9,10 +11,10 @@ from lark import Token, Tree
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
-from ahbicht.json_serialization.tree_schema import ConciseConditionKeySchema, ConciseTreeSchema, TreeSchema
+from ahbicht.json_serialization.concise_condition_key_schema import ConciseConditionKeySchema
+from ahbicht.json_serialization.concise_tree_schema import ConciseTreeSchema
+from ahbicht.json_serialization.tree_schema import TreeSchema
 from unittests.test_json_serialization import _test_serialization_roundtrip  # type:ignore[import]
-
-T = TypeVar("T")
 
 
 class TestTreeSchemas:
