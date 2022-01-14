@@ -533,3 +533,190 @@ class TestJsonSerialization:
         tree = parse_condition_expression_to_tree(expression)
         json_dict = ConciseConditionKeySchema().dump(tree)
         assert json_dict == expected_compact_json_dict
+
+    @pytest.mark.parametrize(
+        "expression, expected_compact_json_dict",
+        [
+            pytest.param(
+                "Muss [1] U ([2] O [3])[901]",
+                {
+                    "type": "ahb_expression",
+                    "children": [
+                        {
+                            "token": None,
+                            "tree": {
+                                "type": "single_requirement_indicator_expression",
+                                "children": [
+                                    {"token": {"value": "Muss", "type": "MODAL_MARK"}, "tree": None},
+                                    {
+                                        "token": None,
+                                        "tree": {
+                                            "type": "and_composition",
+                                            "children": [
+                                                {"token": {"value": "1", "type": "condition_key"}, "tree": None},
+                                                {
+                                                    "token": None,
+                                                    "tree": {
+                                                        "type": "then_also_composition",
+                                                        "children": [
+                                                            {
+                                                                "token": None,
+                                                                "tree": {
+                                                                    "type": "or_composition",
+                                                                    "children": [
+                                                                        {
+                                                                            "token": {
+                                                                                "value": "2",
+                                                                                "type": "condition_key",
+                                                                            },
+                                                                            "tree": None,
+                                                                        },
+                                                                        {
+                                                                            "token": {
+                                                                                "value": "3",
+                                                                                "type": "condition_key",
+                                                                            },
+                                                                            "tree": None,
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            },
+                                                            {
+                                                                "token": {"value": "901", "type": "condition_key"},
+                                                                "tree": None,
+                                                            },
+                                                        ],
+                                                    },
+                                                },
+                                            ],
+                                        },
+                                    },
+                                ],
+                            },
+                        }
+                    ],
+                },
+            ),
+            pytest.param(
+                "Soll [3] U ([2] O [3] U [77] X [99][502])[901] Kann [43]",
+                {
+                    "children": [
+                        {
+                            "token": None,
+                            "tree": {
+                                "children": [
+                                    {"token": {"value": "Soll", "type": "MODAL_MARK"}, "tree": None},
+                                    {
+                                        "token": None,
+                                        "tree": {
+                                            "children": [
+                                                {"token": {"value": "3", "type": "condition_key"}, "tree": None},
+                                                {
+                                                    "token": None,
+                                                    "tree": {
+                                                        "children": [
+                                                            {
+                                                                "token": None,
+                                                                "tree": {
+                                                                    "children": [
+                                                                        {
+                                                                            "token": {
+                                                                                "value": "2",
+                                                                                "type": "condition_key",
+                                                                            },
+                                                                            "tree": None,
+                                                                        },
+                                                                        {
+                                                                            "token": None,
+                                                                            "tree": {
+                                                                                "children": [
+                                                                                    {
+                                                                                        "token": None,
+                                                                                        "tree": {
+                                                                                            "children": [
+                                                                                                {
+                                                                                                    "token": {
+                                                                                                        "value": "3",
+                                                                                                        "type": "condition_key",
+                                                                                                    },
+                                                                                                    "tree": None,
+                                                                                                },
+                                                                                                {
+                                                                                                    "token": {
+                                                                                                        "value": "77",
+                                                                                                        "type": "condition_key",
+                                                                                                    },
+                                                                                                    "tree": None,
+                                                                                                },
+                                                                                            ],
+                                                                                            "type": "and_composition",
+                                                                                        },
+                                                                                    },
+                                                                                    {
+                                                                                        "token": None,
+                                                                                        "tree": {
+                                                                                            "children": [
+                                                                                                {
+                                                                                                    "token": {
+                                                                                                        "value": "99",
+                                                                                                        "type": "condition_key",
+                                                                                                    },
+                                                                                                    "tree": None,
+                                                                                                },
+                                                                                                {
+                                                                                                    "token": {
+                                                                                                        "value": "502",
+                                                                                                        "type": "condition_key",
+                                                                                                    },
+                                                                                                    "tree": None,
+                                                                                                },
+                                                                                            ],
+                                                                                            "type": "then_also_composition",
+                                                                                        },
+                                                                                    },
+                                                                                ],
+                                                                                "type": "xor_composition",
+                                                                            },
+                                                                        },
+                                                                    ],
+                                                                    "type": "or_composition",
+                                                                },
+                                                            },
+                                                            {
+                                                                "token": {"value": "901", "type": "condition_key"},
+                                                                "tree": None,
+                                                            },
+                                                        ],
+                                                        "type": "then_also_composition",
+                                                    },
+                                                },
+                                            ],
+                                            "type": "and_composition",
+                                        },
+                                    },
+                                ],
+                                "type": "single_requirement_indicator_expression",
+                            },
+                        },
+                        {
+                            "token": None,
+                            "tree": {
+                                "children": [
+                                    {"token": {"value": "Kann", "type": "MODAL_MARK"}, "tree": None},
+                                    {"token": {"value": "43", "type": "condition_key"}, "tree": None},
+                                ],
+                                "type": "single_requirement_indicator_expression",
+                            },
+                        },
+                    ],
+                    "type": "ahb_expression",
+                },
+            ),
+        ],
+    )
+    def test_concise_condition_key_tree_serialization_behaviour_for_ahb_expressions(
+        self, expression: str, expected_compact_json_dict: dict
+    ):
+        tree = parse_expression_including_unresolved_subexpressions(expression)
+        json_dict = ConciseConditionKeySchema().dump(tree)
+        assert json_dict == expected_compact_json_dict

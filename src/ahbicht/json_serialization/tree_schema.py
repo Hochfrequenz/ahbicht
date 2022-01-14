@@ -137,11 +137,13 @@ def _compress_condition_keys_only(data: dict) -> dict:
     """
     a function that merges a condition key node with its only child (a token that has an int value)
     """
+    # this has been found heuristically. There's no way to explain it, just follow the test cases.
+    # there's probably a much easier way, f.e. by using a separate token schema.
     if "tree" in data and data["tree"] is not None and data["tree"]["type"] == "condition_key":
         return {
             "token": {"value": data["tree"]["children"][0]["token"]["value"], "type": "condition_key"},
             "tree": None,
-        }  # passt für root level 53
+        }
     if (
         "token" in data
         and data["token"] is None
