@@ -7,13 +7,11 @@ import json
 import pathlib
 from typing import List, Type
 
-from marshmallow import Schema
+from marshmallow import Schema, fields
 from marshmallow_jsonschema import JSONSchema  # type:ignore[import]
 
-from ahbicht.content_evaluation.content_evaluation_result import (
-    CategorizedKeyExtractSchema,
-    ContentEvaluationResultSchema,
-)
+from ahbicht.content_evaluation.categorized_key_extract import CategorizedKeyExtractSchema
+from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResultSchema
 from ahbicht.evaluation_results import (
     AhbExpressionEvaluationResultSchema,
     FormatConstraintEvaluationResultSchema,
@@ -43,6 +41,18 @@ for schema_type in schema_types:
     file_name = schema_type.__name__ + ".json"  # pylint:disable=invalid-name
     file_path = this_directory / file_name
     schema_instance = schema_type()
+    if "requirement_indicator" in schema_instance.fields:
+        # workaround: in the schemas we want the requirement indicator to appear as simple string
+        # the schema used internally is just a workaround
+        for field_dict in [
+            schema_instance.fields,
+            schema_instance.load_fields,
+            schema_instance.dump_fields,
+            schema_instance.declared_fields,
+        ]:
+            field_dict["requirement_indicator"] = fields.String(name="requirement_indicator")
+
     json_schema_dict = json_schema.dump(schema_instance)
+
     with open(file_path, "w", encoding="utf-8") as json_schema_file:
         json.dump(json_schema_dict, json_schema_file, ensure_ascii=False, sort_keys=True, indent=4)

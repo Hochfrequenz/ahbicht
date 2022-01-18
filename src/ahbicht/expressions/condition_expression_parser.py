@@ -10,7 +10,7 @@ from lark import Lark, Tree
 from lark.exceptions import UnexpectedCharacters, UnexpectedEOF
 
 from ahbicht.condition_node_distinction import ConditionNodeType, derive_condition_node_type
-from ahbicht.content_evaluation.content_evaluation_result import CategorizedKeyExtract
+from ahbicht.content_evaluation.categorized_key_extract import CategorizedKeyExtract
 
 
 def parse_condition_expression_to_tree(condition_expression: str) -> Tree:

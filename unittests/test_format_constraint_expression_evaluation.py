@@ -12,6 +12,8 @@ from ahbicht.expressions.format_constraint_expression_evaluation import (
     format_constraint_evaluation,
 )
 
+pytestmark = pytest.mark.asyncio
+
 
 class DummyFcEvaluator(FcEvaluator):
     """
@@ -96,7 +98,7 @@ class TestFormatConstraintExpressionEvaluation:
             pytest.param("[902]U([904]O[901])", False, "902 muss erfüllt sein"),
         ],
     )
-    def test_evaluate_valid_format_constraint_expression(
+    async def test_evaluate_valid_format_constraint_expression(
         self, mocker, format_constraint_expression, expected_format_constraints_fulfilled, expected_error_message
     ):
         """
@@ -108,7 +110,7 @@ class TestFormatConstraintExpressionEvaluation:
             return_value=self._input_values,
         )
 
-        result = format_constraint_evaluation(format_constraint_expression, entered_input=None)
+        result = await format_constraint_evaluation(format_constraint_expression, entered_input=None)
 
         assert isinstance(result, FormatConstraintEvaluationResult)
         assert result.format_constraints_fulfilled == expected_format_constraints_fulfilled
@@ -129,7 +131,7 @@ class TestFormatConstraintExpressionEvaluation:
             ),
         ],
     )
-    def test_evaluate_format_constraint_expressions_with_invalid_values(
+    async def test_evaluate_format_constraint_expressions_with_invalid_values(
         self,
         mocker,
         format_constraints_expression: str,
@@ -143,7 +145,9 @@ class TestFormatConstraintExpressionEvaluation:
         )
 
         with pytest.raises(ValueError) as excinfo:
-            format_constraint_evaluation(format_constraints_expression, entered_input=None)  # type:ignore[arg-type]
+            await format_constraint_evaluation(
+                format_constraints_expression, entered_input=None  # type:ignore[arg-type]
+            )
 
         assert expected_error_message in str(excinfo.value)
 
@@ -174,9 +178,9 @@ class TestFormatConstraintExpressionEvaluation:
             ),
         ],
     )
-    def test_build_evaluated_format_constraint_nodes(
+    async def test_build_evaluated_format_constraint_nodes(
         self, condition_keys, entered_input, expected_evaluated_fc_nodes, setup_and_teardown_injector
     ):
         """Tests that evaluated format constraints nodes are build correctly."""
-        evaluated_fc_nodes = _build_evaluated_format_constraint_nodes(condition_keys, entered_input)
+        evaluated_fc_nodes = await _build_evaluated_format_constraint_nodes(condition_keys, entered_input)
         assert evaluated_fc_nodes == expected_evaluated_fc_nodes

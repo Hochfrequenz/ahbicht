@@ -12,8 +12,11 @@ from ahbicht.evaluation_results import FormatConstraintEvaluationResult, Require
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
+from ahbicht.expressions.enums import ModalMark, PrefixOperator, RequirementIndicator
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 from ahbicht.expressions.hints_provider import HintsProvider
+
+pytestmark = pytest.mark.asyncio
 
 
 class TestAHBExpressionEvaluation:
@@ -33,35 +36,46 @@ class TestAHBExpressionEvaluation:
         """ahb_expression, expected_requirement_indicator, expected_requirement_constraints_fulfilled,
         expected_requirement_is_conditional, expected_format_constraints_expression, expected_hints""",
         [
-            pytest.param("Muss", "Muss", True, False, None, None),
-            pytest.param("X", "X", True, False, None, None),
-            pytest.param("Muss[1]", "Muss", True, True, None, None),
-            pytest.param("Muss[2]", "Muss", False, True, None, None),
-            pytest.param("Muss[1]Soll[2]", "Muss", True, True, None, None),
-            pytest.param("Muss[2]Soll[1]Kann[4]", "Soll", True, True, None, None),
-            pytest.param("Muss[2]\tSoll [ 1]  Kann[4\t]", "Soll", True, True, None, None),
-            pytest.param("X[1]", "X", True, True, None, None),
-            pytest.param("O[2]", "O", False, True, None, None),
-            pytest.param("U[1]", "U", True, True, None, None),
-            pytest.param("U[1]U[2]", "U", False, True, None, None),
-            pytest.param("X[1]U[2]U[3]O[4]", "X", False, True, None, None),
-            pytest.param("Muss([1]O[2])U[3]Soll[2]Kann[2]O[4]", "Muss", True, True, None, None),
-            pytest.param("muss([1]o[2])u[3]soll[2]kann[2]O[4]", "muss", True, True, None, None),
-            pytest.param("Muss[2]Soll[2]", "Soll", False, True, None, None),
+            pytest.param("Muss", ModalMark.MUSS, True, False, None, None),
+            pytest.param("X", PrefixOperator.X, True, False, None, None),
+            pytest.param("Muss[1]", ModalMark.MUSS, True, True, None, None),
+            pytest.param("muss[1]", ModalMark.MUSS, True, True, None, None),
+            pytest.param("M[1]", ModalMark.MUSS, True, True, None, None),
+            pytest.param("m[1]", ModalMark.MUSS, True, True, None, None),
+            pytest.param("Soll[1]", ModalMark.SOLL, True, True, None, None),
+            pytest.param("soll[1]", ModalMark.SOLL, True, True, None, None),
+            pytest.param("S[1]", ModalMark.SOLL, True, True, None, None),
+            pytest.param("s[1]", ModalMark.SOLL, True, True, None, None),
+            pytest.param("Kann[1]", ModalMark.KANN, True, True, None, None),
+            pytest.param("kann[1]", ModalMark.KANN, True, True, None, None),
+            pytest.param("K[1]", ModalMark.KANN, True, True, None, None),
+            pytest.param("k[1]", ModalMark.KANN, True, True, None, None),
+            pytest.param("Muss[2]", ModalMark.MUSS, False, True, None, None),
+            pytest.param("Muss[1]Soll[2]", ModalMark.MUSS, True, True, None, None),
+            pytest.param("Muss[2]Soll[1]Kann[4]", ModalMark.SOLL, True, True, None, None),
+            pytest.param("Muss[2]\tSoll [ 1]  Kann[4\t]", ModalMark.SOLL, True, True, None, None),
+            pytest.param("X[1]", PrefixOperator.X, True, True, None, None),
+            pytest.param("O[2]", PrefixOperator.O, False, True, None, None),
+            pytest.param("U[1]", PrefixOperator.U, True, True, None, None),
+            pytest.param("U[1]U[2]", PrefixOperator.U, False, True, None, None),
+            pytest.param("X[1]U[2]U[3]O[4]", PrefixOperator.X, False, True, None, None),
+            pytest.param("Muss([1]O[2])U[3]Soll[2]Kann[2]O[4]", ModalMark.MUSS, True, True, None, None),
+            pytest.param("muss([1]o[2])u[3]soll[2]kann[2]O[4]", ModalMark.MUSS, True, True, None, None),
+            pytest.param("Muss[2]Soll[2]", ModalMark.SOLL, False, True, None, None),
             # Neutral value
-            pytest.param("Muss[503]", "Muss", True, False, None, "[503]"),
-            pytest.param("Soll[902]", "Soll", True, False, "[902]", None),
-            pytest.param("Kann[503]U[504]", "Kann", True, False, None, "[503]U[504]"),
+            pytest.param("Muss[503]", ModalMark.MUSS, True, False, None, "[503]"),
+            pytest.param("Soll[902]", ModalMark.SOLL, True, False, "[902]", None),
+            pytest.param("Kann[503]U[504]", ModalMark.KANN, True, False, None, "[503]U[504]"),
             # Last modal mark without conditions
-            pytest.param("Muss[1]Kann", "Muss", True, True, None, None),
-            pytest.param("Muss[2]Kann", "Kann", True, True, None, None),
+            pytest.param("Muss[1]Kann", ModalMark.MUSS, True, True, None, None),
+            pytest.param("Muss[2]Kann", ModalMark.KANN, True, True, None, None),
         ],
     )
-    def test_evaluate_valid_ahb_expression(
+    async def test_evaluate_valid_ahb_expression(
         self,
         mocker,
         ahb_expression,
-        expected_requirement_indicator,
+        expected_requirement_indicator: RequirementIndicator,
         expected_requirement_constraints_fulfilled,
         expected_requirement_is_conditional,
         expected_format_constraints_expression,
@@ -112,15 +126,17 @@ class TestAHBExpressionEvaluation:
 
         mocker.patch(
             "ahbicht.expressions.ahb_expression_evaluation.requirement_constraint_evaluation",
-            side_effect=side_effect_rc_evaluation,
+            side_effect=AsyncMock(side_effect=side_effect_rc_evaluation),
         )
         mocker.patch(
             "ahbicht.expressions.ahb_expression_evaluation.format_constraint_evaluation",
-            return_value=FormatConstraintEvaluationResult(format_constraints_fulfilled=True, error_message=None),
+            return_value=AsyncMock(
+                side_effect=FormatConstraintEvaluationResult(format_constraints_fulfilled=True, error_message=None)
+            ),
         )
 
         parsed_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_expression)
-        result = evaluate_ahb_expression_tree(parsed_tree, entered_input=None)
+        result = await evaluate_ahb_expression_tree(parsed_tree, entered_input=None)  # type:ignore[arg-type]
 
         assert result.requirement_indicator == expected_requirement_indicator
         assert (
@@ -157,7 +173,7 @@ class TestAHBExpressionEvaluation:
             ),
         ],
     )
-    def test_invalid_ahb_expressions(
+    async def test_invalid_ahb_expressions(
         self, expression: str, expected_error: type, expected_error_message: str, setup_and_teardown_injector
     ):
         """Tests that an error is raised when trying to pass invalid values."""
@@ -165,7 +181,7 @@ class TestAHBExpressionEvaluation:
         parsed_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(expression)
 
         with pytest.raises(expected_error) as excinfo:
-            evaluate_ahb_expression_tree(
+            await evaluate_ahb_expression_tree(
                 parsed_tree, entered_input=None  # type:ignore[arg-type] # ok because error test
             )
 
@@ -190,7 +206,7 @@ class TestAHBExpressionEvaluation:
             )
         ],
     )
-    def test_all_serializations_work_similar(
+    async def test_all_serializations_work_similar(
         self, ahb_expression: str, content_evaluation_result: ContentEvaluationResult
     ):
         tree_a = parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_expression)
@@ -199,6 +215,6 @@ class TestAHBExpressionEvaluation:
         # but in any case the evaluation result should look the same
         create_and_inject_hardcoded_evaluators(content_evaluation_result)
         evaluation_input = "something has to be here but it's not important what"
-        evaluation_result_a = evaluate_ahb_expression_tree(tree_a, entered_input=evaluation_input)
-        evaluation_result_b = evaluate_ahb_expression_tree(tree_b, entered_input=evaluation_input)
+        evaluation_result_a = await evaluate_ahb_expression_tree(tree_a, entered_input=evaluation_input)
+        evaluation_result_b = await evaluate_ahb_expression_tree(tree_b, entered_input=evaluation_input)
         assert evaluation_result_a == evaluation_result_b

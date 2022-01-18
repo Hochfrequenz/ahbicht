@@ -3,7 +3,7 @@ Module to create expressions from scratch.
 """
 import re
 from abc import ABC, abstractmethod
-from typing import Generic, Literal, Optional, Protocol, Type, TypeVar, Union
+from typing import Generic, Optional, Protocol, Type, TypeVar, Union
 
 from ahbicht.expressions.condition_nodes import (
     ConditionNode,
@@ -13,6 +13,7 @@ from ahbicht.expressions.condition_nodes import (
     RequirementConstraint,
     UnevaluatedFormatConstraint,
 )
+from ahbicht.expressions.enums import LogicalOperator
 
 TSupportedNodes = TypeVar("TSupportedNodes")
 
@@ -116,21 +117,19 @@ class FormatConstraintExpressionBuilder(ExpressionBuilder[TSupportedFCExpression
         return self._expression
 
     def land(self, other: TSupportedFCExpressionBuilderArguments) -> ExpressionBuilder:
-        return self._connect("U", other)
+        return self._connect(LogicalOperator.LAND, other)
 
     def lor(self, other: TSupportedFCExpressionBuilderArguments) -> ExpressionBuilder:
-        return self._connect("O", other)
+        return self._connect(LogicalOperator.LOR, other)
 
     def xor(self, other: TSupportedFCExpressionBuilderArguments) -> ExpressionBuilder:
-        return self._connect("X", other)
+        return self._connect(LogicalOperator.XOR, other)
 
-    def _connect(self, operator_character: Literal["U", "O", "X"], other: TSupportedFCExpressionBuilderArguments):
+    def _connect(self, operator_character: LogicalOperator, other: TSupportedFCExpressionBuilderArguments):
         """
         Connect the existing expression and the other part.
 
         :param operator_character: "X", "U" or "O"
-        :param other:
-        :return:
         """
         if self._expression:
             prefix = f"({self._expression}) {operator_character}"
@@ -172,7 +171,7 @@ class HintExpressionBuilder(ExpressionBuilder[TClassesWithHintAttribute]):
     """
 
     @staticmethod
-    def get_hint_text(hinty_object: TClassesWithHintAttribute) -> Optional[str]:
+    def get_hint_text(hinty_object: Optional[_ClassesWithHintAttribute]) -> Optional[str]:
         """
         get the hint from a Hint instance or plain string
         :param hinty_object:
@@ -184,7 +183,7 @@ class HintExpressionBuilder(ExpressionBuilder[TClassesWithHintAttribute]):
             return hinty_object
         return getattr(hinty_object, "hint", None)
 
-    def __init__(self, init_condition: TClassesWithHintAttribute):
+    def __init__(self, init_condition: Optional[_ClassesWithHintAttribute]):
         """
         Initialize by providing either a Hint Node or a hint string
         """
@@ -193,7 +192,7 @@ class HintExpressionBuilder(ExpressionBuilder[TClassesWithHintAttribute]):
     def get_expression(self) -> Optional[str]:
         return self._expression
 
-    def land(self, other: TClassesWithHintAttribute) -> ExpressionBuilder:
+    def land(self, other: Optional[_ClassesWithHintAttribute]) -> ExpressionBuilder:
         if other is not None:
             if self._expression:
                 self._expression += f" und {HintExpressionBuilder.get_hint_text(other)}"
@@ -201,7 +200,7 @@ class HintExpressionBuilder(ExpressionBuilder[TClassesWithHintAttribute]):
                 self._expression = HintExpressionBuilder.get_hint_text(other)
         return self
 
-    def lor(self, other: TClassesWithHintAttribute) -> ExpressionBuilder:
+    def lor(self, other: Optional[_ClassesWithHintAttribute]) -> ExpressionBuilder:
         if other is not None:
             if self._expression:
                 self._expression += f" oder {HintExpressionBuilder.get_hint_text(other)}"
@@ -209,7 +208,7 @@ class HintExpressionBuilder(ExpressionBuilder[TClassesWithHintAttribute]):
                 self._expression = HintExpressionBuilder.get_hint_text(other)
         return self
 
-    def xor(self, other: TClassesWithHintAttribute) -> ExpressionBuilder:
+    def xor(self, other: Optional[_ClassesWithHintAttribute]) -> ExpressionBuilder:
         if other is not None:
             if self._expression:
                 self._expression = f"Entweder ({self._expression}) oder ({HintExpressionBuilder.get_hint_text(other)})"

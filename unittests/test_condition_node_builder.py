@@ -16,6 +16,8 @@ from ahbicht.expressions.condition_nodes import (
 )
 from ahbicht.expressions.hints_provider import HintsProvider, JsonFileHintsProvider
 
+pytestmark = pytest.mark.asyncio
+
 
 class DummyRcEvaluator(RcEvaluator):
     """
@@ -75,22 +77,22 @@ class TestConditionNodeBuilder:
 
         assert "Condition key is not in valid number range." in str(excinfo.value)
 
-    def test_build_hint_nodes(self, setup_and_teardown_injector):
+    async def test_build_hint_nodes(self, setup_and_teardown_injector):
         """Tests that hint nodes are build correctly."""
         condition_keys = ["584", "583"]
         condition_node_builder = ConditionNodeBuilder(condition_keys)
-        hint_nodes = condition_node_builder._build_hint_nodes()
+        hint_nodes = await condition_node_builder._build_hint_nodes()
         excepted_hints_nodes = {"583": self._h_583, "584": self._h_584}
         assert hint_nodes == excepted_hints_nodes
 
-    def test_invalid_hint_nodes(self, setup_and_teardown_injector):
+    async def test_invalid_hint_nodes(self, setup_and_teardown_injector):
         """Tests that correct error is shown, when hint is not implemented."""
         condition_keys = ["500"]
         # it is possible that a hint with [500] will be implemented in the future as not all hints are collected yet.
         # If test fails, look up if hint exist. And if hint list is completed take one that does not exist.
         condition_node_builder = ConditionNodeBuilder(condition_keys)
         with pytest.raises(KeyError) as excinfo:
-            _ = condition_node_builder._build_hint_nodes()
+            _ = await condition_node_builder._build_hint_nodes()
 
         assert "There seems to be no hint implemented with condition key '500'." in str(excinfo.value)
 
@@ -109,7 +111,7 @@ class TestConditionNodeBuilder:
             pytest.param(ConditionFulfilledValue.UNFULFILLED, ConditionFulfilledValue.NEUTRAL),
         ],
     )
-    def test_build_requirement_constraint_nodes(
+    async def test_build_requirement_constraint_nodes(
         self, mocker, expected_conditions_fulfilled_11, expected_conditions_fulfilled_78, setup_and_teardown_injector
     ):
         """Tests that requirement constraint nodes are build correctly."""
@@ -122,7 +124,7 @@ class TestConditionNodeBuilder:
         condition_keys = ["11", "78"]
         condition_node_builder = ConditionNodeBuilder(condition_keys)
 
-        evaluated_requirement_constraints = condition_node_builder._build_requirement_constraint_nodes()
+        evaluated_requirement_constraints = await condition_node_builder._build_requirement_constraint_nodes()
 
         expected_requirement_constraints = {
             "11": RequirementConstraint(condition_key="11", conditions_fulfilled=expected_conditions_fulfilled_11),
@@ -130,7 +132,7 @@ class TestConditionNodeBuilder:
         }
         assert evaluated_requirement_constraints == expected_requirement_constraints
 
-    def test_requirement_evaluation_for_all_condition_keys(self, mocker, setup_and_teardown_injector):
+    async def test_requirement_evaluation_for_all_condition_keys(self, mocker, setup_and_teardown_injector):
         mocker.patch(
             "ahbicht.content_evaluation.rc_evaluators.RcEvaluator.evaluate_single_condition",
             side_effect=[ConditionFulfilledValue.FULFILLED, ConditionFulfilledValue.UNFULFILLED],
@@ -140,7 +142,7 @@ class TestConditionNodeBuilder:
         condition_node_builder = ConditionNodeBuilder(condition_keys)
 
         evaluated_requirement_constraints = (
-            condition_node_builder.requirement_content_evaluation_for_all_condition_keys()
+            await condition_node_builder.requirement_content_evaluation_for_all_condition_keys()
         )
 
         expected_input_nodes = {

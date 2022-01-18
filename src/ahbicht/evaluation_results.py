@@ -3,12 +3,13 @@ This module contains the classes for the evaluation results.
 A "result" is the outcome of a evaluation. It requires actual data to be present.
 """
 
+# pylint: disable=too-few-public-methods, no-member, no-self-use, unused-argument
 from typing import Optional
 
 import attr
-
-# pylint: disable=too-few-public-methods, no-member, no-self-use, unused-argument
 from marshmallow import Schema, fields, post_load
+
+from ahbicht.expressions.enums import RequirementIndicator, RequirementIndicatorSchema
 
 
 @attr.s(auto_attribs=True, kw_only=True)
@@ -17,13 +18,16 @@ class RequirementConstraintEvaluationResult:
     A class for the result of the requirement constraint evaluation.
     """
 
-    requirement_constraints_fulfilled: bool  # true if condition expression in regard to
-    # requirement constraints evaluates to true
-    requirement_is_conditional: bool  # true if it is dependent on requirement constraints
+    #: true if condition expression in regard to requirement constraints evaluates to true
+    requirement_constraints_fulfilled: bool = attr.ib(validator=attr.validators.instance_of(bool))
+    #: true if it is dependent on requirement constraints
+    requirement_is_conditional: bool = attr.ib(validator=attr.validators.instance_of(bool))
 
-    format_constraints_expression: Optional[str] = attr.ib(default=None)
-    hints: Optional[str] = attr.ib(default=None)  # Hint text that should be displayed in the frontend,
-    # e.g. "[501] Hinweis: 'ID der Messlokation'"
+    format_constraints_expression: Optional[str] = attr.ib(
+        default=None, validator=attr.validators.optional(attr.validators.instance_of(str))
+    )
+    #: Hint text that should be displayed in the frontend, e.g. "[501] Hinweis: 'ID der Messlokation'"
+    hints: Optional[str] = attr.ib(default=None, validator=attr.validators.optional(attr.validators.instance_of(str)))
 
 
 class RequirementConstraintEvaluationResultSchema(Schema):
@@ -54,11 +58,13 @@ class FormatConstraintEvaluationResult:
     A class for the result of the format constraint evaluation.
     """
 
-    format_constraints_fulfilled: bool  # true if data entered obey the format constraint expression
+    #: true if data entered obey the format constraint expression
+    format_constraints_fulfilled: bool = attr.ib(validator=attr.validators.instance_of(bool))
 
+    #: All error messages that lead to not fulfilling the format constraint expression
     error_message: Optional[str] = attr.ib(
-        default=None
-    )  # All error messages that lead to not fulfilling the format constraint expression
+        default=None, validator=attr.validators.optional(attr.validators.instance_of(str))
+    )
 
 
 class FormatConstraintEvaluationResultSchema(Schema):
@@ -86,7 +92,7 @@ class AhbExpressionEvaluationResult:
     A class for the result of an ahb expression evaluation.
     """
 
-    requirement_indicator: str  # i.e. "Muss", "M", "Soll", "S", "Kann", "K", "X", "O", "U"
+    requirement_indicator: RequirementIndicator  # i.e. "Muss", "M", "Soll", "S", "Kann", "K", "X", "O", "U"
     requirement_constraint_evaluation_result: RequirementConstraintEvaluationResult
     format_constraint_evaluation_result: FormatConstraintEvaluationResult
 
@@ -96,7 +102,7 @@ class AhbExpressionEvaluationResultSchema(Schema):
     A schema to (de-)serialize AhbExpressionEvaluationResults
     """
 
-    requirement_indicator = fields.String(required=True, allow_none=True)
+    requirement_indicator = fields.Nested(RequirementIndicatorSchema)  # because union is not supported by marshmallow
     requirement_constraint_evaluation_result = fields.Nested(RequirementConstraintEvaluationResultSchema())
     format_constraint_evaluation_result = fields.Nested(FormatConstraintEvaluationResultSchema())
 
@@ -104,8 +110,5 @@ class AhbExpressionEvaluationResultSchema(Schema):
     def deserialize(self, data, **kwargs) -> AhbExpressionEvaluationResult:
         """
         Converts the barely typed data dictionary into an actual AhbExpressionEvaluationResult
-        :param data:
-        :param kwargs:
-        :return:
         """
         return AhbExpressionEvaluationResult(**data)
