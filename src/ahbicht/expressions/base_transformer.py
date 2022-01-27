@@ -53,9 +53,7 @@ class BaseTransformer(Transformer, ABC, Generic[TSupportedArgumentNodeType, TSup
         try:
             package_key = self.input_values[token.value]
         except KeyError as key_err:
-            raise ValueError(
-                "Please make sure that the input values contain all necessary package_keys."
-            ) from key_err
+            raise ValueError("Please make sure that the input values contain all necessary package_keys.") from key_err
         return package_key
 
     @abstractmethod
