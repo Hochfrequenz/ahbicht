@@ -133,6 +133,8 @@ class TestCategorizedKeyExtraction:
         # This quickly gets super large. 2 FCs * 2 RCs is already 64 results
         assert actual == expected_cers
 
+    # pylint:disable=fixme
+    # todo: register as custom mark https://docs.pytest.org/en/stable/mark.html
     ALL_LARGE_TEST_CASES = pytest.mark.datafiles(
         "./unittests/content_evaluation_result_generation/example0.json",
         "./unittests/content_evaluation_result_generation/example1.json",

@@ -4,6 +4,7 @@ from unittest.mock import AsyncMock
 
 import inject
 import pytest  # type:ignore[import]
+import pytest_asyncio  # type:ignore[import]
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.evaluator_factory import create_and_inject_hardcoded_evaluators
@@ -22,7 +23,7 @@ pytestmark = pytest.mark.asyncio
 class TestAHBExpressionEvaluation:
     """Test for the evaluation of the ahb expression conditions tests (Mussfeldprüfung)"""
 
-    @pytest.fixture()
+    @pytest_asyncio.fixture()
     def setup_and_teardown_injector(self):
         inject.clear_and_configure(
             lambda binder: binder.bind(HintsProvider, AsyncMock(wraps=HintsProvider)).bind(
