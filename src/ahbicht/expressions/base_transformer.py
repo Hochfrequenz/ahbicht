@@ -49,14 +49,14 @@ class BaseTransformer(Transformer, ABC, Generic[TSupportedArgumentNodeType, TSup
         return condition_key
 
     def package(self, token: Token) -> TSupportedArgumentNodeType:
-        """Returns ConditionNode of condition_key"""
+        """Returns ConditionNode of package_key"""
         try:
-            condition_key = self.input_values[token.value]
+            package_key = self.input_values[token.value]
         except KeyError as key_err:
             raise ValueError(
-                "Please make sure that the input values contain all necessary condition_keys."
+                "Please make sure that the input values contain all necessary package_keys."
             ) from key_err
-        return condition_key
+        return package_key
 
     @abstractmethod
     def and_composition(
