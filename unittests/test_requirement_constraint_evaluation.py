@@ -117,6 +117,7 @@ class TestRequirementConstraintEvaluation:
              * all open brackets are closed again and vice versa
              """,
             ),
+            # todo: implement wiederholbarkeiten
             pytest.param(
                 "[1]U[2]",
                 {"1": "no_boolean", "2": ConditionFulfilledValue.FULFILLED},

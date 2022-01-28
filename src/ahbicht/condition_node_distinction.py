@@ -22,6 +22,7 @@ def derive_condition_node_type(condition_key: str) -> ConditionNodeType:
     """
     if condition_key.endswith("P"):
         return ConditionNodeType.PACKAGE
+        # todo: implement wiederholbarkeiten https://github.com/Hochfrequenz/ahbicht/issues/96
     if 1 <= int(condition_key) <= 499:
         return ConditionNodeType.REQUIREMENT_CONSTRAINT
     if 500 <= int(condition_key) <= 900:

@@ -105,3 +105,4 @@ the following characters: [ ] ( ) U ∧ O ∨ X ⊻ and digits.""" in str(
              """ in str(
             excinfo.value
         )
+        # todo: implement wiederholbarkeiten

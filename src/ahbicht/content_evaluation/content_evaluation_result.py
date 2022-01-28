@@ -1,8 +1,8 @@
 """
 This module contains a class to store _all_ kinds of content evaluation results.
 """
-# import sys
-from typing import Dict, Optional  # , Type, Union
+
+from typing import Dict, Optional
 from uuid import UUID
 
 import attr
@@ -13,17 +13,6 @@ from ahbicht.expressions.condition_nodes import (
     EvaluatedFormatConstraint,
     EvaluatedFormatConstraintSchema,
 )
-
-# def _union_validator(union_type: Type):
-#    """
-#    The union-instance check only works with Python>=3.10.
-#    In Python <3.10 you'll get: 'TypeError: Subscripted generics cannot be used with class and instance checks'.
-#    This is a workaround.
-#    """
-#    if sys.version_info[0] == 3:
-#        if sys.version_info[1] < 10:
-#            return lambda x, y, z: True  # just ignore it
-#    return attr.validators.instance_of(type=union_type)
 
 
 # pylint: disable=too-few-public-methods, no-self-use, unused-argument
@@ -63,8 +52,8 @@ class ContentEvaluationResult:
                 attr.validators.instance_of(str),
                 attr.validators.matches_re(r"^\d+P$"),  # this is to avoid someone passes '123' instead of '123P'
             ),
-            value_validator=attr.validators.instance_of(str)
-            # _union_validator(Union[str, ConditionFulfilledValue]),  # type:ignore[arg-type]
+            # todo: implement wiederholbarkeiten
+            value_validator=attr.validators.instance_of(str),
         ),
         default=None,
     )
