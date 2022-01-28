@@ -39,9 +39,10 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree:
                 | package
                 | condition_key
     ?brackets: "(" expression ")"
-    package: "[" INT "P]"
-    condition_key: "[" INT "]"
-
+    package: "[" PACKAGE_KEY_WITHOUT_BRACKETS "]" // a rule for packages
+    condition_key: "[" CONDITION_KEY_WITHOUT_BRACKETS "]" // a rule for condition keys
+    CONDITION_KEY_WITHOUT_BRACKETS: INT // a TERMINAL for all the remaining ints (lower priority)
+    PACKAGE_KEY_WITHOUT_BRACKETS: INT "P" // a TERMINAL for all INTs followed by "P" (high priority)
     %import common.INT
     %import common.WS
     %ignore WS  // WS = whitespace
@@ -106,9 +107,18 @@ def extract_categorized_keys_from_tree(
     if isinstance(tree_or_list, list):
         condition_keys = tree_or_list
     elif isinstance(tree_or_list, Tree):
-        condition_keys = _get_rules("condition_key", tree_or_list)
-        package_keys = [package_key + "P" for package_key in _get_rules("package", tree_or_list)]
-        result.package_keys = package_keys
+        condition_keys = [
+            x.value  # type:ignore[attr-defined]
+            for x in tree_or_list.scan_values(
+                lambda token: token.type == "CONDITION_KEY_WITHOUT_BRACKETS"  # type:ignore[union-attr]
+            )
+        ]
+        result.package_keys = [
+            x.value  # type:ignore[attr-defined]
+            for x in tree_or_list.scan_values(
+                lambda token: token.type == "PACKAGE_KEY_WITHOUT_BRACKETS"  # type:ignore[union-attr]
+            )
+        ]
     else:
         raise ValueError(f"{tree_or_list} is neither a list nor a {Tree.__name__}")
     for condition_key in condition_keys:
