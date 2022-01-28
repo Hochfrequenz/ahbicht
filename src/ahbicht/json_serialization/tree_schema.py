@@ -126,7 +126,7 @@ def _compress(data: dict) -> dict:
         return _compress(data["tree"])
     if "tree" in data and "token" in data and data["tree"] is None:
         return _compress(data["token"])
-    if "type" in data and "children" in data:  # and data["type"] in {"MODAL_MARK", "condition_key"}:
+    if "type" in data and "children" in data:  # and data["type"] in {"MODAL_MARK", "condition"}:
         return _compress(data["children"][0]["token"]["value"])
     if "type" in data and data["type"] in {"MODAL_MARK"}:
         return data["value"]

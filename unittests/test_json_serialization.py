@@ -65,12 +65,12 @@ class TestJsonSerialization:
                 Tree(
                     "or_composition",
                     [
-                        Tree("condition_key", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "53")]),
+                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "53")]),
                         Tree(
                             "and_composition",
                             [
-                                Tree("condition_key", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
-                                Tree("condition_key", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "2")]),
+                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
+                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "2")]),
                             ],
                         ),
                     ],
@@ -81,7 +81,7 @@ class TestJsonSerialization:
                         {
                             "token": None,
                             "tree": {
-                                "type": "condition_key",
+                                "type": "condition",
                                 "children": [
                                     {"token": {"value": "53", "type": "CONDITION_KEY_WITHOUT_BRACKETS"}, "tree": None}
                                 ],
@@ -95,7 +95,7 @@ class TestJsonSerialization:
                                     {
                                         "token": None,
                                         "tree": {
-                                            "type": "condition_key",
+                                            "type": "condition",
                                             "children": [
                                                 {
                                                     "token": {"value": "1", "type": "CONDITION_KEY_WITHOUT_BRACKETS"},
@@ -107,7 +107,7 @@ class TestJsonSerialization:
                                     {
                                         "token": None,
                                         "tree": {
-                                            "type": "condition_key",
+                                            "type": "condition",
                                             "children": [
                                                 {
                                                     "token": {"value": "2", "type": "CONDITION_KEY_WITHOUT_BRACKETS"},

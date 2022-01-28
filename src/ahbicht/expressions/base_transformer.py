@@ -38,8 +38,8 @@ class BaseTransformer(Transformer, ABC, Generic[TSupportedArgumentNodeType, TSup
         super().__init__()
         self.input_values = input_values
 
-    def condition_key(self, token: Token) -> TSupportedArgumentNodeType:
-        """Returns ConditionNode of condition_key"""
+    def condition(self, token: Token) -> TSupportedArgumentNodeType:
+        """Returns ConditionNode of rule 'condition'"""
         try:
             condition_key = self.input_values[token.value]
         except KeyError as key_err:
@@ -49,7 +49,7 @@ class BaseTransformer(Transformer, ABC, Generic[TSupportedArgumentNodeType, TSup
         return condition_key
 
     def package(self, token: Token) -> TSupportedArgumentNodeType:
-        """Returns ConditionNode of package_key"""
+        """Returns ConditionNode of rule package"""
         try:
             package_key = self.input_values[token.value]
         except KeyError as key_err:

@@ -37,10 +37,10 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree:
                 | expression expression -> then_also_composition
                 | brackets
                 | package
-                | condition_key
+                | condition
     ?brackets: "(" expression ")"
     package: "[" PACKAGE_KEY_WITHOUT_BRACKETS "]" // a rule for packages
-    condition_key: "[" CONDITION_KEY_WITHOUT_BRACKETS "]" // a rule for condition keys
+    condition: "[" CONDITION_KEY_WITHOUT_BRACKETS "]" // a rule for condition keys
     CONDITION_KEY_WITHOUT_BRACKETS: INT // a TERMINAL for all the remaining ints (lower priority)
     PACKAGE_KEY_WITHOUT_BRACKETS: INT "P" // a TERMINAL for all INTs followed by "P" (high priority)
     %import common.INT
