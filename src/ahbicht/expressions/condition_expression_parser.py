@@ -101,10 +101,6 @@ def extract_categorized_keys_from_tree(
             result.hint_keys.append(condition_key)
         elif condition_node_type is ConditionNodeType.FORMAT_CONSTRAINT:
             result.format_constraint_keys.append(condition_key)
-        # As of now the packages are extracted separately via their rule, not by analyzing the key.
-        #
-        # elif condition_node_type is ConditionNodeType.PACKAGE:
-        #    result.package_keys.append(condition_key)
         else:
             raise NotImplementedError(f"The type '{condition_node_type}' is not implemented yet.")
     if sanitize:
