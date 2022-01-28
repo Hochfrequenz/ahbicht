@@ -114,7 +114,7 @@ class CategorizedKeyExtract:
             possible_rcs = [(("rc_dummy", ConditionFulfilledValue.NEUTRAL),)]  # type:ignore[assignment]
         for fc_rc_tuple in product(possible_fcs, possible_rcs):
             # This product would have length 0 if one of the "factors" had length 0.
-            # In order to prevent 'results' to be empty if either the RC or FC list is empty, we added the the 'dummy's.
+            # In order to prevent 'results' to be empty if either the RC or FC list is empty, we added the 'dummy's.
             result = ContentEvaluationResult(
                 hints={hint_key: f"Hinweis {hint_key}" for hint_key in self.hint_keys},
                 # kvp is short for key value pair
@@ -124,7 +124,7 @@ class CategorizedKeyExtract:
                     if fc_kvp[0] != "fc_dummy"
                 },
                 requirement_constraints={rc_kvp[0]: rc_kvp[1] for rc_kvp in fc_rc_tuple[1] if rc_kvp[0] != "rc_dummy"},
-                packages={},
+                packages={},  # is always empty because looping over all packages does not make sense in this context
             )
             results.append(result)
         return results
