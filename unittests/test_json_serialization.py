@@ -25,7 +25,7 @@ from ahbicht.expressions.condition_nodes import (
     EvaluatedFormatConstraint,
     EvaluatedFormatConstraintSchema,
 )
-from ahbicht.expressions.enums import ModalMark, RequirementIndicator
+from ahbicht.expressions.enums import ModalMark
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 from ahbicht.json_serialization.tree_schema import ConciseTreeSchema, TreeSchema
 from ahbicht.mapping_results import (
@@ -65,46 +65,61 @@ class TestJsonSerialization:
                 Tree(
                     "or_composition",
                     [
-                        Tree("condition_key", [Token("INT", "53")]),
+                        Tree("condition_key", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "53")]),
                         Tree(
                             "and_composition",
-                            [Tree("condition_key", [Token("INT", "1")]), Tree("condition_key", [Token("INT", "2")])],
+                            [
+                                Tree("condition_key", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
+                                Tree("condition_key", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "2")]),
+                            ],
                         ),
                     ],
                 ),
                 {
+                    "type": "or_composition",
                     "children": [
                         {
                             "token": None,
                             "tree": {
-                                "children": [{"token": {"type": "INT", "value": "53"}, "tree": None}],
                                 "type": "condition_key",
+                                "children": [
+                                    {"token": {"value": "53", "type": "CONDITION_KEY_WITHOUT_BRACKETS"}, "tree": None}
+                                ],
                             },
                         },
                         {
                             "token": None,
                             "tree": {
+                                "type": "and_composition",
                                 "children": [
                                     {
                                         "token": None,
                                         "tree": {
-                                            "children": [{"token": {"type": "INT", "value": "1"}, "tree": None}],
                                             "type": "condition_key",
+                                            "children": [
+                                                {
+                                                    "token": {"value": "1", "type": "CONDITION_KEY_WITHOUT_BRACKETS"},
+                                                    "tree": None,
+                                                }
+                                            ],
                                         },
                                     },
                                     {
                                         "token": None,
                                         "tree": {
-                                            "children": [{"token": {"type": "INT", "value": "2"}, "tree": None}],
                                             "type": "condition_key",
+                                            "children": [
+                                                {
+                                                    "token": {"value": "2", "type": "CONDITION_KEY_WITHOUT_BRACKETS"},
+                                                    "tree": None,
+                                                }
+                                            ],
                                         },
                                     },
                                 ],
-                                "type": "and_composition",
                             },
                         },
                     ],
-                    "type": "or_composition",
                 },
             )
         ],

@@ -102,7 +102,7 @@ class PackageExpansionTransformer(Transformer):
         return self._package_async(tokens)
 
     async def _package_async(self, tokens: List[Token]) -> Tree:
-        resolved_package = await self._resolver.get_condition_expression(tokens[0].value + "P")
+        resolved_package = await self._resolver.get_condition_expression(tokens[0].value)
         if not resolved_package.has_been_resolved_successfully():
             raise NotImplementedError(f"The package '{tokens[0].value}' could not be resolved by {self._resolver}")
         # the package_expression is not None because that's the definition of "has been resolved successfully"

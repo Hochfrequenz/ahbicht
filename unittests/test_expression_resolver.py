@@ -22,15 +22,18 @@ class TestExpressionResolver:
                                 Tree(
                                     "and_composition",
                                     [
-                                        Tree("condition_key", [Token("INT", "3")]),
-                                        Tree("condition_key", [Token("INT", "4")]),
+                                        Tree("condition_key", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "3")]),
+                                        Tree("condition_key", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "4")]),
                                     ],
                                 ),
                             ],
                         ),
                         Tree(
                             "single_requirement_indicator_expression",
-                            [Token("MODAL_MARK", "Soll"), Tree("condition_key", [Token("INT", "5")])],
+                            [
+                                Token("MODAL_MARK", "Soll"),
+                                Tree("condition_key", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "5")]),
+                            ],
                         ),
                     ],
                 ),
@@ -47,8 +50,8 @@ class TestExpressionResolver:
                                 Tree(
                                     "or_composition",
                                     [
-                                        Tree("condition_key", [Token("INT", "504")]),
-                                        Tree("condition_key", [Token("INT", "6")]),
+                                        Tree("condition_key", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "504")]),
+                                        Tree("condition_key", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "6")]),
                                     ],
                                 ),
                             ],
@@ -61,12 +64,12 @@ class TestExpressionResolver:
                 Tree(
                     "then_also_composition",
                     [
-                        Tree("condition_key", [Token("INT", "905")]),
+                        Tree("condition_key", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "905")]),
                         Tree(
                             "and_composition",
                             [
-                                Tree("condition_key", [Token("INT", "504")]),
-                                Tree("condition_key", [Token("INT", "6")]),
+                                Tree("condition_key", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "504")]),
+                                Tree("condition_key", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "6")]),
                             ],
                         ),
                     ],
