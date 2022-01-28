@@ -23,10 +23,11 @@ class ConditionKeyConditionTextMapping:
     condition_key: str = attr.ib(
         validator=attr.validators.instance_of(str)
     )  #: the key of the condition without square brackets; f.e. '78'
-    condition_text: Optional[str] = attr.ib(
-        default=None
-        # pylint:disable=line-too-long
-    )  #: the description of the condition as in the AHB; None if unknown; f.e. 'Wenn SG4 STS+7++E02 (Transaktionsgrund: Einzug/Neuanlage)  nicht vorhanden'.
+    condition_text: Optional[str] = attr.ib(default=None)
+    """
+    the description of the condition as in the AHB; None if unknown;
+    f.e. 'Wenn SG4 STS+7++E02 (Transaktionsgrund: Einzug/Neuanlage)  nicht vorhanden'.
+    """
 
 
 class ConditionKeyConditionTextMappingSchema(Schema):
