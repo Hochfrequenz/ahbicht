@@ -65,33 +65,6 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree:
     return parsed_tree
 
 
-def _get_rules(rule_name: Literal["package", "condition_key"], tree: Tree) -> List[str]:
-    """
-    This is an ugly workaround to extract all the rule tokens from the given tree.
-    There has to be a better way of doing this.
-    The rule name can either be "condition_key" or "package"
-    """
-    # Prior to the introduction of packages we could simply loop over all the 'INT' terminals and be sure that
-    # these are all condition keys, simply because our grammar did not contain any INTs that were something else.
-    # Then with the introduction of packages it has become more complicated: It's now the rules not the terminals that
-    # distinguish between packages and condition keys. So our easy
-    #  condition_keys = [
-    #   x.value  # type:ignore[attr-defined]
-    #   for x in tree_or_list.scan_values(
-    #      lambda token: token.type == "INT"  # type:ignore[union-attr]
-    #   )]
-    # does not work anymore.
-    expr = r"^Tree\(Token\('RULE', 'rule_name'\), \[Token\('INT', '(?P<key>\d+)'\)\]\)$".replace("rule_name", rule_name)
-    pattern = re.compile(expr)  # https://regex101.com/r/R8IQRJ/1
-    result: List[str] = []
-    for stringified_sub_tree in (str(sub_tree) for sub_tree in tree.iter_subtrees_topdown()):
-        # todo: this is super ugly but I didn't find any better way to extract the data. todo: ask in lark issues.
-        match = pattern.match(stringified_sub_tree)
-        if match:
-            result.append(match.groupdict()["key"])
-    return result
-
-
 def extract_categorized_keys_from_tree(
     tree_or_list: Union[Tree, List[str]], sanitize: bool = False
 ) -> CategorizedKeyExtract:
