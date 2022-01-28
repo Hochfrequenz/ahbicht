@@ -15,12 +15,12 @@ class TestConditionParser:
             pytest.param(
                 # single condition
                 "[1]",
-                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
+                Tree("condition", [Token("CONDITION_KEY", "1")]),
             ),
             pytest.param(
                 # single condition with whitespace
                 "[1  ]",
-                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
+                Tree("condition", [Token("CONDITION_KEY", "1")]),
             ),
             pytest.param(
                 # simple or_composition
@@ -28,8 +28,8 @@ class TestConditionParser:
                 Tree(
                     "or_composition",
                     [
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "2")]),
+                        Tree("condition", [Token("CONDITION_KEY", "1")]),
+                        Tree("condition", [Token("CONDITION_KEY", "2")]),
                     ],
                 ),
             ),
@@ -39,8 +39,8 @@ class TestConditionParser:
                 Tree(
                     "or_composition",
                     [
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "2")]),
+                        Tree("condition", [Token("CONDITION_KEY", "1")]),
+                        Tree("condition", [Token("CONDITION_KEY", "2")]),
                     ],
                 ),
             ),
@@ -50,8 +50,8 @@ class TestConditionParser:
                 Tree(
                     "and_composition",
                     [
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "2")]),
+                        Tree("condition", [Token("CONDITION_KEY", "1")]),
+                        Tree("condition", [Token("CONDITION_KEY", "2")]),
                     ],
                 ),
             ),
@@ -61,8 +61,8 @@ class TestConditionParser:
                 Tree(
                     "or_composition",
                     [
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "2")]),
+                        Tree("condition", [Token("CONDITION_KEY", "1")]),
+                        Tree("condition", [Token("CONDITION_KEY", "2")]),
                     ],
                 ),
             ),
@@ -72,8 +72,8 @@ class TestConditionParser:
                 Tree(
                     "or_composition",
                     [
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "2")]),
+                        Tree("condition", [Token("CONDITION_KEY", "1")]),
+                        Tree("condition", [Token("CONDITION_KEY", "2")]),
                     ],
                 ),
             ),
@@ -86,11 +86,11 @@ class TestConditionParser:
                         Tree(
                             "and_composition",
                             [
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "2")]),
+                                Tree("condition", [Token("CONDITION_KEY", "1")]),
+                                Tree("condition", [Token("CONDITION_KEY", "2")]),
                             ],
                         ),
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "53")]),
+                        Tree("condition", [Token("CONDITION_KEY", "53")]),
                     ],
                 ),
             ),
@@ -100,12 +100,12 @@ class TestConditionParser:
                 Tree(
                     "or_composition",
                     [
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "53")]),
+                        Tree("condition", [Token("CONDITION_KEY", "53")]),
                         Tree(
                             "and_composition",
                             [
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "2")]),
+                                Tree("condition", [Token("CONDITION_KEY", "1")]),
+                                Tree("condition", [Token("CONDITION_KEY", "2")]),
                             ],
                         ),
                     ],
@@ -117,8 +117,8 @@ class TestConditionParser:
                 Tree(
                     "xor_composition",
                     [
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "2")]),
+                        Tree("condition", [Token("CONDITION_KEY", "1")]),
+                        Tree("condition", [Token("CONDITION_KEY", "2")]),
                     ],
                 ),
             ),
@@ -128,8 +128,8 @@ class TestConditionParser:
                 Tree(
                     "xor_composition",
                     [
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "2")]),
+                        Tree("condition", [Token("CONDITION_KEY", "1")]),
+                        Tree("condition", [Token("CONDITION_KEY", "2")]),
                     ],
                 ),
             ),
@@ -139,8 +139,8 @@ class TestConditionParser:
                 Tree(
                     "xor_composition",
                     [
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "2")]),
+                        Tree("condition", [Token("CONDITION_KEY", "1")]),
+                        Tree("condition", [Token("CONDITION_KEY", "2")]),
                     ],
                 ),
             ),
@@ -165,8 +165,8 @@ class TestConditionParser:
                 Tree(
                     "then_also_composition",
                     [
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "987")]),
+                        Tree("condition", [Token("CONDITION_KEY", "1")]),
+                        Tree("condition", [Token("CONDITION_KEY", "987")]),
                     ],
                 ),
             ),
@@ -176,8 +176,8 @@ class TestConditionParser:
                 Tree(
                     "and_composition",
                     [
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "901")]),
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "987")]),
+                        Tree("condition", [Token("CONDITION_KEY", "901")]),
+                        Tree("condition", [Token("CONDITION_KEY", "987")]),
                     ],
                 ),
             ),
@@ -190,11 +190,11 @@ class TestConditionParser:
                         Tree(
                             "and_composition",
                             [
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "2")]),
+                                Tree("condition", [Token("CONDITION_KEY", "1")]),
+                                Tree("condition", [Token("CONDITION_KEY", "2")]),
                             ],
                         ),
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "987")]),
+                        Tree("condition", [Token("CONDITION_KEY", "987")]),
                     ],
                 ),
             ),
@@ -204,12 +204,12 @@ class TestConditionParser:
                 Tree(
                     "then_also_composition",
                     [
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "987")]),
+                        Tree("condition", [Token("CONDITION_KEY", "987")]),
                         Tree(
                             "and_composition",
                             [
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "2")]),
+                                Tree("condition", [Token("CONDITION_KEY", "1")]),
+                                Tree("condition", [Token("CONDITION_KEY", "2")]),
                             ],
                         ),
                     ],
@@ -221,12 +221,12 @@ class TestConditionParser:
                 Tree(
                     "and_composition",
                     [
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "902")]),
+                        Tree("condition", [Token("CONDITION_KEY", "902")]),
                         Tree(
                             "then_also_composition",
                             [
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "906")]),
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "46")]),
+                                Tree("condition", [Token("CONDITION_KEY", "906")]),
+                                Tree("condition", [Token("CONDITION_KEY", "46")]),
                             ],
                         ),
                     ],
@@ -241,12 +241,12 @@ class TestConditionParser:
                         Tree(
                             "then_also_composition",
                             [
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "950")]),
+                                Tree("condition", [Token("CONDITION_KEY", "950")]),
                                 Tree(
                                     "and_composition",
                                     [
-                                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "2")]),
-                                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "4")]),
+                                        Tree("condition", [Token("CONDITION_KEY", "2")]),
+                                        Tree("condition", [Token("CONDITION_KEY", "4")]),
                                     ],
                                 ),
                             ],
@@ -254,12 +254,12 @@ class TestConditionParser:
                         Tree(
                             "then_also_composition",
                             [
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "951")]),
+                                Tree("condition", [Token("CONDITION_KEY", "951")]),
                                 Tree(
                                     "and_composition",
                                     [
-                                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
-                                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "3")]),
+                                        Tree("condition", [Token("CONDITION_KEY", "1")]),
+                                        Tree("condition", [Token("CONDITION_KEY", "3")]),
                                     ],
                                 ),
                             ],
@@ -286,7 +286,7 @@ class TestConditionParser:
             pytest.param(
                 # single condition
                 "([1])",
-                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
+                Tree("condition", [Token("CONDITION_KEY", "1")]),
             ),
             pytest.param(
                 # simple or_composition
@@ -294,8 +294,8 @@ class TestConditionParser:
                 Tree(
                     "or_composition",
                     [
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "2")]),
+                        Tree("condition", [Token("CONDITION_KEY", "1")]),
+                        Tree("condition", [Token("CONDITION_KEY", "2")]),
                     ],
                 ),
             ),
@@ -308,11 +308,11 @@ class TestConditionParser:
                         Tree(
                             "and_composition",
                             [
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "2")]),
+                                Tree("condition", [Token("CONDITION_KEY", "1")]),
+                                Tree("condition", [Token("CONDITION_KEY", "2")]),
                             ],
                         ),
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "53")]),
+                        Tree("condition", [Token("CONDITION_KEY", "53")]),
                     ],
                 ),
             ),
@@ -325,11 +325,11 @@ class TestConditionParser:
                         Tree(
                             "or_composition",
                             [
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "2")]),
+                                Tree("condition", [Token("CONDITION_KEY", "1")]),
+                                Tree("condition", [Token("CONDITION_KEY", "2")]),
                             ],
                         ),
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "53")]),
+                        Tree("condition", [Token("CONDITION_KEY", "53")]),
                     ],
                 ),
             ),
@@ -339,12 +339,12 @@ class TestConditionParser:
                 Tree(
                     "and_composition",
                     [
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "53")]),
+                        Tree("condition", [Token("CONDITION_KEY", "53")]),
                         Tree(
                             "or_composition",
                             [
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "2")]),
+                                Tree("condition", [Token("CONDITION_KEY", "1")]),
+                                Tree("condition", [Token("CONDITION_KEY", "2")]),
                             ],
                         ),
                     ],
@@ -359,8 +359,8 @@ class TestConditionParser:
                         Tree(
                             "or_composition",
                             [
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "2")]),
+                                Tree("condition", [Token("CONDITION_KEY", "1")]),
+                                Tree("condition", [Token("CONDITION_KEY", "2")]),
                             ],
                         ),
                         Tree(
@@ -369,11 +369,11 @@ class TestConditionParser:
                                 Tree(
                                     "and_composition",
                                     [
-                                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "53")]),
-                                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "4")]),
+                                        Tree("condition", [Token("CONDITION_KEY", "53")]),
+                                        Tree("condition", [Token("CONDITION_KEY", "4")]),
                                     ],
                                 ),
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "12")]),
+                                Tree("condition", [Token("CONDITION_KEY", "12")]),
                             ],
                         ),
                     ],
@@ -388,8 +388,8 @@ class TestConditionParser:
                         Tree(
                             "or_composition",
                             [
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "2")]),
+                                Tree("condition", [Token("CONDITION_KEY", "1")]),
+                                Tree("condition", [Token("CONDITION_KEY", "2")]),
                             ],
                         ),
                         Tree(
@@ -398,11 +398,11 @@ class TestConditionParser:
                                 Tree(
                                     "and_composition",
                                     [
-                                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "53")]),
-                                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "4")]),
+                                        Tree("condition", [Token("CONDITION_KEY", "53")]),
+                                        Tree("condition", [Token("CONDITION_KEY", "4")]),
                                     ],
                                 ),
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "12")]),
+                                Tree("condition", [Token("CONDITION_KEY", "12")]),
                             ],
                         ),
                     ],
@@ -414,16 +414,16 @@ class TestConditionParser:
                 Tree(
                     "and_composition",
                     [
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "100")]),
+                        Tree("condition", [Token("CONDITION_KEY", "100")]),
                         Tree(
                             "and_composition",
                             [
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "2")]),
+                                Tree("condition", [Token("CONDITION_KEY", "2")]),
                                 Tree(
                                     "or_composition",
                                     [
-                                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "53")]),
-                                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "4")]),
+                                        Tree("condition", [Token("CONDITION_KEY", "53")]),
+                                        Tree("condition", [Token("CONDITION_KEY", "4")]),
                                     ],
                                 ),
                             ],
@@ -437,12 +437,12 @@ class TestConditionParser:
                 Tree(
                     "and_composition",
                     [
-                        Tree(Token("RULE", "package"), [Token("PACKAGE_KEY_WITHOUT_BRACKETS", "10P")]),
+                        Tree(Token("RULE", "package"), [Token("PACKAGE_KEY", "10P")]),
                         Tree(
                             "or_composition",
                             [
-                                Tree(Token("RULE", "condition"), [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
-                                Tree(Token("RULE", "condition"), [Token("CONDITION_KEY_WITHOUT_BRACKETS", "2")]),
+                                Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", "1")]),
+                                Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", "2")]),
                             ],
                         ),
                     ],

@@ -38,10 +38,10 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree:
                 | package
                 | condition
     ?brackets: "(" expression ")"
-    package: "[" PACKAGE_KEY_WITHOUT_BRACKETS "]" // a rule for packages
-    condition: "[" CONDITION_KEY_WITHOUT_BRACKETS "]" // a rule for condition keys
-    CONDITION_KEY_WITHOUT_BRACKETS: INT // a TERMINAL for all the remaining ints (lower priority)
-    PACKAGE_KEY_WITHOUT_BRACKETS: INT "P" // a TERMINAL for all INTs followed by "P" (high priority)
+    package: "[" PACKAGE_KEY "]" // a rule for packages
+    condition: "[" CONDITION_KEY "]" // a rule for condition keys
+    CONDITION_KEY: INT // a TERMINAL for all the remaining ints (lower priority)
+    PACKAGE_KEY: INT "P" // a TERMINAL for all INTs followed by "P" (high priority)
     %import common.INT
     %import common.WS
     %ignore WS  // WS = whitespace
@@ -82,13 +82,13 @@ def extract_categorized_keys_from_tree(
         condition_keys = [
             x.value  # type:ignore[attr-defined]
             for x in tree_or_list.scan_values(
-                lambda token: token.type == "CONDITION_KEY_WITHOUT_BRACKETS"  # type:ignore[union-attr]
+                lambda token: token.type == "CONDITION_KEY"  # type:ignore[union-attr]
             )
         ]
         result.package_keys = [
             x.value  # type:ignore[attr-defined]
             for x in tree_or_list.scan_values(
-                lambda token: token.type == "PACKAGE_KEY_WITHOUT_BRACKETS"  # type:ignore[union-attr]
+                lambda token: token.type == "PACKAGE_KEY"  # type:ignore[union-attr]
             )
         ]
     else:

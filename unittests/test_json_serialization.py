@@ -65,12 +65,12 @@ class TestJsonSerialization:
                 Tree(
                     "or_composition",
                     [
-                        Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "53")]),
+                        Tree("condition", [Token("CONDITION_KEY", "53")]),
                         Tree(
                             "and_composition",
                             [
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "1")]),
-                                Tree("condition", [Token("CONDITION_KEY_WITHOUT_BRACKETS", "2")]),
+                                Tree("condition", [Token("CONDITION_KEY", "1")]),
+                                Tree("condition", [Token("CONDITION_KEY", "2")]),
                             ],
                         ),
                     ],
@@ -82,9 +82,7 @@ class TestJsonSerialization:
                             "token": None,
                             "tree": {
                                 "type": "condition",
-                                "children": [
-                                    {"token": {"value": "53", "type": "CONDITION_KEY_WITHOUT_BRACKETS"}, "tree": None}
-                                ],
+                                "children": [{"token": {"value": "53", "type": "CONDITION_KEY"}, "tree": None}],
                             },
                         },
                         {
@@ -98,7 +96,7 @@ class TestJsonSerialization:
                                             "type": "condition",
                                             "children": [
                                                 {
-                                                    "token": {"value": "1", "type": "CONDITION_KEY_WITHOUT_BRACKETS"},
+                                                    "token": {"value": "1", "type": "CONDITION_KEY"},
                                                     "tree": None,
                                                 }
                                             ],
@@ -110,7 +108,7 @@ class TestJsonSerialization:
                                             "type": "condition",
                                             "children": [
                                                 {
-                                                    "token": {"value": "2", "type": "CONDITION_KEY_WITHOUT_BRACKETS"},
+                                                    "token": {"value": "2", "type": "CONDITION_KEY"},
                                                     "tree": None,
                                                 }
                                             ],
