@@ -241,6 +241,8 @@ and edited under
 `app.diagrams.net <https://app.diagrams.net/#HHochfrequenz%2Fdraw_io_charts%2Fmain%2Fwimbee%2Fconditions%2FCondition_Structure_with_more_than_one_condition.drawio>`__
 with your GitHub Account.
 
+There is also an `UML Diagram <docs/_static/ahbicht_uml.svg>`_ available (last updated 2022-01-29).
+
 Truth tables
 ~~~~~~~~~~~~
 
