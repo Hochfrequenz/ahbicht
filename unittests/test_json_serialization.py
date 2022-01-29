@@ -6,7 +6,6 @@ import uuid
 from typing import TypeVar
 
 import pytest  # type:ignore[import]
-from lark import Token, Tree
 from marshmallow import Schema, ValidationError
 
 from ahbicht.content_evaluation.categorized_key_extract import CategorizedKeyExtract, CategorizedKeyExtractSchema
@@ -18,16 +17,12 @@ from ahbicht.evaluation_results import (
     FormatConstraintEvaluationResult,
     RequirementConstraintEvaluationResult,
 )
-from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
-from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.condition_nodes import (
     ConditionFulfilledValue,
     EvaluatedFormatConstraint,
     EvaluatedFormatConstraintSchema,
 )
 from ahbicht.expressions.enums import ModalMark
-from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
-from ahbicht.json_serialization.tree_schema import ConciseTreeSchema, TreeSchema
 from ahbicht.mapping_results import (
     ConditionKeyConditionTextMapping,
     ConditionKeyConditionTextMappingSchema,
@@ -58,107 +53,9 @@ def _test_serialization_roundtrip(serializable_object: T, schema: Schema, expect
 
 
 class TestJsonSerialization:
-    @pytest.mark.parametrize(
-        "tree, expected_json_dict",
-        [
-            pytest.param(
-                Tree(
-                    "or_composition",
-                    [
-                        Tree("condition", [Token("CONDITION_KEY", "53")]),
-                        Tree(
-                            "and_composition",
-                            [
-                                Tree("condition", [Token("CONDITION_KEY", "1")]),
-                                Tree("condition", [Token("CONDITION_KEY", "2")]),
-                            ],
-                        ),
-                    ],
-                ),
-                {
-                    "type": "or_composition",
-                    "children": [
-                        {
-                            "token": None,
-                            "tree": {
-                                "type": "condition",
-                                "children": [{"token": {"value": "53", "type": "CONDITION_KEY"}, "tree": None}],
-                            },
-                        },
-                        {
-                            "token": None,
-                            "tree": {
-                                "type": "and_composition",
-                                "children": [
-                                    {
-                                        "token": None,
-                                        "tree": {
-                                            "type": "condition",
-                                            "children": [
-                                                {
-                                                    "token": {"value": "1", "type": "CONDITION_KEY"},
-                                                    "tree": None,
-                                                }
-                                            ],
-                                        },
-                                    },
-                                    {
-                                        "token": None,
-                                        "tree": {
-                                            "type": "condition",
-                                            "children": [
-                                                {
-                                                    "token": {"value": "2", "type": "CONDITION_KEY"},
-                                                    "tree": None,
-                                                }
-                                            ],
-                                        },
-                                    },
-                                ],
-                            },
-                        },
-                    ],
-                },
-            )
-        ],
-    )
-    def test_tree_serialization(self, tree: Tree, expected_json_dict: dict):
-        _test_serialization_roundtrip(tree, TreeSchema(), expected_json_dict)
-
-    @pytest.mark.parametrize(
-        "condition_string, expected_json_dict",
-        [
-            pytest.param(
-                "Muss [2] U ([3] O [4])[901] U [555]",
-                {
-                    "children": [
-                        {
-                            "token": None,
-                            "tree": {
-                                "children": [
-                                    {"token": {"type": "MODAL_MARK", "value": "Muss"}, "tree": None},
-                                    {
-                                        "token": {
-                                            "type": "CONDITION_EXPRESSION",
-                                            "value": " [2] U ([3] O [4])[901] U [555]",
-                                        },
-                                        "tree": None,
-                                    },
-                                ],
-                                "type": "single_requirement_indicator_expression",
-                            },
-                        }
-                    ],
-                    "type": "ahb_expression",
-                },
-            )
-        ],
-    )
-    def test_single_requirement_indicator_expression_serialization(
-        self, condition_string: str, expected_json_dict: dict
-    ):
-        tree = parse_ahb_expression_to_single_requirement_indicator_expressions(condition_string)
-        _test_serialization_roundtrip(tree, TreeSchema(), expected_json_dict)
+    """
+    This class tests the serialization of all objects except for trees.
+    """
 
     @pytest.mark.parametrize(
         "evaluated_format_constraint, expected_json_dict",
@@ -397,107 +294,3 @@ class TestJsonSerialization:
         self, categorized_key_extract: CategorizedKeyExtract, expected_json_dict: dict
     ):
         _test_serialization_roundtrip(categorized_key_extract, CategorizedKeyExtractSchema(), expected_json_dict)
-
-    @pytest.mark.parametrize(
-        "condition_expression, expected_compact_json_dict",
-        [
-            pytest.param(
-                "[1] U ([2] O [3])[901]",
-                {"and_composition": ["1", {"then_also_composition": [{"or_composition": ["2", "3"]}, "901"]}]},
-            ),
-            pytest.param(
-                "[3] U ([2] O [3] U [77] X [99][502])[901]",
-                {
-                    "and_composition": [
-                        "3",
-                        {
-                            "then_also_composition": [
-                                {
-                                    "or_composition": [
-                                        "2",
-                                        {
-                                            "xor_composition": [
-                                                {"and_composition": ["3", "77"]},
-                                                {"then_also_composition": ["99", "502"]},
-                                            ]
-                                        },
-                                    ]
-                                },
-                                "901",
-                            ]
-                        },
-                    ]
-                },
-            ),
-        ],
-    )
-    def test_concise_tree_serialization_behaviour_for_condition_expressions(
-        self, condition_expression: str, expected_compact_json_dict: dict
-    ):
-        tree = parse_condition_expression_to_tree(condition_expression)
-        json_dict = ConciseTreeSchema().dump(tree)
-        assert json_dict == expected_compact_json_dict
-
-    @pytest.mark.parametrize(
-        "ahb_expression, expected_compact_json_dict",
-        [
-            pytest.param(
-                "Muss [1] U ([2] O [3])[901]",
-                {
-                    "ahb_expression": [
-                        {
-                            "single_requirement_indicator_expression": [
-                                "Muss",
-                                {
-                                    "and_composition": [
-                                        "1",
-                                        {"then_also_composition": [{"or_composition": ["2", "3"]}, "901"]},
-                                    ]
-                                },
-                            ]
-                        }
-                    ]
-                },
-            ),
-            pytest.param(
-                "Soll [3] U ([2] O [3] U [77] X [99][502])[901] Kann [43]",
-                {
-                    "ahb_expression": [
-                        {
-                            "single_requirement_indicator_expression": [
-                                "Soll",
-                                {
-                                    "and_composition": [
-                                        "3",
-                                        {
-                                            "then_also_composition": [
-                                                {
-                                                    "or_composition": [
-                                                        "2",
-                                                        {
-                                                            "xor_composition": [
-                                                                {"and_composition": ["3", "77"]},
-                                                                {"then_also_composition": ["99", "502"]},
-                                                            ]
-                                                        },
-                                                    ]
-                                                },
-                                                "901",
-                                            ]
-                                        },
-                                    ]
-                                },
-                            ]
-                        },
-                        {"single_requirement_indicator_expression": ["Kann", "43"]},
-                    ]
-                },
-            ),
-        ],
-    )
-    async def test_concise_tree_serialization_behaviour_for_ahb_expressions(
-        self, ahb_expression: str, expected_compact_json_dict: dict
-    ):
-        tree = await parse_expression_including_unresolved_subexpressions(ahb_expression)
-        json_dict = ConciseTreeSchema().dump(tree)
-        assert json_dict == expected_compact_json_dict
