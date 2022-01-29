@@ -229,7 +229,7 @@ more than one condition. If it is only a single condition or just a
 requirement indicator, the respective tree consists of just this token
 and the result equals the input.
 
-.. figure:: src/ahbicht/expressions/Condition_Structure_with_more_than_one_condition.png
+.. figure:: src/ahbicht/expressions/condition_structure_with_more_than_one_condition.png
    :alt: grafik
 
 The raw and updated data for this diagram can be found in the
