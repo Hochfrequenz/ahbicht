@@ -385,61 +385,10 @@ Contributing
 You are very welcome to contribute to this repository by opening a pull
 request against the main branch.
 
-How to use this Repository on Your Machine
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+How to use this Repository on Your Machine / Local Setup
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This introduction assumes that you have tox installed already (see
-`installation
-instructions <https://tox.readthedocs.io/en/latest/install.html>`__) and
-that a ``.toxbase`` environment has been created.
-
-If this is the case, clone this repository and create the ``dev``
-environment on your machine.
-
-.. code:: bash
-
-   tox -e dev
-
-How to use with PyCharm
-^^^^^^^^^^^^^^^^^^^^^^^
-
-1. Create a new project using existing sources with your local working
-   copy of this repository as root directory. Choose the path
-   ``your_repo/.tox/dev/`` as path of the “previously configured
-   interpreter”.
-2. Set the default `test runner of your
-   project <https://www.jetbrains.com/help/pycharm/choosing-your-testing-framework.html>`__
-   to pytest.
-3. Set the `working directory of the unit
-   tests <https://www.jetbrains.com/help/pycharm/creating-run-debug-configuration-for-tests.html>`__
-   to the project root (instead of the unittest directory)
-
-How to use with VS Code
-^^^^^^^^^^^^^^^^^^^^^^^
-
-1. Open the folder with VS Code.
-2. **Select the python interpreter** which is created by tox. Open the
-   command pallett with ``CTRL + P`` and type
-   ``Python: Select Interpreter``. Select the interpreter which is
-   placed in ``.tox/dev/Scripts/python.exe`` under Windows or
-   ``.tox/dev/bin/python`` under Linux and macOS.
-3. **Setup pytest and pylint**. Therefore we open the file
-   ``.vscode/settings.json`` which should be automatically generated
-   during the interpreter setup. Insert the following lines into the
-   settings:
-
-.. code:: json
-
-       "python.testing.unittestEnabled": false,
-       "python.testing.nosetestsEnabled": false,
-       "python.testing.pytestEnabled": true,
-       "pythonTestExplorer.testFramework": "pytest",
-       "python.testing.pytestArgs": [
-           "unittests"
-       ],
-       "python.linting.pylintEnabled": true
-
-4. Enjoy 🤗
+Please follow the instructions in our `Python Template Repository <https://github.com/Hochfrequenz/python_template_repository#how-to-use-this-repository-on-your-machine>`_.
 
 .. |Unittests status badge| image:: https://github.com/Hochfrequenz/ahbicht/workflows/Unittests/badge.svg
 .. |Coverage status badge| image:: https://github.com/Hochfrequenz/ahbicht/workflows/Coverage/badge.svg
