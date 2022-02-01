@@ -29,6 +29,13 @@ from ahbicht.mapping_results import (
     PackageKeyConditionExpressionMapping,
     PackageKeyConditionExpressionMappingSchema,
 )
+from ahbicht.validation.validation_results import (
+    DataElementValidationResult,
+    DataElementValidationResultSchema,
+    SegmentLevelValidationResult,
+    SegmentLevelValidationResultSchema,
+)
+from ahbicht.validation.validation_values import FormatValidationValue, RequirementValidationValue
 
 T = TypeVar("T")
 
@@ -226,6 +233,86 @@ class TestJsonSerialization:
         _test_serialization_roundtrip(
             ahb_expression_evaluation_result, AhbExpressionEvaluationResultSchema(), expected_json_dict
         )
+
+    @pytest.mark.parametrize(
+        "validation_result, expected_json_dict",
+        [
+            pytest.param(
+                SegmentLevelValidationResult(
+                    requirement_validation=RequirementValidationValue.IS_FORBIDDEN_AND_EMPTY, hints="foo"
+                ),
+                {
+                    "requirement_validation": "IS_FORBIDDEN_AND_EMPTY",
+                    "hints": "foo",
+                },
+            ),
+            pytest.param(
+                SegmentLevelValidationResult(requirement_validation=RequirementValidationValue.IS_FORBIDDEN),
+                {
+                    "requirement_validation": "IS_FORBIDDEN",
+                    "hints": None,
+                },
+            ),
+        ],
+    )
+    def test_segment_level_validation_result_serialization(
+        self, validation_result: SegmentLevelValidationResult, expected_json_dict: dict
+    ):
+        _test_serialization_roundtrip(validation_result, SegmentLevelValidationResultSchema(), expected_json_dict)
+
+    @pytest.mark.parametrize(
+        "validation_result, expected_json_dict",
+        [
+            pytest.param(
+                DataElementValidationResult(
+                    requirement_validation=RequirementValidationValue.IS_FORBIDDEN,
+                    format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                ),
+                {
+                    "requirement_validation": "IS_FORBIDDEN",
+                    "hints": None,
+                    "format_validation": "FORMAT_CONSTRAINTS_ARE_FULFILLED",
+                    "format_error_message": None,
+                    "possible_values": None,
+                },
+            ),
+            pytest.param(
+                DataElementValidationResult(
+                    requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_FILLED,
+                    hints="foo",
+                    format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_NOT_FULFILLED,
+                    format_error_message="bar",
+                ),
+                {
+                    "requirement_validation": "IS_REQUIRED_AND_FILLED",
+                    "hints": "foo",
+                    "format_validation": "FORMAT_CONSTRAINTS_ARE_NOT_FULFILLED",
+                    "format_error_message": "bar",
+                    "possible_values": None,
+                },
+            ),
+            pytest.param(
+                DataElementValidationResult(
+                    requirement_validation=RequirementValidationValue.IS_REQUIRED,
+                    hints="foo",
+                    format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                    format_error_message=None,
+                    possible_values=["A1", "A2", "Z3"],
+                ),
+                {
+                    "requirement_validation": "IS_REQUIRED",
+                    "hints": "foo",
+                    "format_validation": "FORMAT_CONSTRAINTS_ARE_FULFILLED",
+                    "format_error_message": None,
+                    "possible_values": ["A1", "A2", "Z3"],
+                },
+            ),
+        ],
+    )
+    def test_dataelement_validation_result_serialization(
+        self, validation_result: DataElementValidationResult, expected_json_dict: dict
+    ):
+        _test_serialization_roundtrip(validation_result, DataElementValidationResultSchema(), expected_json_dict)
 
     @pytest.mark.parametrize(
         "condition_key_condition_text_mapping, expected_json_dict",
