@@ -1,6 +1,6 @@
 import uuid
 
-import pytest
+import pytest  # type:ignore[import]
 from maus.models.edifact_components import DataElementFreeText, DataElementValuePool, Segment, SegmentGroup
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
