@@ -107,7 +107,7 @@ async def validate_segment(
     validation_result: Dict[str, ValidationResult] = None,
 ) -> Dict[str, ValidationResult]:
     """
-    Validates a segment group and its containing dataelements.
+    Validates a segment group and its containing dataelements
     :param segment: the segment that should be validated
     :param segment_group_requirement: the requirement of the segment's segment_group, e.g. IS_REQUIRED
     :param soll_is_required: true (default) if SOLL should be handled like MUSS,
@@ -180,12 +180,12 @@ async def validate_dataelement(
     soll_is_required=True,
 ) -> ValidationResult:
     """
-    Validates dataelements by handing them over to specialized functions for freetext or value pool dataelements.
+    Validates data elements by handing them over to specialized functions for freetext or value pool dataelements.
     :param dataelement: the dataelement that should be validated
     :param segment_requirement: the requirement of the dataelement's segment, e.g. IS_REQUIRED
     :param soll_is_required: true (default) if SOLL should be handled like MUSS,
                              false if it should be handled like KANN
-    :return: Validation Result of the Dataelement
+    :return: Validation Result of the Data element
     """
     if isinstance(dataelement, DataElementFreeText):
         return await validate_dataelement_freetext(dataelement, segment_requirement, soll_is_required)
@@ -258,7 +258,7 @@ async def validate_dataelement_valuepool(
     requirement_validation_dataelement = segment_requirement
 
     if segment_requirement != RequirementValidationValue.IS_FORBIDDEN:
-        # it seems like all single value dataelements (except freetext) are just labled "X"
+        # it seems like all single value dataelements (except freetext) are just labeled "X"
         if len(dataelement.value_pool) == 1:
             possible_values = list(dataelement.value_pool)
             hints = None

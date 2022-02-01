@@ -1,4 +1,4 @@
-"This module contains the enums for the possible validation values."
+"""This module contains the enums for the possible validation values."""
 
 from enum import Enum
 
