@@ -3,12 +3,15 @@
 from enum import Enum
 
 
-class RequirementValidationValueWithInput(str, Enum):
+class RequirementValidationValue(str, Enum):
     """
     Possible values to describe the state of the validation
     in the requirement_validation attribute of the ValidationResult.
     """
 
+    IS_REQUIRED = "IS_REQUIRED"  #: element is required
+    IS_FORBIDDEN = "IS_FORBIDDEN"  #: element is forbidden
+    IS_OPTIONAL = "IS_OPTIONAL"  #: element is optional
     IS_REQUIRED_AND_EMPTY = "IS_REQUIRED_AND_EMPTY"  #: field is required, but empty
     IS_REQUIRED_AND_FILLED = "IS_REQUIRED_AND_FILLED"  #: field is required and filled
     IS_FORBIDDEN_AND_EMPTY = "IS_FORBIDDEN_AND_EMPTY"  #: field is forbidden and empty
@@ -20,18 +23,18 @@ class RequirementValidationValueWithInput(str, Enum):
         return self.value
 
 
-class RequirementValidationValueWithoutInput(str, Enum):
-    """
-    Possible values to describe the state of the validation
-    in the requirement_validation attribute of the ValidationResult.
-    """
+# class RequirementValidationValue(str, Enum):
+#     """
+#     Possible values to describe the state of the validation
+#     in the requirement_validation attribute of the ValidationResult.
+#     """
 
-    IS_REQUIRED = "IS_REQUIRED"  #: element is required
-    IS_FORBIDDEN = "IS_FORBIDDEN"  #: element is forbidden
-    IS_OPTIONAL = "IS_OPTIONAL"  #: element is optional
+#     IS_REQUIRED = "IS_REQUIRED"  #: element is required
+#     IS_FORBIDDEN = "IS_FORBIDDEN"  #: element is forbidden
+#     IS_OPTIONAL = "IS_OPTIONAL"  #: element is optional
 
-    def __str__(self):
-        return self.value
+#     def __str__(self):
+#         return self.value
 
 
 class FormatValidationValue(str, Enum):
