@@ -59,7 +59,6 @@ class ContentEvaluationResult:
     )
     """
     maps the key of a package (e.g. '123') to the respective expression (e.g. '[1] U ([2] O [3])'
-    OR to a condition fulfilled value that applies to the entire package.
     """
 
     # pylint:disable=invalid-name
