@@ -126,7 +126,7 @@ class TestConditionNodes:
             ),
             pytest.param(
                 {
-                    "condition_key": "501",
+                    "condition": "501",
                     "conditions_fulfilled": True,
                 },
                 "got an unexpected keyword argument",

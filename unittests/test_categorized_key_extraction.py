@@ -10,6 +10,8 @@ from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluati
 from ahbicht.expressions.condition_expression_parser import extract_categorized_keys
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 
+pytestmark = pytest.mark.asyncio
+
 
 class TestCategorizedKeyExtraction:
     @pytest.mark.parametrize(
@@ -39,15 +41,24 @@ class TestCategorizedKeyExtraction:
                     package_keys=[],
                 ),
             ),
+            pytest.param(
+                "[100]U([2]U([53]O[4]))[999][502]U[123P]",
+                CategorizedKeyExtract(
+                    hint_keys=["502"],
+                    requirement_constraint_keys=["2", "4", "53", "100"],
+                    format_constraint_keys=["999"],
+                    package_keys=["123P"],
+                ),
+            ),
         ],
     )
-    def test_extraction_of_categorized_keys_from_condition_expression(
+    async def test_extraction_of_categorized_keys_from_condition_expression(
         self, expression: str, expected_key_extract: CategorizedKeyExtract
     ):
         """
         Tests that the CategorizedKeyExtract is generated correctly.
         """
-        actual = extract_categorized_keys(expression)
+        actual = await extract_categorized_keys(expression)
         assert actual == expected_key_extract
 
     @pytest.mark.parametrize(
@@ -69,17 +80,25 @@ class TestCategorizedKeyExtraction:
                         hints={},
                         format_constraints={},
                         requirement_constraints={"1": ConditionFulfilledValue.FULFILLED},
+                        packages={},
                     ),
                     ContentEvaluationResult(
                         hints={},
                         format_constraints={},
                         requirement_constraints={"1": ConditionFulfilledValue.UNFULFILLED},
+                        packages={},
                     ),
                     ContentEvaluationResult(
-                        hints={}, format_constraints={}, requirement_constraints={"1": ConditionFulfilledValue.UNKNOWN}
+                        hints={},
+                        format_constraints={},
+                        requirement_constraints={"1": ConditionFulfilledValue.UNKNOWN},
+                        packages={},
                     ),
                     ContentEvaluationResult(
-                        hints={}, format_constraints={}, requirement_constraints={"1": ConditionFulfilledValue.NEUTRAL}
+                        hints={},
+                        format_constraints={},
+                        requirement_constraints={"1": ConditionFulfilledValue.NEUTRAL},
+                        packages={},
                     ),
                 ],
                 id="0 FC, 1 RC",
@@ -93,11 +112,13 @@ class TestCategorizedKeyExtraction:
                         hints={},
                         format_constraints={"901": EvaluatedFormatConstraint(format_constraint_fulfilled=True)},
                         requirement_constraints={},
+                        packages={},
                     ),
                     ContentEvaluationResult(
                         hints={},
                         format_constraints={"901": EvaluatedFormatConstraint(format_constraint_fulfilled=False)},
                         requirement_constraints={},
+                        packages={},
                     ),
                 ],
                 id="1 FC, 0 RC",
@@ -112,6 +133,8 @@ class TestCategorizedKeyExtraction:
         # This quickly gets super large. 2 FCs * 2 RCs is already 64 results
         assert actual == expected_cers
 
+    # pylint:disable=fixme
+    # todo: register as custom mark https://docs.pytest.org/en/stable/mark.html
     ALL_LARGE_TEST_CASES = pytest.mark.datafiles(
         "./unittests/content_evaluation_result_generation/example0.json",
         "./unittests/content_evaluation_result_generation/example1.json",
@@ -130,5 +153,5 @@ class TestCategorizedKeyExtraction:
         categoried_keys = CategorizedKeyExtractSchema().load(file_content["categorizedKeyExtract"])
         expected_result = ContentEvaluationResultSchema(many=True).load(file_content["expected_result"])
         actual = categoried_keys.generate_possible_content_evaluation_results()
-        json_string = ContentEvaluationResultSchema(many=True).dumps(actual)
+        # json_string = ContentEvaluationResultSchema(many=True).dumps(actual)
         assert actual == expected_result

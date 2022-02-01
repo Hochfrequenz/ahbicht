@@ -8,9 +8,9 @@ from _pytest.fixtures import SubRequest  # type:ignore[import]
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.evaluator_factory import create_and_inject_hardcoded_evaluators
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
-from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.expressions.enums import ModalMark, RequirementIndicator
+from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 
 pytestmark = pytest.mark.asyncio
 
@@ -33,9 +33,11 @@ class TestEvaluatorFactory:
                     "902": EvaluatedFormatConstraint(format_constraint_fulfilled=True, error_message=None),
                 },
                 requirement_constraints={
+                    "1": ConditionFulfilledValue.FULFILLED,  # <-- from resolving the 123P package
                     "2": ConditionFulfilledValue.FULFILLED,
                     "3": ConditionFulfilledValue.UNFULFILLED,
                 },
+                packages={"123P": "[1]"},
                 id=uuid.UUID("d106f335-f663-4d14-9636-4f43a883ad26"),
             )
         ],
@@ -46,6 +48,7 @@ class TestEvaluatorFactory:
         [
             pytest.param("Muss ([2] O [3])[902]U[501]", ModalMark.MUSS, True, "foo"),
             pytest.param("Muss [2] O [3][902]U[501]", ModalMark.MUSS, True, None),
+            pytest.param("Muss [2] O [3][902]U[501]U[123P]", ModalMark.MUSS, True, None, id="with package"),
         ],
     )
     async def test_correct_injection(
@@ -56,7 +59,7 @@ class TestEvaluatorFactory:
         expected_format_constraint_result: bool,
         expected_in_hints: Optional[str],
     ):
-        tree = parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_expression=expression)
+        tree = await parse_expression_including_unresolved_subexpressions(expression=expression, resolve_packages=True)
         assert tree is not None
         expression_evaluation_result = await evaluate_ahb_expression_tree(tree, entered_input="hello")
         assert (

@@ -17,11 +17,12 @@ from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluati
 from ahbicht.content_evaluation.fc_evaluators import DictBasedFcEvaluator, FcEvaluator
 from ahbicht.content_evaluation.rc_evaluators import DictBasedRcEvaluator, RcEvaluator
 from ahbicht.expressions.hints_provider import DictBasedHintsProvider, HintsProvider
+from ahbicht.expressions.package_expansion import DictBasedPackageResolver, PackageResolver
 
 
 def create_hardcoded_evaluators(
     content_evaluation_result: ContentEvaluationResult,
-) -> Tuple[RcEvaluator, FcEvaluator, HintsProvider]:
+) -> Tuple[RcEvaluator, FcEvaluator, HintsProvider, PackageResolver]:
     """
     Creates evaluators based on the given content_evaluation_result
 
@@ -31,7 +32,8 @@ def create_hardcoded_evaluators(
     rc_evaluator = DictBasedRcEvaluator(content_evaluation_result.requirement_constraints)
     fc_evaluator = DictBasedFcEvaluator(content_evaluation_result.format_constraints)
     hints_provider = DictBasedHintsProvider(content_evaluation_result.hints)
-    return rc_evaluator, fc_evaluator, hints_provider
+    package_resolver = DictBasedPackageResolver(content_evaluation_result.packages or {})
+    return rc_evaluator, fc_evaluator, hints_provider, package_resolver
 
 
 def create_and_inject_hardcoded_evaluators(content_evaluation_result: ContentEvaluationResult):
@@ -46,4 +48,5 @@ def create_and_inject_hardcoded_evaluators(content_evaluation_result: ContentEva
         lambda binder: binder.bind(RcEvaluator, evaluators[0])  # type:ignore[arg-type]
         .bind(FcEvaluator, evaluators[1])
         .bind(HintsProvider, evaluators[2])
+        .bind(PackageResolver, evaluators[3])
     )

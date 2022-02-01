@@ -38,8 +38,8 @@ class BaseTransformer(Transformer, ABC, Generic[TSupportedArgumentNodeType, TSup
         super().__init__()
         self.input_values = input_values
 
-    def condition_key(self, token: Token) -> TSupportedArgumentNodeType:
-        """Returns ConditionNode of condition_key"""
+    def condition(self, token: Token) -> TSupportedArgumentNodeType:
+        """Returns ConditionNode of rule 'condition'"""
         try:
             condition_key = self.input_values[token.value]
         except KeyError as key_err:
@@ -47,6 +47,14 @@ class BaseTransformer(Transformer, ABC, Generic[TSupportedArgumentNodeType, TSup
                 "Please make sure that the input values contain all necessary condition_keys."
             ) from key_err
         return condition_key
+
+    def package(self, token: Token) -> TSupportedArgumentNodeType:
+        """Returns ConditionNode of rule package"""
+        try:
+            package_key = self.input_values[token.value]
+        except KeyError as key_err:
+            raise ValueError("Please make sure that the input values contain all necessary package_keys.") from key_err
+        return package_key
 
     @abstractmethod
     def and_composition(
