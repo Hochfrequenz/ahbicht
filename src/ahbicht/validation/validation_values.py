@@ -23,20 +23,6 @@ class RequirementValidationValue(str, Enum):
         return self.value
 
 
-# class RequirementValidationValue(str, Enum):
-#     """
-#     Possible values to describe the state of the validation
-#     in the requirement_validation attribute of the ValidationResult.
-#     """
-
-#     IS_REQUIRED = "IS_REQUIRED"  #: element is required
-#     IS_FORBIDDEN = "IS_FORBIDDEN"  #: element is forbidden
-#     IS_OPTIONAL = "IS_OPTIONAL"  #: element is optional
-
-#     def __str__(self):
-#         return self.value
-
-
 class FormatValidationValue(str, Enum):
     """
     Possible values to describe the state of the validation
