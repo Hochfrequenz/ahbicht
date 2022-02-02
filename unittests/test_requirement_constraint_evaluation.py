@@ -111,7 +111,7 @@ class TestRequirementConstraintEvaluation:
                 SyntaxError,
                 """Please make sure that:
              * all conditions have the form [INT]
-             * all packages have the form [INTP]
+             * all packages have the form [INTPn..m]
              * no conditions are empty
              * all compositions are combined by operators 'U'/'O'/'X' or without an operator
              * all open brackets are closed again and vice versa

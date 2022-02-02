@@ -38,15 +38,15 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree:
                 | package
                 | condition
     ?brackets: "(" expression ")"
-    package: "[" PACKAGE_KEY "]" // a rule for packages
+    package: "[" PACKAGE_KEY REPEATABILITY? "]" // a rule for packages
     condition: "[" CONDITION_KEY "]" // a rule for condition keys
     CONDITION_KEY: INT // a TERMINAL for all the remaining ints (lower priority)
+    REPEATABILITY: /[1-9]\.{2}\d+/ // a terminal for repetitions n..m with n>=0 and m>n
     PACKAGE_KEY: INT "P" // a TERMINAL for all INTs followed by "P" (high priority)
     %import common.INT
     %import common.WS
     %ignore WS  // WS = whitespace
     """
-    # todo: add wiederholbarkeiten https://github.com/Hochfrequenz/ahbicht/issues/96
     parser = Lark(grammar, start="expression")
     try:
         parsed_tree = parser.parse(condition_expression)
@@ -54,13 +54,12 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree:
         raise SyntaxError(
             """Please make sure that:
              * all conditions have the form [INT]
-             * all packages have the form [INTP]
+             * all packages have the form [INTPn..m]
              * no conditions are empty
              * all compositions are combined by operators 'U'/'O'/'X' or without an operator
              * all open brackets are closed again and vice versa
              """
         ) from eof
-    # todo: implement wiederholbarkeiten
     return parsed_tree
 
 
