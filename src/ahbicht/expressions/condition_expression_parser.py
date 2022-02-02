@@ -41,7 +41,7 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree:
     package: "[" PACKAGE_KEY REPEATABILITY? "]" // a rule for packages
     condition: "[" CONDITION_KEY "]" // a rule for condition keys
     CONDITION_KEY: INT // a TERMINAL for all the remaining ints (lower priority)
-    REPEATABILITY: /[1-9]\.{2}\d+/ // a terminal for repetitions n..m with n>=0 and m>n
+    REPEATABILITY: /\d+\.{2}[1-9]\d*/ // a terminal for repetitions n..m with n>=0 and m>n
     PACKAGE_KEY: INT "P" // a TERMINAL for all INTs followed by "P" (high priority)
     %import common.INT
     %import common.WS

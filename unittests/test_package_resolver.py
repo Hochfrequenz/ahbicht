@@ -37,6 +37,8 @@ class TestPackageResolver:
         [
             pytest.param("[123P]", "[1] U ([2] O [3])"),
             pytest.param("[123P7..8]", "[1] U ([2] O [3])"),
+            pytest.param("[123P10..11]", "[1] U ([2] O [3])"),
+            pytest.param("[123P0..5]", "[1] U ([2] O [3])"),
             pytest.param("[17] U [123P]", "[17] U ([1] U ([2] O [3]))"),
         ],
     )
