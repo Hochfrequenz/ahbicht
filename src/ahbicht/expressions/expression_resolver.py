@@ -1,11 +1,12 @@
 """
 This module makes it possible to parse expressions including all their subexpressions, if present.
 for example ahb_expressions which contain condition_expressions or condition_expressions which contain packages.
-Parsing expressions that are nested into other expressions is refered to as "resolving".
+Parsing expressions that are nested into other expressions is referred to as "resolving".
 """
 import asyncio
 import inspect
-from typing import Awaitable, List, Union
+import re
+from typing import Awaitable, List, Match, Union
 
 import inject
 from lark import Token, Transformer, Tree
@@ -85,6 +86,9 @@ class AhbExpressionResolverTransformer(Transformer):
         return condition_tree
 
 
+_repeatability_pattern = re.compile(r"^(?P<min>\d+)\.{2}(?P<max>\d+)$")  #: a pattern to match "n..m" repetabilities
+
+
 # pylint: disable=no-self-use, invalid-name
 class PackageExpansionTransformer(Transformer):
     """
@@ -102,7 +106,20 @@ class PackageExpansionTransformer(Transformer):
         return self._package_async(tokens)
 
     async def _package_async(self, tokens: List[Token]) -> Tree:
-        resolved_package = await self._resolver.get_condition_expression(tokens[0].value)
+        package_key_token = [t for t in tokens if t.type == "PACKAGE_KEY"][0]
+        repeatability_tokens = [t for t in tokens if t.type == "REPEATABILITY"]
+        if len(repeatability_tokens) == 1:
+            # match is not None/Optional[Match] because the grammar already enforced a correct syntax
+            match: Match[str] = _repeatability_pattern.match(repeatability_tokens[0])  # type:ignore[assignment]
+            min_repeatability = int(match["min"])
+            max_repeatability = int(match["max"])
+            if min_repeatability > max_repeatability:
+                error_message = (
+                    f"The min repeatability {min_repeatability} must not be greater than the max "
+                    f"repeatability {max_repeatability} "
+                )
+                raise ValueError(error_message)
+        resolved_package = await self._resolver.get_condition_expression(package_key_token.value)
         if not resolved_package.has_been_resolved_successfully():
             raise NotImplementedError(f"The package '{tokens[0].value}' could not be resolved by {self._resolver}")
         # the package_expression is not None because that's the definition of "has been resolved successfully"

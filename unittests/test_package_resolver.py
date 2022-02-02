@@ -36,6 +36,7 @@ class TestPackageResolver:
         "unexpanded_expression, expected_expanded_expression",
         [
             pytest.param("[123P]", "[1] U ([2] O [3])"),
+            pytest.param("[123P7..8]", "[1] U ([2] O [3])"),
             pytest.param("[17] U [123P]", "[17] U ([1] U ([2] O [3]))"),
         ],
     )
@@ -47,3 +48,22 @@ class TestPackageResolver:
         assert actual_tree is not None
         expected_expanded_tree = parse_condition_expression_to_tree(expected_expanded_expression)
         assert actual_tree == expected_expanded_tree
+
+    @pytest.mark.parametrize(
+        "inject_package_resolver",
+        [{"123P": "[1] U ([2] O [3])"}],
+        indirect=True,
+    )
+    @pytest.mark.parametrize(
+        "unexpanded_expression, error_message",
+        [
+            pytest.param("[123P8..7]", "The min repeatability 8 must not be greater than the max repeatability 7"),
+        ],
+    )
+    async def test_invalid_package_repeatability(
+        self, inject_package_resolver, unexpanded_expression: str, error_message: str
+    ):
+        unexpanded_tree = parse_condition_expression_to_tree(unexpanded_expression)
+        with pytest.raises(ValueError) as invalid_repeatability_error:
+            _ = await expand_packages(parsed_tree=unexpanded_tree)
+        assert error_message in str(invalid_repeatability_error)

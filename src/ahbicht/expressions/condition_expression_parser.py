@@ -26,7 +26,7 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree:
     :return parsed_tree: Tree
     """
 
-    grammar = """
+    grammar = r"""
     ?expression: expression "O"i expression -> or_composition
                 | expression "∨" expression -> or_composition
                 | expression "X"i expression -> xor_composition
