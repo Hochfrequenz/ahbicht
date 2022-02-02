@@ -5,8 +5,7 @@ Parsing expressions that are nested into other expressions is referred to as "re
 """
 import asyncio
 import inspect
-import re
-from typing import Awaitable, List, Match, Union
+from typing import Awaitable, List, Optional, Union
 
 import inject
 from lark import Token, Transformer, Tree
@@ -15,6 +14,7 @@ from lark.exceptions import VisitError
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.package_expansion import PackageResolver
+from ahbicht.mapping_results import Repeatability, parse_repeatability
 
 
 async def parse_expression_including_unresolved_subexpressions(expression: str, resolve_packages: bool = False) -> Tree:
@@ -86,9 +86,6 @@ class AhbExpressionResolverTransformer(Transformer):
         return condition_tree
 
 
-_repeatability_pattern = re.compile(r"^(?P<min>\d+)\.{2}(?P<max>\d+)$")  #: a pattern to match "n..m" repetabilities
-
-
 # pylint: disable=no-self-use, invalid-name
 class PackageExpansionTransformer(Transformer):
     """
@@ -103,24 +100,22 @@ class PackageExpansionTransformer(Transformer):
         """
         try to resolve the package using the injected PackageResolver
         """
-        return self._package_async(tokens)
-
-    async def _package_async(self, tokens: List[Token]) -> Tree:
         package_key_token = [t for t in tokens if t.type == "PACKAGE_KEY"][0]
         repeatability_tokens = [t for t in tokens if t.type == "REPEATABILITY"]
+        repeatability: Optional[Repeatability]
         if len(repeatability_tokens) == 1:
-            # match is not None/Optional[Match] because the grammar already enforced a correct syntax
-            match: Match[str] = _repeatability_pattern.match(repeatability_tokens[0])  # type:ignore[assignment]
-            min_repeatability = int(match["min"])
-            max_repeatability = int(match["max"])
-            if min_repeatability > max_repeatability:
-                error_message = (
-                    f"The min repeatability {min_repeatability} must not be greater than the max "
-                    f"repeatability {max_repeatability} "
-                )
-                raise ValueError(error_message)
+            repeatability = parse_repeatability(repeatability_tokens[0].value)
+        else:
+            repeatability = None
+        # todo: what to do with the repeatability?
+        return self._package_async(package_key_token)
+
+    async def _package_async(self, package_key_token: Token) -> Tree:
         resolved_package = await self._resolver.get_condition_expression(package_key_token.value)
         if not resolved_package.has_been_resolved_successfully():
-            raise NotImplementedError(f"The package '{tokens[0].value}' could not be resolved by {self._resolver}")
+            raise NotImplementedError(
+                f"The package '{package_key_token.value}' could not be resolved by {self._resolver}"
+            )
         # the package_expression is not None because that's the definition of "has been resolved successfully"
-        return parse_condition_expression_to_tree(resolved_package.package_expression)  # type:ignore[arg-type]
+        tree_result = parse_condition_expression_to_tree(resolved_package.package_expression)  # type:ignore[arg-type]
+        return tree_result
