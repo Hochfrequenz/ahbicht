@@ -4,6 +4,7 @@ from unittest.mock import AsyncMock
 
 import inject
 import pytest  # type:ignore[import]
+import pytest_asyncio  # type:ignore[import]
 
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.evaluation_results import RequirementConstraintEvaluationResult
@@ -35,7 +36,7 @@ class TestRequirementConstraintEvaluation:
         "504": Hint(condition_key="504", hint="[504] Hinweis:bar"),
     }
 
-    @pytest.fixture()
+    @pytest_asyncio.fixture()
     def setup_and_teardown_injector(self):
         inject.clear_and_configure(
             lambda binder: binder.bind(HintsProvider, AsyncMock(wraps=HintsProvider)).bind(
@@ -110,11 +111,13 @@ class TestRequirementConstraintEvaluation:
                 SyntaxError,
                 """Please make sure that:
              * all conditions have the form [INT]
+             * all packages have the form [INTP]
              * no conditions are empty
              * all compositions are combined by operators 'U'/'O'/'X' or without an operator
              * all open brackets are closed again and vice versa
              """,
             ),
+            # todo: implement wiederholbarkeiten
             pytest.param(
                 "[1]U[2]",
                 {"1": "no_boolean", "2": ConditionFulfilledValue.FULFILLED},

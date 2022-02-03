@@ -35,7 +35,7 @@ def _compress_condition_keys_only(data: dict) -> dict:
     """
     # this has been found heuristically. There's no way to explain it, just follow the test cases.
     # there's probably a much easier way, f.e. by using a separate token schema.
-    if "tree" in data and data["tree"] is not None and data["tree"]["type"] == "condition_key":
+    if "tree" in data and data["tree"] is not None and data["tree"]["type"] == "condition":
         return {
             "token": {"value": data["tree"]["children"][0]["token"]["value"], "type": "condition_key"},
             "tree": None,

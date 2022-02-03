@@ -84,6 +84,14 @@ ahbicht.expressions.hints\_provider module
    :undoc-members:
    :show-inheritance:
 
+ahbicht.expressions.package\_expansion module
+---------------------------------------------
+
+.. automodule:: ahbicht.expressions.package_expansion
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 ahbicht.expressions.requirement\_constraint\_expression\_evaluation module
 --------------------------------------------------------------------------
 

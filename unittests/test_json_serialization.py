@@ -32,6 +32,8 @@ from ahbicht.mapping_results import (
 
 T = TypeVar("T")
 
+pytestmark = pytest.mark.asyncio
+
 
 def _test_serialization_roundtrip(serializable_object: T, schema: Schema, expected_json_dict: dict) -> T:
     """
@@ -108,6 +110,7 @@ class TestJsonSerialization:
                         "3": ConditionFulfilledValue.UNFULFILLED,
                         "4": ConditionFulfilledValue.UNKNOWN,
                     },
+                    packages={"123P": "[17] U [18]"},
                     id=uuid.UUID("d106f335-f663-4d14-9636-4f43a883ad26"),
                 ),
                 {
@@ -117,6 +120,7 @@ class TestJsonSerialization:
                         "901": {"format_constraint_fulfilled": False, "error_message": "something is wrong"},
                     },
                     "requirement_constraints": {"1": "NEUTRAL", "2": "FULFILLED", "3": "UNFULFILLED", "4": "UNKNOWN"},
+                    "packages": {"123P": "[17] U [18]"},
                     "id": "d106f335-f663-4d14-9636-4f43a883ad26",
                 },
             ),

@@ -67,7 +67,7 @@ class TestMixedSyncAsyncEvaluation:
             .bind(HintsProvider, DictBasedHintsProvider({}))
         )
         evaluation_input = "something has to be here but it's not important what"
-        tree = parse_expression_including_unresolved_subexpressions(expression)
+        tree = await parse_expression_including_unresolved_subexpressions(expression)
         evaluation_result = await evaluate_ahb_expression_tree(tree, entered_input=evaluation_input)
         assert (
             evaluation_result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled

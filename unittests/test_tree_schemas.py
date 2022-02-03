@@ -1,9 +1,8 @@
 # type:ignore
-# MyPy will (reproducable) run in an infinite loop if you remove the type ignore in the test! We literally killed it 💀
+# MyPy will (reproducible) run in an infinite loop if you remove the type ignore in the test! We literally killed it 💀
 """
 Tests that the parsed trees are JSON serializable
 """
-
 
 import pytest  # type:ignore[import]
 from lark import Token, Tree
@@ -15,6 +14,8 @@ from ahbicht.json_serialization.concise_condition_key_tree_schema import Concise
 from ahbicht.json_serialization.concise_tree_schema import ConciseTreeSchema
 from ahbicht.json_serialization.tree_schema import TreeSchema
 from unittests.test_json_serialization import _test_serialization_roundtrip  # type:ignore[import]
+
+pytestmark = pytest.mark.asyncio
 
 
 class TestTreeSchemas:
@@ -209,10 +210,10 @@ class TestTreeSchemas:
             ),
         ],
     )
-    def test_concise_tree_serialization_behaviour_for_ahb_expressions(
+    async def test_concise_tree_serialization_behaviour_for_ahb_expressions(
         self, ahb_expression: str, expected_compact_json_dict: dict
     ):
-        tree = parse_expression_including_unresolved_subexpressions(ahb_expression)
+        tree = await parse_expression_including_unresolved_subexpressions(ahb_expression)
         json_dict = ConciseTreeSchema().dump(tree)
         assert json_dict == expected_compact_json_dict
 
@@ -445,9 +446,9 @@ class TestTreeSchemas:
             ),
         ],
     )
-    def test_concise_condition_key_tree_serialization_behaviour_for_ahb_expressions(
+    async def test_concise_condition_key_tree_serialization_behaviour_for_ahb_expressions(
         self, expression: str, expected_compact_json_dict: dict
     ):
-        tree = parse_expression_including_unresolved_subexpressions(expression)
+        tree = await parse_expression_including_unresolved_subexpressions(expression)
         json_dict = ConciseConditionKeyTreeSchema().dump(tree)
         assert json_dict == expected_compact_json_dict
