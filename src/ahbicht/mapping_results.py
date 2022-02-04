@@ -144,10 +144,4 @@ def parse_repeatability(repeatability_string: str) -> Repeatability:
         raise ValueError(f"The given string '{repeatability_string}' could not be parsed as repeatability")
     min_repeatability = int(match["min"])
     max_repeatability = int(match["max"])
-    if min_repeatability > max_repeatability:
-        error_message = (
-            f"The min repeatability {min_repeatability} must not be greater than the max "
-            f"repeatability {max_repeatability} "
-        )
-        raise ValueError(error_message)
     return Repeatability(min_occurrences=min_repeatability, max_occurrences=max_repeatability)

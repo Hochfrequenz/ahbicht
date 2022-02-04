@@ -59,7 +59,7 @@ class TestPackageResolver:
     @pytest.mark.parametrize(
         "unexpanded_expression, error_message",
         [
-            pytest.param("[123P8..7]", "The min repeatability 8 must not be greater than the max repeatability 7"),
+            pytest.param("[123P8..7]", "0≤n<m is not fulfilled for n=8, m=7"),
         ],
     )
     async def test_invalid_package_repeatability(
