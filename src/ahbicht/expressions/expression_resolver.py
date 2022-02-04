@@ -102,12 +102,13 @@ class PackageExpansionTransformer(Transformer):
         """
         package_key_token = [t for t in tokens if t.type == "PACKAGE_KEY"][0]
         repeatability_tokens = [t for t in tokens if t.type == "REPEATABILITY"]
+        # pylint: disable=unused-variable
+        # we parse the repeatability but we don't to anything with it, yet.
         repeatability: Optional[Repeatability]
         if len(repeatability_tokens) == 1:
             repeatability = parse_repeatability(repeatability_tokens[0].value)
         else:
             repeatability = None
-        # todo: what to do with the repeatability?
         return self._package_async(package_key_token)
 
     async def _package_async(self, package_key_token: Token) -> Tree:
