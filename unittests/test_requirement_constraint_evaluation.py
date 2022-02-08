@@ -161,7 +161,7 @@ class TestRequirementConstraintEvaluation:
             "ahbicht.expressions.requirement_constraint_expression_evaluation.ConditionNodeBuilder.requirement_content_evaluation_for_all_condition_keys",
             return_value=input_values,
         )
-        with pytest.raises(expected_error) as excinfo:
+        with pytest.raises(expected_error) as excinfo:  # type: ignore[var-annotated]
             await requirement_constraint_evaluation(condition_expression)
 
         assert expected_error_message in str(excinfo.value)
