@@ -1,3 +1,4 @@
+# type:ignore[misc]
 import pytest  # type:ignore[import]
 from lark import Token, Tree
 
@@ -77,7 +78,7 @@ class TestExpressionResolver:
             ),
         ],
     )
-    async def test_expression_resolver_valid(self, expression: str, expected_tree: Tree):
+    async def test_expression_resolver_valid(self, expression: str, expected_tree: Tree[Token]):
         actual_tree = await parse_expression_including_unresolved_subexpressions(expression)
         assert actual_tree == expected_tree
 
