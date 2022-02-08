@@ -1,3 +1,4 @@
+# type:ignore[misc]
 """ Tests for the parsing of the ahb_expressions as they appear in the AHBs. """
 
 import pytest  # type:ignore[import]
@@ -325,7 +326,7 @@ class TestAhbExpressionParser:
         ],
     )
     def test_parse_valid_ahb_expression_to_to_single_requirement_indicator_expressions(
-        self, ahb_expression: str, expected_tree: Tree
+        self, ahb_expression: str, expected_tree: Tree[Token]
     ):
         """
         Tests that valid ahb expressions are parsed as expected.

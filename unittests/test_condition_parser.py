@@ -1,3 +1,4 @@
+# type:ignore[misc]
 """ Tests for the parsing of the conditions tests (Mussfeldprüfung) """
 
 import pytest  # type:ignore[import]
@@ -146,7 +147,7 @@ class TestConditionParser:
             ),
         ],
     )
-    def test_parse_valid_expression_to_tree(self, expression: str, expected_tree: Tree):
+    def test_parse_valid_expression_to_tree(self, expression: str, expected_tree: Tree[Token]):
         """
         Tests that valid expressions containing operators "O"/"U"/"X", different whitespaces
         and no brackets are parsed as expected.

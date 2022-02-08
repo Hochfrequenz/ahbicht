@@ -5,11 +5,11 @@ The goal is to separate the requirement indicator (i.e. Muss, Soll, Kann, X, O, 
 and also several modal marks expressions if there are more than one.
 """
 
-from lark import Lark, Tree
+from lark import Lark, Token, Tree
 from lark.exceptions import UnexpectedCharacters, UnexpectedEOF
 
 
-def parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_expression: str) -> Tree:
+def parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_expression: str) -> Tree[Token]:
     """
     Parse a given expression as it appears in the AHB with the help of the here defined grammar to a lark tree.
     The goal is to separate the requirement indicator (i.e. Muss/M Soll/S Kann/K, X, O, U) from the condition expression
