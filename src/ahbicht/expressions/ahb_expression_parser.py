@@ -5,11 +5,11 @@ The goal is to separate the requirement indicator (i.e. Muss, Soll, Kann, X, O, 
 and also several modal marks expressions if there are more than one.
 """
 
-from lark import Lark, Tree
+from lark import Lark, Token, Tree
 from lark.exceptions import UnexpectedCharacters, UnexpectedEOF
 
 
-def parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_expression: str) -> Tree:
+def parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_expression: str) -> Tree[Token]:
     """
     Parse a given expression as it appears in the AHB with the help of the here defined grammar to a lark tree.
     The goal is to separate the requirement indicator (i.e. Muss/M Soll/S Kann/K, X, O, U) from the condition expression
@@ -32,8 +32,9 @@ def parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_express
     PREFIX_OPERATOR: "X"i | "O"i | "U"i
     MODAL_MARK: /M(uss)?|S(oll)?|K(ann)?/i
     // Matches if it looks like a condition expression, but does not yet check if it is a syntactically valid one:
-    CONDITION_EXPRESSION: /(?!\BU\B)[\[\]\(\)U∧O∨X⊻\d\s]+/i
+    CONDITION_EXPRESSION: /(?!\BU\B)[\[\]\(\)U∧O∨X⊻\d\sP]+/i
     """
+    # todo: implement wiederholbarkeiten
     # Regarding the negative lookahead in the condition expression regex see examples https://regex101.com/r/6fFHD4/1
     # and CTRL+F for "Mus[2]" in the unittest that fails if you remove the lookahead.
     parser = Lark(grammar, start="ahb_expression")

@@ -3,6 +3,7 @@ from pathlib import Path
 
 import inject
 import pytest  # type:ignore[import]
+import pytest_asyncio  # type:ignore[import]
 
 from ahbicht.condition_node_builder import ConditionNodeBuilder
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluationContext
@@ -40,7 +41,7 @@ class TestConditionNodeBuilder:
     _ufc_955 = UnevaluatedFormatConstraint(condition_key="955")
     _ufc_907 = UnevaluatedFormatConstraint(condition_key="907")
 
-    @pytest.fixture()
+    @pytest_asyncio.fixture()
     def setup_and_teardown_injector(self):
         _hints_provider = JsonFileHintsProvider(
             TestConditionNodeBuilder._edifact_format,

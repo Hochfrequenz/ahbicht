@@ -2,6 +2,7 @@
 
 import inject
 import pytest  # type:ignore[import]
+import pytest_asyncio  # type:ignore[import]
 
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
 from ahbicht.edifact import EdifactFormat, EdifactFormatVersion
@@ -58,7 +59,7 @@ class TestFormatConstraintExpressionEvaluation:
         "904": EvaluatedFormatConstraint(format_constraint_fulfilled=False, error_message="904 muss erfüllt sein"),
     }
 
-    @pytest.fixture()
+    @pytest_asyncio.fixture()
     def setup_and_teardown_injector(self):
         inject.clear_and_configure(lambda binder: binder.bind(FcEvaluator, DummyFcEvaluator()))
         yield

@@ -4,16 +4,17 @@ the parsing library lark: https://lark-parser.readthedocs.io/en/latest/
 
 The used terms are defined in the README_conditions.md.
 """
+# pylint:disable=cyclic-import
 from typing import List, Union
 
-from lark import Lark, Tree
+from lark import Lark, Token, Tree
 from lark.exceptions import UnexpectedCharacters, UnexpectedEOF
 
 from ahbicht.condition_node_distinction import ConditionNodeType, derive_condition_node_type
 from ahbicht.content_evaluation.categorized_key_extract import CategorizedKeyExtract
 
 
-def parse_condition_expression_to_tree(condition_expression: str) -> Tree:
+def parse_condition_expression_to_tree(condition_expression: str) -> Tree[Token]:
     """
     Parse a given condition expression with the help of the here defined grammar to a lark tree.
     The grammar starts with condition keys, e.g. [45] and combines them with
@@ -34,15 +35,18 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree:
                 | expression "∧" expression -> and_composition
                 | expression expression -> then_also_composition
                 | brackets
-                | condition_key
+                | package
+                | condition
     ?brackets: "(" expression ")"
-    condition_key: "[" INT "]"
-
+    package: "[" PACKAGE_KEY "]" // a rule for packages
+    condition: "[" CONDITION_KEY "]" // a rule for condition keys
+    CONDITION_KEY: INT // a TERMINAL for all the remaining ints (lower priority)
+    PACKAGE_KEY: INT "P" // a TERMINAL for all INTs followed by "P" (high priority)
     %import common.INT
     %import common.WS
     %ignore WS  // WS = whitespace
     """
-
+    # todo: add wiederholbarkeiten https://github.com/Hochfrequenz/ahbicht/issues/96
     parser = Lark(grammar, start="expression")
     try:
         parsed_tree = parser.parse(condition_expression)
@@ -50,12 +54,13 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree:
         raise SyntaxError(
             """Please make sure that:
              * all conditions have the form [INT]
+             * all packages have the form [INTP]
              * no conditions are empty
              * all compositions are combined by operators 'U'/'O'/'X' or without an operator
              * all open brackets are closed again and vice versa
              """
         ) from eof
-
+    # todo: implement wiederholbarkeiten
     return parsed_tree
 
 
@@ -77,7 +82,13 @@ def extract_categorized_keys_from_tree(
         condition_keys = [
             x.value  # type:ignore[attr-defined]
             for x in tree_or_list.scan_values(
-                lambda token: token.type == "INT"  # type:ignore[union-attr]
+                lambda token: token.type == "CONDITION_KEY"  # type:ignore[union-attr]
+            )
+        ]
+        result.package_keys = [
+            x.value  # type:ignore[attr-defined]
+            for x in tree_or_list.scan_values(
+                lambda token: token.type == "PACKAGE_KEY"  # type:ignore[union-attr]
             )
         ]
     else:
@@ -90,8 +101,6 @@ def extract_categorized_keys_from_tree(
             result.hint_keys.append(condition_key)
         elif condition_node_type is ConditionNodeType.FORMAT_CONSTRAINT:
             result.format_constraint_keys.append(condition_key)
-        elif condition_node_type is ConditionNodeType.PACKAGE:
-            result.package_keys.append(condition_key)
         else:
             raise NotImplementedError(f"The type '{condition_node_type}' is not implemented yet.")
     if sanitize:
@@ -99,10 +108,18 @@ def extract_categorized_keys_from_tree(
     return result
 
 
-def extract_categorized_keys(condition_expression: str) -> CategorizedKeyExtract:
+async def extract_categorized_keys(condition_expression: str, resolve_packages: bool = False) -> CategorizedKeyExtract:
     """
     Parses the given condition expression and returns CategorizedKeyExtract as a template for content
     evaluation.
     """
-    tree = parse_condition_expression_to_tree(condition_expression)
+    # because of
+    # ImportError: cannot import name 'parse_condition_expression_to_tree' from partially initialized module
+    # 'ahbicht.expressions.condition_expression_parser' (most likely due to a circular import)
+    # pylint: disable=import-outside-toplevel
+    from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
+
+    tree = await parse_expression_including_unresolved_subexpressions(
+        condition_expression, resolve_packages=resolve_packages
+    )
     return extract_categorized_keys_from_tree(tree, sanitize=True)

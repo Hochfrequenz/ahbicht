@@ -3,7 +3,7 @@ This module contains classes that are returned by mappers, meaning they contain 
 """
 from typing import Optional
 
-import attr
+import attrs
 from marshmallow import Schema, fields, post_load
 from marshmallow_enum import EnumField  # type:ignore[import]
 
@@ -11,22 +11,23 @@ from ahbicht.edifact import EdifactFormat
 
 
 # pylint:disable=too-few-public-methods
-@attr.s(auto_attribs=True, kw_only=True)
+@attrs.define(auto_attribs=True, kw_only=True)
 class ConditionKeyConditionTextMapping:
     """
     maps a condition from a specified EDIFACT format onto a text as it is found in the AHB.
     """
 
-    edifact_format: EdifactFormat = attr.ib(
-        validator=attr.validators.instance_of(EdifactFormat)
+    edifact_format: EdifactFormat = attrs.field(
+        validator=attrs.validators.instance_of(EdifactFormat)
     )  #: the format in which the condition is used; f.e. 'UTILMD'
-    condition_key: str = attr.ib(
-        validator=attr.validators.instance_of(str)
+    condition_key: str = attrs.field(
+        validator=attrs.validators.instance_of(str)
     )  #: the key of the condition without square brackets; f.e. '78'
-    condition_text: Optional[str] = attr.ib(
-        default=None
-        # pylint:disable=line-too-long
-    )  #: the description of the condition as in the AHB; None if unknown; f.e. 'Wenn SG4 STS+7++E02 (Transaktionsgrund: Einzug/Neuanlage)  nicht vorhanden'.
+    condition_text: Optional[str] = attrs.field(default=None)
+    """
+    the description of the condition as in the AHB; None if unknown;
+    f.e. 'Wenn SG4 STS+7++E02 (Transaktionsgrund: Einzug/Neuanlage)  nicht vorhanden'.
+    """
 
 
 class ConditionKeyConditionTextMappingSchema(Schema):
@@ -48,22 +49,28 @@ class ConditionKeyConditionTextMappingSchema(Schema):
 
 
 # pylint:disable=too-few-public-methods
-@attr.s(auto_attribs=True, kw_only=True)
+@attrs.define(auto_attribs=True, kw_only=True)
 class PackageKeyConditionExpressionMapping:
     """
     maps a package key from a specified EDIFACT format onto a (not yet parsed) condition expression as it is found in
     the AHB.
     """
 
-    edifact_format: EdifactFormat = attr.ib(
-        validator=attr.validators.instance_of(EdifactFormat)
+    edifact_format: EdifactFormat = attrs.field(
+        validator=attrs.validators.instance_of(EdifactFormat)
     )  #: the format in which the package is used; f.e. 'UTILMD'
-    package_key: str = attr.ib(
-        validator=attr.validators.instance_of(str)
+    package_key: str = attrs.field(
+        validator=attrs.validators.instance_of(str)
     )  #: the key of the package without square brackets but with trailing P; f.e. '10P'
-    package_expression: Optional[str] = attr.ib(
+    package_expression: Optional[str] = attrs.field(
         default=None
     )  #: the expression for which the package is a shortcut; None if unknown f.e. '[20] ∧ [244]'
+
+    def has_been_resolved_successfully(self) -> bool:
+        """
+        return true iff the package has been resolved successfully
+        """
+        return self.package_expression is not None
 
 
 class PackageKeyConditionExpressionMappingSchema(Schema):

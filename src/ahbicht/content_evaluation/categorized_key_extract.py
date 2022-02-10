@@ -1,11 +1,10 @@
 """
 Contains the CategorizedKeyExtract and a schema for (de)serialization.
 """
-
 from itertools import combinations, product
 from typing import List
 
-import attr
+import attrs
 from marshmallow import Schema, fields, post_load
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
@@ -13,7 +12,7 @@ from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, Evaluat
 
 
 # pylint: disable=too-few-public-methods, no-self-use, unused-argument
-@attr.s(auto_attribs=True)
+@attrs.define(auto_attribs=True)
 class CategorizedKeyExtract:
     """
     A Categorized Key Extract contains those condition keys that are contained inside an expression.
@@ -22,10 +21,34 @@ class CategorizedKeyExtract:
     'Which information do I need to provide in a ContentEvaluationResult in order to evaluate a given expression?'
     """
 
-    hint_keys: List[str]  #: list of keys for which you'll need to provide hint texts in a ContentEvaluationResult
-    format_constraint_keys: List[str]  #: list of keys for which you'll need to provide EvaluatedFormatConstraints
-    requirement_constraint_keys: List[str]  #: list of keys for which you'll need to provide ConditionFulfilledValues
-    package_keys: List[str]  #: list of packages that need to be resolved (additionally)
+    #: list of keys for which you'll need to provide hint texts in a ContentEvaluationResult
+    hint_keys: List[str] = attrs.field(
+        validator=attrs.validators.deep_iterable(
+            member_validator=attrs.validators.instance_of(str), iterable_validator=attrs.validators.instance_of(list)
+        )
+    )
+    #: list of keys for which you'll need to provide EvaluatedFormatConstraints
+    format_constraint_keys: List[str] = attrs.field(
+        validator=attrs.validators.deep_iterable(
+            member_validator=attrs.validators.instance_of(str), iterable_validator=attrs.validators.instance_of(list)
+        )
+    )
+
+    #: list of keys for which you'll need to provide ConditionFulfilledValues
+    requirement_constraint_keys: List[str] = attrs.field(
+        validator=attrs.validators.deep_iterable(
+            member_validator=attrs.validators.instance_of(str), iterable_validator=attrs.validators.instance_of(list)
+        )
+    )
+
+    #: list of packages that need to be resolved (additionally)
+    package_keys: List[str] = attrs.field(
+        validator=attrs.validators.deep_iterable(
+            member_validator=attrs.validators.matches_re(r"^\d+P$"),
+            iterable_validator=attrs.validators.instance_of(list)
+            # todo: implement wiederholbarkeiten
+        )
+    )
 
     def _remove_duplicates(self) -> None:
         """
@@ -91,7 +114,7 @@ class CategorizedKeyExtract:
             possible_rcs = [(("rc_dummy", ConditionFulfilledValue.NEUTRAL),)]  # type:ignore[assignment]
         for fc_rc_tuple in product(possible_fcs, possible_rcs):
             # This product would have length 0 if one of the "factors" had length 0.
-            # In order to prevent 'results' to be empty if either the RC or FC list is empty, we added the the 'dummy's.
+            # In order to prevent 'results' to be empty if either the RC or FC list is empty, we added the 'dummy's.
             result = ContentEvaluationResult(
                 hints={hint_key: f"Hinweis {hint_key}" for hint_key in self.hint_keys},
                 # kvp is short for key value pair
@@ -101,6 +124,7 @@ class CategorizedKeyExtract:
                     if fc_kvp[0] != "fc_dummy"
                 },
                 requirement_constraints={rc_kvp[0]: rc_kvp[1] for rc_kvp in fc_rc_tuple[1] if rc_kvp[0] != "rc_dummy"},
+                packages={},  # is always empty because looping over all packages does not make sense in this context
             )
             results.append(result)
         return results

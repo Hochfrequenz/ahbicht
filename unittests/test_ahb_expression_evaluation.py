@@ -4,6 +4,7 @@ from unittest.mock import AsyncMock
 
 import inject
 import pytest  # type:ignore[import]
+import pytest_asyncio  # type:ignore[import]
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.evaluator_factory import create_and_inject_hardcoded_evaluators
@@ -22,7 +23,7 @@ pytestmark = pytest.mark.asyncio
 class TestAHBExpressionEvaluation:
     """Test for the evaluation of the ahb expression conditions tests (Mussfeldprüfung)"""
 
-    @pytest.fixture()
+    @pytest_asyncio.fixture()
     def setup_and_teardown_injector(self):
         inject.clear_and_configure(
             lambda binder: binder.bind(HintsProvider, AsyncMock(wraps=HintsProvider)).bind(
@@ -161,6 +162,7 @@ class TestAHBExpressionEvaluation:
                 SyntaxError,
                 """Please make sure that:
              * all conditions have the form [INT]
+             * all packages have the form [INTP]
              * no conditions are empty
              * all compositions are combined by operators 'U'/'O'/'X' or without an operator
              * all open brackets are closed again and vice versa
@@ -180,7 +182,7 @@ class TestAHBExpressionEvaluation:
 
         parsed_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(expression)
 
-        with pytest.raises(expected_error) as excinfo:
+        with pytest.raises(expected_error) as excinfo:  # type: ignore[var-annotated]
             await evaluate_ahb_expression_tree(
                 parsed_tree, entered_input=None  # type:ignore[arg-type] # ok because error test
             )
@@ -202,6 +204,7 @@ class TestAHBExpressionEvaluation:
                         "3": ConditionFulfilledValue.UNFULFILLED,
                     },
                     id=uuid.UUID("d106f335-f663-4d14-9636-4f43a883ad26"),
+                    packages={},
                 ),
             )
         ],
@@ -210,7 +213,7 @@ class TestAHBExpressionEvaluation:
         self, ahb_expression: str, content_evaluation_result: ContentEvaluationResult
     ):
         tree_a = parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_expression)
-        tree_b = parse_expression_including_unresolved_subexpressions(ahb_expression)
+        tree_b = await parse_expression_including_unresolved_subexpressions(ahb_expression)
         # it's OK/expected that the trees look different depending on whether sub expressions are resolved or not
         # but in any case the evaluation result should look the same
         create_and_inject_hardcoded_evaluators(content_evaluation_result)

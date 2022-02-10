@@ -212,6 +212,8 @@ Definition of terms
 +------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
 | EvaluatedComposition                     | is returned after a composition of two nodes is evaluated                                                                                                                                                                                                                                                                                                       |                                                                                                         |
 +------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
+| Package Resolver                         | a package resolver is a class that replaces package nodes in a tree with a sub tree that is derived from a package definition. Replacing package nodes with sub trees is referred to as "package expansion"                                                                                                                                                     | Example: "[123P]" is replaced with a tree for "[5]U[6]O[7]"                                             |
++------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
 | neutral                                  | Hints and UnevaluatedFormat Constraints are seen as neutral as they don't have a condition to be fulfilled or unfulfilled and should not change the requirement outcome. See truth table below.                                                                                                                                                                 |                                                                                                         |
 +------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
 | unknown                                  | If the condition can be fulfilled but we don't know (yet) if it is or not. See truth table below.                                                                                                                                                                                                                                                               | "Wenn vorhanden"                                                                                        |
@@ -229,7 +231,7 @@ more than one condition. If it is only a single condition or just a
 requirement indicator, the respective tree consists of just this token
 and the result equals the input.
 
-.. figure:: src/ahbicht/expressions/Condition_Structure_with_more_than_one_condition.png
+.. figure:: src/ahbicht/expressions/condition_structure_with_more_than_one_condition.png
    :alt: grafik
 
 The raw and updated data for this diagram can be found in the
@@ -238,6 +240,8 @@ repository <https://github.com/Hochfrequenz/draw_io_charts/tree/main/wimbee/cond
 and edited under
 `app.diagrams.net <https://app.diagrams.net/#HHochfrequenz%2Fdraw_io_charts%2Fmain%2Fwimbee%2Fconditions%2FCondition_Structure_with_more_than_one_condition.drawio>`__
 with your GitHub Account.
+
+There is also an `UML Diagram <docs/_static/ahbicht_uml.svg>`_ available (last updated 2022-01-29).
 
 Truth tables
 ~~~~~~~~~~~~
@@ -385,61 +389,10 @@ Contributing
 You are very welcome to contribute to this repository by opening a pull
 request against the main branch.
 
-How to use this Repository on Your Machine
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+How to use this Repository on Your Machine / Local Setup
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This introduction assumes that you have tox installed already (see
-`installation
-instructions <https://tox.readthedocs.io/en/latest/install.html>`__) and
-that a ``.toxbase`` environment has been created.
-
-If this is the case, clone this repository and create the ``dev``
-environment on your machine.
-
-.. code:: bash
-
-   tox -e dev
-
-How to use with PyCharm
-^^^^^^^^^^^^^^^^^^^^^^^
-
-1. Create a new project using existing sources with your local working
-   copy of this repository as root directory. Choose the path
-   ``your_repo/.tox/dev/`` as path of the “previously configured
-   interpreter”.
-2. Set the default `test runner of your
-   project <https://www.jetbrains.com/help/pycharm/choosing-your-testing-framework.html>`__
-   to pytest.
-3. Set the `working directory of the unit
-   tests <https://www.jetbrains.com/help/pycharm/creating-run-debug-configuration-for-tests.html>`__
-   to the project root (instead of the unittest directory)
-
-How to use with VS Code
-^^^^^^^^^^^^^^^^^^^^^^^
-
-1. Open the folder with VS Code.
-2. **Select the python interpreter** which is created by tox. Open the
-   command pallett with ``CTRL + P`` and type
-   ``Python: Select Interpreter``. Select the interpreter which is
-   placed in ``.tox/dev/Scripts/python.exe`` under Windows or
-   ``.tox/dev/bin/python`` under Linux and macOS.
-3. **Setup pytest and pylint**. Therefore we open the file
-   ``.vscode/settings.json`` which should be automatically generated
-   during the interpreter setup. Insert the following lines into the
-   settings:
-
-.. code:: json
-
-       "python.testing.unittestEnabled": false,
-       "python.testing.nosetestsEnabled": false,
-       "python.testing.pytestEnabled": true,
-       "pythonTestExplorer.testFramework": "pytest",
-       "python.testing.pytestArgs": [
-           "unittests"
-       ],
-       "python.linting.pylintEnabled": true
-
-4. Enjoy 🤗
+Please follow the instructions in our `Python Template Repository <https://github.com/Hochfrequenz/python_template_repository#how-to-use-this-repository-on-your-machine>`_.
 
 .. |Unittests status badge| image:: https://github.com/Hochfrequenz/ahbicht/workflows/Unittests/badge.svg
 .. |Coverage status badge| image:: https://github.com/Hochfrequenz/ahbicht/workflows/Coverage/badge.svg
