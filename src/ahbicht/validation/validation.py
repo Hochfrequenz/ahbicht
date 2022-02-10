@@ -1,5 +1,5 @@
 """
-This module provides the functions to validate segment group, segments and dataelements.
+This module provides the functions to validate segment group, segments and data elements.
 """
 
 from typing import Dict, Optional
@@ -34,8 +34,7 @@ async def validate_root_segment_level(
     Validates the root segment group or segment and its children by handing them
     over to specialized functions for each kind.
     :param segment_level: the segment group or segment that should be validated
-    :param soll_is_required: true (default) if SOLL should be handled like MUSS,
-                             false if it should be handled like KANN
+    :param soll_is_required: true (default) if SOLL should be handled like MUSS, false if it should be handled like KANN
     :return: Validation Result of the segment or segment group including its children
     """
     if isinstance(segment_level, SegmentGroup):
@@ -57,8 +56,7 @@ async def validate_segment_group(
     Validates a segment group and its containing segment groups and segments.
     :param segment_group: the segment_group that should be validated
     :param higher_segment_group_requirement: the requirement of the segment_group's segment_group, e.g. IS_REQUIRED
-    :param soll_is_required: true (default) if SOLL should be handled like MUSS,
-                             false if it should be handled like KANN
+    :param soll_is_required: true (default) if SOLL should be handled like MUSS, false if it should be handled like KANN
     :param validation_result: List for collecting all validation results
     :return: Validation Result of the Dataelement
     """
@@ -110,8 +108,7 @@ async def validate_segment(
     Validates a segment group and its containing dataelements
     :param segment: the segment that should be validated
     :param segment_group_requirement: the requirement of the segment's segment_group, e.g. IS_REQUIRED
-    :param soll_is_required: true (default) if SOLL should be handled like MUSS,
-                             false if it should be handled like KANN
+    :param soll_is_required: true (default) if SOLL should be handled like MUSS, false if it should be handled like KANN
     :param validation_result: List for collecting all validation results
     :return: Validation Result of the segment
     """
@@ -182,8 +179,7 @@ async def validate_dataelement(
     Validates data elements by handing them over to specialized functions for freetext or value pool dataelements.
     :param dataelement: the dataelement that should be validated
     :param segment_requirement: the requirement of the dataelement's segment, e.g. IS_REQUIRED
-    :param soll_is_required: true (default) if SOLL should be handled like MUSS,
-                             false if it should be handled like KANN
+    :param soll_is_required: true (default) if SOLL should be handled like MUSS, false if it should be handled like KANN
     :return: Validation Result of the Data element
     """
     if isinstance(dataelement, DataElementFreeText):
@@ -280,7 +276,7 @@ async def validate_dataelement_valuepool(
     return DataElementValidationResult(
         requirement_validation=requirement_validation_dataelement,
         format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
-        hints=hints,
+        hints=hints,  # todo: hints might be referenced before assignment
         possible_values=possible_values,
     )
 
