@@ -149,8 +149,7 @@ async def get_segment_level_requirement_validation_value(
     also depending on a higher segment group requirement if present.
     :param segment_level: the segment or segment group that should be validated
     :param higher_segment_group_requirement: the requirement of the segment level's segment group, e.g. IS_REQUIRED
-    :param soll_is_required: true (default) if SOLL should be handled like MUSS,
-                             false if it should be handled like KANN
+    :param soll_is_required: true (default) if SOLL should be handled like MUSS, false if it should be handled like KANN
     :return: Validation Result of the Dataelement
     """
 
