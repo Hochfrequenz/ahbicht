@@ -78,7 +78,7 @@ class ConditionFulfilledValue(str, Enum):
         return ConditionFulfilledValue.UNFULFILLED
 
 
-@attrs.define(auto_attribs=True, kw_only=True)
+@attrs.define(auto_attribs=True, kw_only=True, slots=False)
 class ConditionNode(ABC):
     """
     This abstract class specifies the nodes of the parsed tree.
@@ -95,7 +95,7 @@ class ConditionNode(ABC):
 TConditionNode = TypeVar("TConditionNode", bound=ConditionNode)
 
 
-@attrs.define(auto_attribs=True, kw_only=True)
+@attrs.define(auto_attribs=True, kw_only=True, slots=False)
 class ConditionKeyNodeMixin(ABC):
     """
     Nodes that have a condition key.
