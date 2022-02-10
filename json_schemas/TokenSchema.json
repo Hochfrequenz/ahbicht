@@ -90,13 +90,18 @@
                         "null"
                     ]
                 },
+                "packages": {
+                    "additionalProperties": {
+                        "title": "packages",
+                        "type": "string"
+                    },
+                    "title": "packages",
+                    "type": "object"
+                },
                 "requirement_constraints": {
                     "additionalProperties": {
                         "title": "requirement_constraints",
-                        "type": [
-                            "string",
-                            "null"
-                        ]
+                        "type": "string"
                     },
                     "title": "requirement_constraints",
                     "type": "object"

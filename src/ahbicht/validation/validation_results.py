@@ -3,7 +3,7 @@
 from abc import ABC
 from typing import List, Optional
 
-import attr
+import attrs
 from marshmallow import Schema, fields, post_load
 from marshmallow_enum import EnumField  # type:ignore[import]
 
@@ -12,36 +12,38 @@ from ahbicht.validation.validation_values import FormatValidationValue, Requirem
 # pylint: disable=too-few-public-methods, no-member, no-self-use, unused-argument
 
 
-@attr.s(auto_attribs=True, kw_only=True)
+@attrs.define(auto_attribs=True, kw_only=True)
 class ValidationResult(ABC):
     """Result of the validation"""
 
     #: In which requirement state is the field and is it filled or not?
     requirement_validation: RequirementValidationValue
     #: Collected hints
-    hints: Optional[str] = attr.ib(default=None)
+    hints: Optional[str] = attrs.field(default=None)
 
 
-@attr.s(auto_attribs=True, kw_only=True)
+@attrs.define(auto_attribs=True, kw_only=True)
 class SegmentLevelValidationResult(ValidationResult):
     """Result of the validation of a segment or segment group"""
 
 
-@attr.s(auto_attribs=True, kw_only=True)
+@attrs.define(auto_attribs=True, kw_only=True)
 class DataElementValidationResult(ValidationResult):
     """Result of the validation of a dataelement"""
 
     #: Is the format constraint fulfilled or not?
-    format_validation: FormatValidationValue = attr.ib(validator=attr.validators.instance_of(FormatValidationValue))
+    format_validation: FormatValidationValue = attrs.field(
+        validator=attrs.validators.instance_of(FormatValidationValue)
+    )
     #: possible error message regarding the format
-    format_error_message: Optional[str] = attr.ib(default=None)
+    format_error_message: Optional[str] = attrs.field(default=None)
     #: possible qualifiers for value pool dataelements
-    possible_values: Optional[List[str]] = attr.ib(
+    possible_values: Optional[List[str]] = attrs.field(
         default=None,
-        validator=attr.validators.optional(
-            attr.validators.deep_iterable(
-                member_validator=attr.validators.instance_of(str),
-                iterable_validator=attr.validators.instance_of(list),
+        validator=attrs.validators.optional(
+            attrs.validators.deep_iterable(
+                member_validator=attrs.validators.instance_of(str),
+                iterable_validator=attrs.validators.instance_of(list),
             )
         ),
     )
