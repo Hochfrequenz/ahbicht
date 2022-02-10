@@ -17,7 +17,9 @@ from ahbicht.expressions.package_expansion import PackageResolver
 from ahbicht.mapping_results import Repeatability, parse_repeatability
 
 
-async def parse_expression_including_unresolved_subexpressions(expression: str, resolve_packages: bool = False) -> Tree:
+async def parse_expression_including_unresolved_subexpressions(
+    expression: str, resolve_packages: bool = False
+) -> Tree[Token]:
     """
     Parses expressions and resolves its subexpressions,
     for example condition_expressions in ahb_expressions or packages in condition_expressions.
@@ -39,7 +41,7 @@ async def parse_expression_including_unresolved_subexpressions(expression: str, 
     return resolved_expression_tree
 
 
-async def expand_packages(parsed_tree: Tree) -> Tree:
+async def expand_packages(parsed_tree: Tree) -> Tree[Token]:
     """
     Replaces all the "short" packages in parser_tree with the respective "long" condition expressions
     """
@@ -51,7 +53,7 @@ async def expand_packages(parsed_tree: Tree) -> Tree:
     return result
 
 
-async def _replace_sub_coroutines_with_awaited_results(tree: Union[Tree, Awaitable[Tree]]) -> Tree:
+async def _replace_sub_coroutines_with_awaited_results(tree: Union[Tree, Awaitable[Tree]]) -> Tree[Token]:
     """
     awaits all coroutines inside the tree and replaces the coroutines with their respective awaited result.
     returns an updated tree

@@ -11,7 +11,7 @@ from abc import ABC
 from enum import Enum
 from typing import Optional, TypeVar
 
-import attr
+import attrs
 
 # pylint: disable=too-few-public-methods
 from marshmallow import Schema, fields, post_load
@@ -78,7 +78,7 @@ class ConditionFulfilledValue(str, Enum):
         return ConditionFulfilledValue.UNFULFILLED
 
 
-@attr.s(auto_attribs=True, kw_only=True)
+@attrs.define(auto_attribs=True, kw_only=True, slots=False)
 class ConditionNode(ABC):
     """
     This abstract class specifies the nodes of the parsed tree.
@@ -86,8 +86,8 @@ class ConditionNode(ABC):
     is handled in the context of the compositions it is used in.
     """
 
-    conditions_fulfilled: ConditionFulfilledValue = attr.ib(
-        validator=attr.validators.instance_of(ConditionFulfilledValue)
+    conditions_fulfilled: ConditionFulfilledValue = attrs.field(
+        validator=attrs.validators.instance_of(ConditionFulfilledValue)
     )
 
 
@@ -95,23 +95,23 @@ class ConditionNode(ABC):
 TConditionNode = TypeVar("TConditionNode", bound=ConditionNode)
 
 
-@attr.s(auto_attribs=True, kw_only=True)
+@attrs.define(auto_attribs=True, kw_only=True, slots=False)
 class ConditionKeyNodeMixin(ABC):
     """
     Nodes that have a condition key.
     """
 
-    condition_key: str = attr.ib(validator=attr.validators.instance_of(str))
+    condition_key: str = attrs.field(validator=attrs.validators.instance_of(str))
 
 
-@attr.s(auto_attribs=True, kw_only=True)
+@attrs.define(auto_attribs=True, kw_only=True)
 class RequirementConstraint(ConditionNode, ConditionKeyNodeMixin):
     """
     Bedingung, with a requirement constraint, e.g. "falls SG2+IDE+CCI == EHZ"
     """
 
 
-@attr.s(auto_attribs=True, kw_only=True)
+@attrs.define(auto_attribs=True, kw_only=True)
 class Hint(ConditionNode, ConditionKeyNodeMixin):
     """
     A so called 'Hinweis', just a hint, even if it is worded like a condition,
@@ -119,10 +119,10 @@ class Hint(ConditionNode, ConditionKeyNodeMixin):
     """
 
     conditions_fulfilled: ConditionFulfilledValue = ConditionFulfilledValue.NEUTRAL
-    hint: str = attr.ib(validator=attr.validators.instance_of(str))  # an informatory text
+    hint: str = attrs.field(validator=attrs.validators.instance_of(str))  # an informatory text
 
 
-@attr.s(auto_attribs=True, kw_only=True)
+@attrs.define(auto_attribs=True, kw_only=True)
 class FormatConstraint(ConditionNode, ConditionKeyNodeMixin):
     """
     This class is the base class of all format constraints. FormatConstraints describe that data have to obey certain
@@ -131,7 +131,7 @@ class FormatConstraint(ConditionNode, ConditionKeyNodeMixin):
     """
 
 
-@attr.s(auto_attribs=True, kw_only=True)
+@attrs.define(auto_attribs=True, kw_only=True)
 class UnevaluatedFormatConstraint(FormatConstraint):
     """
     This class is the base class of all unevaluated format constraints. They are used in the context of the
@@ -141,7 +141,7 @@ class UnevaluatedFormatConstraint(FormatConstraint):
     conditions_fulfilled: ConditionFulfilledValue = ConditionFulfilledValue.NEUTRAL
 
 
-@attr.s(auto_attribs=True)
+@attrs.define(auto_attribs=True)
 class EvaluatedFormatConstraint:
     """
     This class is the base class of all evaluated format constraints. They are used in the context of the
@@ -149,8 +149,8 @@ class EvaluatedFormatConstraint:
     fulfilled or not.
     """
 
-    format_constraint_fulfilled: bool = attr.ib(validator=attr.validators.instance_of(bool))
-    error_message: Optional[str] = attr.ib(default=None)
+    format_constraint_fulfilled: bool = attrs.field(validator=attrs.validators.instance_of(bool))
+    error_message: Optional[str] = attrs.field(default=None)
 
 
 class EvaluatedFormatConstraintSchema(Schema):
@@ -173,14 +173,15 @@ class EvaluatedFormatConstraintSchema(Schema):
         return EvaluatedFormatConstraint(**data)
 
 
-# @attr.s(auto_attribs=True, kw_only=True)
+# @attrs.define(auto_attribs=True, kw_only=True)
 # class EvaluatableFormatConstraint(FormatConstraint):
 #     """
 #     This class is the base class of all evaluatable format constraints. They are used in the context of the
 #     data evaluation (_after_ the Mussfeldprüfung) and can be either True/False or None.
 #     """
 
-#     name: str = attr.ib(validator=attr.validators.instance_of(str))  # e.g. "MaLo-Prüfsummenprüfung" or "OBIS-Format"
+#     name: str = attrs.field(validator=attrs.validators.instance_of(str))
+# e.g. "MaLo-Prüfsummenprüfung" or "OBIS-Format"
 
 
 # ideas for format constraints:
@@ -190,12 +191,14 @@ class EvaluatedFormatConstraintSchema(Schema):
 # + date format constraint ("must obey 'yyyy-mm-dd'")
 
 
-@attr.s(auto_attribs=True, kw_only=True)
+@attrs.define(auto_attribs=True, kw_only=True)
 class EvaluatedComposition(ConditionNode):
     """
     Node which is returned after a composition of two nodes is evaluated.
     """
 
-    hint: Optional[str] = attr.ib(default=None)  # text from hints/notes
-    format_constraints_expression: Optional[str] = attr.ib(default=None)  # an expression that consists of (initially
+    hint: Optional[str] = attrs.field(default=None)  # text from hints/notes
+    format_constraints_expression: Optional[str] = attrs.field(
+        default=None
+    )  # an expression that consists of (initially
     # unevaluated) format constraints that the evaluated field needs to obey

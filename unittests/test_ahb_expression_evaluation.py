@@ -182,7 +182,7 @@ class TestAHBExpressionEvaluation:
 
         parsed_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(expression)
 
-        with pytest.raises(expected_error) as excinfo:
+        with pytest.raises(expected_error) as excinfo:  # type: ignore[var-annotated]
             await evaluate_ahb_expression_tree(
                 parsed_tree, entered_input=None  # type:ignore[arg-type] # ok because error test
             )

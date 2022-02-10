@@ -4,7 +4,7 @@ Contains the CategorizedKeyExtract and a schema for (de)serialization.
 from itertools import combinations, product
 from typing import List
 
-import attr
+import attrs
 from marshmallow import Schema, fields, post_load
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
@@ -12,7 +12,7 @@ from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, Evaluat
 
 
 # pylint: disable=too-few-public-methods, no-self-use, unused-argument
-@attr.s(auto_attribs=True)
+@attrs.define(auto_attribs=True)
 class CategorizedKeyExtract:
     """
     A Categorized Key Extract contains those condition keys that are contained inside an expression.
@@ -22,30 +22,30 @@ class CategorizedKeyExtract:
     """
 
     #: list of keys for which you'll need to provide hint texts in a ContentEvaluationResult
-    hint_keys: List[str] = attr.ib(
-        validator=attr.validators.deep_iterable(
-            member_validator=attr.validators.instance_of(str), iterable_validator=attr.validators.instance_of(list)
+    hint_keys: List[str] = attrs.field(
+        validator=attrs.validators.deep_iterable(
+            member_validator=attrs.validators.instance_of(str), iterable_validator=attrs.validators.instance_of(list)
         )
     )
     #: list of keys for which you'll need to provide EvaluatedFormatConstraints
-    format_constraint_keys: List[str] = attr.ib(
-        validator=attr.validators.deep_iterable(
-            member_validator=attr.validators.instance_of(str), iterable_validator=attr.validators.instance_of(list)
+    format_constraint_keys: List[str] = attrs.field(
+        validator=attrs.validators.deep_iterable(
+            member_validator=attrs.validators.instance_of(str), iterable_validator=attrs.validators.instance_of(list)
         )
     )
 
     #: list of keys for which you'll need to provide ConditionFulfilledValues
-    requirement_constraint_keys: List[str] = attr.ib(
-        validator=attr.validators.deep_iterable(
-            member_validator=attr.validators.instance_of(str), iterable_validator=attr.validators.instance_of(list)
+    requirement_constraint_keys: List[str] = attrs.field(
+        validator=attrs.validators.deep_iterable(
+            member_validator=attrs.validators.instance_of(str), iterable_validator=attrs.validators.instance_of(list)
         )
     )
 
     #: list of packages that need to be resolved (additionally)
-    package_keys: List[str] = attr.ib(
-        validator=attr.validators.deep_iterable(
-            member_validator=attr.validators.matches_re(r"^\d+P$"),
-            iterable_validator=attr.validators.instance_of(list)
+    package_keys: List[str] = attrs.field(
+        validator=attrs.validators.deep_iterable(
+            member_validator=attrs.validators.matches_re(r"^\d+P$"),
+            iterable_validator=attrs.validators.instance_of(list)
             # todo: implement wiederholbarkeiten
         )
     )
