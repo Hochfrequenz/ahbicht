@@ -113,7 +113,7 @@ class PackageExpansionTransformer(Transformer):
             repeatability = None
         return self._package_async(package_key_token)
 
-    async def _package_async(self, package_key_token: Token) -> Tree:
+    async def _package_async(self, package_key_token: Token) -> Tree[Token]:
         resolved_package = await self._resolver.get_condition_expression(package_key_token.value)
         if not resolved_package.has_been_resolved_successfully():
             raise NotImplementedError(

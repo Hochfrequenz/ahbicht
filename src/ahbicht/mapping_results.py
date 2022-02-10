@@ -104,21 +104,21 @@ def check_max_greater_or_equal_than_min(instance: "Repeatability", attribute, va
 
 
 # pylint:disable=too-few-public-methods
-@attr.s(auto_attribs=True, kw_only=True)
+@attrs.define(auto_attribs=True, kw_only=True)
 class Repeatability:
     """
     describes how often a segment/code must be used when a "repeatability" is provided with packages
     """
 
-    min_occurrences: int = attr.ib(
-        validator=attr.validators.and_(attr.validators.instance_of(int), check_max_greater_or_equal_than_min)
+    min_occurrences: int = attrs.field(
+        validator=attrs.validators.and_(attrs.validators.instance_of(int), check_max_greater_or_equal_than_min)
     )
     """
     how often the segment/code has to be repeated (lower, inclusive bound); maybe 0 for optional packages
     """
 
-    max_occurrences: int = attr.ib(
-        validator=attr.validators.and_(attr.validators.instance_of(int), check_max_greater_or_equal_than_min)
+    max_occurrences: int = attrs.field(
+        validator=attrs.validators.and_(attrs.validators.instance_of(int), check_max_greater_or_equal_than_min)
     )
     """
     how often the segment/coode may be repeated at most (upper, inclusive bound).
