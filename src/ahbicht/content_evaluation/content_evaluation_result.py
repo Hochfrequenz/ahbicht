@@ -48,7 +48,7 @@ class ContentEvaluationResult:
 
     packages: Optional[Dict[str, str]] = attrs.field(  # Union[str, ConditionFulfilledValue]]
         validator=attrs.validators.optional(
-            attrs.validators.deep_mapping(
+            attrs.validators.deep_mapping(  # type: ignore[arg-type]
                 key_validator=attrs.validators.and_(
                     attrs.validators.instance_of(str),
                     attrs.validators.matches_re(r"^\d+P$"),  # this is to avoid someone passes '123' instead of '123P'
