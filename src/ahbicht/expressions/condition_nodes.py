@@ -180,7 +180,8 @@ class EvaluatedFormatConstraintSchema(Schema):
 #     data evaluation (_after_ the Mussfeldprüfung) and can be either True/False or None.
 #     """
 
-#     name: str = attrs.field(validator=attrs.validators.instance_of(str))  # e.g. "MaLo-Prüfsummenprüfung" or "OBIS-Format"
+#     name: str = attrs.field(validator=attrs.validators.instance_of(str))
+# e.g. "MaLo-Prüfsummenprüfung" or "OBIS-Format"
 
 
 # ideas for format constraints:
