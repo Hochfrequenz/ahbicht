@@ -295,8 +295,7 @@ def map_requirement_validation_values(
     and whether the requirements constraints are fulfilled.
     :param requirement_constraints_are_fulfilled: true if requirement constraints are fulfilled
     :param requirement_indicator: requirement indicator, e.g MUSS, SOLL, KANN, X, O, U
-    :param soll_is_required: true (default) if SOLL should be handled like MUSS,
-                             false if it should be handled like KANN
+    :param soll_is_required: true (default) if SOLL should be handled like MUSS, false if it should be handled like KANN
     :return: mapped requirement validation value
     """
 
