@@ -198,8 +198,7 @@ async def validate_dataelement_freetext(
     Validates a freetext dataelement, e.g. 'Dokumentennummer'.
     :param dataelement: the dataelement that should be validated
     :param segment_requirement: the requirement of the dataelement's segment, e.g. IS_REQUIRED
-    :param soll_is_required: true (default) if SOLL should be handled like MUSS,
-                             false if it should be handled like KANN
+    :param soll_is_required: true (default) if SOLL should be handled like MUSS, if it should be handled like KANN
     :return: Validation Result of the Dataelement
     """
 
