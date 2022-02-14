@@ -37,9 +37,12 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree[Token]
                 | brackets
                 | package
                 | condition
+                | time_condition
     ?brackets: "(" expression ")"
+    time_condition: "[" TIME_CONDITION_KEY "]" // a rule for point in time-conditions
     package: "[" PACKAGE_KEY REPEATABILITY? "]" // a rule for packages
     condition: "[" CONDITION_KEY "]" // a rule for condition keys
+    TIME_CONDITION_KEY: /UB(1|2|3)/ // a terminal for "übergreifende Bedingungen für Zeitpunktangaben"
     CONDITION_KEY: INT // a TERMINAL for all the remaining ints (lower priority)
     REPEATABILITY: /\d+\.{2}[1-9]\d*/ // a terminal for repetitions n..m with n>=0 and m>n
     PACKAGE_KEY: INT "P" // a TERMINAL for all INTs followed by "P" (high priority)
