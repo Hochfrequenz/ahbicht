@@ -3,7 +3,8 @@
     "hint_keys": [],
     "requirement_constraint_keys": ["1", "2", "3"],
     "format_constraint_keys": ["904", "905"],
-    "package_keys": []
+    "package_keys": [],
+    "time_condition_keys": []
   },
   "expected_result": [
     {

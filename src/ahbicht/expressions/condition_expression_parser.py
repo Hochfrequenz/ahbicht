@@ -75,7 +75,7 @@ def extract_categorized_keys_from_tree(
     See 'Allgemeine Festlegungen' from EDI@Energy.
     """
     result = CategorizedKeyExtract(
-        format_constraint_keys=[], requirement_constraint_keys=[], hint_keys=[], package_keys=[]
+        format_constraint_keys=[], requirement_constraint_keys=[], hint_keys=[], package_keys=[], time_condition_keys=[]
     )
     condition_keys: List[str]
     if isinstance(tree_or_list, list):
@@ -91,6 +91,12 @@ def extract_categorized_keys_from_tree(
             x.value  # type:ignore[attr-defined]
             for x in tree_or_list.scan_values(
                 lambda token: token.type == "PACKAGE_KEY"  # type:ignore[union-attr]
+            )
+        ]
+        result.time_condition_keys = [
+            x.value  # type:ignore[attr-defined]
+            for x in tree_or_list.scan_values(
+                lambda token: token.type == "TIME_CONDITION_KEY"  # type:ignore[union-attr]
             )
         ]
     else:
