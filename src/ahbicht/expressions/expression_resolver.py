@@ -122,3 +122,44 @@ class PackageExpansionTransformer(Transformer):
         # the package_expression is not None because that's the definition of "has been resolved successfully"
         tree_result = parse_condition_expression_to_tree(resolved_package.package_expression)  # type:ignore[arg-type]
         return tree_result
+
+
+# pylint: disable=no-self-use, invalid-name
+class TimeConditionTransformer(Transformer):
+    """
+    The TimeConditionEvaluator replaces "time conditions" (aka "UB1", "UB2", "UB3") with evaluatable format constraints.
+    This is not what BDEW suggests us to do in the "Allgemeine Festlegungen". BDEW says that "UBx" conditions have to be
+    expanded just like packages: For example "UB1" shall be expanded to "([931] ∧ [932] [490]) ⊻ ([931] ∧ [933] [491])".
+
+    This just doesn't work out for multiple reasons:
+
+    1. Other than _all_ the other requirement constraints RC 490, 491, 492 and 493 are self-referencing.
+    While "normal" RCs act like "You have to provide this ("Foo") if the other thing ("Bar") meets a requirement",
+    the 49x  RCs are of kind "This ("Foo") has to meet certain requirements (f.e. be the end of a German day), regardless
+    of the other things ("Bar"). So the usual requirement constraint evaluation approach ("Search for Bar and derive
+    from there what it means for this (Foo)") won't work and is overly complicated, too.
+
+    2. No one who understands the concept of datetime+offset and is able to parse datetime+offset nowadays cares, if you
+    use ("x datetime" with an "0 offset") or ("x+z datetime" that has a "z offset") instead. It's just BDEWs home-brewed
+    EDIFACT serialization rule that, for no real reason, restricts us to set the offset z to "+00:00" always.
+    https://imgflip.com/i/65giq5
+
+    AHBicht won't restrict you to use datetime offset=="+00:00". Because we don't care and you should not care.
+    Also this default transformer won't expand the UBx conditions into something which is overly complicated and in the
+    end does really fit (for above reasons).
+
+    That being said... the thing that actually happens is:
+    UBx will be replaced with a format constraint (plus a requirement constraint in case of UB3) that is fulfilled,
+    if and only if the value provided obeys the original *meaning* of UBx.
+    So the data provided will be evaluated just as you'd expect them to be evaluated but without all the bureaucracy.
+    Condition UB1 checks if the datetime provided is the (inclusive) start / (exclusive) end of a German "Stromtag".
+    Condition UB2 checks if the datetime provided is the (inclusive) start / (exclusive) end of a German "Gastag".
+    Condition UB3 checks if the datetime provided is the (inclusive) start / (exclusive) end of a German "Stromtag" if
+    the receiver is from division electricity (RC 492) or a "Gastag" if a receiver is from division gas (RC 493).
+    """
+
+    def time_condition(self, tokens: List[Token]) -> Awaitable[Tree]:
+        """
+        try to resolve the package using the injected PackageResolver
+        """
+        raise NotImplementedError("todo: hier")
