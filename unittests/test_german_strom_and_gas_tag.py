@@ -25,6 +25,10 @@ class TestGermanStromAndGasTag:
             pytest.param(datetime(2022, 10, 30, 23, 0, 0, 0, tzinfo=timezone.utc), True),
             pytest.param(datetime.fromisoformat("2022-10-31T00:00:00+01:00"), True),
             pytest.param(datetime.fromisoformat("2022-10-31T00:00:00+02:00"), False),
+            pytest.param(datetime.fromisoformat("2022-10-29T12:00:00-10:00"), True, id="Hawaii, German DST"),
+            pytest.param(datetime.fromisoformat("2022-10-30T13:00:00-10:00"), True, id="Hawaii, German standard time"),
+            pytest.param(datetime.fromisoformat("2022-10-30T07:00:00+09:00"), True, id="Tokyo, German DST"),
+            pytest.param(datetime.fromisoformat("2022-10-31T08:00:00+09:00"), True, id="Tokyo, German standard time"),
         ],
     )
     def test_stromtag(self, dt: datetime, expected_is_start_or_end_of_german_stromtag: bool):
@@ -45,6 +49,11 @@ class TestGermanStromAndGasTag:
             pytest.param(datetime(2022, 10, 29, 4, 0, 0, 0, tzinfo=timezone.utc), True),
             pytest.param(datetime.fromisoformat("2022-10-30T06:00:00+01:00"), True),
             pytest.param(datetime.fromisoformat("2022-10-30T06:00:00+02:00"), False),
+            pytest.param(datetime.fromisoformat("2022-10-29T19:00:00-10:00"), True, id="Hawaii, German DST"),
+            pytest.param(datetime.fromisoformat("2022-10-30T19:00:00-10:00"), True, id="Hawaii, German standard time"),
+            pytest.param(datetime.fromisoformat("2022-10-29T09:45:00+05:45"), True, id="Nepal, German DST"),
+            pytest.param(datetime.fromisoformat("2022-10-30T10:45:00+05:45"), True, id="Nepal, German standard time 1"),
+            pytest.param(datetime.fromisoformat("2022-10-31T10:45:00+05:45"), True, id="Nepal, German standard time 2"),
         ],
     )
     def test_gastag(self, dt: datetime, expected_is_start_or_end_of_german_gastag: bool):
