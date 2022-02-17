@@ -3,7 +3,7 @@ Tests the evaluation of the start/end of a German Strom- or Gastag.
 """
 from datetime import datetime, timezone
 
-import pytest
+import pytest  # type:ignore[import]
 
 from ahbicht.content_evaluation.german_strom_and_gas_tag import is_gastag_limit, is_stromtag_limit
 
