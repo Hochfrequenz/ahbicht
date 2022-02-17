@@ -135,9 +135,11 @@ class TimeConditionTransformer(Transformer):
 
     1. Other than _all_ the other requirement constraints RC 490, 491, 492 and 493 are self-referencing.
     While "normal" RCs act like "You have to provide this ("Foo") if the other thing ("Bar") meets a requirement",
-    the 49x  RCs are of kind "This ("Foo") has to meet certain requirements (f.e. be the end of a German day), regardless
+    the 49x  RCs are of kind "This ("Foo") has to meet certain requirements (f.e. the end of a German day), regardless
     of the other things ("Bar"). So the usual requirement constraint evaluation approach ("Search for Bar and derive
     from there what it means for this (Foo)") won't work and is overly complicated, too.
+    Also, if the pseudo requirement constraint 490-493 evaluates to false, this does _not_ mean that the data must not
+    be provided which is also a different behaviour compared to usual requirement constraints.
 
     2. No one who understands the concept of datetime+offset and is able to parse datetime+offset nowadays cares, if you
     use ("x datetime" with an "0 offset") or ("x+z datetime" that has a "z offset") instead. It's just BDEWs home-brewed
