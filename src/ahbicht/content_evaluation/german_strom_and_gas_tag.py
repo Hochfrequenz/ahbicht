@@ -34,7 +34,7 @@ def parse_as_datetime(entered_input: str) -> Tuple[Optional[datetime], Optional[
     if not entered_input:
         return None, EvaluatedFormatConstraint(
             format_constraint_fulfilled=False,
-            error_message=f"An empty or None string cannot be parsed as datetime",
+            error_message="An empty or None string cannot be parsed as datetime",
         )
     try:
         if entered_input.endswith("Z"):
@@ -86,9 +86,9 @@ def is_xtag_limit(entered_input: str, division: Union[Literal["Strom"], Literal[
         xtag_evaluator = is_gastag_limit
     else:
         raise NotImplementedError(f"The division must either be 'Strom' or 'Gas': '{division}'")
-    if xtag_evaluator(date_time):
+    if xtag_evaluator(date_time):  # type:ignore[arg-type]
         return EvaluatedFormatConstraint(format_constraint_fulfilled=True, error_message=None)
-    return EvaluatedFormatConstraint(
-        format_constraint_fulfilled=False,
-        error_message=f"The given datetime '{date_time.isoformat()}' is not the limit of a {division}tag",
+    error_message = (
+        f"The given datetime '{date_time.isoformat()}' is not the limit of a {division}tag"  # type:ignore[union-attr]
     )
+    return EvaluatedFormatConstraint(format_constraint_fulfilled=False, error_message=error_message)

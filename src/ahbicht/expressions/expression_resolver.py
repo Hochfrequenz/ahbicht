@@ -18,27 +18,32 @@ from ahbicht.mapping_results import Repeatability, parse_repeatability
 
 
 async def parse_expression_including_unresolved_subexpressions(
-    expression: str, resolve_packages: bool = False
+    expression: str,
+    resolve_packages: bool = False,
+    replace_time_conditions: bool = True,
 ) -> Tree[Token]:
     """
     Parses expressions and resolves its subexpressions,
     for example condition_expressions in ahb_expressions or packages in condition_expressions.
     :param expression: a syntactically valid ahb_expression or condition_expression
     :param resolve_packages: if true resolves also the packages in the condition_expressions
+    :param replace_time_conditions: if true the time conditions "UBx" are replaced with format constraints
     """
     try:
         expression_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(expression)
-        resolved_expression_tree = AhbExpressionResolverTransformer().transform(expression_tree)
-        if resolve_packages:
-            # the condition expression inside the ahb expression has to be resolved before trying to resolve packages
-            resolved_expression_tree = await expand_packages(resolved_expression_tree)
+        expression_tree = AhbExpressionResolverTransformer().transform(expression_tree)
     except SyntaxError as ahb_syntax_error:
         try:
-            resolved_expression_tree = parse_condition_expression_to_tree(expression)
+            expression_tree = parse_condition_expression_to_tree(expression)
         except SyntaxError as condition_syntax_error:
             # pylint: disable=raise-missing-from
             raise SyntaxError(f"{ahb_syntax_error.msg} {condition_syntax_error.msg}")
-    return resolved_expression_tree
+    if resolve_packages:
+        # the condition expression inside the ahb expression has to be resolved before trying to resolve packages
+        expression_tree = await expand_packages(expression_tree)
+    if replace_time_conditions:
+        expression_tree = expand_time_conditions(expression_tree)
+    return expression_tree
 
 
 async def expand_packages(parsed_tree: Tree) -> Tree[Token]:
@@ -50,6 +55,14 @@ async def expand_packages(parsed_tree: Tree) -> Tree[Token]:
     except VisitError as visit_err:
         raise visit_err.orig_exc
     result = await _replace_sub_coroutines_with_awaited_results(result)
+    return result
+
+
+def expand_time_conditions(parsed_tree: Tree) -> Tree[Token]:
+    """
+    Replaces all the time conditions "UBx" with format constraints (and requirements constraints for UB3)
+    """
+    result = TimeConditionTransformer().transform(parsed_tree)
     return result
 
 
@@ -154,14 +167,32 @@ class TimeConditionTransformer(Transformer):
     UBx will be replaced with a format constraint (plus a requirement constraint in case of UB3) that is fulfilled,
     if and only if the value provided obeys the original *meaning* of UBx.
     So the data provided will be evaluated just as you'd expect them to be evaluated but without all the bureaucracy.
+
     Condition UB1 checks if the datetime provided is the (inclusive) start / (exclusive) end of a German "Stromtag".
+    Condition UB1 will be replaced with the format constraint 932.
+
     Condition UB2 checks if the datetime provided is the (inclusive) start / (exclusive) end of a German "Gastag".
+    Condition UB2 will be replaced with the format constraint 934.
+
     Condition UB3 checks if the datetime provided is the (inclusive) start / (exclusive) end of a German "Stromtag" if
     the receiver is from division electricity (RC 492) or a "Gastag" if a receiver is from division gas (RC 493).
+    Condition UB3 will be replaced with two XOR connected format constraints, each of them coupled to a requirement
+    constraint for the respective division.
     """
 
-    def time_condition(self, tokens: List[Token]) -> Awaitable[Tree]:
+    def time_condition(self, tokens: List[Token]) -> Tree:
         """
         try to resolve the package using the injected PackageResolver
         """
-        raise NotImplementedError("todo: hier")
+        time_condition_key = tokens[0].value
+        if time_condition_key == "UB1":
+            # a format constraint for "Stromtag"
+            return Tree("condition", [Token("CONDITION_KEY", "932")])
+        if time_condition_key == "UB2":
+            # a format constraint for "Gastage"
+            return Tree("condition", [Token("CONDITION_KEY", "934")])
+        if time_condition_key == "UB3":
+            # RC 492 = receiver is from division electricity/strom
+            # RC 493 = receiver is from division gas
+            return parse_condition_expression_to_tree("[932][492]X[934][493]")
+        raise NotImplementedError(f"The time_condition '{time_condition_key}' is not implemented")

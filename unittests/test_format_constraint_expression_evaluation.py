@@ -216,4 +216,4 @@ class TestFormatConstraintExpressionEvaluation:
         assert result is not None
         assert result.format_constraints_fulfilled == is_successful
         if is_successful is False and error_message is not None:
-            assert error_message in result.error_message
+            assert error_message in result.error_message  # type:ignore[operator]

@@ -44,7 +44,7 @@ class TestGermanStromAndGasTag:
         assert actual is None
         assert error is not None
         assert error.format_constraint_fulfilled is False
-        assert expected_error_msg in error.error_message
+        assert expected_error_msg in error.error_message  # type:ignore[operator]
 
     @pytest.mark.parametrize(
         "dt, expected_is_start_or_end_of_german_stromtag",

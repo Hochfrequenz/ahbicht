@@ -10,11 +10,10 @@ validate already required data.
 import asyncio
 import inspect
 from abc import ABC
-from datetime import datetime
-from typing import Callable, Coroutine, Dict, List, Tuple
+from typing import Coroutine, Dict, List
 
 from ahbicht.content_evaluation.evaluators import Evaluator
-from ahbicht.content_evaluation.german_strom_and_gas_tag import is_stromtag_limit, is_xtag_limit, parse_as_datetime
+from ahbicht.content_evaluation.german_strom_and_gas_tag import is_xtag_limit
 from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
 
 
