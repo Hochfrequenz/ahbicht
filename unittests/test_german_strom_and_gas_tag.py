@@ -36,6 +36,7 @@ class TestGermanStromAndGasTag:
             pytest.param("2019-12-31T00:00:00", "Neither offset nor timezone was given"),
             pytest.param("2019-12-31T25:00:00+00:00", "hour must be in 0..23"),
             pytest.param("foo", "Invalid isoformat string"),
+            pytest.param("", "empty or None"),
         ],
     )
     def test_errornous_parsing(self, dt_string: str, expected_error_msg: str):

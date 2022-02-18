@@ -185,3 +185,27 @@ class TestFormatConstraintExpressionEvaluation:
         """Tests that evaluated format constraints nodes are build correctly."""
         evaluated_fc_nodes = await _build_evaluated_format_constraint_nodes(condition_keys, entered_input)
         assert evaluated_fc_nodes == expected_evaluated_fc_nodes
+
+    @pytest.mark.parametrize(
+        "format_constraint_expression, entered_input, is_successful",
+        [
+            pytest.param("[932]", None, False),
+            pytest.param("[932]", "2022-01-01T00:00:00Z", False),
+            pytest.param("[933]", "2022-01-01T00:00:00Z", False),
+            pytest.param("[934]", "2022-01-01T06:00:00Z", False),
+            pytest.param("[935]", "2022-01-01T06:00:00Z", False),
+            pytest.param("[932]", "2022-06-01T00:00:00+02:00", True),
+            pytest.param("[933]", "2022-01-01T00:00:00+01:00", True),
+            pytest.param("[934]", "2022-06-01T06:00:00+02:00", True),
+            pytest.param("[935]", "2022-01-01T06:00:00+01:00", True),
+        ],
+    )
+    async def test_93x_format_constraints(
+        self, format_constraint_expression, entered_input: str, is_successful: bool, setup_and_teardown_injector
+    ):
+        """
+        Tests that the default FC evaluator ships evaluation methods for 932, 933, 934 and 935 (those expanded from UBx)
+        """
+        result = await format_constraint_evaluation(format_constraint_expression, entered_input=entered_input)
+        assert result is not None
+        assert result.format_constraints_fulfilled == is_successful

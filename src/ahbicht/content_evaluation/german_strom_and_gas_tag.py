@@ -6,7 +6,7 @@ from datetime import datetime, time
 # The problem with the stdlib zoneinfo is, that the availability of timezones via ZoneInfo(zone_key) depends on the OS
 # and system on which you're running it. In some cases "Europe/Berlin" might be available, but generally it's not,
 # and it's PITA to manually define timezones. So we're using pytz as a datasource for timezone information.
-from typing import Optional, Tuple
+from typing import Callable, Literal, Optional, Tuple, Union
 
 from pytz import timezone
 
@@ -31,6 +31,11 @@ def parse_as_datetime(entered_input: str) -> Tuple[Optional[datetime], Optional[
     :return: A tuple with the first item being a datetime if parsing was successful or the second item being
     an (erroneous) EvaluatedFormatConstraint if the parsing was not successful.
     """
+    if not entered_input:
+        return None, EvaluatedFormatConstraint(
+            format_constraint_fulfilled=False,
+            error_message=f"An empty or None string cannot be parsed as datetime",
+        )
     try:
         if entered_input.endswith("Z"):
             entered_input = entered_input.replace("Z", "+00:00")
@@ -65,3 +70,25 @@ def is_gastag_limit(date_time: datetime) -> bool:  # the name is not as speaking
     """
     german_local_time = _get_german_local_time(date_time)
     return german_local_time.hour == 6 and german_local_time.minute == 0 and german_local_time.second == 0
+
+
+def is_xtag_limit(entered_input: str, division: Union[Literal["Strom"], Literal["Gas"]]) -> EvaluatedFormatConstraint:
+    """
+    Tries to parse the entered_input as datetime and checks if it is the start/end of a Strom- or Gastag.
+    """
+    date_time, error_result = parse_as_datetime(entered_input)
+    if error_result is not None:
+        return error_result
+    xtag_evaluator: Callable[[datetime], bool]
+    if division == "Strom":
+        xtag_evaluator = is_stromtag_limit
+    elif division == "Gas":
+        xtag_evaluator = is_gastag_limit
+    else:
+        raise NotImplementedError(f"The division must either be 'Strom' or 'Gas': '{division}'")
+    if xtag_evaluator(date_time):
+        return EvaluatedFormatConstraint(format_constraint_fulfilled=True, error_message=None)
+    return EvaluatedFormatConstraint(
+        format_constraint_fulfilled=False,
+        error_message=f"The given datetime '{date_time.isoformat()}' is not the limit of a {division}tag",
+    )

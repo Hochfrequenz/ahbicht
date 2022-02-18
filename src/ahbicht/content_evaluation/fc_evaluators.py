@@ -10,9 +10,11 @@ validate already required data.
 import asyncio
 import inspect
 from abc import ABC
-from typing import Coroutine, Dict, List
+from datetime import datetime
+from typing import Callable, Coroutine, Dict, List, Tuple
 
 from ahbicht.content_evaluation.evaluators import Evaluator
+from ahbicht.content_evaluation.german_strom_and_gas_tag import is_stromtag_limit, is_xtag_limit, parse_as_datetime
 from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
 
 
@@ -24,6 +26,40 @@ class FcEvaluator(Evaluator, ABC):
     edifact_format_version set accordingly. Then create a method named "evaluate_123" where "123" is the condition key
     of the condition it evaluates.
     """
+
+    def evaluate_932(self, entered_input: str) -> EvaluatedFormatConstraint:
+        """
+        Assert that the entered input is the start/end of a german "Stromtag" (during central european daylight saving
+        time).
+        We ship this predefined method to evaluate the format constraints which are being introduced by expanding
+        "time conditions" (UB1/UB3) in the :class:`expression_resolver.TimeConditionTransformer`.
+        """
+        return is_xtag_limit(entered_input, "Strom")
+
+    def evaluate_933(self, entered_input: str) -> EvaluatedFormatConstraint:
+        """
+        Assert that the entered input is the start/end of a german "Stromtag" (during central european standard time).
+        We ship this predefined method to evaluate the format constraints which are being introduced by expanding
+        "time conditions" (UB1/UB3) in the :class:`expression_resolver.TimeConditionTransformer`.
+        """
+        return is_xtag_limit(entered_input, "Strom")
+
+    def evaluate_934(self, entered_input: str) -> EvaluatedFormatConstraint:
+        """
+        Assert that the entered input is the start/end of a german "Gastag" (during central european daylight saving
+        time).
+        We ship this predefined method to evaluate the format constraints which are being introduced by expanding
+        "time conditions" (UB2/UB3) in the :class:`expression_resolver.TimeConditionTransformer`.
+        """
+        return is_xtag_limit(entered_input, "Gas")
+
+    def evaluate_935(self, entered_input: str) -> EvaluatedFormatConstraint:
+        """
+        Assert that the entered input is the start/end of a german "Gastag" (during central european standard time).
+        We ship this predefined method to evaluate the format constraints which are being introduced by expanding
+        "time conditions" (UB2/UB3) in the :class:`expression_resolver.TimeConditionTransformer`.
+        """
+        return is_xtag_limit(entered_input, "Gas")
 
     async def evaluate_single_format_constraint(
         self, condition_key: str, entered_input: str
