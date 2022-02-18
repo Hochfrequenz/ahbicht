@@ -20,7 +20,7 @@ pytestmark = pytest.mark.asyncio
 
 class TestTimeConditionReplacement:
     """
-    Test for the expansions of packages
+    Test for the replacement of time conditions
     """
 
     @pytest.mark.parametrize(
@@ -115,7 +115,6 @@ class TestTimeConditionReplacement:
     async def test_time_condition_expansion(
         self, expression: str, replace_time_conditions: bool, expected_tree: Tree[Token]
     ):
-        """Tests that valid strings that contain brackets are parsed as expected."""
         parsed_tree = await parse_expression_including_unresolved_subexpressions(
             expression, replace_time_conditions=replace_time_conditions
         )

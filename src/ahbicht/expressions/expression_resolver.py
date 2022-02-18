@@ -151,7 +151,7 @@ class TimeConditionTransformer(Transformer):
     the 49x  RCs are of kind "This ("Foo") has to meet certain requirements (f.e. the end of a German day), regardless
     of the other things ("Bar"). So the usual requirement constraint evaluation approach ("Search for Bar and derive
     from there what it means for this (Foo)") won't work and is overly complicated, too.
-    Also, if the pseudo requirement constraint 490-493 evaluates to false, this does _not_ mean that the data must not
+    Also, if the pseudo requirement constraint 490-493 is UNFULFILLED, this does _not_ mean that the data must not
     be provided which is also a different behaviour compared to usual requirement constraints.
 
     2. No one who understands the concept of datetime+offset and is able to parse datetime+offset nowadays cares, if you
@@ -160,10 +160,11 @@ class TimeConditionTransformer(Transformer):
     https://imgflip.com/i/65giq5
 
     AHBicht won't restrict you to use datetime offset=="+00:00". Because we don't care and you should not care.
+    The scope of AHBicht is to evaluate expressions and data, not to obey pointless BDEW EDIFACT rules.
     Also this default transformer won't expand the UBx conditions into something which is overly complicated and in the
     end does really fit (for above reasons).
 
-    That being said... the thing that actually happens is:
+    That being said… the thing that actually happens is:
     UBx will be replaced with a format constraint (plus a requirement constraint in case of UB3) that is fulfilled,
     if and only if the value provided obeys the original *meaning* of UBx.
     So the data provided will be evaluated just as you'd expect them to be evaluated but without all the bureaucracy.
