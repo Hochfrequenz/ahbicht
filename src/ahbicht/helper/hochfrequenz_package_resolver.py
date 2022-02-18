@@ -21,7 +21,7 @@ class HochfrequenzPackageResolver(PackageResolver):
 
     def __init__(self, api_url=_hochfrequenz_base_uri):
         """
-        initializes the package resolver and set's up a cache
+        initializes the package resolver; you may overwrite the base url (f.e. for a test-system)
         """
         self.api_url = api_url
 
