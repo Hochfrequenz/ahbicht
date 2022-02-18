@@ -4,8 +4,7 @@ Tests the HochfrequenzPackageResolver
 import pytest  # type:ignore[import]
 from aioresponses import CallbackResult, aioresponses
 
-# from maus.edifact import EdifactFormat, EdifactFormatVersion
-from ahbicht.edifact import EdifactFormat, EdifactFormatVersion
+from maus.edifact import EdifactFormat, EdifactFormatVersion
 from ahbicht.helper.hochfrequenz_package_resolver import HochfrequenzPackageResolver
 from ahbicht.mapping_results import PackageKeyConditionExpressionMapping
 
