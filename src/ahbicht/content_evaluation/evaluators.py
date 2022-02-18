@@ -7,7 +7,7 @@ import inspect
 from abc import ABC
 from typing import Callable, Optional
 
-from ahbicht.edifact import EdifactFormat, EdifactFormatVersion
+from maus.edifact import EdifactFormat, EdifactFormatVersion
 
 
 # pylint: disable=no-self-use, too-few-public-methods
