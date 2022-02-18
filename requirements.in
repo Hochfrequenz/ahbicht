@@ -1,6 +1,7 @@
-attrs
-lark
-inject
-marshmallow
-marshmallow_enum
-maus
+attrs # for model classes
+aiohttp # for resolving packages via REST APIs
+lark # for parsing and evaluation orchestration
+inject # for dependency injection
+marshmallow # for serialization (JSON)
+marshmallow_enum # for enum serialization
+maus # for validation
