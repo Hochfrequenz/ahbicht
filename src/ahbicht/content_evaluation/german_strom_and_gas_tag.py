@@ -2,8 +2,8 @@
 A module to evaluate datetimes and whether they are "on the edge" of a German "Stromtag" or "Gastag" respectively
 """
 from datetime import datetime, time
-
 from typing import Callable, Literal, Optional, Tuple, Union
+
 # The problem with the stdlib zoneinfo is, that the availability of timezones via ZoneInfo(zone_key) depends on the OS
 # and system on which you're running it. In some cases "Europe/Berlin" might be available, but generally it's not,
 # and it's PITA to manually define timezones. So we're using pytz as a datasource for timezone information.
