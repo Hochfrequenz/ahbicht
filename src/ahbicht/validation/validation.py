@@ -2,7 +2,7 @@
 This module provides the functions to validate segment group, segments and data elements.
 """
 
-from typing import Dict, Optional
+from typing import Optional, List
 
 from maus.models.edifact_components import (
     DataElement,
@@ -20,6 +20,7 @@ from ahbicht.validation.validation_results import (
     DataElementValidationResult,
     SegmentLevelValidationResult,
     ValidationResult,
+    ValidationResultInContext,
 )
 from ahbicht.validation.validation_values import FormatValidationValue, RequirementValidationValue
 
@@ -29,13 +30,13 @@ from ahbicht.validation.validation_values import FormatValidationValue, Requirem
 async def validate_root_segment_level(
     segment_level: SegmentLevel,
     soll_is_required: bool = True,
-) -> Dict[str, ValidationResult]:
+) -> List[ValidationResultInContext]:
     """
     Validates the root segment group or segment and its children by handing them
     over to specialized functions for each kind.
     :param segment_level: the segment group or segment that should be validated
     :param soll_is_required: true (default) if SOLL should be handled like MUSS, false if it should be handled like KANN
-    :return: Validation Result of the segment or segment group including its children
+    :return: List of ValidationResultInContext of the segment or segment group including its children
     """
     if isinstance(segment_level, SegmentGroup):
         return await validate_segment_group(segment_group=segment_level, soll_is_required=soll_is_required)
@@ -50,18 +51,18 @@ async def validate_segment_group(
     segment_group: SegmentGroup,
     higher_segment_group_requirement: Optional[RequirementValidationValue] = None,
     soll_is_required: bool = True,
-    validation_result: Optional[Dict[str, ValidationResult]] = None,
-) -> Dict[str, ValidationResult]:
+    validation_results_in_context: Optional[List[ValidationResultInContext]] = None,
+) -> List[ValidationResultInContext]:
     """
     Validates a segment group and its containing segment groups and segments.
     :param segment_group: the segment_group that should be validated
     :param higher_segment_group_requirement: the requirement of the segment_group's segment_group, e.g. IS_REQUIRED
     :param soll_is_required: true (default) if SOLL should be handled like MUSS, false if it should be handled like KANN
-    :param validation_result: List for collecting all validation results
-    :return: Validation Result of the Dataelement
+    :param validation_result: List for collecting all ValidationResultInContext
+    :return: List of ValidationResultInContext of the Dataelement
     """
-    if not validation_result:
-        validation_result = {}
+    if not validation_results_in_context:
+        validation_results_in_context = []
 
     # validation of this segment group
     if higher_segment_group_requirement == RequirementValidationValue.IS_FORBIDDEN:
@@ -73,47 +74,49 @@ async def validate_segment_group(
             segment_group, higher_segment_group_requirement, soll_is_required
         )
 
-    validation_result[segment_group.discriminator] = segment_group_validation
+    validation_results_in_context.append(
+        ValidationResultInContext(discriminator=segment_group.discriminator, validation_result=segment_group_validation)
+    )
 
     # validation of lower segment_groups
     if segment_group.segment_groups:
         for lower_segment_group in segment_group.segment_groups:
-            validation_result = await validate_segment_group(
+            validation_results_in_context = await validate_segment_group(
                 lower_segment_group,
                 segment_group_validation.requirement_validation,
                 soll_is_required,
-                validation_result,
+                validation_results_in_context,
             )
 
     # validation of lower segments
     if segment_group.segments:
         for segment in segment_group.segments:
-            validation_result = await validate_segment(
+            validation_results_in_context = await validate_segment(
                 segment,
                 segment_group_validation.requirement_validation,
                 soll_is_required,
-                validation_result,
+                validation_results_in_context,
             )
 
-    return validation_result
+    return validation_results_in_context
 
 
 async def validate_segment(
     segment: Segment,
     segment_group_requirement: Optional[RequirementValidationValue] = None,
     soll_is_required: bool = True,
-    validation_result: Dict[str, ValidationResult] = None,
-) -> Dict[str, ValidationResult]:
+    validation_results_in_context: List[ValidationResultInContext] = None,
+) -> List[ValidationResultInContext]:
     """
     Validates a segment group and its containing dataelements
     :param segment: the segment that should be validated
     :param segment_group_requirement: the requirement of the segment's segment_group, e.g. IS_REQUIRED
     :param soll_is_required: true (default) if SOLL should be handled like MUSS, false if it should be handled like KANN
-    :param validation_result: List for collecting all validation results
-    :return: Validation Result of the segment
+    :param validation_result: List for collecting all ValidationResultInContext
+    :return: List of ValidationResultInContext of the segment
     """
-    if not validation_result:
-        validation_result = {}
+    if not validation_results_in_context:
+        validation_results_in_context = []
 
     # validation of this segment
     if segment_group_requirement == RequirementValidationValue.IS_FORBIDDEN:
@@ -125,15 +128,22 @@ async def validate_segment(
             segment, segment_group_requirement, soll_is_required
         )
 
-    validation_result[segment.discriminator] = segment_validation
+    validation_results_in_context.append(
+        ValidationResultInContext(discriminator=segment.discriminator, validation_result=segment_validation)
+    )
 
     # validation of this segments dataelements
     for dataelement in segment.data_elements:
-        validation_result[dataelement.discriminator] = await validate_dataelement(
+        validation_result_of_dataelement = await validate_dataelement(
             dataelement, segment_validation.requirement_validation
         )
+        validation_results_in_context.append(
+            ValidationResultInContext(
+                discriminator=dataelement.discriminator, validation_result=validation_result_of_dataelement
+            )
+        )
 
-    return validation_result
+    return validation_results_in_context
 
 
 async def get_segment_level_requirement_validation_value(

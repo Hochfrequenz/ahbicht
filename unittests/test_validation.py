@@ -16,7 +16,11 @@ from ahbicht.validation.validation import (
     validate_segment,
     validate_segment_group,
 )
-from ahbicht.validation.validation_results import DataElementValidationResult, SegmentLevelValidationResult
+from ahbicht.validation.validation_results import (
+    DataElementValidationResult,
+    SegmentLevelValidationResult,
+    ValidationResultInContext,
+)
 from ahbicht.validation.validation_values import FormatValidationValue, RequirementValidationValue
 
 pytestmark = pytest.mark.asyncio
@@ -52,7 +56,7 @@ class TestValidation:
                     segments=[
                         Segment(
                             ahb_expression="Muss[2]",
-                            discriminator="SG10 Datum",
+                            discriminator="SG10 - Datum",
                             data_elements=[
                                 DataElementFreeText(
                                     discriminator="SG10 - Datum - Einzug",
@@ -65,21 +69,32 @@ class TestValidation:
                     ],
                     segment_groups=[],
                 ),
-                {
-                    "SG10": SegmentLevelValidationResult(requirement_validation=RequirementValidationValue.IS_REQUIRED),
-                    "SG10 Datum": SegmentLevelValidationResult(
-                        requirement_validation=RequirementValidationValue.IS_REQUIRED
+                [
+                    ValidationResultInContext(
+                        discriminator="SG10",
+                        validation_result=SegmentLevelValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_REQUIRED
+                        ),
                     ),
-                    "SG10 - Datum - Einzug": DataElementValidationResult(
-                        requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
-                        format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                    ValidationResultInContext(
+                        discriminator="SG10 - Datum",
+                        validation_result=SegmentLevelValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_REQUIRED
+                        ),
                     ),
-                },
+                    ValidationResultInContext(
+                        discriminator="SG10 - Datum - Einzug",
+                        validation_result=DataElementValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
+                            format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                        ),
+                    ),
+                ],
             ),
             pytest.param(
                 Segment(
                     ahb_expression="Muss[2]",
-                    discriminator="SG10 Datum",
+                    discriminator="SG10 - Datum",
                     data_elements=[
                         DataElementFreeText(
                             discriminator="SG10 - Datum - Einzug",
@@ -89,15 +104,21 @@ class TestValidation:
                         )
                     ],
                 ),
-                {
-                    "SG10 Datum": SegmentLevelValidationResult(
-                        requirement_validation=RequirementValidationValue.IS_REQUIRED
+                [
+                    ValidationResultInContext(
+                        discriminator="SG10 - Datum",
+                        validation_result=SegmentLevelValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_REQUIRED
+                        ),
                     ),
-                    "SG10 - Datum - Einzug": DataElementValidationResult(
-                        requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
-                        format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                    ValidationResultInContext(
+                        discriminator="SG10 - Datum - Einzug",
+                        validation_result=DataElementValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
+                            format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                        ),
                     ),
-                },
+                ],
             ),
         ],
     )
@@ -120,7 +141,7 @@ class TestValidation:
                     segments=[
                         Segment(
                             ahb_expression="Muss[2]",
-                            discriminator="SG10 Datum",
+                            discriminator="SG10 - Datum",
                             data_elements=[
                                 DataElementFreeText(
                                     discriminator="SG10 - Datum - Einzug",
@@ -134,16 +155,27 @@ class TestValidation:
                     segment_groups=[],
                 ),
                 RequirementValidationValue.IS_REQUIRED,
-                {
-                    "SG10": SegmentLevelValidationResult(requirement_validation=RequirementValidationValue.IS_REQUIRED),
-                    "SG10 Datum": SegmentLevelValidationResult(
-                        requirement_validation=RequirementValidationValue.IS_REQUIRED
+                [
+                    ValidationResultInContext(
+                        discriminator="SG10",
+                        validation_result=SegmentLevelValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_REQUIRED
+                        ),
                     ),
-                    "SG10 - Datum - Einzug": DataElementValidationResult(
-                        requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
-                        format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                    ValidationResultInContext(
+                        discriminator="SG10 - Datum",
+                        validation_result=SegmentLevelValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_REQUIRED
+                        ),
                     ),
-                },
+                    ValidationResultInContext(
+                        discriminator="SG10 - Datum - Einzug",
+                        validation_result=DataElementValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
+                            format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                        ),
+                    ),
+                ],
             ),
         ],
     )
@@ -174,15 +206,21 @@ class TestValidation:
                     ],
                 ),
                 RequirementValidationValue.IS_REQUIRED,
-                {
-                    "SG10 Datum": SegmentLevelValidationResult(
-                        requirement_validation=RequirementValidationValue.IS_REQUIRED
+                [
+                    ValidationResultInContext(
+                        discriminator="SG10 Datum",
+                        validation_result=SegmentLevelValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_REQUIRED
+                        ),
                     ),
-                    "SG10 - Datum - Einzug": DataElementValidationResult(
-                        requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
-                        format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                    ValidationResultInContext(
+                        discriminator="SG10 - Datum - Einzug",
+                        validation_result=DataElementValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
+                            format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                        ),
                     ),
-                },
+                ],
             ),
         ],
     )

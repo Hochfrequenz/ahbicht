@@ -3,7 +3,7 @@ Tests that the parsed trees are JSON serializable
 """
 import json
 import uuid
-from typing import TypeVar
+from typing import List, TypeVar
 
 import pytest  # type:ignore[import]
 from marshmallow import Schema, ValidationError
@@ -34,6 +34,8 @@ from ahbicht.validation.validation_results import (
     DataElementValidationResultSchema,
     SegmentLevelValidationResult,
     SegmentLevelValidationResultSchema,
+    ValidationResultInContext,
+    ValidationResultInContextSchema,
 )
 from ahbicht.validation.validation_values import FormatValidationValue, RequirementValidationValue
 
@@ -317,6 +319,81 @@ class TestJsonSerialization:
         self, validation_result: DataElementValidationResult, expected_json_dict: dict
     ):
         _test_serialization_roundtrip(validation_result, DataElementValidationResultSchema(), expected_json_dict)
+
+    @pytest.mark.parametrize(
+        "validation_result_in_context, expected_json_dict",
+        [
+            pytest.param(
+                ValidationResultInContext(
+                    discriminator="foo",
+                    validation_result=SegmentLevelValidationResult(
+                        requirement_validation=RequirementValidationValue.IS_FORBIDDEN_AND_EMPTY, hints="foo"
+                    ),
+                ),
+                {
+                    "discriminator": "foo",
+                    "validation_result": {
+                        "requirement_validation": "IS_FORBIDDEN_AND_EMPTY",
+                        "hints": "foo",
+                    },
+                },
+            ),
+        ],
+    )
+    def test_validation_result_in_context_serialization(
+        self, validation_result_in_context: ValidationResultInContext, expected_json_dict: dict
+    ):
+        json_string = ValidationResultInContextSchema().dumps(validation_result_in_context)
+        assert json_string is not None
+        actual_json_dict = json.loads(json_string)
+        assert actual_json_dict == expected_json_dict
+
+    @pytest.mark.parametrize(
+        "list_of_validation_result_in_context, expected_json_dict",
+        [
+            pytest.param(
+                [
+                    ValidationResultInContext(
+                        discriminator="foo",
+                        validation_result=SegmentLevelValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_FORBIDDEN_AND_EMPTY, hints="foo"
+                        ),
+                    ),
+                    ValidationResultInContext(
+                        discriminator="bar",
+                        validation_result=SegmentLevelValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_REQUIRED, hints="bar"
+                        ),
+                    ),
+                ],
+                [
+                    {
+                        "discriminator": "foo",
+                        "validation_result": {
+                            "requirement_validation": "IS_FORBIDDEN_AND_EMPTY",
+                            "hints": "foo",
+                        },
+                    },
+                    {
+                        "discriminator": "bar",
+                        "validation_result": {
+                            "requirement_validation": "IS_REQUIRED",
+                            "hints": "bar",
+                        },
+                    },
+                ],
+            ),
+        ],
+    )
+    def test_list_of_validation_result_in_context_serialization(
+        self,
+        list_of_validation_result_in_context: List[ValidationResultInContext],
+        expected_json_dict: dict,
+    ):
+        json_string = ValidationResultInContextSchema().dumps(list_of_validation_result_in_context, many=True)
+        assert json_string is not None
+        actual_json_dict = json.loads(json_string)
+        assert actual_json_dict == expected_json_dict
 
     @pytest.mark.parametrize(
         "condition_key_condition_text_mapping, expected_json_dict",
