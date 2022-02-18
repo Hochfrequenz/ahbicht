@@ -6,7 +6,8 @@ from abc import ABC, abstractmethod
 from typing import Mapping, Optional
 
 # pylint:disable=too-few-public-methods
-from ahbicht.edifact import EdifactFormat, EdifactFormatVersion
+from maus.edifact import EdifactFormat, EdifactFormatVersion
+
 from ahbicht.mapping_results import PackageKeyConditionExpressionMapping
 
 
