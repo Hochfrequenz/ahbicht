@@ -1,8 +1,7 @@
 from typing import Optional, Tuple
 
 import pytest  # type:ignore[import]
-
-from ahbicht.edifact import EdifactFormat, pruefidentifikator_to_format
+from maus.edifact import EdifactFormat, pruefidentifikator_to_format
 
 
 class TestEdifact:

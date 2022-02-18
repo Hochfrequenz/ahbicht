@@ -5,8 +5,8 @@ import asyncio
 import datetime
 
 import pytest  # type:ignore[import]
+from maus.edifact import EdifactFormat, EdifactFormatVersion
 
-from ahbicht.edifact import EdifactFormat, EdifactFormatVersion
 from ahbicht.expressions.hints_provider import HintsProvider, JsonFileHintsProvider
 
 pytestmark = pytest.mark.asyncio
