@@ -1,20 +1,58 @@
 """
 Tests the evaluation of the start/end of a German Strom- or Gastag.
 """
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 import pytest  # type:ignore[import]
 
-from ahbicht.content_evaluation.german_strom_and_gas_tag import is_gastag_limit, is_stromtag_limit
+from ahbicht.content_evaluation.german_strom_and_gas_tag import (
+    berlin,
+    is_gastag_limit,
+    is_stromtag_limit,
+    parse_as_datetime,
+)
 
 
 class TestGermanStromAndGasTag:
+    @pytest.mark.parametrize(
+        "dt_string, expected_datetime",
+        [
+            pytest.param(
+                "2019-12-31T23:00:00+01:00", datetime(2019, 12, 31, 23, 0, 0, tzinfo=timezone(timedelta(seconds=3600)))
+            ),
+            pytest.param("2022-01-01T00:00:00+00:00", datetime(2022, 1, 1, 0, 0, 0, tzinfo=timezone.utc)),
+            pytest.param("2022-01-01T00:00:00Z", datetime(2022, 1, 1, 0, 0, 0, tzinfo=timezone.utc)),
+            pytest.param("2021-12-31T23:00:00-01:00", datetime(2022, 1, 1, 0, 0, 0, tzinfo=timezone.utc)),
+        ],
+    )
+    def test_successful_parsing(self, dt_string: str, expected_datetime: datetime):
+        actual, error = parse_as_datetime(dt_string)
+        assert error is None
+        assert actual == expected_datetime
+
+    @pytest.mark.parametrize(
+        "dt_string, expected_error_msg",
+        [
+            pytest.param("2019-12-31T00:00:00", "Neither offset nor timezone was given"),
+            pytest.param("2019-12-31T25:00:00+00:00", "hour must be in 0..23"),
+            pytest.param("foo", "Invalid isoformat string"),
+        ],
+    )
+    def test_errornous_parsing(self, dt_string: str, expected_error_msg: str):
+        actual, error = parse_as_datetime(dt_string)
+        assert actual is None
+        assert error is not None
+        assert error.format_constraint_fulfilled is False
+        assert expected_error_msg in error.error_message
+
     @pytest.mark.parametrize(
         "dt, expected_is_start_or_end_of_german_stromtag",
         [
             pytest.param(datetime(2020, 1, 1, 0, 0, 0, tzinfo=timezone.utc), False),
             pytest.param(datetime(2019, 12, 31, 23, 0, 0, tzinfo=timezone.utc), True),
             pytest.param(datetime(2019, 12, 31, 22, 0, 0, tzinfo=timezone.utc), False),
+            pytest.param(datetime(2010, 1, 1, 0, 0, 0, tzinfo=berlin), True),
+            pytest.param(datetime(2010, 1, 1, 0, 0, 0, tzinfo=timezone(timedelta(seconds=3600))), True),
             pytest.param(datetime(2022, 3, 26, 23, 0, 0, 0, tzinfo=timezone.utc), True),
             pytest.param(datetime.fromisoformat("2022-03-27T00:00:00+01:00"), True),
             pytest.param(datetime.fromisoformat("2022-03-27T00:00:00+02:00"), False),

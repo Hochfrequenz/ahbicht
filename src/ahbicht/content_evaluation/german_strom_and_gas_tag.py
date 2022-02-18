@@ -6,7 +6,11 @@ from datetime import datetime, time
 # The problem with the stdlib zoneinfo is, that the availability of timezones via ZoneInfo(zone_key) depends on the OS
 # and system on which you're running it. In some cases "Europe/Berlin" might be available, but generally it's not,
 # and it's PITA to manually define timezones. So we're using pytz as a datasource for timezone information.
+from typing import Optional, Tuple
+
 from pytz import timezone
+
+from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
 
 berlin = timezone("Europe/Berlin")
 
@@ -20,6 +24,27 @@ def _get_german_local_time(date_time: datetime) -> time:
 
 
 # the functions below are excessively unit tested; Please add a test case if you suspect their behaviour to be wrong
+def parse_as_datetime(entered_input: str) -> Tuple[Optional[datetime], Optional[EvaluatedFormatConstraint]]:
+    """
+    Try to parse the given entered_input as datetime
+    :param entered_input: a string
+    :return: A tuple with the first item being a datetime if parsing was successful or the second item being
+    an (erroneous) EvaluatedFormatConstraint if the parsing was not successful.
+    """
+    try:
+        if entered_input.endswith("Z"):
+            entered_input = entered_input.replace("Z", "+00:00")
+        result = datetime.fromisoformat(entered_input)
+        if result.tzinfo is None:
+            # if tzinfo is none the datetime is "naive"/not aware of its timezone
+            # we don't want naive datetimes because they are the root of all evil.
+            return None, EvaluatedFormatConstraint(
+                format_constraint_fulfilled=False,
+                error_message=f"Neither offset nor timezone was given: '{entered_input}'",
+            )
+        return result, None
+    except ValueError as value_error:
+        return None, EvaluatedFormatConstraint(format_constraint_fulfilled=False, error_message=str(value_error))
 
 
 def is_stromtag_limit(date_time: datetime) -> bool:  # the name is not as speaking as I'd like it to be
