@@ -6,7 +6,7 @@ import aiohttp
 from ahbicht.expressions.package_expansion import PackageResolver
 from ahbicht.mapping_results import PackageKeyConditionExpressionMapping, PackageKeyConditionExpressionMappingSchema
 
-
+#pylint: disable=too-few-public-methods
 class HochfrequenzPackageResolver(PackageResolver):
     """
     A package resolver that uses a REST API (by Hochfrequenz) to resolve packages.
