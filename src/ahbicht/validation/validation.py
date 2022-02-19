@@ -184,7 +184,7 @@ async def validate_dataelement(
     dataelement: DataElement,
     segment_requirement: RequirementValidationValue,
     soll_is_required=True,
-) -> ValidationResult:
+) -> ValidationResultInContext:
     """
     Validates data elements by handing them over to specialized functions for freetext or value pool dataelements.
     :param dataelement: the dataelement that should be validated
@@ -203,7 +203,7 @@ async def validate_dataelement_freetext(
     dataelement: DataElementFreeText,
     segment_requirement: Optional[RequirementValidationValue] = None,
     soll_is_required=True,
-) -> DataElementValidationResult:
+) -> ValidationResultInContext:
     """
     Validates a freetext dataelement, e.g. 'Dokumentennummer'.
     :param dataelement: the dataelement that should be validated
@@ -250,7 +250,7 @@ async def validate_dataelement_freetext(
 async def validate_dataelement_valuepool(
     dataelement: DataElementValuePool,
     segment_requirement: RequirementValidationValue,
-) -> DataElementValidationResult:
+) -> ValidationResultInContext:
     """
     Validates a value pool data element which depends on the requirement status of its segment.
     :param dataelement: the dataelement that should be validated

@@ -110,8 +110,8 @@ class ValidationResultInContext:
     Class to set validation result in context, for example with its discriminator.
     """
 
-    discriminator: str = attrs.validators.instance_of(str)
-    validation_result: ValidationResult = attrs.validators.instance_of(ValidationResult)
+    discriminator: str = attrs.validators.instance_of(str)  # type:ignore[assignment]
+    validation_result: ValidationResult = attrs.validators.instance_of(ValidationResult)  # type:ignore[assignment]
 
 
 class ValidationResultInContextSchema(Schema):
@@ -124,7 +124,7 @@ class ValidationResultInContextSchema(Schema):
 
     # pylint:disable=unused-argument,no-self-use
     @post_load
-    def deserialize(self, data, **kwargs) -> dict:
+    def deserialize(self, data, **kwargs) -> ValidationResultInContext:
         """
         Serializes a ValidationResultDiscriminator
         so that the discriminator is the key and the validation_result the value.
