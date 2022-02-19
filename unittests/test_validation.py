@@ -67,13 +67,52 @@ class TestValidation:
                             ],
                         )
                     ],
-                    segment_groups=[],
+                    segment_groups=[
+                        SegmentGroup(
+                            ahb_expression="Muss",
+                            discriminator="SG11",
+                            segments=[
+                                Segment(
+                                    ahb_expression="Muss[2]",
+                                    discriminator="SG11 - Datum",
+                                    data_elements=[
+                                        DataElementFreeText(
+                                            discriminator="SG11 - Datum - Auszug",
+                                            data_element_id="1235",
+                                            ahb_expression="M[2]",
+                                            entered_input="",
+                                        )
+                                    ],
+                                )
+                            ],
+                            segment_groups=None,
+                        )
+                    ],
                 ),
                 [
                     ValidationResultInContext(
                         discriminator="SG10",
                         validation_result=SegmentLevelValidationResult(
                             requirement_validation=RequirementValidationValue.IS_REQUIRED
+                        ),
+                    ),
+                    ValidationResultInContext(
+                        discriminator="SG11",
+                        validation_result=SegmentLevelValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_REQUIRED
+                        ),
+                    ),
+                    ValidationResultInContext(
+                        discriminator="SG11 - Datum",
+                        validation_result=SegmentLevelValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_REQUIRED
+                        ),
+                    ),
+                    ValidationResultInContext(
+                        discriminator="SG11 - Datum - Auszug",
+                        validation_result=DataElementValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
+                            format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
                         ),
                     ),
                     ValidationResultInContext(
@@ -215,6 +254,49 @@ class TestValidation:
                     ),
                     ValidationResultInContext(
                         discriminator="SG10 - Datum - Einzug",
+                        validation_result=DataElementValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
+                            format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                        ),
+                    ),
+                ],
+            ),
+            pytest.param(
+                Segment(
+                    ahb_expression="Muss[2]",
+                    discriminator="SG10 Datum",
+                    data_elements=[
+                        DataElementFreeText(
+                            discriminator="SG10 - Datum - Einzug",
+                            data_element_id="1234",
+                            ahb_expression="M[2]",
+                            entered_input="",
+                        ),
+                        DataElementFreeText(
+                            discriminator="SG10 - Datum - Auszug",
+                            data_element_id="1235",
+                            ahb_expression="M[2]",
+                            entered_input="",
+                        ),
+                    ],
+                ),
+                RequirementValidationValue.IS_REQUIRED,
+                [
+                    ValidationResultInContext(
+                        discriminator="SG10 Datum",
+                        validation_result=SegmentLevelValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_REQUIRED
+                        ),
+                    ),
+                    ValidationResultInContext(
+                        discriminator="SG10 - Datum - Einzug",
+                        validation_result=DataElementValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
+                            format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                        ),
+                    ),
+                    ValidationResultInContext(
+                        discriminator="SG10 - Datum - Auszug",
                         validation_result=DataElementValidationResult(
                             requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
                             format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
