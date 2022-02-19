@@ -238,17 +238,23 @@ class TestValidation:
                     discriminator="SG1", ahb_expression="X", entered_input="bar", data_element_id="1234"
                 ),
                 RequirementValidationValue.IS_REQUIRED,
-                DataElementValidationResult(
-                    requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_FILLED,
-                    format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                ValidationResultInContext(
+                    discriminator="SG1",
+                    validation_result=DataElementValidationResult(
+                        requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_FILLED,
+                        format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                    ),
                 ),
             ),
             pytest.param(
                 DataElementFreeText(discriminator="SG1", ahb_expression="X", entered_input="", data_element_id="1234"),
                 RequirementValidationValue.IS_REQUIRED,
-                DataElementValidationResult(
-                    requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
-                    format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                ValidationResultInContext(
+                    discriminator="SG1",
+                    validation_result=DataElementValidationResult(
+                        requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
+                        format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                    ),
                 ),
             ),
             pytest.param(
@@ -256,11 +262,14 @@ class TestValidation:
                     discriminator="SG1", ahb_expression="M[903][2]U[501]", entered_input="", data_element_id="1234"
                 ),
                 RequirementValidationValue.IS_REQUIRED,
-                DataElementValidationResult(
-                    requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
-                    format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_NOT_FULFILLED,
-                    format_error_message="Format error 903",
-                    hints="foo",
+                ValidationResultInContext(
+                    discriminator="SG1",
+                    validation_result=DataElementValidationResult(
+                        requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
+                        format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_NOT_FULFILLED,
+                        format_error_message="Format error 903",
+                        hints="foo",
+                    ),
                 ),
             ),
             pytest.param(
@@ -268,9 +277,12 @@ class TestValidation:
                     discriminator="SG1", ahb_expression="M[902][3]U[501]", entered_input="bar", data_element_id="1234"
                 ),
                 RequirementValidationValue.IS_REQUIRED,
-                DataElementValidationResult(
-                    requirement_validation=RequirementValidationValue.IS_FORBIDDEN_AND_FILLED,
-                    format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                ValidationResultInContext(
+                    discriminator="SG1",
+                    validation_result=DataElementValidationResult(
+                        requirement_validation=RequirementValidationValue.IS_FORBIDDEN_AND_FILLED,
+                        format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                    ),
                 ),
             ),
         ],
@@ -289,10 +301,13 @@ class TestValidation:
                     discriminator="SG1", data_element_id="1234", value_pool={"A1": "X", "A2": "X", "A3": "X"}
                 ),
                 RequirementValidationValue.IS_REQUIRED,
-                DataElementValidationResult(
-                    requirement_validation=RequirementValidationValue.IS_REQUIRED,
-                    format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
-                    possible_values=["A1", "A2", "A3"],
+                ValidationResultInContext(
+                    discriminator="SG1",
+                    validation_result=DataElementValidationResult(
+                        requirement_validation=RequirementValidationValue.IS_REQUIRED,
+                        format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                        possible_values=["A1", "A2", "A3"],
+                    ),
                 ),
             ),
             pytest.param(
@@ -300,10 +315,13 @@ class TestValidation:
                     discriminator="SG1", data_element_id="1234", value_pool={"A1": "X", "A2": "X", "A3": "X"}
                 ),
                 RequirementValidationValue.IS_FORBIDDEN,
-                DataElementValidationResult(
-                    requirement_validation=RequirementValidationValue.IS_FORBIDDEN,
-                    format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
-                    possible_values=[],
+                ValidationResultInContext(
+                    discriminator="SG1",
+                    validation_result=DataElementValidationResult(
+                        requirement_validation=RequirementValidationValue.IS_FORBIDDEN,
+                        format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                        possible_values=[],
+                    ),
                 ),
             ),
             pytest.param(
@@ -311,10 +329,13 @@ class TestValidation:
                     discriminator="SG1", data_element_id="1234", value_pool={"A1": "X[2]", "A2": "X[3]", "A3": "X"}
                 ),
                 RequirementValidationValue.IS_REQUIRED,
-                DataElementValidationResult(
-                    requirement_validation=RequirementValidationValue.IS_REQUIRED,
-                    format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
-                    possible_values=["A1", "A3"],
+                ValidationResultInContext(
+                    discriminator="SG1",
+                    validation_result=DataElementValidationResult(
+                        requirement_validation=RequirementValidationValue.IS_REQUIRED,
+                        format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                        possible_values=["A1", "A3"],
+                    ),
                 ),
             ),
             pytest.param(
@@ -322,19 +343,25 @@ class TestValidation:
                     discriminator="SG1", data_element_id="1234", value_pool={"A1": "X[2]", "A2": "X[3][501]", "A3": "X"}
                 ),
                 RequirementValidationValue.IS_FORBIDDEN,
-                DataElementValidationResult(
-                    requirement_validation=RequirementValidationValue.IS_FORBIDDEN,
-                    format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
-                    possible_values=[],
+                ValidationResultInContext(
+                    discriminator="SG1",
+                    validation_result=DataElementValidationResult(
+                        requirement_validation=RequirementValidationValue.IS_FORBIDDEN,
+                        format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                        possible_values=[],
+                    ),
                 ),
             ),
             pytest.param(
                 DataElementValuePool(discriminator="SG1", data_element_id="1234", value_pool={"A1": "X"}),
                 RequirementValidationValue.IS_REQUIRED,
-                DataElementValidationResult(
-                    requirement_validation=RequirementValidationValue.IS_REQUIRED,
-                    format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
-                    possible_values=["A1"],
+                ValidationResultInContext(
+                    discriminator="SG1",
+                    validation_result=DataElementValidationResult(
+                        requirement_validation=RequirementValidationValue.IS_REQUIRED,
+                        format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                        possible_values=["A1"],
+                    ),
                 ),
             ),
         ],

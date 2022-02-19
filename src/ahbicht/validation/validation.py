@@ -236,11 +236,14 @@ async def validate_dataelement_freetext(
     else:
         requirement_validation = RequirementValidationValue(str(requirement_validation_without_input) + "_AND_EMPTY")
 
-    return DataElementValidationResult(
-        requirement_validation=requirement_validation,
-        format_validation=format_validation,
-        format_error_message=evaluation_result.format_constraint_evaluation_result.error_message,
-        hints=evaluation_result.requirement_constraint_evaluation_result.hints,
+    return ValidationResultInContext(
+        discriminator=dataelement.discriminator,
+        validation_result=DataElementValidationResult(
+            requirement_validation=requirement_validation,
+            format_validation=format_validation,
+            format_error_message=evaluation_result.format_constraint_evaluation_result.error_message,
+            hints=evaluation_result.requirement_constraint_evaluation_result.hints,
+        ),
     )
 
 
@@ -282,11 +285,14 @@ async def validate_dataelement_valuepool(
         requirement_validation_dataelement == RequirementValidationValue.IS_FORBIDDEN
         hints = None
 
-    return DataElementValidationResult(
-        requirement_validation=requirement_validation_dataelement,
-        format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
-        hints=hints,  # todo: hints might be referenced before assignment
-        possible_values=possible_values,
+    return ValidationResultInContext(
+        discriminator=dataelement.discriminator,
+        validation_result=DataElementValidationResult(
+            requirement_validation=requirement_validation_dataelement,
+            format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+            hints=hints,  # todo: hints might be referenced before assignment
+            possible_values=possible_values,
+        ),
     )
 
 
