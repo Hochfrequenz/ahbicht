@@ -47,25 +47,25 @@ async def validate_root_segment_level(
 
 async def validate_segment_group(
     segment_group: SegmentGroup,
-    higher_segment_group_requirement: Optional[RequirementValidationValue] = None,
+    parent_segment_group_requirement: Optional[RequirementValidationValue] = None,
     soll_is_required: bool = True,
 ) -> List[ValidationResultInContext]:
     """
     Validates a segment group and the segment groups and segments it contains.
     :param segment_group: the segment_group that should be validated
-    :param higher_segment_group_requirement: the requirement of the segment_group's segment_group, e.g. IS_REQUIRED
+    :param parent_segment_group_requirement: the requirement of the segment_group's segment_group, e.g. IS_REQUIRED
     :param soll_is_required: true (default) if SOLL should be handled like MUSS, false if it should be handled like KANN
     :return: List of ValidationResultInContext of the segment group and the segment groups and segments it contains.
     """
 
     # validation of this segment group
-    if higher_segment_group_requirement is RequirementValidationValue.IS_FORBIDDEN:
+    if parent_segment_group_requirement is RequirementValidationValue.IS_FORBIDDEN:
         segment_group_validation = SegmentLevelValidationResult(
             requirement_validation=RequirementValidationValue.IS_FORBIDDEN
         )
     else:
         segment_group_validation = await get_segment_level_requirement_validation_value(
-            segment_group, higher_segment_group_requirement, soll_is_required
+            segment_group, parent_segment_group_requirement, soll_is_required
         )
 
     validation_results_in_context = [
@@ -74,18 +74,18 @@ async def validate_segment_group(
 
     tasks = []
 
-    # validation of lower segment_groups
+    # validation of child_segment_group s
     if segment_group.segment_groups:
-        for lower_segment_group in segment_group.segment_groups:
+        for child_segment_group in segment_group.segment_groups:
             tasks.append(
                 validate_segment_group(
-                    lower_segment_group,
+                    child_segment_group,
                     segment_group_validation.requirement_validation,
                     soll_is_required,
                 )
             )
 
-    # validation of lower segments
+    # validation of child segments
     if segment_group.segments:
         for segment in segment_group.segments:
             tasks.append(
@@ -145,14 +145,14 @@ async def validate_segment(
 
 async def get_segment_level_requirement_validation_value(
     segment_level: SegmentLevel,
-    higher_segment_group_requirement: Optional[RequirementValidationValue] = None,
+    parent_segment_group_requirement: Optional[RequirementValidationValue] = None,
     soll_is_required: bool = True,
 ) -> SegmentLevelValidationResult:
     """
     Parses and evaluates a segment level expression and maps it to a requirement validation value,
-    also depending on a higher segment group requirement if present.
+    also depending on a parent segment group requirement if present.
     :param segment_level: the segment or segment group that should be validated
-    :param higher_segment_group_requirement: the requirement of the segment level's segment group, e.g. IS_REQUIRED
+    :param parent_segment_group_requirement: the requirement of the segment level's segment group, e.g. IS_REQUIRED
     :param soll_is_required: true (default) if SOLL should be handled like MUSS, false if it should be handled like KANN
     :return: Validation Result of the data element
     """
@@ -167,8 +167,8 @@ async def get_segment_level_requirement_validation_value(
     )
 
     requirement_validation = combine_requirements_of_different_levels(
-        higher_level_requirement=higher_segment_group_requirement,
-        lower_level_requirement=requirement_validation_without_hierarchy,
+        parent_level_requirement=parent_segment_group_requirement,
+        child_level_requirement=requirement_validation_without_hierarchy,
     )
 
     return SegmentLevelValidationResult(
@@ -326,15 +326,15 @@ def map_requirement_validation_values(
 
 
 def combine_requirements_of_different_levels(
-    higher_level_requirement: Optional[RequirementValidationValue],
-    lower_level_requirement: RequirementValidationValue,
+    parent_level_requirement: Optional[RequirementValidationValue],
+    child_level_requirement: RequirementValidationValue,
 ) -> RequirementValidationValue:
     """
-    Combines two requirement values of a higher and lower level.
+    Combines two requirement values of a parent and child level.
     Requirement status from `segment group` beats `segment` beats `data element`
     Forbidden is catched beforehand to make further evaluation unnecessary.
 
-    | Higher group | lower group | result    |
+    | parent group | child group | result    |
     | ------------ | ----------- | --------- |
     | required     | required    | required  |
     | required     | forbidden   | forbidden |
@@ -344,14 +344,14 @@ def combine_requirements_of_different_levels(
     | optional     | optional    | optional  |
 
     """
-    if higher_level_requirement is None:
-        return lower_level_requirement
+    if parent_level_requirement is None:
+        return child_level_requirement
 
-    if higher_level_requirement is RequirementValidationValue.IS_REQUIRED:
-        return lower_level_requirement
-    if higher_level_requirement is RequirementValidationValue.IS_OPTIONAL:
-        if lower_level_requirement is RequirementValidationValue.IS_REQUIRED:
+    if parent_level_requirement is RequirementValidationValue.IS_REQUIRED:
+        return child_level_requirement
+    if parent_level_requirement is RequirementValidationValue.IS_OPTIONAL:
+        if child_level_requirement is RequirementValidationValue.IS_REQUIRED:
             return RequirementValidationValue.IS_OPTIONAL  # TODO: Let's discuss this (optional/optionalrequired?)
-        return lower_level_requirement
+        return child_level_requirement
 
-    raise ValueError("Unexpected higher_level_requirement value")
+    raise ValueError("Unexpected parent_level_requirement value")

@@ -171,7 +171,7 @@ class TestValidation:
         assert result == expected_validation_result
 
     @pytest.mark.parametrize(
-        "segment_group, higher_segment_group_requirement, expected_validation_result",
+        "segment_group, parent_segment_group_requirement, expected_validation_result",
         [
             pytest.param(
                 SegmentGroup(
@@ -221,11 +221,11 @@ class TestValidation:
     async def test_validate_segment_group(
         self,
         segment_group,
-        higher_segment_group_requirement,
+        parent_segment_group_requirement,
         expected_validation_result,
         inject_content_evaluation_result,
     ):
-        result = await validate_segment_group(segment_group, higher_segment_group_requirement)
+        result = await validate_segment_group(segment_group, parent_segment_group_requirement)
         assert result == expected_validation_result
 
     @pytest.mark.parametrize(
@@ -536,7 +536,7 @@ class TestValidation:
         assert requirement_validation_value == expected_requirement_validation_value
 
     @pytest.mark.parametrize(
-        "higher_level_requirement, lower_level_requirement, expected_requirement",
+        "parent_level_requirement, child_level_requirement, expected_requirement",
         [
             pytest.param(
                 RequirementValidationValue.IS_REQUIRED,
@@ -571,18 +571,18 @@ class TestValidation:
         ],
     )
     def test_combine_requirements_of_different_levels(
-        self, higher_level_requirement, lower_level_requirement, expected_requirement
+        self, parent_level_requirement, child_level_requirement, expected_requirement
     ):
         combined_requirement = combine_requirements_of_different_levels(
-            higher_level_requirement, lower_level_requirement
+            parent_level_requirement, child_level_requirement
         )
         assert combined_requirement == expected_requirement
 
     def test_combine_requirements_of_different_levels_error(self):
         with pytest.raises(ValueError) as excinfo:
             _ = combine_requirements_of_different_levels(
-                higher_level_requirement=RequirementValidationValue.IS_FORBIDDEN,
-                lower_level_requirement=RequirementValidationValue.IS_OPTIONAL,  # does not matter
+                parent_level_requirement=RequirementValidationValue.IS_FORBIDDEN,
+                child_level_requirement=RequirementValidationValue.IS_OPTIONAL,  # does not matter
             )
 
-        assert "Unexpected higher_level_requirement value" in str(excinfo.value)
+        assert "Unexpected parent_level_requirement value" in str(excinfo.value)
