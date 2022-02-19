@@ -7,10 +7,10 @@ from typing import List, TypeVar
 
 import pytest  # type:ignore[import]
 from marshmallow import Schema, ValidationError
+from maus.edifact import EdifactFormat
 
 from ahbicht.content_evaluation.categorized_key_extract import CategorizedKeyExtract, CategorizedKeyExtractSchema
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
-from ahbicht.edifact import EdifactFormat
 from ahbicht.evaluation_results import (
     AhbExpressionEvaluationResult,
     AhbExpressionEvaluationResultSchema,

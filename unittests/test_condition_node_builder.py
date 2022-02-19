@@ -4,11 +4,11 @@ from pathlib import Path
 import inject
 import pytest  # type:ignore[import]
 import pytest_asyncio  # type:ignore[import]
+from maus.edifact import EdifactFormat, EdifactFormatVersion
 
 from ahbicht.condition_node_builder import ConditionNodeBuilder
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluationContext
 from ahbicht.content_evaluation.rc_evaluators import EvaluatableData, RcEvaluator
-from ahbicht.edifact import EdifactFormat, EdifactFormatVersion
 from ahbicht.expressions.condition_nodes import (
     ConditionFulfilledValue,
     Hint,
