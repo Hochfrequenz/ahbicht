@@ -33,6 +33,3 @@ class FormatValidationValue(str, Enum):
     FORMAT_CONSTRAINTS_ARE_FULFILLED = "FORMAT_CONSTRAINTS_ARE_FULFILLED"
     #: format constraints are not fullfilled
     FORMAT_CONSTRAINTS_ARE_NOT_FULFILLED = "FORMAT_CONSTRAINTS_ARE_NOT_FULFILLED"
-
-    def __str__(self):
-        return self.value
