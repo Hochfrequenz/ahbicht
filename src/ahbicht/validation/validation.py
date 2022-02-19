@@ -59,7 +59,7 @@ async def validate_segment_group(
     """
 
     # validation of this segment group
-    if higher_segment_group_requirement == RequirementValidationValue.IS_FORBIDDEN:
+    if higher_segment_group_requirement is RequirementValidationValue.IS_FORBIDDEN:
         segment_group_validation = SegmentLevelValidationResult(
             requirement_validation=RequirementValidationValue.IS_FORBIDDEN
         )
@@ -119,7 +119,7 @@ async def validate_segment(
     """
 
     # validation of this segment
-    if segment_group_requirement == RequirementValidationValue.IS_FORBIDDEN:
+    if segment_group_requirement is RequirementValidationValue.IS_FORBIDDEN:
         segment_validation = SegmentLevelValidationResult(
             requirement_validation=RequirementValidationValue.IS_FORBIDDEN
         )
@@ -261,7 +261,7 @@ async def validate_dataelement_valuepool(
     # Only exception is if no qualifier is possible, see below
     requirement_validation_dataelement = segment_requirement
 
-    if segment_requirement != RequirementValidationValue.IS_FORBIDDEN:
+    if segment_requirement is not RequirementValidationValue.IS_FORBIDDEN:
         # it seems like all single value dataelements (except freetext) are just labeled "X"
         if len(dataelement.value_pool) == 1:
             possible_values = list(dataelement.value_pool)
@@ -279,7 +279,7 @@ async def validate_dataelement_valuepool(
     # pylint: disable = pointless-statement
     # Case: segment_requirement is required, but no possible values are appended
     if not possible_values:
-        requirement_validation_dataelement == RequirementValidationValue.IS_FORBIDDEN
+        requirement_validation_dataelement is RequirementValidationValue.IS_FORBIDDEN
         hints = None
 
     return ValidationResultInContext(
@@ -308,7 +308,7 @@ def map_requirement_validation_values(
     """
 
     # sets soll according to soll_is_required
-    if requirement_indicator == ModalMark.SOLL:
+    if requirement_indicator is ModalMark.SOLL:
         if soll_is_required:
             requirement_indicator = ModalMark.MUSS
         else:
@@ -317,9 +317,9 @@ def map_requirement_validation_values(
     if not requirement_constraints_are_fulfilled:
         requirement_validation = RequirementValidationValue.IS_FORBIDDEN
     else:
-        if requirement_indicator == ModalMark.MUSS or isinstance(requirement_indicator, PrefixOperator):
+        if requirement_indicator is ModalMark.MUSS or isinstance(requirement_indicator, PrefixOperator):
             requirement_validation = RequirementValidationValue.IS_REQUIRED
-        elif requirement_indicator == ModalMark.KANN:
+        elif requirement_indicator is ModalMark.KANN:
             requirement_validation = RequirementValidationValue.IS_OPTIONAL
 
     return requirement_validation
@@ -347,10 +347,10 @@ def combine_requirements_of_different_levels(
     if higher_level_requirement is None:
         return lower_level_requirement
 
-    if higher_level_requirement == RequirementValidationValue.IS_REQUIRED:
+    if higher_level_requirement is RequirementValidationValue.IS_REQUIRED:
         return lower_level_requirement
-    if higher_level_requirement == RequirementValidationValue.IS_OPTIONAL:
-        if lower_level_requirement == RequirementValidationValue.IS_REQUIRED:
+    if higher_level_requirement is RequirementValidationValue.IS_OPTIONAL:
+        if lower_level_requirement is RequirementValidationValue.IS_REQUIRED:
             return RequirementValidationValue.IS_OPTIONAL  # TODO: Let's discuss this (optional/optionalrequired?)
         return lower_level_requirement
 
