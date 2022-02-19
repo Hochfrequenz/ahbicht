@@ -2,6 +2,7 @@
 This module provides the functions to validate segment group, segments and data elements.
 """
 
+import asyncio
 from typing import Optional, List
 
 from maus.models.edifact_components import (
@@ -51,18 +52,14 @@ async def validate_segment_group(
     segment_group: SegmentGroup,
     higher_segment_group_requirement: Optional[RequirementValidationValue] = None,
     soll_is_required: bool = True,
-    validation_results_in_context: Optional[List[ValidationResultInContext]] = None,
 ) -> List[ValidationResultInContext]:
     """
     Validates a segment group and its containing segment groups and segments.
     :param segment_group: the segment_group that should be validated
     :param higher_segment_group_requirement: the requirement of the segment_group's segment_group, e.g. IS_REQUIRED
     :param soll_is_required: true (default) if SOLL should be handled like MUSS, false if it should be handled like KANN
-    :param validation_result: List for collecting all ValidationResultInContext
-    :return: List of ValidationResultInContext of the Dataelement
+    :return: List of ValidationResultInContext of the segment group
     """
-    if not validation_results_in_context:
-        validation_results_in_context = []
 
     # validation of this segment group
     if higher_segment_group_requirement == RequirementValidationValue.IS_FORBIDDEN:
@@ -74,29 +71,39 @@ async def validate_segment_group(
             segment_group, higher_segment_group_requirement, soll_is_required
         )
 
-    validation_results_in_context.append(
+    validation_results_in_context = [
         ValidationResultInContext(discriminator=segment_group.discriminator, validation_result=segment_group_validation)
-    )
+    ]
+
+    tasks = []
 
     # validation of lower segment_groups
     if segment_group.segment_groups:
         for lower_segment_group in segment_group.segment_groups:
-            validation_results_in_context = await validate_segment_group(
-                lower_segment_group,
-                segment_group_validation.requirement_validation,
-                soll_is_required,
-                validation_results_in_context,
+            tasks.append(
+                validate_segment_group(
+                    lower_segment_group,
+                    segment_group_validation.requirement_validation,
+                    soll_is_required,
+                )
             )
 
     # validation of lower segments
     if segment_group.segments:
         for segment in segment_group.segments:
-            validation_results_in_context = await validate_segment(
-                segment,
-                segment_group_validation.requirement_validation,
-                soll_is_required,
-                validation_results_in_context,
+            tasks.append(
+                validate_segment(
+                    segment,
+                    segment_group_validation.requirement_validation,
+                    soll_is_required,
+                )
             )
+
+    validation_results_of_children = await asyncio.gather(*tasks)
+
+    for sublist in validation_results_of_children:
+        for item in sublist:
+            validation_results_in_context.append(item)
 
     return validation_results_in_context
 
@@ -105,18 +112,14 @@ async def validate_segment(
     segment: Segment,
     segment_group_requirement: Optional[RequirementValidationValue] = None,
     soll_is_required: bool = True,
-    validation_results_in_context: List[ValidationResultInContext] = None,
 ) -> List[ValidationResultInContext]:
     """
-    Validates a segment group and its containing dataelements
+    Validates a segment and its containing dataelements
     :param segment: the segment that should be validated
     :param segment_group_requirement: the requirement of the segment's segment_group, e.g. IS_REQUIRED
     :param soll_is_required: true (default) if SOLL should be handled like MUSS, false if it should be handled like KANN
-    :param validation_result: List for collecting all ValidationResultInContext
-    :return: List of ValidationResultInContext of the segment
+    :return: List of ValidationResultInContext of the segment and its containing dataelements
     """
-    if not validation_results_in_context:
-        validation_results_in_context = []
 
     # validation of this segment
     if segment_group_requirement == RequirementValidationValue.IS_FORBIDDEN:
@@ -128,22 +131,19 @@ async def validate_segment(
             segment, segment_group_requirement, soll_is_required
         )
 
-    validation_results_in_context.append(
+    validation_results_in_context = [
         ValidationResultInContext(discriminator=segment.discriminator, validation_result=segment_validation)
-    )
+    ]
+
+    tasks = []
 
     # validation of this segments dataelements
     for dataelement in segment.data_elements:
-        validation_result_of_dataelement = await validate_dataelement(
-            dataelement, segment_validation.requirement_validation
-        )
-        validation_results_in_context.append(
-            ValidationResultInContext(
-                discriminator=dataelement.discriminator, validation_result=validation_result_of_dataelement
-            )
-        )
+        tasks.append(validate_dataelement(dataelement, segment_validation.requirement_validation))
 
-    return validation_results_in_context
+    validation_results_in_context_dataelements = await asyncio.gather(*tasks)
+
+    return [*validation_results_in_context, *validation_results_in_context_dataelements]
 
 
 async def get_segment_level_requirement_validation_value(
