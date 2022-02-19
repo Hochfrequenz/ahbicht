@@ -3,7 +3,7 @@ This module provides the functions to validate segment group, segments and data 
 """
 
 import asyncio
-from typing import Optional, List
+from typing import List, Optional
 
 from maus.models.edifact_components import (
     DataElement,
@@ -20,12 +20,9 @@ from ahbicht.expressions.enums import ModalMark, PrefixOperator, RequirementIndi
 from ahbicht.validation.validation_results import (
     DataElementValidationResult,
     SegmentLevelValidationResult,
-    ValidationResult,
     ValidationResultInContext,
 )
 from ahbicht.validation.validation_values import FormatValidationValue, RequirementValidationValue
-
-# pylint: disable=too-few-public-methods, no-member, no-self-use, unused-argument
 
 
 async def validate_root_segment_level(
