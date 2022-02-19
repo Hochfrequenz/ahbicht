@@ -51,11 +51,11 @@ async def validate_segment_group(
     soll_is_required: bool = True,
 ) -> List[ValidationResultInContext]:
     """
-    Validates a segment group and its containing segment groups and segments.
+    Validates a segment group and the segment groups and segments it contains.
     :param segment_group: the segment_group that should be validated
     :param higher_segment_group_requirement: the requirement of the segment_group's segment_group, e.g. IS_REQUIRED
     :param soll_is_required: true (default) if SOLL should be handled like MUSS, false if it should be handled like KANN
-    :return: List of ValidationResultInContext of the segment group
+    :return: List of ValidationResultInContext of the segment group and the segment groups and segments it contains.
     """
 
     # validation of this segment group
@@ -111,11 +111,11 @@ async def validate_segment(
     soll_is_required: bool = True,
 ) -> List[ValidationResultInContext]:
     """
-    Validates a segment and its containing dataelements
+    Validates a segment and the data elements it contains.
     :param segment: the segment that should be validated
     :param segment_group_requirement: the requirement of the segment's segment_group, e.g. IS_REQUIRED
     :param soll_is_required: true (default) if SOLL should be handled like MUSS, false if it should be handled like KANN
-    :return: List of ValidationResultInContext of the segment and its containing dataelements
+    :return: List of ValidationResultInContext of the segment and the data elements it contains
     """
 
     # validation of this segment
@@ -154,7 +154,7 @@ async def get_segment_level_requirement_validation_value(
     :param segment_level: the segment or segment group that should be validated
     :param higher_segment_group_requirement: the requirement of the segment level's segment group, e.g. IS_REQUIRED
     :param soll_is_required: true (default) if SOLL should be handled like MUSS, false if it should be handled like KANN
-    :return: Validation Result of the Dataelement
+    :return: Validation Result of the data element
     """
 
     expression_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(segment_level.ahb_expression)
@@ -185,7 +185,7 @@ async def validate_dataelement(
     """
     Validates data elements by handing them over to specialized functions for freetext or value pool dataelements.
     :param dataelement: the dataelement that should be validated
-    :param segment_requirement: the requirement of the dataelement's segment, e.g. IS_REQUIRED
+    :param segment_requirement: the requirement of the dataelement's parent segment, e.g. IS_REQUIRED
     :param soll_is_required: true (default) if SOLL should be handled like MUSS, false if it should be handled like KANN
     :return: Validation Result of the Data element
     """
@@ -204,7 +204,7 @@ async def validate_dataelement_freetext(
     """
     Validates a freetext dataelement, e.g. 'Dokumentennummer'.
     :param dataelement: the dataelement that should be validated
-    :param segment_requirement: the requirement of the dataelement's segment, e.g. IS_REQUIRED
+    :param segment_requirement: the requirement of the dataelement's parent segment, e.g. IS_REQUIRED
     :param soll_is_required: true (default) if SOLL should be handled like MUSS, if it should be handled like KANN
     :return: Validation Result of the Dataelement
     """
@@ -251,14 +251,14 @@ async def validate_dataelement_valuepool(
     """
     Validates a value pool data element which depends on the requirement status of its segment.
     :param dataelement: the dataelement that should be validated
-    :param segment_requirement: the requirement of the dataelement's segment, e.g. IS_REQUIRED
+    :param segment_requirement: the requirement of the dataelement's parent segment, e.g. IS_REQUIRED
     :returns: Validation Result of the Dataelement
     """
     possible_values = []
 
     # Since the conditions behind the qualifiers only say if this qualifier is possible or not,
-    # the overall requirement is inherited from the dataelement's segment.
-    # Only exception is if no dataelement is possible, see below
+    # the overall requirement is inherited from the dataelement's parent segment.
+    # Only exception is if no qualifier is possible, see below
     requirement_validation_dataelement = segment_requirement
 
     if segment_requirement != RequirementValidationValue.IS_FORBIDDEN:
