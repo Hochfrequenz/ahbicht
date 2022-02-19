@@ -17,7 +17,9 @@ class ValidationResult(ABC):
     """Result of the validation"""
 
     #: In which requirement state is the field and is it filled or not?
-    requirement_validation: RequirementValidationValue
+    requirement_validation: RequirementValidationValue = attrs.field(
+        validator=attrs.validators.instance_of(RequirementValidationValue)
+    )
     #: Collected hints
     hints: Optional[str] = attrs.field(default=None)
 
