@@ -545,7 +545,9 @@ class TestValidation:
         for rcs_fulfilled, requirement_indicator, soll_is_required in product(
             [True, False], requirement_indicators, [True, False]
         ):
-            _ = map_requirement_validation_values(rcs_fulfilled, requirement_indicator, soll_is_required)
+            result = map_requirement_validation_values(rcs_fulfilled, requirement_indicator, soll_is_required)
+            assert result is not None
+            assert isinstance(result, RequirementValidationValue)
 
     @pytest.mark.parametrize(
         "parent_level_requirement, child_level_requirement, expected_requirement",
