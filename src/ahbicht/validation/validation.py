@@ -213,13 +213,13 @@ async def validate_dataelement_freetext(
     evaluation_result = await evaluate_ahb_expression_tree(expression_tree, entered_input=dataelement.entered_input)
 
     # requirement constraints
-    requirement_validation_without_input_without_hierachry = map_requirement_validation_values(
+    requirement_validation_without_input_without_hierarchy = map_requirement_validation_values(
         evaluation_result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled,
         evaluation_result.requirement_indicator,
         soll_is_required,
     )
     requirement_validation_without_input = combine_requirements_of_different_levels(
-        segment_requirement, requirement_validation_without_input_without_hierachry
+        segment_requirement, requirement_validation_without_input_without_hierarchy
     )
 
     # format constraints
