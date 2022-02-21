@@ -1,4 +1,6 @@
 import uuid
+from itertools import product
+from typing import List
 
 import pytest  # type:ignore[import]
 from maus.models.edifact_components import DataElementFreeText, DataElementValuePool, Segment, SegmentGroup
@@ -6,7 +8,7 @@ from maus.models.edifact_components import DataElementFreeText, DataElementValue
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.evaluator_factory import create_and_inject_hardcoded_evaluators
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
-from ahbicht.expressions.enums import ModalMark, PrefixOperator
+from ahbicht.expressions.enums import ModalMark, PrefixOperator, RequirementIndicator
 from ahbicht.validation.validation import (
     combine_requirements_of_different_levels,
     map_requirement_validation_values,
@@ -534,6 +536,16 @@ class TestValidation:
             requirement_constraints_are_fulfilled, requirement_indicator, soll_is_required=False
         )
         assert requirement_validation_value == expected_requirement_validation_value
+
+    def test_map_requirement_validation_values_all_cases_are_covered(self):
+        """
+        A fuzzing test to make sure all possible input values are mapped
+        """
+        requirement_indicators: List[RequirementIndicator] = [x for x in ModalMark] + [x for x in PrefixOperator]
+        for rcs_fulfilled, requirement_indicator, soll_is_required in product(
+            [True, False], requirement_indicators, [True, False]
+        ):
+            _ = map_requirement_validation_values(rcs_fulfilled, requirement_indicator, soll_is_required)
 
     @pytest.mark.parametrize(
         "parent_level_requirement, child_level_requirement, expected_requirement",
