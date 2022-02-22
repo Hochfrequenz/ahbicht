@@ -1,5 +1,5 @@
 """
-This module provides the functions to validate segment group, segments and data elements.
+This module provides the functions to validate segment groups, segments and data elements.
 """
 
 import asyncio
