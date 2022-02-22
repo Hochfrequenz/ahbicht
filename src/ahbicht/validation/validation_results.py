@@ -37,7 +37,7 @@ class DataElementValidationResult(ValidationResult):
     format_validation: FormatValidationValue = attrs.field(
         validator=attrs.validators.instance_of(FormatValidationValue)
     )
-    #: possible error message regarding the format
+    #: possible error message regarding the format constraints
     format_error_message: Optional[str] = attrs.field(default=None)
     #: possible qualifiers for value pool dataelements
     possible_values: Optional[List[str]] = attrs.field(
