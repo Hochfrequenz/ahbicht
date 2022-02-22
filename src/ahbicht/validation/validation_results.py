@@ -112,8 +112,12 @@ class ValidationResultInContext:
     Class to set validation result in context, for example with its discriminator.
     """
 
-    discriminator: str = attrs.validators.instance_of(str)  # type:ignore[assignment]
-    validation_result: ValidationResult = attrs.validators.instance_of(ValidationResult)  # type:ignore[assignment]
+    discriminator: str = attrs.field(
+        validator=attrs.validators.instance_of(str)
+    )
+    validation_result: ValidationResult = attrs.field(
+        validator=attrs.validators.instance_of(ValidationResult)
+    )
 
 
 class ValidationResultInContextSchema(Schema):
