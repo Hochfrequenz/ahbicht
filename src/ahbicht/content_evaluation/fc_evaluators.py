@@ -13,7 +13,7 @@ from abc import ABC
 from typing import Coroutine, Dict, List
 
 from ahbicht.content_evaluation.evaluators import Evaluator
-from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
+from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint, FormatConstraintEvaluationStatus
 
 
 # pylint: disable=no-self-use
@@ -43,7 +43,10 @@ class FcEvaluator(Evaluator, ABC):
         else:
             result = evaluation_method(entered_input)
         # Fallback error message if there is no error message even though format constraint isn't fulfilled
-        if result.format_constraint_fulfilled is False and result.error_message is None:
+        if (
+            result.format_constraint_fulfilled is FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_NOT_FULFILLED
+            and result.error_message is None
+        ):
             result.error_message = f"Condition [{condition_key}] has to be fulfilled."
 
         return result

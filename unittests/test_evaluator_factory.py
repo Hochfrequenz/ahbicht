@@ -8,7 +8,11 @@ from _pytest.fixtures import SubRequest  # type:ignore[import]
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.evaluator_factory import create_and_inject_hardcoded_evaluators
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
-from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
+from ahbicht.expressions.condition_nodes import (
+    ConditionFulfilledValue,
+    EvaluatedFormatConstraint,
+    FormatConstraintEvaluationStatus,
+)
 from ahbicht.expressions.enums import ModalMark, RequirementIndicator
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 
@@ -30,7 +34,10 @@ class TestEvaluatorFactory:
             ContentEvaluationResult(
                 hints={"501": "foo"},
                 format_constraints={
-                    "902": EvaluatedFormatConstraint(format_constraint_fulfilled=True, error_message=None),
+                    "902": EvaluatedFormatConstraint(
+                        format_constraint_fulfilled=FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_FULFILLED,
+                        error_message=None,
+                    ),
                 },
                 requirement_constraints={
                     "1": ConditionFulfilledValue.FULFILLED,  # <-- from resolving the 123P package
@@ -46,9 +53,25 @@ class TestEvaluatorFactory:
     @pytest.mark.parametrize(
         "expression, expected_requirement_indicator, expected_format_constraint_result, expected_in_hints",
         [
-            pytest.param("Muss ([2] O [3])[902]U[501]", ModalMark.MUSS, True, "foo"),
-            pytest.param("Muss [2] O [3][902]U[501]", ModalMark.MUSS, True, None),
-            pytest.param("Muss [2] O [3][902]U[501]U[123P]", ModalMark.MUSS, True, None, id="with package"),
+            pytest.param(
+                "Muss ([2] O [3])[902]U[501]",
+                ModalMark.MUSS,
+                FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_FULFILLED,
+                "foo",
+            ),
+            pytest.param(
+                "Muss [2] O [3][902]U[501]",
+                ModalMark.MUSS,
+                FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_FULFILLED,
+                None,
+            ),
+            pytest.param(
+                "Muss [2] O [3][902]U[501]U[123P]",
+                ModalMark.MUSS,
+                FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_FULFILLED,
+                None,
+                id="with package",
+            ),
         ],
     )
     async def test_correct_injection(
@@ -56,7 +79,7 @@ class TestEvaluatorFactory:
         inject_content_evaluation_result,
         expression: str,
         expected_requirement_indicator: RequirementIndicator,
-        expected_format_constraint_result: bool,
+        expected_format_constraint_result: FormatConstraintEvaluationStatus,
         expected_in_hints: Optional[str],
     ):
         tree = await parse_expression_including_unresolved_subexpressions(expression=expression, resolve_packages=True)

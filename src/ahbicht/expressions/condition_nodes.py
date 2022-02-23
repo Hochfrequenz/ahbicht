@@ -15,6 +15,7 @@ import attrs
 
 # pylint: disable=too-few-public-methods
 from marshmallow import Schema, fields, post_load
+from marshmallow_enum import EnumField
 
 
 class ConditionFulfilledValue(str, Enum):
@@ -141,6 +142,80 @@ class UnevaluatedFormatConstraint(FormatConstraint):
     conditions_fulfilled: ConditionFulfilledValue = ConditionFulfilledValue.NEUTRAL
 
 
+class FormatConstraintEvaluationStatus(str, Enum):
+    """
+    Possible values to describe the outcome of the evaluation of a single format constraint.
+    It behaves like a boolean but (in contrast to a boolean) is extendable.
+    """
+
+    #: format constraint is fulfilled (true)
+    FORMAT_CONSTRAINT_IS_FULFILLED = "FORMAT_CONSTRAINT_IS_FULFILLED"
+    #: format constraint is not fulfilled (false)
+    FORMAT_CONSTRAINT_IS_NOT_FULFILLED = "FORMAT_CONSTRAINT_IS_NOT_FULFILLED"
+
+    def __and__(self, other: "FormatConstraintEvaluationStatus") -> "FormatConstraintEvaluationStatus":
+        if (
+            self == FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_FULFILLED
+            and other == FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_FULFILLED
+        ):
+            return FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_FULFILLED
+        return FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_NOT_FULFILLED
+
+    def __or__(self, other: "FormatConstraintEvaluationStatus") -> "FormatConstraintEvaluationStatus":
+        if (
+            self == FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_FULFILLED
+            or other == FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_FULFILLED
+        ):
+            return FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_FULFILLED
+        return FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_NOT_FULFILLED
+
+    def __xor__(self, other: "FormatConstraintEvaluationStatus") -> "FormatConstraintEvaluationStatus":
+        if (
+            self
+            == FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_FULFILLED ^ other
+            == FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_FULFILLED
+        ):
+            return FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_FULFILLED
+        return FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_NOT_FULFILLED
+
+
+class FormatConstraintsEvaluationResult(str, Enum):
+    """
+    Possible values to describe the outcome of the evaluation of a single format constraint.
+    It behaves like a boolean but (in contrast to a boolean) is extendable.
+    """
+
+    #: format constraints are fulfilled (true)
+    FORMAT_CONSTRAINTS_ARE_FULFILLED = "FORMAT_CONSTRAINTS_ARE_FULFILLED"
+    #: format constraints are not fulfilled (false)
+    FORMAT_CONSTRAINTS_ARE_NOT_FULFILLED = "FORMAT_CONSTRAINTS_ARE_NOT_FULFILLED"
+
+    def __and__(self, other: "FormatConstraintsEvaluationResult") -> "FormatConstraintsEvaluationResult":
+        if (
+            self == FormatConstraintsEvaluationResult.FORMAT_CONSTRAINTS_ARE_FULFILLED
+            and other == FormatConstraintsEvaluationResult.FORMAT_CONSTRAINTS_ARE_FULFILLED
+        ):
+            return FormatConstraintsEvaluationResult.FORMAT_CONSTRAINTS_ARE_FULFILLED
+        return FormatConstraintsEvaluationResult.FORMAT_CONSTRAINTS_ARE_NOT_FULFILLED
+
+    def __or__(self, other: "FormatConstraintsEvaluationResult") -> "FormatConstraintsEvaluationResult":
+        if (
+            self == FormatConstraintsEvaluationResult.FORMAT_CONSTRAINTS_ARE_FULFILLED
+            or other == FormatConstraintsEvaluationResult.FORMAT_CONSTRAINTS_ARE_NOT_FULFILLED
+        ):
+            return FormatConstraintsEvaluationResult.FORMAT_CONSTRAINTS_ARE_FULFILLED
+        return FormatConstraintsEvaluationResult.FORMAT_CONSTRAINTS_ARE_NOT_FULFILLED
+
+    def __xor__(self, other: "FormatConstraintsEvaluationResult") -> "FormatConstraintsEvaluationResult":
+        if (
+            self
+            == FormatConstraintsEvaluationResult.FORMAT_CONSTRAINTS_ARE_FULFILLED ^ other
+            == FormatConstraintsEvaluationResult.FORMAT_CONSTRAINTS_ARE_FULFILLED
+        ):
+            return FormatConstraintsEvaluationResult.FORMAT_CONSTRAINTS_ARE_FULFILLED
+        return FormatConstraintsEvaluationResult.FORMAT_CONSTRAINTS_ARE_NOT_FULFILLED
+
+
 @attrs.define(auto_attribs=True)
 class EvaluatedFormatConstraint:
     """
@@ -149,7 +224,10 @@ class EvaluatedFormatConstraint:
     fulfilled or not.
     """
 
-    format_constraint_fulfilled: bool = attrs.field(validator=attrs.validators.instance_of(bool))
+    format_constraint_fulfilled: FormatConstraintEvaluationStatus = attrs.field(
+        validator=attrs.validators.instance_of(FormatConstraintEvaluationStatus)
+    )
+    #: the error message is None iff the format constraint is fulfilled
     error_message: Optional[str] = attrs.field(default=None)
 
 
@@ -158,7 +236,7 @@ class EvaluatedFormatConstraintSchema(Schema):
     A schema to (de)serialize EvaluatedFormatConstraints.
     """
 
-    format_constraint_fulfilled = fields.Boolean(required=True)
+    format_constraint_fulfilled = EnumField(FormatConstraintEvaluationStatus)
     error_message = fields.String(required=False, allow_none=True, dump_default=True)
 
     # pylint: disable=no-self-use, unused-argument

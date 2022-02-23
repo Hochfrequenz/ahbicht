@@ -36,7 +36,7 @@ class FormatConstraintTransformer(BaseTransformer[EvaluatedFormatConstraint, Eva
     ) -> EvaluatedFormatConstraint:
         """Evaluates logical and_composition"""
 
-        resulting_format_constraint_fulfilled = left.format_constraint_fulfilled and right.format_constraint_fulfilled
+        resulting_format_constraint_fulfilled = left.format_constraint_fulfilled & right.format_constraint_fulfilled
         error_message = FormatErrorMessageExpressionBuilder(left).land(right).get_expression()
 
         return EvaluatedFormatConstraint(
@@ -48,7 +48,7 @@ class FormatConstraintTransformer(BaseTransformer[EvaluatedFormatConstraint, Eva
     ) -> EvaluatedFormatConstraint:
         """Evaluates logical (inclusive) or_composition"""
 
-        resulting_format_constraint_fulfilled = left.format_constraint_fulfilled or right.format_constraint_fulfilled
+        resulting_format_constraint_fulfilled = left.format_constraint_fulfilled | right.format_constraint_fulfilled
         error_message = FormatErrorMessageExpressionBuilder(left).lor(right).get_expression()
 
         return EvaluatedFormatConstraint(

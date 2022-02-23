@@ -8,7 +8,11 @@ import attrs
 from marshmallow import Schema, fields, post_load
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
-from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
+from ahbicht.expressions.condition_nodes import (
+    ConditionFulfilledValue,
+    EvaluatedFormatConstraint,
+    FormatConstraintEvaluationStatus,
+)
 
 
 # pylint: disable=too-few-public-methods, no-self-use, unused-argument
@@ -88,7 +92,14 @@ class CategorizedKeyExtract:
             possible_fcs = (
                 z
                 for z in combinations(
-                    product(self.format_constraint_keys, [True, False]), len(self.format_constraint_keys)
+                    product(
+                        self.format_constraint_keys,
+                        [
+                            FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_FULFILLED,
+                            FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_NOT_FULFILLED,
+                        ],
+                    ),
+                    len(self.format_constraint_keys),
                 )
                 # y[0] is the key (and y[1] is the value (true/false))
                 # We only want those combinations where the number of distinct keys == the number of keys present.

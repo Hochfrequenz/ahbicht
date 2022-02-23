@@ -8,7 +8,11 @@ import pytest  # type:ignore[import]
 from ahbicht.content_evaluation.categorized_key_extract import CategorizedKeyExtract, CategorizedKeyExtractSchema
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
 from ahbicht.expressions.condition_expression_parser import extract_categorized_keys
-from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
+from ahbicht.expressions.condition_nodes import (
+    ConditionFulfilledValue,
+    EvaluatedFormatConstraint,
+    FormatConstraintEvaluationStatus,
+)
 
 pytestmark = pytest.mark.asyncio
 
@@ -110,13 +114,21 @@ class TestCategorizedKeyExtraction:
                 [
                     ContentEvaluationResult(
                         hints={},
-                        format_constraints={"901": EvaluatedFormatConstraint(format_constraint_fulfilled=True)},
+                        format_constraints={
+                            "901": EvaluatedFormatConstraint(
+                                format_constraint_fulfilled=FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_FULFILLED
+                            )
+                        },
                         requirement_constraints={},
                         packages={},
                     ),
                     ContentEvaluationResult(
                         hints={},
-                        format_constraints={"901": EvaluatedFormatConstraint(format_constraint_fulfilled=False)},
+                        format_constraints={
+                            "901": EvaluatedFormatConstraint(
+                                format_constraint_fulfilled=FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_NOT_FULFILLED
+                            )
+                        },
                         requirement_constraints={},
                         packages={},
                     ),

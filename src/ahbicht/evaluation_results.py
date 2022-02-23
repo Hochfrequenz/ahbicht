@@ -8,7 +8,9 @@ from typing import Optional
 
 import attrs
 from marshmallow import Schema, fields, post_load
+from marshmallow_enum import EnumField
 
+from ahbicht.expressions.condition_nodes import FormatConstraintsEvaluationResult
 from ahbicht.expressions.enums import RequirementIndicator, RequirementIndicatorSchema
 
 
@@ -61,7 +63,9 @@ class FormatConstraintEvaluationResult:
     """
 
     #: true if data entered obey the format constraint expression
-    format_constraints_fulfilled: bool = attrs.field(validator=attrs.validators.instance_of(bool))
+    format_constraints_fulfilled: FormatConstraintsEvaluationResult = attrs.field(
+        validator=attrs.validators.instance_of(FormatConstraintsEvaluationResult)
+    )
 
     #: All error messages that lead to not fulfilling the format constraint expression
     error_message: Optional[str] = attrs.field(
@@ -74,7 +78,7 @@ class FormatConstraintEvaluationResultSchema(Schema):
     A class to (de-)serialize FormatConstraintEvaluationResult
     """
 
-    format_constraints_fulfilled = fields.Boolean()
+    format_constraints_fulfilled = EnumField(FormatConstraintsEvaluationResult)
     error_message = fields.String(allow_none=True, load_default=None)
 
     @post_load

@@ -106,7 +106,8 @@ class AhbExpressionTransformer(Transformer):
                 hints=None,
             ),
             format_constraint_evaluation_result=FormatConstraintEvaluationResult(
-                format_constraints_fulfilled=True, error_message=None
+                format_constraints_fulfilled=FormatConstraintEvaluationResult.FORMAT_CONSTRAINT_IS_FULFILLED,
+                error_message=None,
             ),
         )
 

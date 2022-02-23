@@ -9,8 +9,10 @@ from typing import Callable, Optional
 
 from maus.edifact import EdifactFormat, EdifactFormatVersion
 
-
 # pylint: disable=no-self-use, too-few-public-methods
+from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
+
+
 class Evaluator(ABC):
     """
     Base of all evaluators.
@@ -28,7 +30,7 @@ class Evaluator(ABC):
         "The inheriting class needs to define a format version."
     )
 
-    def get_evaluation_method(self, condition_key: str) -> Optional[Callable]:
+    def get_evaluation_method(self, condition_key: str) -> Optional[Callable[[str], EvaluatedFormatConstraint]]:
         """
         Returns the method that evaluates the condition with key condition_key
         :param condition_key: unique key of the condition, e.g. "59"

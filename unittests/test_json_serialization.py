@@ -21,6 +21,8 @@ from ahbicht.expressions.condition_nodes import (
     ConditionFulfilledValue,
     EvaluatedFormatConstraint,
     EvaluatedFormatConstraintSchema,
+    FormatConstraintEvaluationStatus,
+    FormatConstraintsEvaluationResult,
 )
 from ahbicht.expressions.enums import ModalMark
 from ahbicht.mapping_results import (
@@ -61,11 +63,17 @@ class TestJsonSerialization:
         "evaluated_format_constraint, expected_json_dict",
         [
             pytest.param(
-                EvaluatedFormatConstraint(format_constraint_fulfilled=True, error_message=None),
+                EvaluatedFormatConstraint(
+                    format_constraint_fulfilled=FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_FULFILLED,
+                    error_message=None,
+                ),
                 {"format_constraint_fulfilled": True, "error_message": None},
             ),
             pytest.param(
-                EvaluatedFormatConstraint(format_constraint_fulfilled=False, error_message="something is wrong"),
+                EvaluatedFormatConstraint(
+                    format_constraint_fulfilled=FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_NOT_FULFILLED,
+                    error_message="something is wrong",
+                ),
                 {"format_constraint_fulfilled": False, "error_message": "something is wrong"},
             ),
         ],
@@ -100,9 +108,13 @@ class TestJsonSerialization:
                     hints={"501": "foo", "502": "bar", "503": None},
                     format_constraints={
                         "901": EvaluatedFormatConstraint(
-                            format_constraint_fulfilled=False, error_message="something is wrong"
+                            format_constraint_fulfilled=FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_NOT_FULFILLED,
+                            error_message="something is wrong",
                         ),
-                        "902": EvaluatedFormatConstraint(format_constraint_fulfilled=True, error_message=None),
+                        "902": EvaluatedFormatConstraint(
+                            format_constraint_fulfilled=FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_FULFILLED,
+                            error_message=None,
+                        ),
                     },
                     requirement_constraints={
                         "1": ConditionFulfilledValue.NEUTRAL,
@@ -116,8 +128,11 @@ class TestJsonSerialization:
                 {
                     "hints": {"501": "foo", "502": "bar", "503": None},
                     "format_constraints": {
-                        "902": {"format_constraint_fulfilled": True, "error_message": None},
-                        "901": {"format_constraint_fulfilled": False, "error_message": "something is wrong"},
+                        "902": {"format_constraint_fulfilled": "FORMAT_CONSTRAINT_IS_FULFILLED", "error_message": None},
+                        "901": {
+                            "format_constraint_fulfilled": "FORMAT_CONSTRAINT_IS_NOT_FULFILLED",
+                            "error_message": "something is wrong",
+                        },
                     },
                     "requirement_constraints": {"1": "NEUTRAL", "2": "FULFILLED", "3": "UNFULFILLED", "4": "UNKNOWN"},
                     "packages": {"123P": "[17] U [18]"},
@@ -146,7 +161,8 @@ class TestJsonSerialization:
                 AhbExpressionEvaluationResult(
                     requirement_indicator=ModalMark.MUSS,
                     format_constraint_evaluation_result=FormatConstraintEvaluationResult(
-                        error_message="hello", format_constraints_fulfilled=False
+                        error_message="hello",
+                        format_constraints_fulfilled=FormatConstraintsEvaluationResult.FORMAT_CONSTRAINTS_ARE_NOT_FULFILLED,
                     ),
                     requirement_constraint_evaluation_result=RequirementConstraintEvaluationResult(
                         hints="foo bar",
@@ -158,7 +174,7 @@ class TestJsonSerialization:
                 {
                     "requirement_indicator": "MUSS",
                     "format_constraint_evaluation_result": {
-                        "format_constraints_fulfilled": False,
+                        "format_constraints_fulfilled": "FORMAT_CONSTRAINTS_ARE_NOT_FULFILLED",
                         "error_message": "hello",
                     },
                     "requirement_constraint_evaluation_result": {
@@ -173,7 +189,8 @@ class TestJsonSerialization:
                 AhbExpressionEvaluationResult(
                     requirement_indicator=ModalMark.MUSS,
                     format_constraint_evaluation_result=FormatConstraintEvaluationResult(
-                        error_message="hello", format_constraints_fulfilled=False
+                        error_message="hello",
+                        format_constraints_fulfilled=FormatConstraintsEvaluationResult.FORMAT_CONSTRAINTS_ARE_NOT_FULFILLED,
                     ),
                     requirement_constraint_evaluation_result=RequirementConstraintEvaluationResult(
                         hints="foo bar",
@@ -185,7 +202,7 @@ class TestJsonSerialization:
                 {
                     "format_constraint_evaluation_result": {
                         "error_message": "hello",
-                        "format_constraints_fulfilled": False,
+                        "format_constraints_fulfilled": "FORMAT_CONSTRAINTS_ARE_NOT_FULFILLED",
                     },
                     "requirement_constraint_evaluation_result": {
                         "format_constraints_expression": "[asd]",
@@ -200,7 +217,7 @@ class TestJsonSerialization:
                 AhbExpressionEvaluationResult(
                     requirement_indicator=ModalMark.MUSS,
                     format_constraint_evaluation_result=FormatConstraintEvaluationResult(
-                        format_constraints_fulfilled=False
+                        format_constraints_fulfilled=FormatConstraintsEvaluationResult.FORMAT_CONSTRAINTS_ARE_NOT_FULFILLED
                     ),
                     requirement_constraint_evaluation_result=RequirementConstraintEvaluationResult(
                         requirement_constraints_fulfilled=True,
@@ -210,7 +227,7 @@ class TestJsonSerialization:
                 {
                     "format_constraint_evaluation_result": {
                         "error_message": None,
-                        "format_constraints_fulfilled": False,
+                        "format_constraints_fulfilled": "FORMAT_CONSTRAINTS_ARE_NOT_FULFILLED",
                     },
                     "requirement_constraint_evaluation_result": {
                         "format_constraints_expression": None,

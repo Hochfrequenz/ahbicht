@@ -7,7 +7,7 @@ from maus.edifact import EdifactFormat, EdifactFormatVersion
 
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
 from ahbicht.evaluation_results import FormatConstraintEvaluationResult
-from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
+from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint, FormatConstraintEvaluationStatus
 from ahbicht.expressions.format_constraint_expression_evaluation import (
     _build_evaluated_format_constraint_nodes,
     format_constraint_evaluation,
@@ -31,10 +31,12 @@ class DummyFcEvaluator(FcEvaluator):
         # this is just a minimal working example; we skip all the stuff like check digits and so on for simplicity
         is_malo: bool = entered_input and len(entered_input) == 11  # type:ignore[assignment]
         if is_malo:
+            outcome = FormatConstraintEvaluationResult.FORMAT_CONSTRAINT_IS_FULFILLED
             error_message = None
         else:
+            outcome = FormatConstraintEvaluationResult.FORMAT_CONSTRAINT_IS_NOT_FULFILLED
             error_message = f"'{entered_input}' is not 11 characters long and hence no MaLo."
-        return EvaluatedFormatConstraint(format_constraint_fulfilled=is_malo, error_message=error_message)
+        return EvaluatedFormatConstraint(format_constraint_fulfilled=outcome, error_message=error_message)
 
     async def evaluate_951(self, entered_input: str) -> EvaluatedFormatConstraint:
         """
@@ -43,20 +45,32 @@ class DummyFcEvaluator(FcEvaluator):
         # this is just a minimal working example; we skip regex matching and integrity checks for simplicity
         is_zaehlpunkt: bool = entered_input and len(entered_input) == 33  # type:ignore[assignment]
         if is_zaehlpunkt:
+            outcome = FormatConstraintEvaluationResult.FORMAT_CONSTRAINT_IS_FULFILLED
             error_message = None
         else:
+            outcome = FormatConstraintEvaluationResult.FORMAT_CONSTRAINT_IS_NOT_FULFILLED
             error_message = f"'{entered_input}' is not a valid Zählpunktbezeichnung."
-        return EvaluatedFormatConstraint(format_constraint_fulfilled=is_zaehlpunkt, error_message=error_message)
+        return EvaluatedFormatConstraint(format_constraint_fulfilled=outcome, error_message=error_message)
 
 
 class TestFormatConstraintExpressionEvaluation:
     """Test for the evaluation of the format constraint expressions"""
 
     _input_values = {
-        "901": EvaluatedFormatConstraint(format_constraint_fulfilled=True),
-        "902": EvaluatedFormatConstraint(format_constraint_fulfilled=False, error_message="902 muss erfüllt sein"),
-        "903": EvaluatedFormatConstraint(format_constraint_fulfilled=True),
-        "904": EvaluatedFormatConstraint(format_constraint_fulfilled=False, error_message="904 muss erfüllt sein"),
+        "901": EvaluatedFormatConstraint(
+            format_constraint_fulfilled=FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_FULFILLED
+        ),
+        "902": EvaluatedFormatConstraint(
+            format_constraint_fulfilled=FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_NOT_FULFILLED,
+            error_message="902 muss erfüllt sein",
+        ),
+        "903": EvaluatedFormatConstraint(
+            format_constraint_fulfilled=FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_FULFILLED
+        ),
+        "904": EvaluatedFormatConstraint(
+            format_constraint_fulfilled=FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_NOT_FULFILLED,
+            error_message="904 muss erfüllt sein",
+        ),
     }
 
     @pytest_asyncio.fixture()
@@ -127,7 +141,11 @@ class TestFormatConstraintExpressionEvaluation:
             ),
             pytest.param(
                 "[1]U[2]",
-                {"1": EvaluatedFormatConstraint(format_constraint_fulfilled=True)},
+                {
+                    "1": EvaluatedFormatConstraint(
+                        format_constraint_fulfilled=FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_FULFILLED
+                    )
+                },
                 "Please make sure that the input values contain all necessary condition_keys.",
             ),
         ],
@@ -159,9 +177,11 @@ class TestFormatConstraintExpressionEvaluation:
                 ["950", "951"],
                 "12345678913",
                 {
-                    "950": EvaluatedFormatConstraint(format_constraint_fulfilled=True),
+                    "950": EvaluatedFormatConstraint(
+                        format_constraint_fulfilled=FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_FULFILLED
+                    ),
                     "951": EvaluatedFormatConstraint(
-                        format_constraint_fulfilled=False,
+                        format_constraint_fulfilled=FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_NOT_FULFILLED,
                         error_message="'12345678913' is not a valid Zählpunktbezeichnung.",
                     ),
                 },
@@ -171,10 +191,12 @@ class TestFormatConstraintExpressionEvaluation:
                 "DE00056266802AO6G56M11SN51G21M24S",
                 {
                     "950": EvaluatedFormatConstraint(
-                        format_constraint_fulfilled=False,
+                        format_constraint_fulfilled=FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_NOT_FULFILLED,
                         error_message="'DE00056266802AO6G56M11SN51G21M24S' is not 11 characters long and hence no MaLo.",
                     ),
-                    "951": EvaluatedFormatConstraint(format_constraint_fulfilled=True),
+                    "951": EvaluatedFormatConstraint(
+                        format_constraint_fulfilled=FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_FULFILLED
+                    ),
                 },
             ),
         ],

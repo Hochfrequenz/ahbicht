@@ -12,7 +12,11 @@ from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.evaluation_results import FormatConstraintEvaluationResult, RequirementConstraintEvaluationResult
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
-from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
+from ahbicht.expressions.condition_nodes import (
+    ConditionFulfilledValue,
+    EvaluatedFormatConstraint,
+    FormatConstraintEvaluationStatus,
+)
 from ahbicht.expressions.enums import ModalMark, PrefixOperator, RequirementIndicator
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 from ahbicht.expressions.hints_provider import HintsProvider
@@ -132,7 +136,10 @@ class TestAHBExpressionEvaluation:
         mocker.patch(
             "ahbicht.expressions.ahb_expression_evaluation.format_constraint_evaluation",
             return_value=AsyncMock(
-                side_effect=FormatConstraintEvaluationResult(format_constraints_fulfilled=True, error_message=None)
+                side_effect=FormatConstraintEvaluationResult(
+                    format_constraints_fulfilled=FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_FULFILLED,
+                    error_message=None,
+                )
             ),
         )
 
@@ -197,7 +204,10 @@ class TestAHBExpressionEvaluation:
                 ContentEvaluationResult(
                     hints={"501": "foo"},
                     format_constraints={
-                        "902": EvaluatedFormatConstraint(format_constraint_fulfilled=True, error_message=None),
+                        "902": EvaluatedFormatConstraint(
+                            format_constraint_fulfilled=FormatConstraintEvaluationStatus.FORMAT_CONSTRAINT_IS_FULFILLED,
+                            error_message=None,
+                        ),
                     },
                     requirement_constraints={
                         "2": ConditionFulfilledValue.FULFILLED,
