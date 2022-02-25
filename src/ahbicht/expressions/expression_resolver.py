@@ -139,6 +139,7 @@ class PackageExpansionTransformer(Transformer):
         tree_result = parse_condition_expression_to_tree(resolved_package.package_expression)  # type:ignore[arg-type]
         return tree_result
 
+
 # pylint: disable=no-self-use, invalid-name
 class TimeConditionTransformer(Transformer):
     """
