@@ -42,6 +42,7 @@ class TestUtilityFunctions:
         "candidate, expected_result",
         [
             pytest.param("0..1", Repeatability(min_occurrences=0, max_occurrences=1)),
+            pytest.param("1..1", Repeatability(min_occurrences=1, max_occurrences=1)),
             pytest.param("1..2", Repeatability(min_occurrences=1, max_occurrences=2)),
             pytest.param("71..89", Repeatability(min_occurrences=71, max_occurrences=89)),
         ],
