@@ -112,7 +112,7 @@ class Repeatability:
         validator=attrs.validators.and_(attrs.validators.instance_of(int), check_max_greater_or_equal_than_min)
     )
     """
-    how often the segment/code has to be repeated (lower, inclusive bound); maybe 0 for optional packages
+    how often the segment/code has to be repeated (lower, inclusive bound); may be 0 for optional packages
     """
 
     max_occurrences: int = attrs.field(
