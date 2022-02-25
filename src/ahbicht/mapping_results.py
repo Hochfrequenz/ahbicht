@@ -99,8 +99,6 @@ def check_max_greater_or_equal_than_min(instance: "Repeatability", attribute, va
     """
     if not 0 <= instance.min_occurrences < instance.max_occurrences:
         raise ValueError(f"0≤n<m is not fulfilled for n={instance.min_occurrences}, m={instance.max_occurrences}")
-    if instance.max_occurrences < 1:
-        raise ValueError(f"0≤n<m with m≥1 is not fulfilled for m={instance.max_occurrences}")
 
 
 # pylint:disable=too-few-public-methods
