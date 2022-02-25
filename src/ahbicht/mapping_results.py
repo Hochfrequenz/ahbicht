@@ -7,8 +7,7 @@ from typing import Match, Optional
 import attrs
 from marshmallow import Schema, fields, post_load
 from marshmallow_enum import EnumField  # type:ignore[import]
-
-from ahbicht.edifact import EdifactFormat
+from maus.edifact import EdifactFormat
 
 
 # pylint:disable=too-few-public-methods
@@ -95,12 +94,12 @@ class PackageKeyConditionExpressionMappingSchema(Schema):
 # pylint:disable=unused-argument
 def check_max_greater_or_equal_than_min(instance: "Repeatability", attribute, value):
     """
-    assert that max>=min>=0 and max is at least 1
+    assert that 0<=min<max and not both min and max are 0
     """
-    if not 0 <= instance.min_occurrences < instance.max_occurrences:
-        raise ValueError(f"0≤n<m is not fulfilled for n={instance.min_occurrences}, m={instance.max_occurrences}")
-    if instance.max_occurrences < 1:
-        raise ValueError(f"0≤n<m with m≥1 is not fulfilled for m={instance.max_occurrences}")
+    if not 0 <= instance.min_occurrences <= instance.max_occurrences:
+        raise ValueError(f"0≤n≤m is not fulfilled for n={instance.min_occurrences}, m={instance.max_occurrences}")
+    if instance.min_occurrences == instance.max_occurrences == 0:
+        raise ValueError("not both min and max occurrences must be 0")
 
 
 # pylint:disable=too-few-public-methods
@@ -114,7 +113,7 @@ class Repeatability:
         validator=attrs.validators.and_(attrs.validators.instance_of(int), check_max_greater_or_equal_than_min)
     )
     """
-    how often the segment/code has to be repeated (lower, inclusive bound); maybe 0 for optional packages
+    how often the segment/code has to be repeated (lower, inclusive bound); may be 0 for optional packages
     """
 
     max_occurrences: int = attrs.field(
