@@ -11,7 +11,7 @@ from ahbicht.mapping_results import PackageKeyConditionExpressionMapping, Packag
 class HochfrequenzPackageResolver(PackageResolver):
     """
     A package resolver that uses a REST API (by Hochfrequenz) to resolve packages.
-    Note that this resolver requires an internet connection to work and the hochfrequenz API to be up and running.
+    Note that this resolver requires an internet connection to work and the Hochfrequenz API to be up and running.
     Consider using this resolver to retrieve package information once and then dump them into something fast and stable
     like f.e. a JSON file, a database or feed its results into a hardcoded package resolver once on startup.
     Relying on external web services is prone to be a bottleneck for your application.
