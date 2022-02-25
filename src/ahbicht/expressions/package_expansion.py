@@ -5,7 +5,7 @@ F.e. if inside a tree "[123P]" is replaced by "[1] U ([2] O [3])".
 from abc import ABC, abstractmethod
 from typing import Mapping, Optional
 
-from ahbicht.edifact import EdifactFormat, EdifactFormatVersion
+from maus.edifact import EdifactFormat, EdifactFormatVersion
 from ahbicht.mapping_results import PackageKeyConditionExpressionMapping
 
 

@@ -9,7 +9,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Dict, List, Mapping, Optional
 
-from ahbicht.edifact import EdifactFormat, EdifactFormatVersion
+from maus.edifact import EdifactFormat, EdifactFormatVersion
 
 # pylint: disable = too-few-public-methods
 from ahbicht.expressions.condition_nodes import Hint

@@ -7,8 +7,7 @@ from typing import Match, Optional
 import attrs
 from marshmallow import Schema, fields, post_load
 from marshmallow_enum import EnumField  # type:ignore[import]
-
-from ahbicht.edifact import EdifactFormat
+from maus.edifact import EdifactFormat
 
 
 # pylint:disable=too-few-public-methods
