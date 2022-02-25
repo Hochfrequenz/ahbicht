@@ -102,10 +102,13 @@ class PackageExpansionTransformer(Transformer):
         """
         try to resolve the package using the injected PackageResolver
         """
+        # The grammar guarantees that there is always exactly 1 package_key token/terminal.
+        # But the repeatability token is optional, so the list repeatability_tokens might contain 0 or 1 entries
+        # They all come in the same `tokens` list which we split in the following two lines.
         package_key_token = [t for t in tokens if t.type == "PACKAGE_KEY"][0]
         repeatability_tokens = [t for t in tokens if t.type == "REPEATABILITY"]
         # pylint: disable=unused-variable
-        # we parse the repeatability but we don't to anything with it, yet.
+        # we parse the repeatability, but we don't to anything with it, yet.
         repeatability: Optional[Repeatability]
         if len(repeatability_tokens) == 1:
             repeatability = parse_repeatability(repeatability_tokens[0].value)
