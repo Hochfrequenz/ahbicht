@@ -94,7 +94,7 @@ class PackageKeyConditionExpressionMappingSchema(Schema):
 # pylint:disable=unused-argument
 def check_max_greater_or_equal_than_min(instance: "Repeatability", attribute, value):
     """
-    assert that 0<=min<max
+    assert that 0<=min<max and not both min and max are 0
     """
     if not 0 <= instance.min_occurrences <= instance.max_occurrences:
         raise ValueError(f"0≤n≤m is not fulfilled for n={instance.min_occurrences}, m={instance.max_occurrences}")
