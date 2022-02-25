@@ -1,11 +1,11 @@
 """
 This module makes it possible to parse expressions including all their subexpressions, if present.
 for example ahb_expressions which contain condition_expressions or condition_expressions which contain packages.
-Parsing expressions that are nested into other expressions is refered to as "resolving".
+Parsing expressions that are nested into other expressions is referred to as "resolving".
 """
 import asyncio
 import inspect
-from typing import Awaitable, List, Union
+from typing import Awaitable, List, Optional, Union
 
 import inject
 from lark import Token, Transformer, Tree
@@ -14,6 +14,7 @@ from lark.exceptions import VisitError
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.package_expansion import PackageResolver
+from ahbicht.mapping_results import Repeatability, parse_repeatability
 
 
 async def parse_expression_including_unresolved_subexpressions(
@@ -101,11 +102,26 @@ class PackageExpansionTransformer(Transformer):
         """
         try to resolve the package using the injected PackageResolver
         """
-        return self._package_async(tokens)
+        # The grammar guarantees that there is always exactly 1 package_key token/terminal.
+        # But the repeatability token is optional, so the list repeatability_tokens might contain 0 or 1 entries
+        # They all come in the same `tokens` list which we split in the following two lines.
+        package_key_token = [t for t in tokens if t.type == "PACKAGE_KEY"][0]
+        repeatability_tokens = [t for t in tokens if t.type == "REPEATABILITY"]
+        # pylint: disable=unused-variable
+        # we parse the repeatability, but we don't to anything with it, yet.
+        repeatability: Optional[Repeatability]
+        if len(repeatability_tokens) == 1:
+            repeatability = parse_repeatability(repeatability_tokens[0].value)
+        else:
+            repeatability = None
+        return self._package_async(package_key_token)
 
-    async def _package_async(self, tokens: List[Token]) -> Tree[Token]:
-        resolved_package = await self._resolver.get_condition_expression(tokens[0].value)
+    async def _package_async(self, package_key_token: Token) -> Tree[Token]:
+        resolved_package = await self._resolver.get_condition_expression(package_key_token.value)
         if not resolved_package.has_been_resolved_successfully():
-            raise NotImplementedError(f"The package '{tokens[0].value}' could not be resolved by {self._resolver}")
+            raise NotImplementedError(
+                f"The package '{package_key_token.value}' could not be resolved by {self._resolver}"
+            )
         # the package_expression is not None because that's the definition of "has been resolved successfully"
-        return parse_condition_expression_to_tree(resolved_package.package_expression)  # type:ignore[arg-type]
+        tree_result = parse_condition_expression_to_tree(resolved_package.package_expression)  # type:ignore[arg-type]
+        return tree_result

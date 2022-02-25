@@ -449,6 +449,23 @@ class TestConditionParser:
                     ],
                 ),
             ),
+            pytest.param(
+                # nested brackets
+                "[10P1..5]U([1]O[2])",
+                Tree(
+                    "and_composition",
+                    [
+                        Tree(Token("RULE", "package"), [Token("PACKAGE_KEY", "10P"), Token("REPEATABILITY", "1..5")]),
+                        Tree(
+                            "or_composition",
+                            [
+                                Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", "1")]),
+                                Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", "2")]),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
         ],
     )
     def test_parse_valid_expression_with_brackets_to_tree(self, expression: str, expected_tree: Tree):
@@ -484,7 +501,7 @@ class TestConditionParser:
 
         assert """Please make sure that:
              * all conditions have the form [INT]
-             * all packages have the form [INTP]
+             * all packages have the form [INTPn..m]
              * no conditions are empty
              * all compositions are combined by operators 'U'/'O'/'X' or without an operator
              * all open brackets are closed again and vice versa
