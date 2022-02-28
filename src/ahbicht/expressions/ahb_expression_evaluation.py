@@ -132,7 +132,7 @@ class AhbExpressionTransformer(Transformer):
             Union[AhbExpressionEvaluationResult, Awaitable[AhbExpressionEvaluationResult]]
         ],
     ) -> AhbExpressionEvaluationResult:
-        # the thing is that some user funcs (like f.e. 'requirement_indicator' are not async and there's no reason to
+        # the thing is that some user funcs (like f.e. 'requirement_indicator') are not async and there's no reason to
         # make them async. So here we have a list that is mixed: It contains both evaluation results and awaitable
         # evaluation results. The utility function 'gather_if_necessary' accounts for that (see its separate tests).
         results = await gather_if_necessary(list_of_single_requirement_indicator_expressions)

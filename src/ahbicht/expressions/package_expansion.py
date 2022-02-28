@@ -27,7 +27,7 @@ class PackageResolver(ABC):
     @abstractmethod
     async def get_condition_expression(self, package_key: str) -> PackageKeyConditionExpressionMapping:
         """
-        Returns a condition expression (e.g. "[1] U ([2] O [3]) for the given package_key (e.g. "123P")
+        Returns a condition expression (e.g. "[1] U ([2] O [3])") for the given package_key (e.g. "123P")
         Returns None in the package_expression if the package is unresolvable (see 'has_been_resolved_successfully').
         :param package_key: The unique (integer) key of the package. The 'P' suffix is required.
         :return:

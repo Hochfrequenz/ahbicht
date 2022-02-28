@@ -79,10 +79,10 @@ TSupportedFCExpressionBuilderArguments = Union[
 
 class FormatConstraintExpressionBuilder(ExpressionBuilder[TSupportedFCExpressionBuilderArguments]):
     """
-    Class to create expressions that consists of FormatConstraints
+    Class to create expressions that consist of FormatConstraints
     """
 
-    # the character `]` is escaped although it's not necessary, just to avoid that it's being confused with group end
+    # the character `]` is escaped, although it's not necessary, just to avoid that it's being confused with group end
     _one_key_surrounded_by_brackets_pattern = re.compile(r"\((?P<body>\[\d+\])\)")  # https://regex101.com/r/IauOei/1
 
     # (?P<group_name>...) is a named group: https://docs.python.org/3/howto/regex.html#non-capturing-and-named-groups
@@ -105,8 +105,7 @@ class FormatConstraintExpressionBuilder(ExpressionBuilder[TSupportedFCExpression
         elif isinstance(init_condition_or_expression, str):
             self._expression = f"{init_condition_or_expression}"
         elif isinstance(init_condition_or_expression, (RequirementConstraint, EvaluatedComposition, Hint)):
-            # requirement constraints and hints don't have any effect on the a newly built
-            # format constraint expression
+            # requirement constraints and hints don't have any effect on the newly built format constraint expression
             # also evaluated compositions that don't have a format constraint expression
             self._expression = None
         else:
@@ -168,7 +167,7 @@ TClassesWithHintAttribute = TypeVar("TClassesWithHintAttribute", bound=_ClassesW
 
 class HintExpressionBuilder(ExpressionBuilder[TClassesWithHintAttribute]):
     """
-    Allows to connect hints with logical operations.
+    Allows connecting hints with logical operations.
     """
 
     @staticmethod
