@@ -12,7 +12,7 @@ jobs:
         with:
           node-version: 14
       - name: Install Code Generator
-        run: npm install json-schema-to-typescript
+        run: npm install json-schema-to-typescript -g
       - name: Run Code Generator
         run: json2ts -i 'json_schemas/**.json' -o ts_models/
       - name: Upload TypeScript Files
