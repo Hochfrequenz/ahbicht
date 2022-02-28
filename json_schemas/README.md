@@ -12,3 +12,8 @@ Simply run:
 ```bash
 tox -e json_schemas
 ```
+
+### Github Action and Type Script Models
+The JSON Schemas in this directory are used to autogenerate TypeScript Model classes.
+Therefore, [a Github Action](../.github/workflows/typescript_from_json_schemas.yml) is triggered whenever something is written to this directory.
+The generated classes are uploaded as Action artifact and pushed to [ahbicht-ts-models](https://github.com/Hochfrequenz/ahbicht-ts-models).
