@@ -28,9 +28,9 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.TS_MODELS_PUSH_TOKEN }}
         with:
-          source-directory: 'ts_models'
-          target-directory: 'src'
-          destination-github-username: 'Hochfrequenz'
-          destination-repository-name: 'ahbicht-ts-models'
+          source-directory: "ts_models"
+          target-directory: "src"
+          destination-github-username: "Hochfrequenz"
+          destination-repository-name: "ahbicht-ts-models"
           user-email: ahbicht@hochfrequenz.de
           target-branch: main
