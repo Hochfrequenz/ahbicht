@@ -2,8 +2,8 @@
 A module to generate ready to use evaluators.
 
 AHBicht, in the first place, is designed to do the content evaluation itself with actual code that checks if conditions
-are fulfilled, format constraints are met and gets hints from somewhere. However, AHBicht can also be used to do a "fake"
-content evaluation where the single truth values of conditions are already known.
+are fulfilled, format constraints are met and gets hints from somewhere. However, AHBicht can also be used to do a
+"fake" content evaluation where the single truth values of conditions are already known.
 Then the approach with implementing single methods whose outcomes are already known/hardcoded at compile time
 seems like a big overhead. The code representation of "all outcomes are already known" is an instance of the
 ContentEvaluationResult. Now the methods below are useful. Simply provide a content evaluation result (the data) and
