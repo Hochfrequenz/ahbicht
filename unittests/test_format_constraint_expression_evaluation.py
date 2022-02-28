@@ -24,6 +24,8 @@ class DummyFcEvaluator(FcEvaluator):
     edifact_format = EdifactFormat.UTILMD
     edifact_format_version = EdifactFormatVersion.FV2104
 
+    # no-self-use: The following methods are not static because it refers to the terminals of the lark grammar.
+
     async def evaluate_950(self, entered_input: str) -> EvaluatedFormatConstraint:
         """
         [950] Format: Marktlokations-ID

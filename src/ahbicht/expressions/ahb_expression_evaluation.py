@@ -30,6 +30,8 @@ _str_to_modal_mark_mapping: Dict[str, ModalMark] = {
 
 
 # pylint: disable=no-self-use, invalid-name
+# no-self-use: The following methods are not static because it refers to the terminals of the lark grammar.
+# invalid-name: That's also the reason why they seemingly violate the naming conventions.
 class AhbExpressionTransformer(Transformer):
     """
     Transformer, that evaluates the trees built from the ahb expressions.

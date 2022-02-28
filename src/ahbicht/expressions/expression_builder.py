@@ -82,6 +82,7 @@ class FormatConstraintExpressionBuilder(ExpressionBuilder[TSupportedFCExpression
     Class to create expressions that consists of FormatConstraints
     """
 
+    # the character `]` is escaped although it's not necessary, just to avoid that it's being confused with group end
     _one_key_surrounded_by_brackets_pattern = re.compile(r"\((?P<body>\[\d+\])\)")  # https://regex101.com/r/IauOei/1
 
     # (?P<group_name>...) is a named group: https://docs.python.org/3/howto/regex.html#non-capturing-and-named-groups
