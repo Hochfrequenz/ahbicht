@@ -20,3 +20,14 @@ jobs:
         with:
           name: TypeScriptClasses
           path: ts_models
+      - name: Push ts_models content to type script models repo
+        uses: cpina/github-action-push-to-another-repository@v1.4.1
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: 'ts_models'
+          target-directory: 'src'
+          destination-github-username: 'Hochfrequenz'
+          destination-repository-name: 'ahbicht-ts-models'
+          user-email: ahbicht@hochfrequenz.de
+          target-branch: main
