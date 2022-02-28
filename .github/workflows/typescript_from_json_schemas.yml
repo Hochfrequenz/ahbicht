@@ -1,0 +1,22 @@
+name: Generate TypeScript Classes from JSONSchemas
+on: push
+jobs:
+  generate:
+    name: Generate TypeScript Classes from JSONSchemas
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14
+      - name: Install Code Generator
+        run: npm install json-schema-to-typescript
+      - name: Run Code Generator
+        run: json2ts -i json_schemas/ -o ts_models/
+      - name: Upload TypeScript Files
+        uses: actions/upload-artifact@master
+        with:
+          name: TypeScriptClasses
+          path: ts_models
