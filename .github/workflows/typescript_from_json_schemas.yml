@@ -14,7 +14,7 @@ jobs:
       - name: Install Code Generator
         run: npm install json-schema-to-typescript
       - name: Run Code Generator
-        run: json2ts -i json_schemas/ -o ts_models/
+        run: json2ts -i 'json_schemas/**.json' -o ts_models/
       - name: Upload TypeScript Files
         uses: actions/upload-artifact@master
         with:
