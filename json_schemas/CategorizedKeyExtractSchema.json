@@ -134,7 +134,10 @@
                         "type": "string"
                     },
                     "title": "packages",
-                    "type": "object"
+                    "type": [
+                        "object",
+                        "null"
+                    ]
                 },
                 "requirement_constraints": {
                     "additionalProperties": {
