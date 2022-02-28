@@ -14,6 +14,7 @@ class ConditionNodeType(str, Enum):
     REQUIREMENT_CONSTRAINT = "REQUIREMENT_CONSTRAINT"  #: a requirement constraint
     HINT = "HINT"  #: a hint
     PACKAGE = "PACKAGE"  #: a package
+    REPEATABILITY_CONSTRAINT = "REPEATABILITY_CONSTRAINT"  #: a repeatability constraint
 
 
 def derive_condition_node_type(condition_key: str) -> ConditionNodeType:
@@ -29,4 +30,6 @@ def derive_condition_node_type(condition_key: str) -> ConditionNodeType:
         return ConditionNodeType.HINT
     if 901 <= int(condition_key) <= 999:
         return ConditionNodeType.FORMAT_CONSTRAINT
+    if 2000 <= int(condition_key) <= 2499:
+        return ConditionNodeType.REPEATABILITY_CONSTRAINT
     raise ValueError("Condition key is not in valid number range.")
