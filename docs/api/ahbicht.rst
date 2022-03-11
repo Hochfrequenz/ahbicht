@@ -30,14 +30,6 @@ ahbicht.condition\_node\_distinction module
    :undoc-members:
    :show-inheritance:
 
-ahbicht.edifact module
-----------------------
-
-.. automodule:: ahbicht.edifact
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 ahbicht.evaluation\_results module
 ----------------------------------
 

@@ -25,7 +25,7 @@ idna==3.3
     # via yarl
 inject==4.3.1
     # via -r requirements.in
-lark==1.1.1
+lark==1.1.2
     # via -r requirements.in
 marshmallow==3.14.1
     # via
@@ -34,7 +34,7 @@ marshmallow==3.14.1
     #   maus
 marshmallow-enum==1.5.1
     # via -r requirements.in
-maus==0.0.10
+maus==0.1.1
     # via -r requirements.in
 multidict==6.0.2
     # via

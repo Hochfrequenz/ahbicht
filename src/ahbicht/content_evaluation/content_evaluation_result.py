@@ -89,6 +89,7 @@ class ContentEvaluationResultSchema(Schema):
         values=fields.String(allow_none=False),
         required=False,
         load_default={},
+        allow_none=True,
     )
     id = fields.UUID(required=False, dump_default=False, load_default=None)
 

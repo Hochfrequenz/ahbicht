@@ -5,3 +5,5 @@ inject # for dependency injection
 marshmallow # for serialization (JSON)
 marshmallow_enum # for enum serialization
 maus # for validation
+
+# whenever adding something here, don't forget to also add it to setup.cfg
