@@ -1,6 +1,6 @@
 """
 Package Expansion is the process of finding the condition expression which was abbreviated by using a package.
-F.e. if inside a tree "[123P]" is replaced by "[1] U ([2] O [3])".
+e.g. if inside a tree "[123P]" is replaced by "[1] U ([2] O [3])".
 """
 from abc import ABC, abstractmethod
 from typing import Mapping, Optional
