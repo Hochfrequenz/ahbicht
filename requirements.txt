@@ -12,7 +12,7 @@ inject==4.3.1
     # via -r requirements.in
 lark==1.1.2
     # via -r requirements.in
-marshmallow==3.14.1
+marshmallow==3.15.0
     # via
     #   -r requirements.in
     #   marshmallow-enum
@@ -21,3 +21,7 @@ marshmallow-enum==1.5.1
     # via -r requirements.in
 maus==0.1.1
     # via -r requirements.in
+packaging==21.3
+    # via marshmallow
+pyparsing==3.0.7
+    # via packaging
