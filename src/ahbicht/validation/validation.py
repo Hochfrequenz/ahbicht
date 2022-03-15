@@ -25,7 +25,7 @@ from ahbicht.validation.validation_results import (
 from ahbicht.validation.validation_values import FormatValidationValue, RequirementValidationValue
 
 
-async def validate_root_segment_level(
+async def validate_segment_level(
     segment_level: SegmentLevel,
     soll_is_required: bool = True,
 ) -> List[ValidationResultInContext]:
