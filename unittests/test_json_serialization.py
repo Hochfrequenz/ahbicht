@@ -139,6 +139,21 @@ class TestJsonSerialization:
         for rc_evaluation_result in content_evaluation_result.requirement_constraints.values():
             assert isinstance(rc_evaluation_result, ConditionFulfilledValue)
 
+    def test_content_evaluation_result_without_packages_may_can_deserialized(self):
+        json_dict = {
+            "hints": {"501": "foo", "502": "bar", "503": None},
+            "format_constraints": {
+                "902": {"format_constraint_fulfilled": True, "error_message": None},
+                "901": {"format_constraint_fulfilled": False, "error_message": "something is wrong"},
+            },
+            "requirement_constraints": {"1": "NEUTRAL", "2": "FULFILLED", "3": "UNFULFILLED", "4": "UNKNOWN"},
+            "packages": None,
+            "id": "d106f335-f663-4d14-9636-4f43a883ad26",
+        }
+        cer = ContentEvaluationResultSchema().load(json_dict)
+        assert cer is not None
+        assert cer.packages is None
+
     @pytest.mark.parametrize(
         "ahb_expression_evaluation_result, expected_json_dict",
         [

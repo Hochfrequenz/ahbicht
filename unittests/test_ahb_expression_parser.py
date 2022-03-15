@@ -362,7 +362,7 @@ class TestAhbExpressionParser:
             # marks the characters alone are all ok (lower case 'u' is a valid expression operator and lower case 's'
             # could be interpreted as lower case model mark). As of 2021-10-27, when parsing an AHB expression we only
             # use a simple regex to roughly check if the characters at the positions where we expect condition
-            # expressions to be found are allow listed. But we do not check the grammar yet. The grammar is checked
+            # expressions to be found are allow-listed. But we do not check the grammar yet. The grammar is checked
             # upon parsing the condition expression, but that's the second step. To keep the test failing, I introduced
             # a negative look ahead where formerly only a "character set" allow list check.
             pytest.param("Muss[2]C[3]"),

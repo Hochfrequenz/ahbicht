@@ -40,7 +40,7 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
     After two nodes are evaluated in a composition, the resulting node has the node type EvalutatedComposition.
     The return value is a ConditionNode whose attribute `conditions_fulfilled` describes whether it is a required field,
     its hints are the gathered hints and its `format_constraint_expression` contains the gathered format constraints
-    for the field in a newly build expression.
+    for the field in a newly built expression.
     """
 
     def and_composition(self, left: TRCTransformerArgument, right: TRCTransformerArgument) -> EvaluatedComposition:
@@ -94,6 +94,7 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
             resulting_conditions_fulfilled = left.conditions_fulfilled | right.conditions_fulfilled
         elif composition == "xor_composition":
             resulting_conditions_fulfilled = left.conditions_fulfilled ^ right.conditions_fulfilled
+        # resulting_conditions_fulfilled is never referenced before assignment when you obey the type hint
         evaluated_composition = EvaluatedComposition(conditions_fulfilled=resulting_conditions_fulfilled)
         return evaluated_composition
 

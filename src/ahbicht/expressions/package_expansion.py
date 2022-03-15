@@ -1,6 +1,6 @@
 """
 Package Expansion is the process of finding the condition expression which was abbreviated by using a package.
-F.e. if inside a tree "[123P]" is replaced by "[1] U ([2] O [3])".
+e.g. if inside a tree "[123P]" is replaced by "[1] U ([2] O [3])".
 """
 from abc import ABC, abstractmethod
 from typing import Mapping, Optional
@@ -27,7 +27,7 @@ class PackageResolver(ABC):
     @abstractmethod
     async def get_condition_expression(self, package_key: str) -> PackageKeyConditionExpressionMapping:
         """
-        Returns a condition expression (e.g. "[1] U ([2] O [3]) for the given package_key (e.g. "123P")
+        Returns a condition expression (e.g. "[1] U ([2] O [3])") for the given package_key (e.g. "123P")
         Returns None in the package_expression if the package is unresolvable (see 'has_been_resolved_successfully').
         :param package_key: The unique (integer) key of the package. The 'P' suffix is required.
         :return:

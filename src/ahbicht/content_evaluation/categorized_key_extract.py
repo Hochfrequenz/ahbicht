@@ -87,7 +87,7 @@ class CategorizedKeyExtract:
 
     def generate_possible_content_evaluation_results(self) -> List[ContentEvaluationResult]:
         """
-        A categorized key extract allows to generate nearly all possible content evaluation results,
+        A categorized key extract allows generating nearly all possible content evaluation results,
         except for hints, error messages, resolving packages.
         """
         results: List[ContentEvaluationResult] = []
