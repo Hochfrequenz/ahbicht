@@ -46,6 +46,13 @@ class ContentEvaluationResult:
         )
     )
 
+    repeatability_constraints: Dict[str, ConditionFulfilledValue] = attrs.field(
+        validator=attrs.validators.deep_mapping(
+            key_validator=attrs.validators.instance_of(str),
+            value_validator=attrs.validators.instance_of(ConditionFulfilledValue),
+        )
+    )
+
     packages: Optional[Dict[str, str]] = attrs.field(  # Union[str, ConditionFulfilledValue]]
         validator=attrs.validators.optional(
             attrs.validators.deep_mapping(  # type: ignore[arg-type]
@@ -89,6 +96,9 @@ class ContentEvaluationResultSchema(Schema):
         values=fields.String(allow_none=False),
         required=False,
         load_default={},
+    )
+    repeatability_constraints = fields.Dict(
+        keys=fields.String(allow_none=False), values=fields.String(allow_none=False), required=False
     )
     id = fields.UUID(required=False, dump_default=False, load_default=None)
 

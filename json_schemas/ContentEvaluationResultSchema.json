@@ -98,6 +98,14 @@
                     "title": "packages",
                     "type": "object"
                 },
+                "repeatability_constraints": {
+                    "additionalProperties": {
+                        "title": "repeatability_constraints",
+                        "type": "string"
+                    },
+                    "title": "repeatability_constraints",
+                    "type": "object"
+                },
                 "requirement_constraints": {
                     "additionalProperties": {
                         "title": "requirement_constraints",

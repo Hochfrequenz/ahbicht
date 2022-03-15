@@ -41,6 +41,13 @@ class CategorizedKeyExtract:
         )
     )
 
+    #: list of keys for which you'll need to provide RepeatabilityFulfilledValues
+    repeatability_constraint_keys: List[str] = attrs.field(
+        validator=attrs.validators.deep_iterable(
+            member_validator=attrs.validators.instance_of(str), iterable_validator=attrs.validators.instance_of(list)
+        )
+    )
+
     #: list of packages that need to be resolved (additionally)
     package_keys: List[str] = attrs.field(
         validator=attrs.validators.deep_iterable(
@@ -139,6 +146,7 @@ class CategorizedKeyExtractSchema(Schema):
     format_constraint_keys = fields.List(fields.String())
     requirement_constraint_keys = fields.List(fields.String())
     package_keys = fields.List(fields.String())
+    repeatability_constraint_keys = fields.List(fields.String())
 
     @post_load
     def deserialize(self, data, **kwargs) -> CategorizedKeyExtract:

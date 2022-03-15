@@ -20,7 +20,11 @@ class TestCategorizedKeyExtraction:
             pytest.param(
                 "[1]",
                 CategorizedKeyExtract(
-                    hint_keys=[], requirement_constraint_keys=["1"], format_constraint_keys=[], package_keys=[]
+                    hint_keys=[],
+                    requirement_constraint_keys=["1"],
+                    format_constraint_keys=[],
+                    package_keys=[],
+                    repeatability_constraint_keys=[],
                 ),
             ),
             pytest.param(
@@ -30,6 +34,7 @@ class TestCategorizedKeyExtraction:
                     requirement_constraint_keys=["1", "2", "3"],
                     format_constraint_keys=[],
                     package_keys=[],
+                    repeatability_constraint_keys=[],
                 ),
             ),
             pytest.param(
@@ -39,6 +44,7 @@ class TestCategorizedKeyExtraction:
                     requirement_constraint_keys=["2", "4", "53", "100"],
                     format_constraint_keys=["999"],
                     package_keys=[],
+                    repeatability_constraint_keys=[],
                 ),
             ),
             pytest.param(
@@ -48,6 +54,7 @@ class TestCategorizedKeyExtraction:
                     requirement_constraint_keys=["2", "4", "53", "100"],
                     format_constraint_keys=["999"],
                     package_keys=["123P"],
+                    repeatability_constraint_keys=[],
                 ),
             ),
         ],
@@ -66,14 +73,22 @@ class TestCategorizedKeyExtraction:
         [
             pytest.param(
                 CategorizedKeyExtract(
-                    hint_keys=[], requirement_constraint_keys=[], format_constraint_keys=[], package_keys=[]
+                    hint_keys=[],
+                    requirement_constraint_keys=[],
+                    format_constraint_keys=[],
+                    package_keys=[],
+                    repeatability_constraint_keys=[],
                 ),
                 [],
                 id="0 FC, 0 RC",
             ),
             pytest.param(
                 CategorizedKeyExtract(
-                    hint_keys=[], requirement_constraint_keys=["1"], format_constraint_keys=[], package_keys=[]
+                    hint_keys=[],
+                    requirement_constraint_keys=["1"],
+                    format_constraint_keys=[],
+                    package_keys=[],
+                    repeatability_constraint_keys=[],
                 ),
                 [
                     ContentEvaluationResult(
@@ -105,7 +120,11 @@ class TestCategorizedKeyExtraction:
             ),
             pytest.param(
                 CategorizedKeyExtract(
-                    hint_keys=[], requirement_constraint_keys=[], format_constraint_keys=["901"], package_keys=[]
+                    hint_keys=[],
+                    requirement_constraint_keys=[],
+                    format_constraint_keys=["901"],
+                    package_keys=[],
+                    repeatability_constraint_keys=[],
                 ),
                 [
                     ContentEvaluationResult(
