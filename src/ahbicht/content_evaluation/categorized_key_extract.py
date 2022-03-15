@@ -41,13 +41,6 @@ class CategorizedKeyExtract:
         )
     )
 
-    #: list of keys for which you'll need to provide RepeatabilityFulfilledValues
-    repeatability_constraint_keys: List[str] = attrs.field(
-        validator=attrs.validators.deep_iterable(
-            member_validator=attrs.validators.instance_of(str), iterable_validator=attrs.validators.instance_of(list)
-        )
-    )
-
     #: list of packages that need to be resolved (additionally)
     package_keys: List[str] = attrs.field(
         validator=attrs.validators.deep_iterable(
@@ -119,6 +112,7 @@ class CategorizedKeyExtract:
             )
         else:
             possible_rcs = [(("rc_dummy", ConditionFulfilledValue.NEUTRAL),)]  # type:ignore[assignment]
+
         for fc_rc_tuple in product(possible_fcs, possible_rcs):
             # This product would have length 0 if one of the "factors" had length 0.
             # In order to prevent 'results' to be empty if either the RC or FC list is empty, we added the 'dummy's.

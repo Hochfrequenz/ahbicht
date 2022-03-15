@@ -46,13 +46,6 @@ class ContentEvaluationResult:
         )
     )
 
-    repeatability_constraints: Dict[str, ConditionFulfilledValue] = attrs.field(
-        validator=attrs.validators.deep_mapping(
-            key_validator=attrs.validators.instance_of(str),
-            value_validator=attrs.validators.instance_of(ConditionFulfilledValue),
-        )
-    )
-
     packages: Optional[Dict[str, str]] = attrs.field(  # Union[str, ConditionFulfilledValue]]
         validator=attrs.validators.optional(
             attrs.validators.deep_mapping(  # type: ignore[arg-type]

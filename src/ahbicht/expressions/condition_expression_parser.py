@@ -74,7 +74,6 @@ def extract_categorized_keys_from_tree(
     result = CategorizedKeyExtract(
         format_constraint_keys=[],
         requirement_constraint_keys=[],
-        repeatability_constraint_keys=[],
         hint_keys=[],
         package_keys=[],
     )
@@ -98,10 +97,11 @@ def extract_categorized_keys_from_tree(
         raise ValueError(f"{tree_or_list} is neither a list nor a {Tree.__name__}")
     for condition_key in condition_keys:
         condition_node_type = derive_condition_node_type(condition_key)
-        if condition_node_type is ConditionNodeType.REQUIREMENT_CONSTRAINT:
+        if (
+            condition_node_type is ConditionNodeType.REQUIREMENT_CONSTRAINT
+            or condition_node_type is ConditionNodeType.REPEATABILITY_CONSTRAINT
+        ):
             result.requirement_constraint_keys.append(condition_key)
-        elif condition_node_type is ConditionNodeType.REPEATABILITY_CONSTRAINT:
-            result.repeatability_constraint_keys.append(condition_key)
         elif condition_node_type is ConditionNodeType.HINT:
             result.hint_keys.append(condition_key)
         elif condition_node_type is ConditionNodeType.FORMAT_CONSTRAINT:

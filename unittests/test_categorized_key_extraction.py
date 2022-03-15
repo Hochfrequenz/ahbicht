@@ -24,7 +24,6 @@ class TestCategorizedKeyExtraction:
                     requirement_constraint_keys=["1"],
                     format_constraint_keys=[],
                     package_keys=[],
-                    repeatability_constraint_keys=[],
                 ),
             ),
             pytest.param(
@@ -34,7 +33,6 @@ class TestCategorizedKeyExtraction:
                     requirement_constraint_keys=["1", "2", "3"],
                     format_constraint_keys=[],
                     package_keys=[],
-                    repeatability_constraint_keys=[],
                 ),
             ),
             pytest.param(
@@ -44,7 +42,6 @@ class TestCategorizedKeyExtraction:
                     requirement_constraint_keys=["2", "4", "53", "100"],
                     format_constraint_keys=["999"],
                     package_keys=[],
-                    repeatability_constraint_keys=[],
                 ),
             ),
             pytest.param(
@@ -54,7 +51,6 @@ class TestCategorizedKeyExtraction:
                     requirement_constraint_keys=["2", "4", "53", "100"],
                     format_constraint_keys=["999"],
                     package_keys=["123P"],
-                    repeatability_constraint_keys=[],
                 ),
             ),
         ],
@@ -77,7 +73,6 @@ class TestCategorizedKeyExtraction:
                     requirement_constraint_keys=[],
                     format_constraint_keys=[],
                     package_keys=[],
-                    repeatability_constraint_keys=[],
                 ),
                 [],
                 id="0 FC, 0 RC",
@@ -88,7 +83,6 @@ class TestCategorizedKeyExtraction:
                     requirement_constraint_keys=["1"],
                     format_constraint_keys=[],
                     package_keys=[],
-                    repeatability_constraint_keys=[],
                 ),
                 [
                     ContentEvaluationResult(
@@ -124,7 +118,6 @@ class TestCategorizedKeyExtraction:
                     requirement_constraint_keys=[],
                     format_constraint_keys=["901"],
                     package_keys=[],
-                    repeatability_constraint_keys=[],
                 ),
                 [
                     ContentEvaluationResult(
