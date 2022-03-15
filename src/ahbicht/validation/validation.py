@@ -113,7 +113,7 @@ async def validate_segment(
     """
     Validates a segment and the data elements it contains.
     :param segment: the segment that should be validated
-    :param segment_group_requirement: the requirement of the segment's segment_group, e.g. IS_REQUIRED
+    :param segment_group_requirement: the requirement of the segment's parent segment_group, e.g. IS_REQUIRED
     :param soll_is_required: true (default) if SOLL should be handled like MUSS, false if it should be handled like KANN
     :return: List of ValidationResultInContext of the segment and the data elements it contains
     """
@@ -260,8 +260,7 @@ async def validate_data_element_valuepool(
         if len(data_element.value_pool) == 1:
             possible_values = list(data_element.value_pool)
             hints = None
-        # value pool > 1
-        else:
+        else: # len(value_pool) >1
             for qualifier, expression in data_element.value_pool.items():
                 expression_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(expression)
                 evaluation_result = await evaluate_ahb_expression_tree(expression_tree, entered_input=None)
@@ -326,7 +325,7 @@ def combine_requirements_of_different_levels(
     """
     Combines two requirement values of a parent and child level.
     Requirement status from `segment group` beats `segment` beats `data element`
-    Forbidden is catched beforehand to make further evaluation unnecessary.
+    Forbidden on parent level is caught beforehand to make further evaluation unnecessary.
 
     | parent group | child group | result    |
     | ------------ | ----------- | --------- |
