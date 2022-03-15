@@ -21,7 +21,9 @@ class ValidationResult(ABC):
         validator=attrs.validators.instance_of(RequirementValidationValue)
     )
     #: Collected hints
-    hints: Optional[str] = attrs.field(default=None)
+    hints: Optional[str] = attrs.field(
+        validator=attrs.validators.optional(attrs.validators.instance_of(str)), default=None
+    )
 
 
 class ValidationResultSchema(Schema):
@@ -71,7 +73,9 @@ class DataElementValidationResult(ValidationResult):
     #: Is the format constraint fulfilled or not?
     format_validation_fulfilled: bool = attrs.field(validator=attrs.validators.instance_of(bool))
     #: possible error message regarding the format constraints
-    format_error_message: Optional[str] = attrs.field(default=None)
+    format_error_message: Optional[str] = attrs.field(
+        validator=attrs.validators.optional(attrs.validators.instance_of(str)), default=None
+    )
     #: possible qualifiers for value pool data elements
     possible_values: Optional[Dict[str, str]] = attrs.field(
         default=None,
