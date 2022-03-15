@@ -7,6 +7,9 @@ class RequirementValidationValue(str, Enum):
     """
     Possible values to describe the state of the validation
     in the requirement_validation attribute of the ValidationResult.
+    The values without "AND_EMPTY" or "AND_FILLED" is for segment_level
+    due to no value that could be filled or empty.
+    It's easier to put all of them in one Enum for the ValidationResult class.
     """
 
     IS_REQUIRED = "IS_REQUIRED"  #: element is required
