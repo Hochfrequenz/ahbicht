@@ -7,7 +7,7 @@ import attrs
 from marshmallow import Schema, fields, post_load
 from marshmallow_enum import EnumField  # type:ignore[import]
 
-from ahbicht.validation.validation_values import FormatValidationValue, RequirementValidationValue
+from ahbicht.validation.validation_values import RequirementValidationValue
 
 # pylint: disable=too-few-public-methods, no-member, no-self-use, unused-argument
 
@@ -34,9 +34,7 @@ class DataElementValidationResult(ValidationResult):
     """Result of the validation of a dataelement"""
 
     #: Is the format constraint fulfilled or not?
-    format_validation: FormatValidationValue = attrs.field(
-        validator=attrs.validators.instance_of(FormatValidationValue)
-    )
+    format_validation_fulfilled: bool = attrs.field(validator=attrs.validators.instance_of(bool))
     #: possible error message regarding the format constraints
     format_error_message: Optional[str] = attrs.field(default=None)
     #: possible qualifiers for value pool dataelements
@@ -91,7 +89,7 @@ class DataElementValidationResultSchema(ValidationResultSchema):
     A schema to (de-)serialize DataElementValidationResult
     """
 
-    format_validation = EnumField(FormatValidationValue)
+    format_validation_fulfilled = fields.Bool()
     format_error_message = fields.String(load_default=None)
     possible_values = fields.List(fields.Str, load_default=None)
 

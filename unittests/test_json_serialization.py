@@ -37,7 +37,7 @@ from ahbicht.validation.validation_results import (
     ValidationResultInContext,
     ValidationResultInContextSchema,
 )
-from ahbicht.validation.validation_values import FormatValidationValue, RequirementValidationValue
+from ahbicht.validation.validation_values import RequirementValidationValue
 
 T = TypeVar("T")
 
@@ -287,12 +287,12 @@ class TestJsonSerialization:
             pytest.param(
                 DataElementValidationResult(
                     requirement_validation=RequirementValidationValue.IS_FORBIDDEN,
-                    format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                    format_validation_fulfilled=True,
                 ),
                 {
                     "requirement_validation": "IS_FORBIDDEN",
                     "hints": None,
-                    "format_validation": "FORMAT_CONSTRAINTS_ARE_FULFILLED",
+                    "format_validation_fulfilled": True,
                     "format_error_message": None,
                     "possible_values": None,
                 },
@@ -301,13 +301,13 @@ class TestJsonSerialization:
                 DataElementValidationResult(
                     requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_FILLED,
                     hints="foo",
-                    format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_NOT_FULFILLED,
+                    format_validation_fulfilled=False,
                     format_error_message="bar",
                 ),
                 {
                     "requirement_validation": "IS_REQUIRED_AND_FILLED",
                     "hints": "foo",
-                    "format_validation": "FORMAT_CONSTRAINTS_ARE_NOT_FULFILLED",
+                    "format_validation_fulfilled": False,
                     "format_error_message": "bar",
                     "possible_values": None,
                 },
@@ -316,14 +316,14 @@ class TestJsonSerialization:
                 DataElementValidationResult(
                     requirement_validation=RequirementValidationValue.IS_REQUIRED,
                     hints="foo",
-                    format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                    format_validation_fulfilled=True,
                     format_error_message=None,
                     possible_values=["A1", "A2", "Z3"],
                 ),
                 {
                     "requirement_validation": "IS_REQUIRED",
                     "hints": "foo",
-                    "format_validation": "FORMAT_CONSTRAINTS_ARE_FULFILLED",
+                    "format_validation_fulfilled": True,
                     "format_error_message": None,
                     "possible_values": ["A1", "A2", "Z3"],
                 },

@@ -22,7 +22,7 @@ from ahbicht.validation.validation_results import (
     SegmentLevelValidationResult,
     ValidationResultInContext,
 )
-from ahbicht.validation.validation_values import FormatValidationValue, RequirementValidationValue
+from ahbicht.validation.validation_values import RequirementValidationValue
 
 
 async def validate_segment_level(
@@ -222,12 +222,6 @@ async def validate_dataelement_freetext(
         segment_requirement, requirement_validation_without_input_without_hierarchy
     )
 
-    # format constraints
-    if evaluation_result.format_constraint_evaluation_result.format_constraints_fulfilled:
-        format_validation = FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED
-    else:
-        format_validation = FormatValidationValue.FORMAT_CONSTRAINTS_ARE_NOT_FULFILLED
-
     if dataelement.entered_input:
         requirement_validation = RequirementValidationValue(str(requirement_validation_without_input) + "_AND_FILLED")
     else:
@@ -237,7 +231,7 @@ async def validate_dataelement_freetext(
         discriminator=dataelement.discriminator,
         validation_result=DataElementValidationResult(
             requirement_validation=requirement_validation,
-            format_validation=format_validation,
+            format_validation_fulfilled=evaluation_result.format_constraint_evaluation_result.format_constraints_fulfilled,
             format_error_message=evaluation_result.format_constraint_evaluation_result.error_message,
             hints=evaluation_result.requirement_constraint_evaluation_result.hints,
         ),
@@ -286,7 +280,7 @@ async def validate_dataelement_valuepool(
         discriminator=dataelement.discriminator,
         validation_result=DataElementValidationResult(
             requirement_validation=requirement_validation_dataelement,
-            format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+            format_validation_fulfilled=True,
             hints=hints,  # todo: hints might be referenced before assignment
             possible_values=possible_values,
         ),

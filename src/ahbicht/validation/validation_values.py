@@ -24,15 +24,3 @@ class RequirementValidationValue(str, Enum):
 
     def __str__(self):
         return self.value
-
-
-class FormatValidationValue(str, Enum):
-    """
-    Possible values to describe the state of the validation
-    in the format_validation attribute of the ValidationResult.
-    """
-
-    #: format constraints are fullfilled
-    FORMAT_CONSTRAINTS_ARE_FULFILLED = "FORMAT_CONSTRAINTS_ARE_FULFILLED"
-    #: format constraints are not fullfilled
-    FORMAT_CONSTRAINTS_ARE_NOT_FULFILLED = "FORMAT_CONSTRAINTS_ARE_NOT_FULFILLED"

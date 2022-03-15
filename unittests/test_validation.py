@@ -14,7 +14,7 @@ from ahbicht.validation.validation import (
     map_requirement_validation_values,
     validate_dataelement_freetext,
     validate_dataelement_valuepool,
-    validate_root_segment_level,
+    validate_segment_level,
     validate_segment,
     validate_segment_group,
 )
@@ -23,7 +23,7 @@ from ahbicht.validation.validation_results import (
     SegmentLevelValidationResult,
     ValidationResultInContext,
 )
-from ahbicht.validation.validation_values import FormatValidationValue, RequirementValidationValue
+from ahbicht.validation.validation_values import RequirementValidationValue
 
 pytestmark = pytest.mark.asyncio
 
@@ -114,7 +114,7 @@ class TestValidation:
                         discriminator="SG11 - Datum - Auszug",
                         validation_result=DataElementValidationResult(
                             requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
-                            format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                            format_validation_fulfilled=True,
                         ),
                     ),
                     ValidationResultInContext(
@@ -127,7 +127,7 @@ class TestValidation:
                         discriminator="SG10 - Datum - Einzug",
                         validation_result=DataElementValidationResult(
                             requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
-                            format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                            format_validation_fulfilled=True,
                         ),
                     ),
                 ],
@@ -156,7 +156,7 @@ class TestValidation:
                         discriminator="SG10 - Datum - Einzug",
                         validation_result=DataElementValidationResult(
                             requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
-                            format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                            format_validation_fulfilled=True,
                         ),
                     ),
                 ],
@@ -169,7 +169,7 @@ class TestValidation:
         expected_validation_result,
         inject_content_evaluation_result,
     ):
-        result = await validate_root_segment_level(segment_level)
+        result = await validate_segment_level(segment_level)
         assert result == expected_validation_result
 
     @pytest.mark.parametrize(
@@ -213,7 +213,7 @@ class TestValidation:
                         discriminator="SG10 - Datum - Einzug",
                         validation_result=DataElementValidationResult(
                             requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
-                            format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                            format_validation_fulfilled=True,
                         ),
                     ),
                 ],
@@ -258,7 +258,7 @@ class TestValidation:
                         discriminator="SG10 - Datum - Einzug",
                         validation_result=DataElementValidationResult(
                             requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
-                            format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                            format_validation_fulfilled=True,
                         ),
                     ),
                 ],
@@ -294,14 +294,14 @@ class TestValidation:
                         discriminator="SG10 - Datum - Einzug",
                         validation_result=DataElementValidationResult(
                             requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
-                            format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                            format_validation_fulfilled=True,
                         ),
                     ),
                     ValidationResultInContext(
                         discriminator="SG10 - Datum - Auszug",
                         validation_result=DataElementValidationResult(
                             requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
-                            format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                            format_validation_fulfilled=True,
                         ),
                     ),
                 ],
@@ -326,7 +326,7 @@ class TestValidation:
                     discriminator="SG1",
                     validation_result=DataElementValidationResult(
                         requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_FILLED,
-                        format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                        format_validation_fulfilled=True,
                     ),
                 ),
             ),
@@ -337,7 +337,7 @@ class TestValidation:
                     discriminator="SG1",
                     validation_result=DataElementValidationResult(
                         requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
-                        format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                        format_validation_fulfilled=True,
                     ),
                 ),
             ),
@@ -350,7 +350,7 @@ class TestValidation:
                     discriminator="SG1",
                     validation_result=DataElementValidationResult(
                         requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
-                        format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_NOT_FULFILLED,
+                        format_validation_fulfilled=False,
                         format_error_message="Format error 903",
                         hints="foo",
                     ),
@@ -365,7 +365,7 @@ class TestValidation:
                     discriminator="SG1",
                     validation_result=DataElementValidationResult(
                         requirement_validation=RequirementValidationValue.IS_FORBIDDEN_AND_FILLED,
-                        format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                        format_validation_fulfilled=True,
                     ),
                 ),
             ),
@@ -389,7 +389,7 @@ class TestValidation:
                     discriminator="SG1",
                     validation_result=DataElementValidationResult(
                         requirement_validation=RequirementValidationValue.IS_REQUIRED,
-                        format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                        format_validation_fulfilled=True,
                         possible_values=["A1", "A2", "A3"],
                     ),
                 ),
@@ -403,7 +403,7 @@ class TestValidation:
                     discriminator="SG1",
                     validation_result=DataElementValidationResult(
                         requirement_validation=RequirementValidationValue.IS_FORBIDDEN,
-                        format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                        format_validation_fulfilled=True,
                         possible_values=[],
                     ),
                 ),
@@ -417,7 +417,7 @@ class TestValidation:
                     discriminator="SG1",
                     validation_result=DataElementValidationResult(
                         requirement_validation=RequirementValidationValue.IS_REQUIRED,
-                        format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                        format_validation_fulfilled=True,
                         possible_values=["A1", "A3"],
                     ),
                 ),
@@ -431,7 +431,7 @@ class TestValidation:
                     discriminator="SG1",
                     validation_result=DataElementValidationResult(
                         requirement_validation=RequirementValidationValue.IS_FORBIDDEN,
-                        format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                        format_validation_fulfilled=True,
                         possible_values=[],
                     ),
                 ),
@@ -443,7 +443,7 @@ class TestValidation:
                     discriminator="SG1",
                     validation_result=DataElementValidationResult(
                         requirement_validation=RequirementValidationValue.IS_REQUIRED,
-                        format_validation=FormatValidationValue.FORMAT_CONSTRAINTS_ARE_FULFILLED,
+                        format_validation_fulfilled=True,
                         possible_values=["A1"],
                     ),
                 ),
