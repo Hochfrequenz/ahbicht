@@ -24,9 +24,44 @@ class ValidationResult(ABC):
     hints: Optional[str] = attrs.field(default=None)
 
 
+class ValidationResultSchema(Schema):
+    """
+    A schema to (de-)serialize ValidationResult
+    """
+
+    requirement_validation = EnumField(RequirementValidationValue)
+    hints = fields.String(load_default=None)
+
+    @post_load
+    def deserialize(self, data, **kwargs) -> ValidationResult:
+        """
+        Converts the barely typed data dictionary into an actual ValidationResult
+        :param data:
+        :param kwargs:
+        :return:
+        """
+        return ValidationResult(**data)
+
+
 @attrs.define(auto_attribs=True, kw_only=True)
 class SegmentLevelValidationResult(ValidationResult):
     """Result of the validation of a segment or segment group"""
+
+
+class SegmentLevelValidationResultSchema(ValidationResultSchema):
+    """
+    A schema to (de-)serialize SegmentLevelValidationResult
+    """
+
+    @post_load
+    def deserialize(self, data, **kwargs) -> SegmentLevelValidationResult:
+        """
+        Converts the barely typed data dictionary into an actual ValidationResult
+        :param data:
+        :param kwargs:
+        :return:
+        """
+        return SegmentLevelValidationResult(**data)
 
 
 @attrs.define(auto_attribs=True, kw_only=True)
@@ -47,41 +82,6 @@ class DataElementValidationResult(ValidationResult):
             )
         ),
     )
-
-
-class ValidationResultSchema(Schema):
-    """
-    A schema to (de-)serialize ValidationResult
-    """
-
-    requirement_validation = EnumField(RequirementValidationValue)
-    hints = fields.String(load_default=None)
-
-    @post_load
-    def deserialize(self, data, **kwargs) -> ValidationResult:
-        """
-        Converts the barely typed data dictionary into an actual ValidationResult
-        :param data:
-        :param kwargs:
-        :return:
-        """
-        return ValidationResult(**data)
-
-
-class SegmentLevelValidationResultSchema(ValidationResultSchema):
-    """
-    A schema to (de-)serialize SegmentLevelValidationResult
-    """
-
-    @post_load
-    def deserialize(self, data, **kwargs) -> SegmentLevelValidationResult:
-        """
-        Converts the barely typed data dictionary into an actual ValidationResult
-        :param data:
-        :param kwargs:
-        :return:
-        """
-        return SegmentLevelValidationResult(**data)
 
 
 class DataElementValidationResultSchema(ValidationResultSchema):
