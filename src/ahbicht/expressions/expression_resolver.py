@@ -75,6 +75,8 @@ async def _replace_sub_coroutines_with_awaited_results(tree: Union[Tree, Awaitab
 
 
 # pylint: disable=no-self-use, invalid-name
+# no-self-use: The following method is not static because it refers to the terminal of the lark grammar.
+# invalid-name: That's also the reason why it seemingly violates the naming conventions.
 class AhbExpressionResolverTransformer(Transformer):
     """
     Resolves the condition_expressions inside an ahb_expression.
