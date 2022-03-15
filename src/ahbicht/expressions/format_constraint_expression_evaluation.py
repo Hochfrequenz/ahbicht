@@ -89,7 +89,7 @@ def evaluate_format_constraint_tree(
 
 
 async def format_constraint_evaluation(
-    format_constraints_expression: Optional[str], entered_input: str
+    format_constraints_expression: Optional[str], entered_input: Optional[str]
 ) -> FormatConstraintEvaluationResult:
     """
     Evaluation of the format constraint expression.
@@ -118,7 +118,7 @@ async def format_constraint_evaluation(
 
 
 async def _build_evaluated_format_constraint_nodes(
-    evaluatable_format_constraint_keys: List[str], entered_input: str
+    evaluatable_format_constraint_keys: List[str], entered_input: Optional[str]
 ) -> Dict[str, EvaluatedFormatConstraint]:
     """Build evaluated format constraint nodes."""
 

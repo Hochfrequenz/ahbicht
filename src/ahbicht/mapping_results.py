@@ -19,14 +19,14 @@ class ConditionKeyConditionTextMapping:
 
     edifact_format: EdifactFormat = attrs.field(
         validator=attrs.validators.instance_of(EdifactFormat)
-    )  #: the format in which the condition is used; f.e. 'UTILMD'
+    )  #: the format in which the condition is used; e.g. 'UTILMD'
     condition_key: str = attrs.field(
         validator=attrs.validators.instance_of(str)
-    )  #: the key of the condition without square brackets; f.e. '78'
+    )  #: the key of the condition without square brackets; e.g. '78'
     condition_text: Optional[str] = attrs.field(default=None)
     """
     the description of the condition as in the AHB; None if unknown;
-    f.e. 'Wenn SG4 STS+7++E02 (Transaktionsgrund: Einzug/Neuanlage)  nicht vorhanden'.
+    e.g. 'Wenn SG4 STS+7++E02 (Transaktionsgrund: Einzug/Neuanlage)  nicht vorhanden'.
     """
 
 
@@ -58,13 +58,13 @@ class PackageKeyConditionExpressionMapping:
 
     edifact_format: EdifactFormat = attrs.field(
         validator=attrs.validators.instance_of(EdifactFormat)
-    )  #: the format in which the package is used; f.e. 'UTILMD'
+    )  #: the format in which the package is used; e.g. 'UTILMD'
     package_key: str = attrs.field(
         validator=attrs.validators.instance_of(str)
-    )  #: the key of the package without square brackets but with trailing P; f.e. '10P'
+    )  #: the key of the package without square brackets but with trailing P; e.g. '10P'
     package_expression: Optional[str] = attrs.field(
         default=None
-    )  #: the expression for which the package is a shortcut; None if unknown f.e. '[20] ∧ [244]'
+    )  #: the expression for which the package is a shortcut; None if unknown e.g. '[20] ∧ [244]'
 
     def has_been_resolved_successfully(self) -> bool:
         """
@@ -136,7 +136,7 @@ _repeatability_pattern = re.compile(r"^(?P<min>\d+)\.{2}(?P<max>\d+)$")  #: a pa
 
 def parse_repeatability(repeatability_string: str) -> Repeatability:
     """
-    parses the given string as repeatability; f.e. `17..23` is parsed as min=17, max=23
+    parses the given string as repeatability; e.g. `17..23` is parsed as min=17, max=23
     """
     match: Optional[Match[str]] = _repeatability_pattern.match(repeatability_string)
     if match is None:
