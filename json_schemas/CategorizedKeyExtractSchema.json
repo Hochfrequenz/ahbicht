@@ -47,14 +47,6 @@
                     "title": "package_keys",
                     "type": "array"
                 },
-                "repeatability_constraint_keys": {
-                    "items": {
-                        "title": "repeatability_constraint_keys",
-                        "type": "string"
-                    },
-                    "title": "repeatability_constraint_keys",
-                    "type": "array"
-                },
                 "requirement_constraint_keys": {
                     "items": {
                         "title": "requirement_constraint_keys",
@@ -142,14 +134,6 @@
                         "type": "string"
                     },
                     "title": "packages",
-                    "type": "object"
-                },
-                "repeatability_constraints": {
-                    "additionalProperties": {
-                        "title": "repeatability_constraints",
-                        "type": "string"
-                    },
-                    "title": "repeatability_constraints",
                     "type": "object"
                 },
                 "requirement_constraints": {

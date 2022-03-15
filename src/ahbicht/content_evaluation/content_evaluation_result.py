@@ -90,9 +90,6 @@ class ContentEvaluationResultSchema(Schema):
         required=False,
         load_default={},
     )
-    repeatability_constraints = fields.Dict(
-        keys=fields.String(allow_none=False), values=fields.String(allow_none=False), required=False
-    )
     id = fields.UUID(required=False, dump_default=False, load_default=None)
 
     @post_load

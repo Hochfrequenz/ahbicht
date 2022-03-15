@@ -20,10 +20,7 @@ class TestCategorizedKeyExtraction:
             pytest.param(
                 "[1]",
                 CategorizedKeyExtract(
-                    hint_keys=[],
-                    requirement_constraint_keys=["1"],
-                    format_constraint_keys=[],
-                    package_keys=[],
+                    hint_keys=[], requirement_constraint_keys=["1"], format_constraint_keys=[], package_keys=[]
                 ),
             ),
             pytest.param(
@@ -69,20 +66,14 @@ class TestCategorizedKeyExtraction:
         [
             pytest.param(
                 CategorizedKeyExtract(
-                    hint_keys=[],
-                    requirement_constraint_keys=[],
-                    format_constraint_keys=[],
-                    package_keys=[],
+                    hint_keys=[], requirement_constraint_keys=[], format_constraint_keys=[], package_keys=[]
                 ),
                 [],
                 id="0 FC, 0 RC",
             ),
             pytest.param(
                 CategorizedKeyExtract(
-                    hint_keys=[],
-                    requirement_constraint_keys=["1"],
-                    format_constraint_keys=[],
-                    package_keys=[],
+                    hint_keys=[], requirement_constraint_keys=["1"], format_constraint_keys=[], package_keys=[]
                 ),
                 [
                     ContentEvaluationResult(
@@ -114,10 +105,7 @@ class TestCategorizedKeyExtraction:
             ),
             pytest.param(
                 CategorizedKeyExtract(
-                    hint_keys=[],
-                    requirement_constraint_keys=[],
-                    format_constraint_keys=["901"],
-                    package_keys=[],
+                    hint_keys=[], requirement_constraint_keys=[], format_constraint_keys=["901"], package_keys=[]
                 ),
                 [
                     ContentEvaluationResult(

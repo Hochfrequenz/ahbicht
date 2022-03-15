@@ -140,7 +140,6 @@ class CategorizedKeyExtractSchema(Schema):
     format_constraint_keys = fields.List(fields.String())
     requirement_constraint_keys = fields.List(fields.String())
     package_keys = fields.List(fields.String())
-    repeatability_constraint_keys = fields.List(fields.String())
 
     @post_load
     def deserialize(self, data, **kwargs) -> CategorizedKeyExtract:

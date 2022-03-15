@@ -76,12 +76,9 @@ class TestExpressionResolver:
                     ],
                 ),
             ),
-            # pytest.param("[2056]", Tree("condition", [Token("REPEATABILITY_KEY", "2056")])),
         ],
     )
     async def test_expression_resolver_valid(self, expression: str, expected_tree: Tree[Token]):
-        # if expression == "[2056]":
-        #     breakpoint()
         actual_tree = await parse_expression_including_unresolved_subexpressions(expression)
         assert actual_tree == expected_tree
 
