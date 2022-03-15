@@ -4,7 +4,7 @@ The AhbExpressionTransformer defines the rules how the different parts of the pa
 
 The used terms are defined in the README.md.
 """
-from typing import Awaitable, Dict, List, Union
+from typing import Awaitable, Dict, List, Optional, Union
 
 from lark import Token, Transformer, Tree, v_args
 from lark.exceptions import VisitError
@@ -40,7 +40,7 @@ class AhbExpressionTransformer(Transformer):
     their respective condition expressions already evaluated to booleans.
     """
 
-    def __init__(self, entered_input: str):
+    def __init__(self, entered_input: Optional[str]):
         """
         The input are the evaluated format constraint conditions in the form of ConditionNodes.
 
@@ -150,7 +150,9 @@ class AhbExpressionTransformer(Transformer):
         return results[-1]
 
 
-async def evaluate_ahb_expression_tree(parsed_tree: Tree, entered_input: str) -> AhbExpressionEvaluationResult:
+async def evaluate_ahb_expression_tree(
+    parsed_tree: Tree, entered_input: Optional[str]
+) -> AhbExpressionEvaluationResult:
     """
     Evaluates the tree built from the ahb expressions with the help of the AhbExpressionTransformer.
 
