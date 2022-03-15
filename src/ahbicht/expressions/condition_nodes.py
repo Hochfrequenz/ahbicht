@@ -54,7 +54,7 @@ class ConditionFulfilledValue(str, Enum):
             return self
         if self == ConditionFulfilledValue.NEUTRAL:
             return other
-        # if any single operand in the and composition is unfulfilled, then the entire outcome is unfulfilled,
+        # if any single operand in the and_composition is unfulfilled, then the entire outcome is unfulfilled,
         # regardless of the other operand
         if ConditionFulfilledValue.UNFULFILLED in (self, other):
             return ConditionFulfilledValue.UNFULFILLED
@@ -198,7 +198,7 @@ class EvaluatedComposition(ConditionNode):
     """
 
     hint: Optional[str] = attrs.field(default=None)  # text from hints/notes
-    format_constraints_expression: Optional[str] = attrs.field(
-        default=None
-    )  # an expression that consists of (initially
-    # unevaluated) format constraints that the evaluated field needs to obey
+    format_constraints_expression: Optional[str] = attrs.field(default=None)
+    """
+    an expression that consists of (initially unevaluated) format constraints that the evaluated field needs to obey
+    """

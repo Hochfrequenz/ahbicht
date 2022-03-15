@@ -1,6 +1,6 @@
 """
 This module contains the classes for the evaluation results.
-A "result" is the outcome of a evaluation. It requires actual data to be present.
+A "result" is the outcome of an evaluation. It requires actual data to be present.
 """
 
 # pylint: disable=too-few-public-methods, no-member, no-self-use, unused-argument

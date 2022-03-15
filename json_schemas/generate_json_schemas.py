@@ -53,6 +53,16 @@ for schema_type in schema_types:
             field_dict["requirement_indicator"] = fields.String(name="requirement_indicator")
 
     json_schema_dict = json_schema.dump(schema_instance)
+    # We want our JSON schemas to be compatible with a typescript code generator:
+    # https://github.com/bcherny/json-schema-to-typescript/
+    # However there's an unresolved bug: The root level of the schema must not contain any '$ref' key.
+    # https://github.com/bcherny/json-schema-to-typescript/issues/132
+    # The workaround goes like this:
+    result = json_schema_dict.copy()
+    result["type"] = "object"
+    result["title"] = schema_type.__name__
+    result["properties"] = {"$ref": result["$ref"] + "/properties"}
+    del result["$ref"]
 
     with open(file_path, "w", encoding="utf-8") as json_schema_file:
-        json.dump(json_schema_dict, json_schema_file, ensure_ascii=False, sort_keys=True, indent=4)
+        json.dump(result, json_schema_file, ensure_ascii=False, sort_keys=True, indent=4)
