@@ -3,7 +3,7 @@ This module provides the functions to validate segment groups, segments and data
 """
 
 import asyncio
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from maus.models.edifact_components import (
     DataElement,
@@ -231,7 +231,7 @@ async def validate_data_element_freetext(
         discriminator=data_element.discriminator,
         validation_result=DataElementValidationResult(
             requirement_validation=requirement_validation,
-            format_validation_fulfilled=evaluation_result.format_constraint_evaluation_result.format_constraints_fulfilled,
+            format_validation_fulfilled=evaluation_result.format_constraint_evaluation_result.format_constraints_fulfilled,  # pylint: disable=line-too-long
             format_error_message=evaluation_result.format_constraint_evaluation_result.error_message,
             hints=evaluation_result.requirement_constraint_evaluation_result.hints,
         ),
@@ -248,7 +248,7 @@ async def validate_data_element_valuepool(
     :param segment_requirement: the requirement of the data element's parent segment, e.g. IS_REQUIRED
     :returns: Validation Result of the DataElement
     """
-    possible_values = []
+    possible_values: Dict[str, str] = {}
 
     # Since the conditions behind the qualifiers only say if this qualifier is possible or not,
     # the overall requirement is inherited from the data element's parent segment.
@@ -258,14 +258,16 @@ async def validate_data_element_valuepool(
     if segment_requirement is not RequirementValidationValue.IS_FORBIDDEN:
         # it seems like all single value data elements (except freetext) are just labeled "X"
         if len(data_element.value_pool) == 1:
-            possible_values = list(data_element.value_pool)
+            possible_values[data_element.value_pool[0].qualifier] = data_element.value_pool[0].meaning
             hints = None
-        else: # len(value_pool) >1
-            for qualifier, expression in data_element.value_pool.items():
-                expression_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(expression)
+        else:  # len(value_pool) >1
+            for value_pool_entry in data_element.value_pool:
+                expression_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(
+                    value_pool_entry.ahb_expression
+                )
                 evaluation_result = await evaluate_ahb_expression_tree(expression_tree, entered_input=None)
                 if evaluation_result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled:
-                    possible_values.append(qualifier)
+                    possible_values[value_pool_entry.qualifier] = value_pool_entry.meaning
                 hints = None  # TODO: Get all hints from possible values
 
     # if no possible values are found, the requirement is set to forbidden

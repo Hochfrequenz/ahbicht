@@ -3,7 +3,13 @@ from itertools import product
 from typing import List
 
 import pytest  # type:ignore[import]
-from maus.models.edifact_components import DataElementFreeText, DataElementValuePool, Segment, SegmentGroup
+from maus.models.edifact_components import (
+    DataElementFreeText,
+    DataElementValuePool,
+    Segment,
+    SegmentGroup,
+    ValuePoolEntry,
+)
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.evaluator_factory import create_and_inject_hardcoded_evaluators
@@ -14,9 +20,9 @@ from ahbicht.validation.validation import (
     map_requirement_validation_values,
     validate_data_element_freetext,
     validate_data_element_valuepool,
-    validate_segment_level,
     validate_segment,
     validate_segment_group,
+    validate_segment_level,
 )
 from ahbicht.validation.validation_results import (
     DataElementValidationResult,
@@ -382,7 +388,25 @@ class TestValidation:
         [
             pytest.param(
                 DataElementValuePool(
-                    discriminator="SG1", data_element_id="1234", value_pool={"A1": "X", "A2": "X", "A3": "X"}
+                    discriminator="SG1",
+                    data_element_id="1234",
+                    value_pool=[
+                        ValuePoolEntry(
+                            qualifier="A1",
+                            meaning="Ich bin A1",
+                            ahb_expression="X",
+                        ),
+                        ValuePoolEntry(
+                            qualifier="A2",
+                            meaning="Ich bin A2",
+                            ahb_expression="X",
+                        ),
+                        ValuePoolEntry(
+                            qualifier="A3",
+                            meaning="Ich bin A3",
+                            ahb_expression="X",
+                        ),
+                    ],
                 ),
                 RequirementValidationValue.IS_REQUIRED,
                 ValidationResultInContext(
@@ -390,13 +414,31 @@ class TestValidation:
                     validation_result=DataElementValidationResult(
                         requirement_validation=RequirementValidationValue.IS_REQUIRED,
                         format_validation_fulfilled=True,
-                        possible_values=["A1", "A2", "A3"],
+                        possible_values={"A1": "Ich bin A1", "A2": "Ich bin A2", "A3": "Ich bin A3"},
                     ),
                 ),
             ),
             pytest.param(
                 DataElementValuePool(
-                    discriminator="SG1", data_element_id="1234", value_pool={"A1": "X", "A2": "X", "A3": "X"}
+                    discriminator="SG1",
+                    data_element_id="1234",
+                    value_pool=[
+                        ValuePoolEntry(
+                            qualifier="A1",
+                            meaning="Ich bin A1",
+                            ahb_expression="X",
+                        ),
+                        ValuePoolEntry(
+                            qualifier="A2",
+                            meaning="Ich bin A2",
+                            ahb_expression="X",
+                        ),
+                        ValuePoolEntry(
+                            qualifier="A3",
+                            meaning="Ich bin A3",
+                            ahb_expression="X",
+                        ),
+                    ],
                 ),
                 RequirementValidationValue.IS_FORBIDDEN,
                 ValidationResultInContext(
@@ -404,13 +446,31 @@ class TestValidation:
                     validation_result=DataElementValidationResult(
                         requirement_validation=RequirementValidationValue.IS_FORBIDDEN,
                         format_validation_fulfilled=True,
-                        possible_values=[],
+                        possible_values={},
                     ),
                 ),
             ),
             pytest.param(
                 DataElementValuePool(
-                    discriminator="SG1", data_element_id="1234", value_pool={"A1": "X[2]", "A2": "X[3]", "A3": "X"}
+                    discriminator="SG1",
+                    data_element_id="1234",
+                    value_pool=[
+                        ValuePoolEntry(
+                            qualifier="A1",
+                            meaning="Ich bin A1",
+                            ahb_expression="X[2]",
+                        ),
+                        ValuePoolEntry(
+                            qualifier="A2",
+                            meaning="Ich bin A2",
+                            ahb_expression="X[3]",
+                        ),
+                        ValuePoolEntry(
+                            qualifier="A3",
+                            meaning="Ich bin A3",
+                            ahb_expression="X",
+                        ),
+                    ],
                 ),
                 RequirementValidationValue.IS_REQUIRED,
                 ValidationResultInContext(
@@ -418,13 +478,31 @@ class TestValidation:
                     validation_result=DataElementValidationResult(
                         requirement_validation=RequirementValidationValue.IS_REQUIRED,
                         format_validation_fulfilled=True,
-                        possible_values=["A1", "A3"],
+                        possible_values={"A1": "Ich bin A1", "A3": "Ich bin A3"},
                     ),
                 ),
             ),
             pytest.param(
                 DataElementValuePool(
-                    discriminator="SG1", data_element_id="1234", value_pool={"A1": "X[2]", "A2": "X[3][501]", "A3": "X"}
+                    discriminator="SG1",
+                    data_element_id="1234",
+                    value_pool=[
+                        ValuePoolEntry(
+                            qualifier="A1",
+                            meaning="Ich bin A1",
+                            ahb_expression="X[2]",
+                        ),
+                        ValuePoolEntry(
+                            qualifier="A2",
+                            meaning="Ich bin A2",
+                            ahb_expression="X[3][501]",
+                        ),
+                        ValuePoolEntry(
+                            qualifier="A3",
+                            meaning="Ich bin A3",
+                            ahb_expression="X",
+                        ),
+                    ],
                 ),
                 RequirementValidationValue.IS_FORBIDDEN,
                 ValidationResultInContext(
@@ -432,19 +510,29 @@ class TestValidation:
                     validation_result=DataElementValidationResult(
                         requirement_validation=RequirementValidationValue.IS_FORBIDDEN,
                         format_validation_fulfilled=True,
-                        possible_values=[],
+                        possible_values={},
                     ),
                 ),
             ),
             pytest.param(
-                DataElementValuePool(discriminator="SG1", data_element_id="1234", value_pool={"A1": "X"}),
+                DataElementValuePool(
+                    discriminator="SG1",
+                    data_element_id="1234",
+                    value_pool=[
+                        ValuePoolEntry(
+                            qualifier="A1",
+                            meaning="Ich bin A1",
+                            ahb_expression="X",
+                        )
+                    ],
+                ),
                 RequirementValidationValue.IS_REQUIRED,
                 ValidationResultInContext(
                     discriminator="SG1",
                     validation_result=DataElementValidationResult(
                         requirement_validation=RequirementValidationValue.IS_REQUIRED,
                         format_validation_fulfilled=True,
-                        possible_values=["A1"],
+                        possible_values={"A1": "Ich bin A1"},
                     ),
                 ),
             ),

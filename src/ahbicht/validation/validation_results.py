@@ -1,7 +1,7 @@
 "This module contains the classes for the validation results."
 
 from abc import ABC
-from typing import List, Optional
+from typing import Dict, Optional
 
 import attrs
 from marshmallow import Schema, fields, post_load
@@ -73,12 +73,13 @@ class DataElementValidationResult(ValidationResult):
     #: possible error message regarding the format constraints
     format_error_message: Optional[str] = attrs.field(default=None)
     #: possible qualifiers for value pool data elements
-    possible_values: Optional[List[str]] = attrs.field(
+    possible_values: Optional[Dict[str, str]] = attrs.field(
         default=None,
         validator=attrs.validators.optional(
-            attrs.validators.deep_iterable(
-                member_validator=attrs.validators.instance_of(str),
-                iterable_validator=attrs.validators.instance_of(list),
+            attrs.validators.deep_mapping(
+                key_validator=attrs.validators.instance_of(str),
+                value_validator=attrs.validators.instance_of(str),
+                mapping_validator=attrs.validators.instance_of(dict),
             )
         ),
     )
@@ -91,7 +92,7 @@ class DataElementValidationResultSchema(ValidationResultSchema):
 
     format_validation_fulfilled = fields.Bool()
     format_error_message = fields.String(load_default=None)
-    possible_values = fields.List(fields.Str, load_default=None)
+    possible_values = fields.Dict(fields.Str, load_default=None)
 
     @post_load
     def deserialize(self, data, **kwargs) -> DataElementValidationResult:
