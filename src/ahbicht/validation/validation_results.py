@@ -66,13 +66,13 @@ class SegmentLevelValidationResultSchema(ValidationResultSchema):
 
 @attrs.define(auto_attribs=True, kw_only=True)
 class DataElementValidationResult(ValidationResult):
-    """Result of the validation of a dataelement"""
+    """Result of the validation of a data element"""
 
     #: Is the format constraint fulfilled or not?
     format_validation_fulfilled: bool = attrs.field(validator=attrs.validators.instance_of(bool))
     #: possible error message regarding the format constraints
     format_error_message: Optional[str] = attrs.field(default=None)
-    #: possible qualifiers for value pool dataelements
+    #: possible qualifiers for value pool data elements
     possible_values: Optional[List[str]] = attrs.field(
         default=None,
         validator=attrs.validators.optional(

@@ -134,13 +134,13 @@ async def validate_segment(
 
     tasks = []
 
-    # validation of this segments dataelements
-    for dataelement in segment.data_elements:
-        tasks.append(validate_dataelement(dataelement, segment_validation.requirement_validation))
+    # validation of this segments data elements
+    for data_element in segment.data_elements:
+        tasks.append(validate_data_element(data_element, segment_validation.requirement_validation))
 
-    validation_results_in_context_dataelements = await asyncio.gather(*tasks)
+    validation_results_in_context_data_elements = await asyncio.gather(*tasks)
 
-    return [*validation_results_in_context, *validation_results_in_context_dataelements]
+    return [*validation_results_in_context, *validation_results_in_context_data_elements]
 
 
 async def get_segment_level_requirement_validation_value(
@@ -177,40 +177,40 @@ async def get_segment_level_requirement_validation_value(
     )
 
 
-async def validate_dataelement(
-    dataelement: DataElement,
+async def validate_data_element(
+    data_element: DataElement,
     segment_requirement: RequirementValidationValue,
     soll_is_required=True,
 ) -> ValidationResultInContext:
     """
-    Validates data elements by handing them over to specialized functions for freetext or value pool dataelements.
-    :param dataelement: the dataelement that should be validated
-    :param segment_requirement: the requirement of the dataelement's parent segment, e.g. IS_REQUIRED
+    Validates data elements by handing them over to specialized functions for freetext or value pool data elements.
+    :param dat_aelement: the data element that should be validated
+    :param segment_requirement: the requirement of the data element's parent segment, e.g. IS_REQUIRED
     :param soll_is_required: true (default) if SOLL should be handled like MUSS, false if it should be handled like KANN
     :return: Validation Result of the Data element
     """
-    if isinstance(dataelement, DataElementFreeText):
-        return await validate_dataelement_freetext(dataelement, segment_requirement, soll_is_required)
-    if isinstance(dataelement, DataElementValuePool):
-        return await validate_dataelement_valuepool(dataelement, segment_requirement)
-    raise NotImplementedError("Unexpected type for dataelement")
+    if isinstance(data_element, DataElementFreeText):
+        return await validate_data_element_freetext(data_element, segment_requirement, soll_is_required)
+    if isinstance(data_element, DataElementValuePool):
+        return await validate_data_element_valuepool(data_element, segment_requirement)
+    raise NotImplementedError("Unexpected type for data element")
 
 
-async def validate_dataelement_freetext(
-    dataelement: DataElementFreeText,
+async def validate_data_element_freetext(
+    data_element: DataElementFreeText,
     segment_requirement: Optional[RequirementValidationValue] = None,
     soll_is_required=True,
 ) -> ValidationResultInContext:
     """
-    Validates a freetext dataelement, e.g. 'Dokumentennummer'.
-    :param dataelement: the dataelement that should be validated
-    :param segment_requirement: the requirement of the dataelement's parent segment, e.g. IS_REQUIRED
+    Validates a freetext data element, e.g. 'Dokumentennummer'.
+    :param data_element: the data element that should be validated
+    :param segment_requirement: the requirement of the data element's parent segment, e.g. IS_REQUIRED
     :param soll_is_required: true (default) if SOLL should be handled like MUSS, if it should be handled like KANN
-    :return: Validation Result of the Dataelement
+    :return: Validation Result of the DataElement
     """
 
-    expression_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(dataelement.ahb_expression)
-    evaluation_result = await evaluate_ahb_expression_tree(expression_tree, entered_input=dataelement.entered_input)
+    expression_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(data_element.ahb_expression)
+    evaluation_result = await evaluate_ahb_expression_tree(expression_tree, entered_input=data_element.entered_input)
 
     # requirement constraints
     requirement_validation_without_input_without_hierarchy = map_requirement_validation_values(
@@ -222,13 +222,13 @@ async def validate_dataelement_freetext(
         segment_requirement, requirement_validation_without_input_without_hierarchy
     )
 
-    if dataelement.entered_input:
+    if data_element.entered_input:
         requirement_validation = RequirementValidationValue(str(requirement_validation_without_input) + "_AND_FILLED")
     else:
         requirement_validation = RequirementValidationValue(str(requirement_validation_without_input) + "_AND_EMPTY")
 
     return ValidationResultInContext(
-        discriminator=dataelement.discriminator,
+        discriminator=data_element.discriminator,
         validation_result=DataElementValidationResult(
             requirement_validation=requirement_validation,
             format_validation_fulfilled=evaluation_result.format_constraint_evaluation_result.format_constraints_fulfilled,
@@ -238,31 +238,31 @@ async def validate_dataelement_freetext(
     )
 
 
-async def validate_dataelement_valuepool(
-    dataelement: DataElementValuePool,
+async def validate_data_element_valuepool(
+    data_element: DataElementValuePool,
     segment_requirement: RequirementValidationValue,
 ) -> ValidationResultInContext:
     """
     Validates a value pool data element which depends on the requirement status of its segment.
-    :param dataelement: the dataelement that should be validated
-    :param segment_requirement: the requirement of the dataelement's parent segment, e.g. IS_REQUIRED
-    :returns: Validation Result of the Dataelement
+    :param data_element: the data element that should be validated
+    :param segment_requirement: the requirement of the data element's parent segment, e.g. IS_REQUIRED
+    :returns: Validation Result of the DataElement
     """
     possible_values = []
 
     # Since the conditions behind the qualifiers only say if this qualifier is possible or not,
-    # the overall requirement is inherited from the dataelement's parent segment.
+    # the overall requirement is inherited from the data element's parent segment.
     # Only exception is if no qualifier is possible, see below
-    requirement_validation_dataelement = segment_requirement
+    requirement_validation_data_element = segment_requirement
 
     if segment_requirement is not RequirementValidationValue.IS_FORBIDDEN:
-        # it seems like all single value dataelements (except freetext) are just labeled "X"
-        if len(dataelement.value_pool) == 1:
-            possible_values = list(dataelement.value_pool)
+        # it seems like all single value data elements (except freetext) are just labeled "X"
+        if len(data_element.value_pool) == 1:
+            possible_values = list(data_element.value_pool)
             hints = None
         # value pool > 1
         else:
-            for qualifier, expression in dataelement.value_pool.items():
+            for qualifier, expression in data_element.value_pool.items():
                 expression_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(expression)
                 evaluation_result = await evaluate_ahb_expression_tree(expression_tree, entered_input=None)
                 if evaluation_result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled:
@@ -273,13 +273,13 @@ async def validate_dataelement_valuepool(
     # pylint: disable = pointless-statement
     # Case: segment_requirement is required, but no possible values are appended
     if not possible_values:
-        requirement_validation_dataelement is RequirementValidationValue.IS_FORBIDDEN
+        requirement_validation_data_element is RequirementValidationValue.IS_FORBIDDEN
         hints = None
 
     return ValidationResultInContext(
-        discriminator=dataelement.discriminator,
+        discriminator=data_element.discriminator,
         validation_result=DataElementValidationResult(
-            requirement_validation=requirement_validation_dataelement,
+            requirement_validation=requirement_validation_data_element,
             format_validation_fulfilled=True,
             hints=hints,  # todo: hints might be referenced before assignment
             possible_values=possible_values,

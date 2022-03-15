@@ -330,7 +330,7 @@ class TestJsonSerialization:
             ),
         ],
     )
-    def test_dataelement_validation_result_serialization(
+    def test_data_element_validation_result_serialization(
         self, validation_result: DataElementValidationResult, expected_json_dict: dict
     ):
         _test_serialization_roundtrip(validation_result, DataElementValidationResultSchema(), expected_json_dict)

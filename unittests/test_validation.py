@@ -12,8 +12,8 @@ from ahbicht.expressions.enums import ModalMark, PrefixOperator, RequirementIndi
 from ahbicht.validation.validation import (
     combine_requirements_of_different_levels,
     map_requirement_validation_values,
-    validate_dataelement_freetext,
-    validate_dataelement_valuepool,
+    validate_data_element_freetext,
+    validate_data_element_valuepool,
     validate_segment_level,
     validate_segment,
     validate_segment_group,
@@ -315,7 +315,7 @@ class TestValidation:
         assert result == expected_validation_result
 
     @pytest.mark.parametrize(
-        "dataelement, segment_requirement, expected_validation",
+        "data_element, segment_requirement, expected_validation",
         [
             pytest.param(
                 DataElementFreeText(
@@ -371,14 +371,14 @@ class TestValidation:
             ),
         ],
     )
-    async def test_validate_dataelement_freetext(
-        self, dataelement, segment_requirement, expected_validation, inject_content_evaluation_result
+    async def test_validate_data_element_freetext(
+        self, data_element, segment_requirement, expected_validation, inject_content_evaluation_result
     ):
-        result = await validate_dataelement_freetext(dataelement, segment_requirement)
+        result = await validate_data_element_freetext(data_element, segment_requirement)
         assert result == expected_validation
 
     @pytest.mark.parametrize(
-        "dataelement, segment_requirement, expected_validation",
+        "data_element, segment_requirement, expected_validation",
         [
             pytest.param(
                 DataElementValuePool(
@@ -450,10 +450,10 @@ class TestValidation:
             ),
         ],
     )
-    async def test_validate_dataelement_valuepool(
-        self, dataelement, segment_requirement, expected_validation, inject_content_evaluation_result
+    async def test_validate_data_element_valuepool(
+        self, data_element, segment_requirement, expected_validation, inject_content_evaluation_result
     ):
-        result = await validate_dataelement_valuepool(dataelement, segment_requirement)
+        result = await validate_data_element_valuepool(data_element, segment_requirement)
         assert result == expected_validation
 
     @pytest.mark.parametrize(
