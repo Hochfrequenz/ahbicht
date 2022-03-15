@@ -1,3 +1,3 @@
-import setuptools
+from setuptools import setup
 
-setuptools.setup()
+setup(name="ahbicht", use_scm_version=True)
