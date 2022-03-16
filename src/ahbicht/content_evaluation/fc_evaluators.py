@@ -26,7 +26,7 @@ class FcEvaluator(Evaluator, ABC):
     of the condition it evaluates.
     """
 
-    # Attentive readers will notice, that 932 does exactly the same thing as 931; Also 934 does the same thing as 933.
+    # Attentive readers will notice, that 933 does exactly the same thing as 932; Also 935 does the same thing as 934.
     # This is because, from a data perspective, it's totally irrelevant if we're communicating a datetime with
     # +1h or +2h UTC offset as long as _any_ offset is given. Two distinctive format constraints are just ..., ok.
     # The authors of the AHBs probably had good intentions, when they introduced two different format constraints for
