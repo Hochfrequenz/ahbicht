@@ -26,6 +26,13 @@ class FcEvaluator(Evaluator, ABC):
     of the condition it evaluates.
     """
 
+    # Attentive readers will notice, that 932 does exactly the same thing as 931; Also 934 does the same thing as 933.
+    # This is because, from a data perspective, it's totally irrelevant if we're communicating a datetime with
+    # +1h or +2h UTC offset as long as _any_ offset is given. Two distinctive format constraints are just ..., ok.
+    # The authors of the AHBs probably had good intentions, when they introduced two different format constraints for
+    # both German "winter" (CET/MEZ) and "summer time" (CEST/MESZ).
+    # The road to hell is paved with good intentions.
+
     def evaluate_931(self, entered_input: str) -> EvaluatedFormatConstraint:
         """
         Assert that the entered input is parsable as datetime with explicit UTC offset.

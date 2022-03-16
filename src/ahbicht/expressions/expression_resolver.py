@@ -193,10 +193,10 @@ class TimeConditionTransformer(Transformer):
         time_condition_key = tokens[0].value
         if time_condition_key == "UB1":
             # a format constraint for "Stromtag"
-            return Tree("condition", [Token("CONDITION_KEY", "932")])
+            return Tree("condition", [Token("CONDITION_KEY", "932")])  # we could also use 933; it doesn't matter
         if time_condition_key == "UB2":
             # a format constraint for "Gastage"
-            return Tree("condition", [Token("CONDITION_KEY", "934")])
+            return Tree("condition", [Token("CONDITION_KEY", "934")])  # we could also use 935; it doesn't matter
         if time_condition_key == "UB3":
             # RC 492 = receiver is from division electricity/strom
             # RC 493 = receiver is from division gas
