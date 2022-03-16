@@ -60,9 +60,9 @@ def has_no_utc_offset(entered_input: str) -> EvaluatedFormatConstraint:
     date_time, error_result = _parse_as_datetime(entered_input)
     if error_result is not None:
         return error_result
-    utc_datetime = date_time.astimezone(tz=utc)
-    utc_time = utc_datetime.time()
-    if utc_time == date_time.time() and utc_time.hour == 0 and utc_time.minute == 0 and utc_time.second == 0:
+    original_time = date_time.time()  # type:ignore[union-attr]
+    utc_time = date_time.astimezone(tz=utc).time()  # type:ignore[union-attr]
+    if utc_time == original_time and utc_time.hour == 0 and utc_time.minute == 0 and utc_time.second == 0:
         return EvaluatedFormatConstraint(format_constraint_fulfilled=True, error_message=None)
     error_message = f"The provided date time '{entered_input}' has a UTC offset of {utc_time}."
     return EvaluatedFormatConstraint(format_constraint_fulfilled=False, error_message=error_message)
