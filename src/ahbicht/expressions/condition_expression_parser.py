@@ -37,9 +37,12 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree[Token]
                 | brackets
                 | package
                 | condition
+                | time_condition
     ?brackets: "(" expression ")"
+    time_condition: "[" TIME_CONDITION_KEY "]" // a rule for point in time-conditions
     package: "[" PACKAGE_KEY REPEATABILITY? "]" // a rule for packages
     condition: "[" CONDITION_KEY "]" // a rule for condition keys
+    TIME_CONDITION_KEY: /UB(1|2|3)/ // a terminal for "übergreifende Bedingungen für Zeitpunktangaben"
     CONDITION_KEY: INT // a TERMINAL for all the remaining ints (lower priority)
     REPEATABILITY: /\d+\.{2}[1-9]\d*/ // a terminal for repetitions n..m with n>=0 and m>n
     PACKAGE_KEY: INT "P" // a TERMINAL for all INTs followed by "P" (high priority)
@@ -72,7 +75,7 @@ def extract_categorized_keys_from_tree(
     See 'Allgemeine Festlegungen' from EDI@Energy.
     """
     result = CategorizedKeyExtract(
-        format_constraint_keys=[], requirement_constraint_keys=[], hint_keys=[], package_keys=[]
+        format_constraint_keys=[], requirement_constraint_keys=[], hint_keys=[], package_keys=[], time_condition_keys=[]
     )
     condition_keys: List[str]
     if isinstance(tree_or_list, list):
@@ -88,6 +91,12 @@ def extract_categorized_keys_from_tree(
             x.value  # type:ignore[attr-defined]
             for x in tree_or_list.scan_values(
                 lambda token: token.type == "PACKAGE_KEY"  # type:ignore[union-attr]
+            )
+        ]
+        result.time_condition_keys = [
+            x.value  # type:ignore[attr-defined]
+            for x in tree_or_list.scan_values(
+                lambda token: token.type == "TIME_CONDITION_KEY"  # type:ignore[union-attr]
             )
         ]
     else:
@@ -107,7 +116,9 @@ def extract_categorized_keys_from_tree(
     return result
 
 
-async def extract_categorized_keys(condition_expression: str, resolve_packages: bool = False) -> CategorizedKeyExtract:
+async def extract_categorized_keys(
+    condition_expression: str, resolve_packages: bool = False, replace_time_conditions: bool = False
+) -> CategorizedKeyExtract:
     """
     Parses the given condition expression and returns CategorizedKeyExtract as a template for content
     evaluation.
@@ -119,6 +130,6 @@ async def extract_categorized_keys(condition_expression: str, resolve_packages: 
     from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 
     tree = await parse_expression_including_unresolved_subexpressions(
-        condition_expression, resolve_packages=resolve_packages
+        condition_expression, resolve_packages=resolve_packages, replace_time_conditions=replace_time_conditions
     )
     return extract_categorized_keys_from_tree(tree, sanitize=True)

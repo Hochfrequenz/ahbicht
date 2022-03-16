@@ -1,4 +1,5 @@
 """ Test for the evaluation of the format constraint expression. """
+from typing import Optional
 
 import inject
 import pytest  # type:ignore[import]
@@ -187,3 +188,39 @@ class TestFormatConstraintExpressionEvaluation:
         """Tests that evaluated format constraints nodes are build correctly."""
         evaluated_fc_nodes = await _build_evaluated_format_constraint_nodes(condition_keys, entered_input)
         assert evaluated_fc_nodes == expected_evaluated_fc_nodes
+
+    @pytest.mark.parametrize(
+        "format_constraint_expression, entered_input, is_successful, error_message",
+        [
+            pytest.param("[931]", "2022-01-01T00:00:00+00:00", True, "+00:00"),
+            pytest.param("[931]", "2022-01-01T00:00:00Z", True, "Z is +00:00"),
+            pytest.param("[931]", None, False, "None"),
+            pytest.param("[931]", "2022-12-31T16:00:00-08:00", False, None),  # yes, it's truly a format constraint
+            pytest.param("[931]", "2022-01-01T01:00:00+01:00", False, None),  # yes, it's that bad
+            pytest.param("[932]", None, False, "empty or None"),
+            pytest.param("[932]", "2022-01-01T00:00:00Z", False, "Stromtag"),
+            pytest.param("[933]", "2022-01-01T00:00:00Z", False, "Stromtag"),
+            pytest.param("[934]", "2022-01-01T06:00:00Z", False, "Gastag"),
+            pytest.param("[935]", "2022-01-01T06:00:00Z", False, "Gastag"),
+            pytest.param("[932]", "2022-06-01T00:00:00+02:00", True, None),
+            pytest.param("[933]", "2022-01-01T00:00:00+01:00", True, None),
+            pytest.param("[934]", "2022-06-01T06:00:00+02:00", True, None),
+            pytest.param("[935]", "2022-01-01T06:00:00+01:00", True, None),
+        ],
+    )
+    async def test_93x_format_constraints(
+        self,
+        format_constraint_expression,
+        entered_input: str,
+        is_successful: bool,
+        error_message: Optional[str],
+        setup_and_teardown_injector,
+    ):
+        """
+        Tests that the default FC evaluator ships evaluation methods for 932, 933, 934 and 935 (those expanded from UBx)
+        """
+        result = await format_constraint_evaluation(format_constraint_expression, entered_input=entered_input)
+        assert result is not None
+        assert result.format_constraints_fulfilled == is_successful
+        if is_successful is False and error_message is not None:
+            assert error_message in result.error_message  # type:ignore[operator]

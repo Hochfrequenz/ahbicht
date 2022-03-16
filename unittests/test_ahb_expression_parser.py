@@ -87,6 +87,21 @@ class TestAhbExpressionParser:
                 ),
             ),
             pytest.param(
+                "Muss[UB1]U[5]",
+                Tree(
+                    "ahb_expression",
+                    [
+                        Tree(
+                            "single_requirement_indicator_expression",
+                            [
+                                Token("MODAL_MARK", "Muss"),
+                                Token("CONDITION_EXPRESSION", "[UB1]U[5]"),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            pytest.param(
                 "Kann([1]O[5])U[904]",
                 Tree(
                     "ahb_expression",
@@ -350,7 +365,7 @@ class TestAhbExpressionParser:
             # expressions to be found are allow-listed. But we do not check the grammar yet. The grammar is checked
             # upon parsing the condition expression, but that's the second step. To keep the test failing, I introduced
             # a negative look ahead where formerly only a "character set" allow list check.
-            pytest.param("Muss[2]B[3]"),
+            pytest.param("Muss[2]C[3]"),
         ],
     )
     def test_parse_invalid_ahb_expression(self, ahb_expression: str):
