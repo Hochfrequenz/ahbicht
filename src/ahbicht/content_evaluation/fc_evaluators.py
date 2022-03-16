@@ -10,7 +10,7 @@ validate already required data.
 import asyncio
 import inspect
 from abc import ABC
-from typing import Coroutine, Dict, List
+from typing import Coroutine, Dict, List, Optional
 
 from ahbicht.content_evaluation.evaluators import Evaluator
 from ahbicht.content_evaluation.german_strom_and_gas_tag import has_no_utc_offset, is_xtag_limit
@@ -78,7 +78,7 @@ class FcEvaluator(Evaluator, ABC):
         return is_xtag_limit(entered_input, "Gas")
 
     async def evaluate_single_format_constraint(
-        self, condition_key: str, entered_input: str
+        self, condition_key: str, entered_input: Optional[str]
     ) -> EvaluatedFormatConstraint:
         """
         Evaluates the format constraint with the given key.
@@ -101,7 +101,7 @@ class FcEvaluator(Evaluator, ABC):
         return result
 
     async def evaluate_format_constraints(
-        self, condition_keys: List[str], entered_input: str
+        self, condition_keys: List[str], entered_input: Optional[str]
     ) -> Dict[str, EvaluatedFormatConstraint]:
         """
         Evaluate the entered_input in regard to all the formats provided in condition_keys.
@@ -129,7 +129,7 @@ class DictBasedFcEvaluator(FcEvaluator):
 
     # pylint: disable=unused-argument
     async def evaluate_single_format_constraint(
-        self, condition_key: str, entered_input: str
+        self, condition_key: str, entered_input: Optional[str]
     ) -> EvaluatedFormatConstraint:
         try:
             return self._results[condition_key]
