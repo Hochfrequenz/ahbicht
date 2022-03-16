@@ -153,7 +153,7 @@ class TimeConditionTransformer(Transformer):
 
     1. Other than _all_ the other requirement constraints RC 490, 491, 492 and 493 are self-referencing.
     While "normal" RCs act like "You have to provide this ("Foo") if the other thing ("Bar") meets a requirement",
-    the 49x  RCs are of kind "This ("Foo") has to meet certain requirements (f.e. the end of a German day), regardless
+    the 49x RCs are of kind "This ("Foo") has to meet certain requirements (e.g. the end of a German day), regardless
     of the other things ("Bar"). So the usual requirement constraint evaluation approach ("Search for Bar and derive
     from there what it means for this (Foo)") won't work and is overly complicated, too.
     Also, if the pseudo requirement constraint 490-493 is UNFULFILLED, this does _not_ mean that the data must not
