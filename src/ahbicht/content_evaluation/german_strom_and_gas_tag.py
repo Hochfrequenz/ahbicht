@@ -7,7 +7,7 @@ from typing import Callable, Literal, Optional, Tuple, Union
 # The problem with the stdlib zoneinfo is, that the availability of timezones via ZoneInfo(zone_key) depends on the OS
 # and system on which you're running it. In some cases "Europe/Berlin" might be available, but generally it's not,
 # and it's PITA to manually define timezones. So we're using pytz as a datasource for timezone information.
-from pytz import timezone
+from pytz import timezone, utc
 
 from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
 
@@ -49,6 +49,23 @@ def _parse_as_datetime(entered_input: str) -> Tuple[Optional[datetime], Optional
         return result, None
     except ValueError as value_error:
         return None, EvaluatedFormatConstraint(format_constraint_fulfilled=False, error_message=str(value_error))
+
+
+def has_no_utc_offset(entered_input: str) -> EvaluatedFormatConstraint:
+    """
+    returns true if and only if entered_input is parsable as date time with explicit offset which has no UTC offset.
+    This means the UTC offset is exactly "+00:00".
+    """
+    # the name of the method contains a negation because this it's commonly like this in the BDEW format constraints.
+    date_time, error_result = _parse_as_datetime(entered_input)
+    if error_result is not None:
+        return error_result
+    utc_datetime = date_time.astimezone(tz=utc)
+    utc_time = utc_datetime.time()
+    if utc_time == date_time.time() and utc_time.hour == 0 and utc_time.minute == 0 and utc_time.second == 0:
+        return EvaluatedFormatConstraint(format_constraint_fulfilled=True, error_message=None)
+    error_message = f"The provided date time '{entered_input}' has a UTC offset of {utc_time}."
+    return EvaluatedFormatConstraint(format_constraint_fulfilled=False, error_message=error_message)
 
 
 def is_stromtag_limit(date_time: datetime) -> bool:  # the name is not as speaking as I'd like it to be

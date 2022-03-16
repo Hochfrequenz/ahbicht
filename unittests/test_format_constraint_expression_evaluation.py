@@ -192,6 +192,11 @@ class TestFormatConstraintExpressionEvaluation:
     @pytest.mark.parametrize(
         "format_constraint_expression, entered_input, is_successful, error_message",
         [
+            pytest.param("[931]", "2022-01-01T00:00:00+00:00", True, "+00:00"),
+            pytest.param("[931]", "2022-01-01T00:00:00Z", True, "Z is +00:00"),
+            pytest.param("[931]", None, False, "None"),
+            pytest.param("[931]", "2022-12-31T16:00:00-08:00", False, None),  # yes, it's truly a format constraint
+            pytest.param("[931]", "2022-01-01T01:00:00+01:00", False, None),  # yes, it's that bad
             pytest.param("[932]", None, False, "empty or None"),
             pytest.param("[932]", "2022-01-01T00:00:00Z", False, "Stromtag"),
             pytest.param("[933]", "2022-01-01T00:00:00Z", False, "Stromtag"),

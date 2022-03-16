@@ -13,7 +13,7 @@ from abc import ABC
 from typing import Coroutine, Dict, List
 
 from ahbicht.content_evaluation.evaluators import Evaluator
-from ahbicht.content_evaluation.german_strom_and_gas_tag import is_xtag_limit
+from ahbicht.content_evaluation.german_strom_and_gas_tag import has_no_utc_offset, is_xtag_limit
 from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
 
 
@@ -25,6 +25,16 @@ class FcEvaluator(Evaluator, ABC):
     edifact_format_version set accordingly. Then create a method named "evaluate_123" where "123" is the condition key
     of the condition it evaluates.
     """
+
+    def evaluate_931(self, entered_input: str) -> EvaluatedFormatConstraint:
+        """
+        Assert that the entered input is parsable as datetime with explicit UTC offset.
+        Then assert that the UTC offset is exactly +00:00.
+        Be aware of the fact that asserting on a fixed offset when both datetime + offset are given will not lead to any
+        truly meaningful results.
+        We implement it for compatability but don't encourage you to actively write any conditions that use it.
+        """
+        return has_no_utc_offset(entered_input)
 
     def evaluate_932(self, entered_input: str) -> EvaluatedFormatConstraint:
         """
