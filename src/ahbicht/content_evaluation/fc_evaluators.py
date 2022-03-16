@@ -13,6 +13,7 @@ from abc import ABC
 from typing import Coroutine, Dict, List, Optional
 
 from ahbicht.content_evaluation.evaluators import Evaluator
+from ahbicht.content_evaluation.german_strom_and_gas_tag import has_no_utc_offset, is_xtag_limit
 from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
 
 
@@ -24,6 +25,57 @@ class FcEvaluator(Evaluator, ABC):
     edifact_format_version set accordingly. Then create a method named "evaluate_123" where "123" is the condition key
     of the condition it evaluates.
     """
+
+    def evaluate_931(self, entered_input: str) -> EvaluatedFormatConstraint:
+        """
+        Assert that the entered input is parsable as datetime with explicit UTC offset.
+        Then assert that the UTC offset is exactly +00:00.
+        Be aware of the fact that asserting on a fixed offset when both datetime + offset are given will not lead to any
+        truly meaningful results.
+        We implement it for compatability but don't encourage you to actively write any conditions that use it.
+        """
+        return has_no_utc_offset(entered_input)
+
+    def evaluate_932(self, entered_input: str) -> EvaluatedFormatConstraint:
+        """
+        Assert that the entered input is the start/end of a german "Stromtag" (during central european daylight saving
+        time).
+        We ship this predefined method to evaluate the format constraints which are being introduced by expanding
+        "time conditions" (UB1/UB3) in the :class:`expression_resolver.TimeConditionTransformer`.
+        """
+        return is_xtag_limit(entered_input, "Strom")
+
+    # Attentive readers will notice, that 933 does exactly the same thing as 932; Also 935 does the same thing as 934.
+    # This is because, from a data perspective, it's totally irrelevant if we're communicating a datetime with
+    # +1h or +2h UTC offset as long as _any_ offset is given. Two distinctive format constraints are just ..., ok.
+    # The authors of the AHBs probably had good intentions, when they introduced two different format constraints for
+    # both German "winter" (CET/MEZ) and "summer time" (CEST/MESZ).
+    # The road to hell is paved with good intentions.
+
+    def evaluate_933(self, entered_input: str) -> EvaluatedFormatConstraint:
+        """
+        Assert that the entered input is the start/end of a german "Stromtag" (during central european standard time).
+        We ship this predefined method to evaluate the format constraints which are being introduced by expanding
+        "time conditions" (UB1/UB3) in the :class:`expression_resolver.TimeConditionTransformer`.
+        """
+        return is_xtag_limit(entered_input, "Strom")
+
+    def evaluate_934(self, entered_input: str) -> EvaluatedFormatConstraint:
+        """
+        Assert that the entered input is the start/end of a german "Gastag" (during central european daylight saving
+        time).
+        We ship this predefined method to evaluate the format constraints which are being introduced by expanding
+        "time conditions" (UB2/UB3) in the :class:`expression_resolver.TimeConditionTransformer`.
+        """
+        return is_xtag_limit(entered_input, "Gas")
+
+    def evaluate_935(self, entered_input: str) -> EvaluatedFormatConstraint:
+        """
+        Assert that the entered input is the start/end of a german "Gastag" (during central european standard time).
+        We ship this predefined method to evaluate the format constraints which are being introduced by expanding
+        "time conditions" (UB2/UB3) in the :class:`expression_resolver.TimeConditionTransformer`.
+        """
+        return is_xtag_limit(entered_input, "Gas")
 
     async def evaluate_single_format_constraint(
         self, condition_key: str, entered_input: Optional[str]

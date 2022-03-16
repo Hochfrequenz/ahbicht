@@ -145,6 +145,17 @@ class TestConditionParser:
                     ],
                 ),
             ),
+            pytest.param(
+                # time condition
+                "[UB1]u[2]",
+                Tree(
+                    "and_composition",
+                    [
+                        Tree("time_condition", [Token("TIME_CONDITION_KEY", "UB1")]),
+                        Tree("condition", [Token("CONDITION_KEY", "2")]),
+                    ],
+                ),
+            ),
         ],
     )
     def test_parse_valid_expression_to_tree(self, expression: str, expected_tree: Tree[Token]):
