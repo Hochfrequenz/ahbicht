@@ -51,14 +51,14 @@ class TestCategorizedKeyExtraction:
                 ),
             ),
             pytest.param(
-                "[100]U([2]U([53]O[4]))[999][502]U[2002]",
+                "[100]U([2050]U([53]O[4]))[999][502]U[2002]",
                 CategorizedKeyExtract(
                     hint_keys=["502"],
-                    requirement_constraint_keys=["2", "4", "53", "100", "2002"],
+                    requirement_constraint_keys=["4", "53", "100", "2002", "2050"],
                     format_constraint_keys=["999"],
                     package_keys=[],
                 ),
-                id="simons_test",
+                id="repeatability constraint",
             ),
         ],
     )
