@@ -270,6 +270,36 @@ class TestTreeSchemas:
         "expression, expected_compact_json_dict",
         [
             pytest.param(
+                "X [1]",
+                {
+                    "children": [
+                        {
+                            "token": None,
+                            "tree": {
+                                "children": [{"token": {"value": "1", "type": "condition_key"}, "tree": None}],
+                                "type": "X",
+                            },
+                        }
+                    ],
+                    "type": "ahb_expression",
+                },
+            ),
+            pytest.param(
+                "Muss [1]",
+                {
+                    "children": [
+                        {
+                            "token": None,
+                            "tree": {
+                                "children": [{"token": {"value": "1", "type": "condition_key"}, "tree": None}],
+                                "type": "Muss",
+                            },
+                        }
+                    ],
+                    "type": "ahb_expression",
+                },
+            ),
+            pytest.param(
                 "Muss [1] U ([2] O [3])[901]",
                 {
                     "type": "ahb_expression",
