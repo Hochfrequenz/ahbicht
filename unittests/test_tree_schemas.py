@@ -272,19 +272,31 @@ class TestTreeSchemas:
             pytest.param(
                 "X [1]",
                 {
-                    "type": "ahb_expression",
                     "children": [
                         {
-                            "tree": {
-                                "type": "single_requirement_indicator_expression",
-                                "children": [
-                                    {"tree": None, "token": {"type": "PREFIX_OPERATOR", "value": "X"}},
-                                    {"token": {"value": "1", "type": "condition_key"}, "tree": None},
-                                ],
-                            },
                             "token": None,
+                            "tree": {
+                                "children": [{"token": {"value": "1", "type": "condition_key"}, "tree": None}],
+                                "type": "X",
+                            },
                         }
                     ],
+                    "type": "ahb_expression",
+                },
+            ),
+            pytest.param(
+                "Muss [1]",
+                {
+                    "children": [
+                        {
+                            "token": None,
+                            "tree": {
+                                "children": [{"token": {"value": "1", "type": "condition_key"}, "tree": None}],
+                                "type": "Muss",
+                            },
+                        }
+                    ],
+                    "type": "ahb_expression",
                 },
             ),
             pytest.param(
