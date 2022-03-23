@@ -35,6 +35,15 @@ def _compress_condition_keys_only(data: dict) -> dict:
     """
     # this has been found heuristically. There's no way to explain it, just follow the test cases.
     # there's probably a much easier way, e.g. by using a separate token schema.
+    if (
+        "tree" in data
+        and "type" in data["tree"]
+        and data["tree"]["type"] == "single_requirement_indicator_expression"
+        and data["tree"]["children"][0]["token"]["type"] == "MODAL_MARK"
+    ):
+        modal_mark = data["tree"]["children"][0]["token"]["value"]
+        del data["tree"]["children"][0]
+        data["tree"]["type"] = modal_mark
     if "tree" in data and data["tree"] is not None and data["tree"]["type"] == "condition":
         return {
             "token": {"value": data["tree"]["children"][0]["token"]["value"], "type": "condition_key"},
