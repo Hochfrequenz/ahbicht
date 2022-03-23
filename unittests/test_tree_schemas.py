@@ -271,7 +271,21 @@ class TestTreeSchemas:
         [
             pytest.param(
                 "X [1]",
-                None,  # nothing here yet. this is just to reproduce the error
+                {
+                    "type": "ahb_expression",
+                    "children": [
+                        {
+                            "tree": {
+                                "type": "single_requirement_indicator_expression",
+                                "children": [
+                                    {"tree": None, "token": {"type": "PREFIX_OPERATOR", "value": "X"}},
+                                    {"token": {"value": "1", "type": "condition_key"}, "tree": None},
+                                ],
+                            },
+                            "token": None,
+                        }
+                    ],
+                },
             ),
             pytest.param(
                 "Muss [1] U ([2] O [3])[901]",
