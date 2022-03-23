@@ -270,6 +270,10 @@ class TestTreeSchemas:
         "expression, expected_compact_json_dict",
         [
             pytest.param(
+                "X [1]",
+                None,  # nothing here yet. this is just to reproduce the error
+            ),
+            pytest.param(
                 "Muss [1] U ([2] O [3])[901]",
                 {
                     "type": "ahb_expression",
