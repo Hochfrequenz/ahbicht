@@ -270,6 +270,36 @@ class TestTreeSchemas:
         "expression, expected_compact_json_dict",
         [
             pytest.param(
+                "X [1]",
+                {
+                    "children": [
+                        {
+                            "token": None,
+                            "tree": {
+                                "children": [{"token": {"value": "1", "type": "condition_key"}, "tree": None}],
+                                "type": "X",
+                            },
+                        }
+                    ],
+                    "type": "ahb_expression",
+                },
+            ),
+            pytest.param(
+                "Muss [1]",
+                {
+                    "children": [
+                        {
+                            "token": None,
+                            "tree": {
+                                "children": [{"token": {"value": "1", "type": "condition_key"}, "tree": None}],
+                                "type": "Muss",
+                            },
+                        }
+                    ],
+                    "type": "ahb_expression",
+                },
+            ),
+            pytest.param(
                 "Muss [1] U ([2] O [3])[901]",
                 {
                     "type": "ahb_expression",
@@ -277,9 +307,8 @@ class TestTreeSchemas:
                         {
                             "token": None,
                             "tree": {
-                                "type": "single_requirement_indicator_expression",
+                                "type": "Muss",
                                 "children": [
-                                    {"token": {"value": "Muss", "type": "MODAL_MARK"}, "tree": None},
                                     {
                                         "token": None,
                                         "tree": {
@@ -337,7 +366,6 @@ class TestTreeSchemas:
                             "token": None,
                             "tree": {
                                 "children": [
-                                    {"token": {"value": "Soll", "type": "MODAL_MARK"}, "tree": None},
                                     {
                                         "token": None,
                                         "tree": {
@@ -427,17 +455,14 @@ class TestTreeSchemas:
                                         },
                                     },
                                 ],
-                                "type": "single_requirement_indicator_expression",
+                                "type": "Soll",
                             },
                         },
                         {
                             "token": None,
                             "tree": {
-                                "children": [
-                                    {"token": {"value": "Kann", "type": "MODAL_MARK"}, "tree": None},
-                                    {"token": {"value": "43", "type": "condition_key"}, "tree": None},
-                                ],
-                                "type": "single_requirement_indicator_expression",
+                                "children": [{"token": {"value": "43", "type": "condition_key"}, "tree": None}],
+                                "type": "Kann",
                             },
                         },
                     ],
