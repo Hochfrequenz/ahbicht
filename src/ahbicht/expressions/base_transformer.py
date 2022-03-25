@@ -16,11 +16,11 @@ SupportedArgumentNodeType = TypeVar("SupportedArgumentNodeType")  # bound=Condit
 # bound does not work because:
 # error: Type argument "ahbicht.expressions.condition_nodes.EvaluatedFormatConstraint" of "BaseTransformer" must be a
 # subtype of "ahbicht.expressions.condition_nodes.ConditionNode"  [type-var]
-TSupportedReturnType = TypeVar("TSupportedReturnType")
+SupportedReturnType = TypeVar("SupportedReturnType")
 
 
 @v_args(inline=True)  # Children are provided as *args instead of a list argument
-class BaseTransformer(Transformer, ABC, Generic[SupportedArgumentNodeType, TSupportedReturnType]):
+class BaseTransformer(Transformer, ABC, Generic[SupportedArgumentNodeType, SupportedReturnType]):
     """
     Transformer that evaluates the trees built from the format constraint expressions.
     The input are the evaluated format constraint conditions in the form of ConditionNodes.
@@ -57,23 +57,19 @@ class BaseTransformer(Transformer, ABC, Generic[SupportedArgumentNodeType, TSupp
         return package_key
 
     @abstractmethod
-    def and_composition(
-        self, left: SupportedArgumentNodeType, right: SupportedArgumentNodeType
-    ) -> TSupportedReturnType:
+    def and_composition(self, left: SupportedArgumentNodeType, right: SupportedArgumentNodeType) -> SupportedReturnType:
         """Evaluates logical and_composition"""
 
         raise NotImplementedError("Has to be implemented by inheriting class.")
 
     @abstractmethod
-    def or_composition(self, left: SupportedArgumentNodeType, right: SupportedArgumentNodeType) -> TSupportedReturnType:
+    def or_composition(self, left: SupportedArgumentNodeType, right: SupportedArgumentNodeType) -> SupportedReturnType:
         """Evaluates logical (inclusive) or_composition"""
 
         raise NotImplementedError("Has to be implemented by inheriting class.")
 
     @abstractmethod
-    def xor_composition(
-        self, left: SupportedArgumentNodeType, right: SupportedArgumentNodeType
-    ) -> TSupportedReturnType:
+    def xor_composition(self, left: SupportedArgumentNodeType, right: SupportedArgumentNodeType) -> SupportedReturnType:
         """Evaluates exclusive xor_composition"""
 
         raise NotImplementedError("Has to be implemented by inheriting class.")
