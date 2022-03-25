@@ -12,7 +12,7 @@ from lark import Token, Transformer, v_args
 #   1. The methods of each transformer all have the same accepted argument type ("TSupportedArgumentNodeType").
 #       This type is arbitrary but fixed per Transformer.
 #   2. Also, all the methods of one transformer return objects of the same type ("TSupportedReturnType").
-TSupportedArgumentNodeType = TypeVar("TSupportedArgumentNodeType")  # bound=ConditionNode)
+SupportedArgumentNodeType = TypeVar("SupportedArgumentNodeType")  # bound=ConditionNode)
 # bound does not work because:
 # error: Type argument "ahbicht.expressions.condition_nodes.EvaluatedFormatConstraint" of "BaseTransformer" must be a
 # subtype of "ahbicht.expressions.condition_nodes.ConditionNode"  [type-var]
@@ -20,7 +20,7 @@ TSupportedReturnType = TypeVar("TSupportedReturnType")
 
 
 @v_args(inline=True)  # Children are provided as *args instead of a list argument
-class BaseTransformer(Transformer, ABC, Generic[TSupportedArgumentNodeType, TSupportedReturnType]):
+class BaseTransformer(Transformer, ABC, Generic[SupportedArgumentNodeType, TSupportedReturnType]):
     """
     Transformer that evaluates the trees built from the format constraint expressions.
     The input are the evaluated format constraint conditions in the form of ConditionNodes.
@@ -30,7 +30,7 @@ class BaseTransformer(Transformer, ABC, Generic[TSupportedArgumentNodeType, TSup
     the format constraint expression is fulfiled or not.
     """
 
-    def __init__(self, input_values: Mapping[str, TSupportedArgumentNodeType]):
+    def __init__(self, input_values: Mapping[str, SupportedArgumentNodeType]):
         """
         The input are the evaluated format constraint conditions in the form of ConditionNodes.
         :param input_values: something that maps a condition key (str) onto an argument
@@ -38,7 +38,7 @@ class BaseTransformer(Transformer, ABC, Generic[TSupportedArgumentNodeType, TSup
         super().__init__()
         self.input_values = input_values
 
-    def condition(self, token: Token) -> TSupportedArgumentNodeType:
+    def condition(self, token: Token) -> SupportedArgumentNodeType:
         """Returns ConditionNode of rule 'condition'"""
         try:
             condition_key = self.input_values[token.value]
@@ -48,7 +48,7 @@ class BaseTransformer(Transformer, ABC, Generic[TSupportedArgumentNodeType, TSup
             ) from key_err
         return condition_key
 
-    def package(self, token: Token) -> TSupportedArgumentNodeType:
+    def package(self, token: Token) -> SupportedArgumentNodeType:
         """Returns ConditionNode of rule package"""
         try:
             package_key = self.input_values[token.value]
@@ -58,23 +58,21 @@ class BaseTransformer(Transformer, ABC, Generic[TSupportedArgumentNodeType, TSup
 
     @abstractmethod
     def and_composition(
-        self, left: TSupportedArgumentNodeType, right: TSupportedArgumentNodeType
+        self, left: SupportedArgumentNodeType, right: SupportedArgumentNodeType
     ) -> TSupportedReturnType:
         """Evaluates logical and_composition"""
 
         raise NotImplementedError("Has to be implemented by inheriting class.")
 
     @abstractmethod
-    def or_composition(
-        self, left: TSupportedArgumentNodeType, right: TSupportedArgumentNodeType
-    ) -> TSupportedReturnType:
+    def or_composition(self, left: SupportedArgumentNodeType, right: SupportedArgumentNodeType) -> TSupportedReturnType:
         """Evaluates logical (inclusive) or_composition"""
 
         raise NotImplementedError("Has to be implemented by inheriting class.")
 
     @abstractmethod
     def xor_composition(
-        self, left: TSupportedArgumentNodeType, right: TSupportedArgumentNodeType
+        self, left: SupportedArgumentNodeType, right: SupportedArgumentNodeType
     ) -> TSupportedReturnType:
         """Evaluates exclusive xor_composition"""
 
