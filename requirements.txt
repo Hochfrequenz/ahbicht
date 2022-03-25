@@ -19,11 +19,11 @@ marshmallow==3.15.0
     #   maus
 marshmallow-enum==1.5.1
     # via -r requirements.in
-maus==0.1.1
-    # via -r requirements.in
-pytz==2021.3
+maus==0.1.4
     # via -r requirements.in
 packaging==21.3
     # via marshmallow
 pyparsing==3.0.7
     # via packaging
+pytz==2022.1
+    # via -r requirements.in
