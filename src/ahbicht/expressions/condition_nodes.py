@@ -91,8 +91,8 @@ class ConditionNode(ABC):
     )
 
 
-# TConditionNode is a type var that matches any class inheriting from ConditionNode (in contrast to Type[ConditionNode])
-TConditionNode = TypeVar("TConditionNode", bound=ConditionNode)
+# ConditionNodeType_co matches any class inheriting from ConditionNode (in contrast to Type[ConditionNode])
+ConditionNode_co = TypeVar("ConditionNode_co", bound=ConditionNode, covariant=True)
 
 
 @attrs.define(auto_attribs=True, kw_only=True, slots=False)
