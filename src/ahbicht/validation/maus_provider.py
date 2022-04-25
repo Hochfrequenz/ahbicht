@@ -1,5 +1,5 @@
 """
-MAUS s' (plural of MAUS) are data structures which are structurally equivalent to the maus.DeepAnwendungshandbuch.
+MAUS s (plural of MAUS) are data structures which are structurally equivalent to the maus.DeepAnwendungshandbuch.
 For more information see the MAUS repo and its documentation: https://github.com/Hochfrequenz/mig_ahb_utility_stack/
 A MAUS Provider is a class that returns MAUS s' from what ever data source the implementation prefers.
 The MAUS provider is supposed to be used with dependency injection.
@@ -34,12 +34,12 @@ class MausProvider(ABC):
 
 class FileBasedMausProvider(MausProvider):
     """
-    A MAUS provider that uses the file system to retrieve MAUS s'.
+    A MAUS provider that uses the file system to retrieve MAUS s.
     """
 
     def __init__(self, base_path: Path, encoding: str = "utf-8"):
         """
-        initialize by providing a base path relative to which the MAUS s' can be found.
+        initialize by providing a base path relative to which the MAUS s can be found.
         """
         self.base_path: Path = base_path
         self._encoding = encoding
@@ -49,7 +49,7 @@ class FileBasedMausProvider(MausProvider):
         self, edifact_format: EdifactFormat, edifact_format_version: EdifactFormatVersion, pruefidentifikator: str
     ) -> Path:
         """
-        returns the path of the maus file relative to  for the given parameters.
+        returns the path of the maus file relative to the given parameters.
         """
         raise NotImplementedError("Has to be implemented in inheriting class")
 
