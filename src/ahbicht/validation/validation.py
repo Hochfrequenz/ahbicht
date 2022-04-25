@@ -5,6 +5,7 @@ This module provides the functions to validate segment groups, segments and data
 import asyncio
 from typing import Dict, List, Optional
 
+from maus import DeepAnwendungshandbuch
 from maus.models.edifact_components import (
     DataElement,
     DataElementFreeText,
@@ -23,6 +24,36 @@ from ahbicht.validation.validation_results import (
     ValidationResultInContext,
 )
 from ahbicht.validation.validation_values import RequirementValidationValue
+
+
+async def validate_deep_anwendungshandbuch(
+    deep_ahb: DeepAnwendungshandbuch, soll_is_required: bool = True
+) -> List[ValidationResultInContext]:
+    """
+    Validates a deep Anwendungshandbuch as provided from the package maus.
+    :param deep_ahb: the deep Anwendungshandbuch that should be validated
+    :param soll_is_required: true (default) if SOLL should be handled like MUSS, false if it should be handled like KANN
+     :return: List of ValidationResultInContext of the deep Anwendungshandbuch
+    """
+
+    tasks = []
+
+    for segment_group in deep_ahb.lines:
+        tasks.append(
+            validate_segment_group(
+                segment_group=segment_group,
+                soll_is_required=soll_is_required,
+            )
+        )
+
+    validation_results_of_segment_groups = await asyncio.gather(*tasks)
+
+    deep_ahb_validation_result = []
+    for sublist in validation_results_of_segment_groups:
+        for item in sublist:
+            deep_ahb_validation_result.append(item)
+
+    return deep_ahb_validation_result
 
 
 async def validate_segment_level(
