@@ -30,7 +30,7 @@ async def validate_deep_anwendungshandbuch(
     deep_ahb: DeepAnwendungshandbuch, soll_is_required: bool = True
 ) -> List[ValidationResultInContext]:
     """
-    Validates a deep Anwendungshandbuch as provided from the package maus.
+    Validates a deep Anwendungshandbuch aka 'MAUS' as provided from the package maus.
     :param deep_ahb: the deep Anwendungshandbuch that should be validated
     :param soll_is_required: true (default) if SOLL should be handled like MUSS, false if it should be handled like KANN
     :return: List of ValidationResultInContext of the deep Anwendungshandbuch
