@@ -168,7 +168,7 @@ async def validate_segment(
     if segment_validation.requirement_validation is RequirementValidationValue.IS_FORBIDDEN:
         validation_results_in_context_data_elements = []
     else:
-        tasks = []
+        tasks: List[Awaitable[ValidationResultInContext]] = []
         for data_element in segment.data_elements:
             tasks.append(validate_data_element(data_element, segment_validation.requirement_validation))
         validation_results_in_context_data_elements = await asyncio.gather(*tasks)
