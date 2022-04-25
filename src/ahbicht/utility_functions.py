@@ -5,10 +5,10 @@ import asyncio
 import inspect
 from typing import Awaitable, List, TypeVar, Union
 
-TResult = TypeVar("TResult")
+Result = TypeVar("Result")
 
 
-async def gather_if_necessary(results_and_awaitable_results: List[Union[TResult, Awaitable[TResult]]]) -> List[TResult]:
+async def gather_if_necessary(results_and_awaitable_results: List[Union[Result, Awaitable[Result]]]) -> List[Result]:
     """
     Await the awaitables, pass the un-awaitable results
     :param results_and_awaitable_results: heterogenous list of both Ts and Awaitable[T]s.
@@ -16,7 +16,7 @@ async def gather_if_necessary(results_and_awaitable_results: List[Union[TResult,
     """
     awaitable_indexes = [n for n, x in enumerate(results_and_awaitable_results) if inspect.isawaitable(x)]
     awaited_results = await asyncio.gather(*[x for x in results_and_awaitable_results if inspect.isawaitable(x)])
-    result: List[TResult] = []
+    result: List[Result] = []
     awaited_results_index = 0
     for index, obj in enumerate(results_and_awaitable_results):
         if index in awaitable_indexes:

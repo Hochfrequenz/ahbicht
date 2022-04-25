@@ -50,6 +50,14 @@ class CategorizedKeyExtract:
         )
     )
 
+    #: a list of time conditions, if present
+    time_condition_keys: List[str] = attrs.field(
+        validator=attrs.validators.deep_iterable(
+            member_validator=attrs.validators.matches_re(r"^UB(?:1|2|3)$"),
+            iterable_validator=attrs.validators.instance_of(list),
+        )
+    )
+
     def _remove_duplicates(self) -> None:
         """
         remove duplicates from all lists
@@ -58,6 +66,7 @@ class CategorizedKeyExtract:
         self.format_constraint_keys = [*set(self.format_constraint_keys)]
         self.requirement_constraint_keys = [*set(self.requirement_constraint_keys)]
         self.package_keys = [*set(self.package_keys)]
+        self.time_condition_keys = [*set(self.time_condition_keys)]
 
     def _sort_keys(self) -> None:
         """
@@ -67,6 +76,7 @@ class CategorizedKeyExtract:
         self.format_constraint_keys.sort(key=int)
         self.requirement_constraint_keys.sort(key=int)
         self.package_keys.sort()
+        self.time_condition_keys.sort()
 
     def sanitize(self) -> None:
         """
@@ -140,6 +150,7 @@ class CategorizedKeyExtractSchema(Schema):
     format_constraint_keys = fields.List(fields.String())
     requirement_constraint_keys = fields.List(fields.String())
     package_keys = fields.List(fields.String())
+    time_condition_keys = fields.List(fields.String())
 
     @post_load
     def deserialize(self, data, **kwargs) -> CategorizedKeyExtract:

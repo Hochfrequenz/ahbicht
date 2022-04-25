@@ -20,7 +20,11 @@ class TestCategorizedKeyExtraction:
             pytest.param(
                 "[1]",
                 CategorizedKeyExtract(
-                    hint_keys=[], requirement_constraint_keys=["1"], format_constraint_keys=[], package_keys=[]
+                    hint_keys=[],
+                    requirement_constraint_keys=["1"],
+                    format_constraint_keys=[],
+                    package_keys=[],
+                    time_condition_keys=[],
                 ),
             ),
             pytest.param(
@@ -30,6 +34,7 @@ class TestCategorizedKeyExtraction:
                     requirement_constraint_keys=["1", "2", "3"],
                     format_constraint_keys=[],
                     package_keys=[],
+                    time_condition_keys=[],
                 ),
             ),
             pytest.param(
@@ -39,6 +44,7 @@ class TestCategorizedKeyExtraction:
                     requirement_constraint_keys=["2", "4", "53", "100"],
                     format_constraint_keys=["999"],
                     package_keys=[],
+                    time_condition_keys=[],
                 ),
             ),
             pytest.param(
@@ -48,6 +54,17 @@ class TestCategorizedKeyExtraction:
                     requirement_constraint_keys=["2", "4", "53", "100"],
                     format_constraint_keys=["999"],
                     package_keys=["123P"],
+                    time_condition_keys=[],
+                ),
+            ),
+            pytest.param(
+                "[UB3]U[100]U([2]U([53]O[4]))[999][502]U[123P]",
+                CategorizedKeyExtract(
+                    hint_keys=["502"],
+                    requirement_constraint_keys=["2", "4", "53", "100"],
+                    format_constraint_keys=["999"],
+                    package_keys=["123P"],
+                    time_condition_keys=["UB3"],
                 ),
             ),
             pytest.param(
@@ -76,14 +93,22 @@ class TestCategorizedKeyExtraction:
         [
             pytest.param(
                 CategorizedKeyExtract(
-                    hint_keys=[], requirement_constraint_keys=[], format_constraint_keys=[], package_keys=[]
+                    hint_keys=[],
+                    requirement_constraint_keys=[],
+                    format_constraint_keys=[],
+                    package_keys=[],
+                    time_condition_keys=[],
                 ),
                 [],
                 id="0 FC, 0 RC",
             ),
             pytest.param(
                 CategorizedKeyExtract(
-                    hint_keys=[], requirement_constraint_keys=["1"], format_constraint_keys=[], package_keys=[]
+                    hint_keys=[],
+                    requirement_constraint_keys=["1"],
+                    format_constraint_keys=[],
+                    package_keys=[],
+                    time_condition_keys=[],
                 ),
                 [
                     ContentEvaluationResult(
@@ -115,7 +140,11 @@ class TestCategorizedKeyExtraction:
             ),
             pytest.param(
                 CategorizedKeyExtract(
-                    hint_keys=[], requirement_constraint_keys=[], format_constraint_keys=["901"], package_keys=[]
+                    hint_keys=[],
+                    requirement_constraint_keys=[],
+                    format_constraint_keys=["901"],
+                    package_keys=[],
+                    time_condition_keys=[],
                 ),
                 [
                     ContentEvaluationResult(
@@ -160,8 +189,8 @@ class TestCategorizedKeyExtraction:
     @ALL_LARGE_TEST_CASES
     def test_possible_cer_generation_large_results(self, test_file_path, datafiles):
         file_content = json.load(datafiles / test_file_path)
-        categoried_keys = CategorizedKeyExtractSchema().load(file_content["categorizedKeyExtract"])
+        categorized_keys = CategorizedKeyExtractSchema().load(file_content["categorizedKeyExtract"])
         expected_result = ContentEvaluationResultSchema(many=True).load(file_content["expected_result"])
-        actual = categoried_keys.generate_possible_content_evaluation_results()
+        actual = categorized_keys.generate_possible_content_evaluation_results()
         # json_string = ContentEvaluationResultSchema(many=True).dumps(actual)
         assert actual == expected_result

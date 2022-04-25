@@ -15,10 +15,10 @@ from ahbicht.expressions.condition_nodes import (
 )
 from ahbicht.expressions.enums import LogicalOperator
 
-TSupportedNodes = TypeVar("TSupportedNodes")
+SupportedNodes = TypeVar("SupportedNodes")
 
 
-class ExpressionBuilder(Generic[TSupportedNodes], ABC):
+class ExpressionBuilder(Generic[SupportedNodes], ABC):
     """
     Class that helps to create expression strings. It separates the logical operation (connect two conditions with a
     logical operator) from the implementation which might differ depending on the condition type and other
@@ -34,7 +34,7 @@ class ExpressionBuilder(Generic[TSupportedNodes], ABC):
         raise NotImplementedError("Has to be implemented by inheriting class.")
 
     @abstractmethod
-    def land(self, other: TSupportedNodes):
+    def land(self, other: SupportedNodes):
         """
         connects the expression with a logical and (LAND)
         :param other: condition or expression to be connected to the expression
@@ -43,7 +43,7 @@ class ExpressionBuilder(Generic[TSupportedNodes], ABC):
         raise NotImplementedError("Has to be implemented by inheriting class.")
 
     @abstractmethod
-    def lor(self, other: TSupportedNodes):
+    def lor(self, other: SupportedNodes):
         """
         connects the expression with a logical or (LOR)
         :param other: condition or expression to be connected to the expression
@@ -52,7 +52,7 @@ class ExpressionBuilder(Generic[TSupportedNodes], ABC):
         raise NotImplementedError("Has to be implemented by inheriting class.")
 
     @abstractmethod
-    def xor(self, other: TSupportedNodes):
+    def xor(self, other: SupportedNodes):
         """
         connects the expression with an exclusive or (XOR)
         :param other: condition or expression to be connected to the expression
@@ -162,10 +162,10 @@ class _ClassesWithHintAttribute(Protocol):
     hint: str
 
 
-TClassesWithHintAttribute = TypeVar("TClassesWithHintAttribute", bound=_ClassesWithHintAttribute)
+ClassesWithHintAttribute_co = TypeVar("ClassesWithHintAttribute_co", bound=_ClassesWithHintAttribute, covariant=True)
 
 
-class HintExpressionBuilder(ExpressionBuilder[TClassesWithHintAttribute]):
+class HintExpressionBuilder(ExpressionBuilder[ClassesWithHintAttribute_co]):
     """
     Allows connecting hints with logical operations.
     """

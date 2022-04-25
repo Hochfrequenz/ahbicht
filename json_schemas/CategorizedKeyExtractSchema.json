@@ -53,6 +53,14 @@
           },
           "title": "requirement_constraint_keys",
           "type": "array"
+        },
+        "time_condition_keys": {
+          "items": {
+            "title": "time_condition_keys",
+            "type": "string"
+          },
+          "title": "time_condition_keys",
+          "type": "array"
         }
       },
       "type": "object"
