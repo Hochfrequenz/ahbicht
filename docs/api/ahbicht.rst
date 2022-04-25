@@ -10,6 +10,7 @@ Subpackages
    ahbicht.content_evaluation
    ahbicht.expressions
    ahbicht.json_serialization
+   ahbicht.validation
 
 Submodules
 ----------
