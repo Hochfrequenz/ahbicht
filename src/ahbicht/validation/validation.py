@@ -164,7 +164,7 @@ async def validate_segment(
         ValidationResultInContext(discriminator=segment.discriminator, validation_result=segment_validation)
     ]
 
-    # validation of this segments data elements if segment is not forbidden
+    # validate this segments' data elements only if segment is not forbidden
     if segment_validation.requirement_validation is RequirementValidationValue.IS_FORBIDDEN:
         validation_results_in_context_data_elements = []
     else:
