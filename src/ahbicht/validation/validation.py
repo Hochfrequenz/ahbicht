@@ -33,7 +33,7 @@ async def validate_deep_anwendungshandbuch(
     Validates a deep Anwendungshandbuch as provided from the package maus.
     :param deep_ahb: the deep Anwendungshandbuch that should be validated
     :param soll_is_required: true (default) if SOLL should be handled like MUSS, false if it should be handled like KANN
-     :return: List of ValidationResultInContext of the deep Anwendungshandbuch
+    :return: List of ValidationResultInContext of the deep Anwendungshandbuch
     """
 
     tasks = []
@@ -239,7 +239,7 @@ async def validate_data_element_freetext(
     :param data_element: the data element that should be validated
     :param segment_requirement: the requirement of the data element's parent segment, e.g. IS_REQUIRED
     :param soll_is_required: true (default) if SOLL should be handled like MUSS, if it should be handled like KANN
-    :returns: Validation Result of the DataElement
+    :return: Validation Result of the DataElement
     """
 
     expression_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(data_element.ahb_expression)
@@ -279,7 +279,7 @@ async def validate_data_element_valuepool(
     Validates a value pool data element which depends on the requirement status of its segment.
     :param data_element: the data element that should be validated
     :param segment_requirement: the requirement of the data element's parent segment, e.g. IS_REQUIRED
-    :returns: Validation Result of the DataElement
+    :return: Validation Result of the DataElement
     """
     possible_values: Dict[str, str] = {}
 
