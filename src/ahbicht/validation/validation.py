@@ -3,7 +3,7 @@ This module provides the functions to validate segment groups, segments and data
 """
 
 import asyncio
-from typing import Dict, List, Optional
+from typing import Awaitable, Dict, List, Optional
 
 from maus import DeepAnwendungshandbuch
 from maus.models.edifact_components import (
@@ -36,7 +36,7 @@ async def validate_deep_anwendungshandbuch(
     :return: List of ValidationResultInContext of the deep Anwendungshandbuch
     """
 
-    tasks = []
+    tasks: List[Awaitable[List[ValidationResultInContext]]] = []
 
     for segment_group in deep_ahb.lines:
         tasks.append(
@@ -46,9 +46,9 @@ async def validate_deep_anwendungshandbuch(
             )
         )
 
-    validation_results_of_segment_groups = await asyncio.gather(*tasks)
+    validation_results_of_segment_groups: List[List[ValidationResultInContext]] = await asyncio.gather(*tasks)
 
-    deep_ahb_validation_result = []
+    deep_ahb_validation_result: List[ValidationResultInContext] = []
     for sublist in validation_results_of_segment_groups:
         for item in sublist:
             deep_ahb_validation_result.append(item)
@@ -104,7 +104,7 @@ async def validate_segment_group(
     ]
 
     if segment_group_validation.requirement_validation is not RequirementValidationValue.IS_FORBIDDEN:
-        tasks = []
+        tasks: List[Awaitable[List[ValidationResultInContext]]] = []
 
         # validation of child_segment_group s
         if segment_group.segment_groups:
@@ -128,7 +128,7 @@ async def validate_segment_group(
                     )
                 )
 
-        validation_results_of_children = await asyncio.gather(*tasks)
+        validation_results_of_children: List[List[ValidationResultInContext]] = await asyncio.gather(*tasks)
 
         for sublist in validation_results_of_children:
             for item in sublist:
