@@ -3,8 +3,9 @@ This module provides the functions to validate segment groups, segments and data
 """
 
 import asyncio
-from typing import Dict, List, Optional
+from typing import Awaitable, Dict, List, Optional
 
+from maus import DeepAnwendungshandbuch
 from maus.models.edifact_components import (
     DataElement,
     DataElementFreeText,
@@ -23,6 +24,36 @@ from ahbicht.validation.validation_results import (
     ValidationResultInContext,
 )
 from ahbicht.validation.validation_values import RequirementValidationValue
+
+
+async def validate_deep_anwendungshandbuch(
+    deep_ahb: DeepAnwendungshandbuch, soll_is_required: bool = True
+) -> List[ValidationResultInContext]:
+    """
+    Validates a deep Anwendungshandbuch aka 'MAUS' as provided from the package maus.
+    :param deep_ahb: the deep Anwendungshandbuch that should be validated
+    :param soll_is_required: true (default) if SOLL should be handled like MUSS, false if it should be handled like KANN
+    :return: List of ValidationResultInContext of the deep Anwendungshandbuch
+    """
+
+    tasks: List[Awaitable[List[ValidationResultInContext]]] = []
+
+    for segment_group in deep_ahb.lines:
+        tasks.append(
+            validate_segment_group(
+                segment_group=segment_group,
+                soll_is_required=soll_is_required,
+            )
+        )
+
+    validation_results_of_segment_groups: List[List[ValidationResultInContext]] = await asyncio.gather(*tasks)
+
+    deep_ahb_validation_result: List[ValidationResultInContext] = []
+    for sublist in validation_results_of_segment_groups:
+        for item in sublist:
+            deep_ahb_validation_result.append(item)
+
+    return deep_ahb_validation_result
 
 
 async def validate_segment_level(
@@ -72,35 +103,36 @@ async def validate_segment_group(
         ValidationResultInContext(discriminator=segment_group.discriminator, validation_result=segment_group_validation)
     ]
 
-    tasks = []
+    if segment_group_validation.requirement_validation is not RequirementValidationValue.IS_FORBIDDEN:
+        tasks: List[Awaitable[List[ValidationResultInContext]]] = []
 
-    # validation of child_segment_group s
-    if segment_group.segment_groups:
-        for child_segment_group in segment_group.segment_groups:
-            tasks.append(
-                validate_segment_group(
-                    child_segment_group,
-                    segment_group_validation.requirement_validation,
-                    soll_is_required,
+        # validation of child_segment_group s
+        if segment_group.segment_groups:
+            for child_segment_group in segment_group.segment_groups:
+                tasks.append(
+                    validate_segment_group(
+                        child_segment_group,
+                        segment_group_validation.requirement_validation,
+                        soll_is_required,
+                    )
                 )
-            )
 
-    # validation of child segments
-    if segment_group.segments:
-        for segment in segment_group.segments:
-            tasks.append(
-                validate_segment(
-                    segment,
-                    segment_group_validation.requirement_validation,
-                    soll_is_required,
+        # validation of child segments
+        if segment_group.segments:
+            for segment in segment_group.segments:
+                tasks.append(
+                    validate_segment(
+                        segment,
+                        segment_group_validation.requirement_validation,
+                        soll_is_required,
+                    )
                 )
-            )
 
-    validation_results_of_children = await asyncio.gather(*tasks)
+        validation_results_of_children: List[List[ValidationResultInContext]] = await asyncio.gather(*tasks)
 
-    for sublist in validation_results_of_children:
-        for item in sublist:
-            validation_results_in_context.append(item)
+        for sublist in validation_results_of_children:
+            for item in sublist:
+                validation_results_in_context.append(item)
 
     return validation_results_in_context
 
@@ -132,13 +164,14 @@ async def validate_segment(
         ValidationResultInContext(discriminator=segment.discriminator, validation_result=segment_validation)
     ]
 
-    tasks = []
-
-    # validation of this segments data elements
-    for data_element in segment.data_elements:
-        tasks.append(validate_data_element(data_element, segment_validation.requirement_validation))
-
-    validation_results_in_context_data_elements = await asyncio.gather(*tasks)
+    # validate this segments' data elements only if segment is not forbidden
+    if segment_validation.requirement_validation is RequirementValidationValue.IS_FORBIDDEN:
+        validation_results_in_context_data_elements = []
+    else:
+        tasks: List[Awaitable[ValidationResultInContext]] = []
+        for data_element in segment.data_elements:
+            tasks.append(validate_data_element(data_element, segment_validation.requirement_validation))
+        validation_results_in_context_data_elements = await asyncio.gather(*tasks)
 
     return [*validation_results_in_context, *validation_results_in_context_data_elements]
 
@@ -246,7 +279,7 @@ async def validate_data_element_valuepool(
     Validates a value pool data element which depends on the requirement status of its segment.
     :param data_element: the data element that should be validated
     :param segment_requirement: the requirement of the data element's parent segment, e.g. IS_REQUIRED
-    :returns: Validation Result of the DataElement
+    :return: Validation Result of the DataElement
     """
     possible_values: Dict[str, str] = {}
 

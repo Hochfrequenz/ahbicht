@@ -3,6 +3,7 @@ from itertools import product
 from typing import List
 
 import pytest  # type:ignore[import]
+from maus.models.anwendungshandbuch import AhbMetaInformation, DeepAnwendungshandbuch
 from maus.models.edifact_components import (
     DataElementFreeText,
     DataElementValuePool,
@@ -20,6 +21,7 @@ from ahbicht.validation.validation import (
     map_requirement_validation_values,
     validate_data_element_freetext,
     validate_data_element_valuepool,
+    validate_deep_anwendungshandbuch,
     validate_segment,
     validate_segment_group,
     validate_segment_level,
@@ -53,6 +55,140 @@ class TestValidation:
         )
 
         create_and_inject_hardcoded_evaluators(content_evaluation_result=content_evaluation_result)
+
+    @pytest.mark.parametrize(
+        "deep_ahb, expected_validation_result",
+        [
+            pytest.param(
+                DeepAnwendungshandbuch(
+                    meta=AhbMetaInformation(pruefidentifikator="12345"),
+                    lines=[
+                        SegmentGroup(
+                            discriminator="root",
+                            ahb_expression="X",
+                            segments=[
+                                Segment(
+                                    discriminator="UNH",
+                                    ahb_expression="X",
+                                    data_elements=[
+                                        DataElementFreeText(
+                                            discriminator="Nachrichten-Startsegment",
+                                            ahb_expression="X",
+                                            entered_input=None,
+                                            data_element_id="1234",
+                                        )
+                                    ],
+                                )
+                            ],
+                        ),
+                        SegmentGroup(
+                            discriminator="SG4",
+                            ahb_expression="X",
+                            segments=[
+                                Segment(
+                                    discriminator="FOO",
+                                    ahb_expression="X",
+                                    data_elements=[
+                                        DataElementValuePool(
+                                            discriminator="SG4->FOO->0333",
+                                            value_pool=[
+                                                ValuePoolEntry(
+                                                    qualifier="E01",
+                                                    meaning="Das andere",
+                                                    ahb_expression="X[3]",
+                                                ),
+                                                ValuePoolEntry(
+                                                    qualifier="E02",
+                                                    meaning="Das Eine",
+                                                    ahb_expression="X[2]",
+                                                ),
+                                            ],
+                                            data_element_id="0333",
+                                        )
+                                    ],
+                                )
+                            ],
+                            segment_groups=[
+                                SegmentGroup(
+                                    discriminator="SG5",
+                                    ahb_expression="X[3]",
+                                    segments=[
+                                        Segment(
+                                            discriminator="BAR",
+                                            ahb_expression="X",
+                                            data_elements=[
+                                                DataElementFreeText(
+                                                    discriminator="Die fünfte Gruppe",
+                                                    ahb_expression="X",
+                                                    entered_input=None,
+                                                    data_element_id="1234",
+                                                )
+                                            ],
+                                        )
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+                [
+                    ValidationResultInContext(
+                        discriminator="root",
+                        validation_result=SegmentLevelValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_REQUIRED
+                        ),
+                    ),
+                    ValidationResultInContext(
+                        discriminator="UNH",
+                        validation_result=SegmentLevelValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_REQUIRED
+                        ),
+                    ),
+                    ValidationResultInContext(
+                        discriminator="Nachrichten-Startsegment",
+                        validation_result=DataElementValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
+                            format_validation_fulfilled=True,
+                        ),
+                    ),
+                    ValidationResultInContext(
+                        discriminator="SG4",
+                        validation_result=SegmentLevelValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_REQUIRED
+                        ),
+                    ),
+                    ValidationResultInContext(
+                        discriminator="SG5",
+                        validation_result=SegmentLevelValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_FORBIDDEN
+                        ),
+                    ),
+                    ValidationResultInContext(
+                        discriminator="FOO",
+                        validation_result=SegmentLevelValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_REQUIRED
+                        ),
+                    ),
+                    ValidationResultInContext(
+                        discriminator="SG4->FOO->0333",
+                        validation_result=DataElementValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_REQUIRED,
+                            format_validation_fulfilled=True,
+                            possible_values={"E02": "Das Eine"},
+                        ),
+                    ),
+                ],
+            ),
+        ],
+    )
+    async def test_validate_deep_ahb(
+        self,
+        deep_ahb,
+        expected_validation_result,
+        inject_content_evaluation_result,
+    ):
+        result = await validate_deep_anwendungshandbuch(deep_ahb)
+        assert result == expected_validation_result
 
     @pytest.mark.parametrize(
         "segment_level, expected_validation_result",
