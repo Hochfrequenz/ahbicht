@@ -4,6 +4,7 @@ For more information see the MAUS repo and its documentation: https://github.com
 A MAUS Provider is a class that returns MAUS s' from what ever data source the implementation prefers.
 The MAUS provider is supposed to be used with dependency injection.
 """
+
 import json
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -12,6 +13,8 @@ from typing import Optional
 from maus import DeepAnwendungshandbuch
 from maus.edifact import EdifactFormat, EdifactFormatVersion
 from maus.models.anwendungshandbuch import DeepAnwendungshandbuchSchema
+
+# pylint:disable=too-few-public-methods
 
 
 class MausProvider(ABC):
@@ -34,11 +37,12 @@ class FileBasedMausProvider(MausProvider):
     A MAUS provider that uses the file system to retrieve MAUS s'.
     """
 
-    def __init__(self, base_path: Path):
+    def __init__(self, base_path: Path, encoding: str = "utf-8"):
         """
         initialize by providing a base path relative to which the MAUS s' can be found.
         """
         self.base_path: Path = base_path
+        self._encoding = encoding
 
     @abstractmethod
     def to_path(
@@ -55,7 +59,7 @@ class FileBasedMausProvider(MausProvider):
         relative_path = self.to_path(edifact_format, edifact_format_version, pruefidentifikator)
         full_path: Path = self.base_path / relative_path
         try:
-            with open(full_path, "r") as maus_infile:
+            with open(full_path, "r", encoding=self._encoding) as maus_infile:
                 file_content_json = json.load(maus_infile)
                 maus = DeepAnwendungshandbuchSchema().load(file_content_json)
         except FileNotFoundError:
