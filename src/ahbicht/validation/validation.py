@@ -103,35 +103,36 @@ async def validate_segment_group(
         ValidationResultInContext(discriminator=segment_group.discriminator, validation_result=segment_group_validation)
     ]
 
-    tasks = []
+    if segment_group_validation.requirement_validation is not RequirementValidationValue.IS_FORBIDDEN:
+        tasks = []
 
-    # validation of child_segment_group s
-    if segment_group.segment_groups:
-        for child_segment_group in segment_group.segment_groups:
-            tasks.append(
-                validate_segment_group(
-                    child_segment_group,
-                    segment_group_validation.requirement_validation,
-                    soll_is_required,
+        # validation of child_segment_group s
+        if segment_group.segment_groups:
+            for child_segment_group in segment_group.segment_groups:
+                tasks.append(
+                    validate_segment_group(
+                        child_segment_group,
+                        segment_group_validation.requirement_validation,
+                        soll_is_required,
+                    )
                 )
-            )
 
-    # validation of child segments
-    if segment_group.segments:
-        for segment in segment_group.segments:
-            tasks.append(
-                validate_segment(
-                    segment,
-                    segment_group_validation.requirement_validation,
-                    soll_is_required,
+        # validation of child segments
+        if segment_group.segments:
+            for segment in segment_group.segments:
+                tasks.append(
+                    validate_segment(
+                        segment,
+                        segment_group_validation.requirement_validation,
+                        soll_is_required,
+                    )
                 )
-            )
 
-    validation_results_of_children = await asyncio.gather(*tasks)
+        validation_results_of_children = await asyncio.gather(*tasks)
 
-    for sublist in validation_results_of_children:
-        for item in sublist:
-            validation_results_in_context.append(item)
+        for sublist in validation_results_of_children:
+            for item in sublist:
+                validation_results_in_context.append(item)
 
     return validation_results_in_context
 
@@ -163,13 +164,14 @@ async def validate_segment(
         ValidationResultInContext(discriminator=segment.discriminator, validation_result=segment_validation)
     ]
 
-    tasks = []
-
-    # validation of this segments data elements
-    for data_element in segment.data_elements:
-        tasks.append(validate_data_element(data_element, segment_validation.requirement_validation))
-
-    validation_results_in_context_data_elements = await asyncio.gather(*tasks)
+    # validation of this segments data elements if segment is not forbidden
+    if segment_validation.requirement_validation is RequirementValidationValue.IS_FORBIDDEN:
+        validation_results_in_context_data_elements = []
+    else:
+        tasks = []
+        for data_element in segment.data_elements:
+            tasks.append(validate_data_element(data_element, segment_validation.requirement_validation))
+        validation_results_in_context_data_elements = await asyncio.gather(*tasks)
 
     return [*validation_results_in_context, *validation_results_in_context_data_elements]
 
