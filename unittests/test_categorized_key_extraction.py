@@ -74,6 +74,7 @@ class TestCategorizedKeyExtraction:
                     requirement_constraint_keys=["4", "53", "100", "2002", "2050"],
                     format_constraint_keys=["999"],
                     package_keys=[],
+                    time_condition_keys=[],
                 ),
                 id="repeatability constraint",
             ),
