@@ -52,6 +52,14 @@ ahbicht.content\_evaluation.fc\_evaluators module
    :undoc-members:
    :show-inheritance:
 
+ahbicht.content\_evaluation.german\_strom\_and\_gas\_tag module
+---------------------------------------------------------------
+
+.. automodule:: ahbicht.content_evaluation.german_strom_and_gas_tag
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 ahbicht.content\_evaluation.rc\_evaluators module
 -------------------------------------------------
 
