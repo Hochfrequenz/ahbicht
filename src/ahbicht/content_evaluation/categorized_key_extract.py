@@ -122,6 +122,7 @@ class CategorizedKeyExtract:
             )
         else:
             possible_rcs = [(("rc_dummy", ConditionFulfilledValue.NEUTRAL),)]  # type:ignore[assignment]
+
         for fc_rc_tuple in product(possible_fcs, possible_rcs):
             # This product would have length 0 if one of the "factors" had length 0.
             # In order to prevent 'results' to be empty if either the RC or FC list is empty, we added the 'dummy's.
