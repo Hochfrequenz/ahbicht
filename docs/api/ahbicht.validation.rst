@@ -4,14 +4,6 @@ ahbicht.validation package
 Submodules
 ----------
 
-ahbicht.validation.maus\_provider module
-----------------------------------------
-
-.. automodule:: ahbicht.validation.maus_provider
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 ahbicht.validation.validation module
 ------------------------------------
 
