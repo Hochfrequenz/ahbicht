@@ -6,10 +6,10 @@ from datetime import datetime, timedelta, timezone
 import pytest  # type:ignore[import]
 
 from ahbicht.content_evaluation.german_strom_and_gas_tag import (
-    _parse_as_datetime,
     berlin,
     is_gastag_limit,
     is_stromtag_limit,
+    parse_as_datetime,
 )
 
 
@@ -26,7 +26,7 @@ class TestGermanStromAndGasTag:
         ],
     )
     def test_successful_parsing(self, dt_string: str, expected_datetime: datetime):
-        actual, error = _parse_as_datetime(dt_string)
+        actual, error = parse_as_datetime(dt_string)
         assert error is None
         assert actual == expected_datetime
 
@@ -40,7 +40,7 @@ class TestGermanStromAndGasTag:
         ],
     )
     def test_errornous_parsing(self, dt_string: str, expected_error_msg: str):
-        actual, error = _parse_as_datetime(dt_string)
+        actual, error = parse_as_datetime(dt_string)
         assert actual is None
         assert error is not None
         assert error.format_constraint_fulfilled is False

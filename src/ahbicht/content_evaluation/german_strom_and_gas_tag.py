@@ -23,7 +23,7 @@ def _get_german_local_time(date_time: datetime) -> time:
 
 
 # the functions below are excessively unit tested; Please add a test case if you suspect their behaviour to be wrong
-def _parse_as_datetime(entered_input: str) -> Tuple[Optional[datetime], Optional[EvaluatedFormatConstraint]]:
+def parse_as_datetime(entered_input: str) -> Tuple[Optional[datetime], Optional[EvaluatedFormatConstraint]]:
     """
     Try to parse the given entered_input as datetime
     :param entered_input: a string
@@ -57,7 +57,7 @@ def has_no_utc_offset(entered_input: str) -> EvaluatedFormatConstraint:
     This means the UTC offset is exactly "+00:00".
     """
     # the name of the method contains a negation because this it's commonly like this in the BDEW format constraints.
-    date_time, error_result = _parse_as_datetime(entered_input)
+    date_time, error_result = parse_as_datetime(entered_input)
     if error_result is not None:
         return error_result
     original_time = date_time.time()  # type:ignore[union-attr]
@@ -92,7 +92,7 @@ def is_xtag_limit(entered_input: str, division: Union[Literal["Strom"], Literal[
     """
     Tries to parse the entered_input as datetime and checks if it is the start/end of a Strom- or Gastag
     """
-    date_time, error_result = _parse_as_datetime(entered_input)
+    date_time, error_result = parse_as_datetime(entered_input)
     if error_result is not None:
         return error_result
     xtag_evaluator: Callable[[datetime], bool]
