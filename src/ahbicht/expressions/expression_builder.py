@@ -233,7 +233,7 @@ class FormatErrorMessageExpressionBuilder(ExpressionBuilder[EvaluatedFormatConst
 
     def land(self, other: EvaluatedFormatConstraint) -> ExpressionBuilder:
         if other.format_constraint_fulfilled is True:
-            self._expression = self._expression
+            pass  # self._expression = self._expression
         else:
             if self._expression is None:
                 self._expression = other.error_message
