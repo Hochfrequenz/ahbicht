@@ -233,7 +233,9 @@ class FormatErrorMessageExpressionBuilder(ExpressionBuilder[EvaluatedFormatConst
 
     def land(self, other: EvaluatedFormatConstraint) -> ExpressionBuilder:
         if other.format_constraint_fulfilled is True:
-            pass  # self._expression = self._expression
+            # If a format constraint is connected with "logical and" to another format constraint which is fulfilled,
+            # then the remaining expression/error message stays the same.
+            pass
         else:
             if self._expression is None:
                 self._expression = other.error_message
