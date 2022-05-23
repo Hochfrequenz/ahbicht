@@ -1,8 +1,7 @@
 """
 Dataclasses that are relevant in the context of the content_evaluation.
 """
-import dataclasses
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Optional, Union
 
 
@@ -42,4 +41,4 @@ def copy_evaluation_context(context: EvaluationContext) -> EvaluationContext:
     :param context:
     :return: a deep copy of the context
     """
-    return dataclasses.replace(context)
+    return replace(context)
