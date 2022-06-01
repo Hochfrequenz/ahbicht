@@ -11,7 +11,7 @@ from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluati
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 
 
-# pylint: disable=too-few-public-methods, no-self-use, unused-argument
+# pylint: disable=too-few-public-methods,  unused-argument
 @attrs.define(auto_attribs=True)
 class CategorizedKeyExtract:
     """

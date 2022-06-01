@@ -9,7 +9,7 @@ from marshmallow_enum import EnumField  # type:ignore[import]
 
 from ahbicht.validation.validation_values import RequirementValidationValue
 
-# pylint: disable=too-few-public-methods, no-member, no-self-use, unused-argument
+# pylint: disable=too-few-public-methods, no-member, unused-argument
 
 
 @attrs.define(auto_attribs=True, kw_only=True)
@@ -127,7 +127,7 @@ class ValidationResultInContextSchema(Schema):
     discriminator = fields.String()
     validation_result = fields.Nested(ValidationResultSchema)
 
-    # pylint:disable=unused-argument,no-self-use
+    # pylint:disable=unused-argument
     @post_load
     def deserialize(self, data, **kwargs) -> ValidationResultInContext:
         """

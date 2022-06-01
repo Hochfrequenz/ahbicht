@@ -3,7 +3,7 @@ This module contains the classes for the evaluation results.
 A "result" is the outcome of an evaluation. It requires actual data to be present.
 """
 
-# pylint: disable=too-few-public-methods, no-member, no-self-use, unused-argument
+# pylint: disable=too-few-public-methods, no-member,  unused-argument
 from typing import Optional
 
 import attrs

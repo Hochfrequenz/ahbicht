@@ -13,7 +13,7 @@ class ConciseConditionKeyTreeSchema(TreeSchema):
     (not deserialization)
     """
 
-    # pylint:disable=unused-argument,no-self-use
+    # pylint:disable=unused-argument
     @post_dump
     def serialize(self, data, **kwargs) -> dict:
         """

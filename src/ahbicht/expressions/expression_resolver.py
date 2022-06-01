@@ -87,8 +87,7 @@ async def _replace_sub_coroutines_with_awaited_results(tree: Union[Tree, Awaitab
     return result
 
 
-# pylint: disable=no-self-use, invalid-name
-# no-self-use: The following method is not static because it refers to the terminal of the lark grammar.
+# pylint: disable=invalid-name
 # invalid-name: That's also the reason why it seemingly violates the naming conventions.
 class AhbExpressionResolverTransformer(Transformer):
     """
@@ -103,7 +102,7 @@ class AhbExpressionResolverTransformer(Transformer):
         return condition_tree
 
 
-# pylint: disable=no-self-use, invalid-name
+# pylint: disable=invalid-name
 class PackageExpansionTransformer(Transformer):
     """
     The PackageExpansionTransformer expands packages inside a tree to condition expressions by using a PackageResolver.
@@ -142,7 +141,7 @@ class PackageExpansionTransformer(Transformer):
         return tree_result
 
 
-# pylint: disable=no-self-use, invalid-name
+# pylint: disable=invalid-name
 class TimeConditionTransformer(Transformer):
     """
     The TimeConditionEvaluator replaces "time conditions" (aka "UB1", "UB2", "UB3") with evaluatable format constraints.
