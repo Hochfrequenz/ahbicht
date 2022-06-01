@@ -161,7 +161,7 @@ class EvaluatedFormatConstraintSchema(Schema):
     format_constraint_fulfilled = fields.Boolean(required=True)
     error_message = fields.String(required=False, allow_none=True, dump_default=True)
 
-    # pylint: disable=no-self-use, unused-argument
+    # pylint: disable=unused-argument
     @post_load
     def deserialize(self, data, **kwargs) -> EvaluatedFormatConstraint:
         """

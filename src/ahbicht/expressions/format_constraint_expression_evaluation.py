@@ -20,7 +20,6 @@ from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
 from ahbicht.expressions.expression_builder import FormatErrorMessageExpressionBuilder
 
 
-# pylint: disable=no-self-use
 @v_args(inline=True)  # Children are provided as *args instead of a list argument
 # pylint:disable=inherit-non-class
 class FormatConstraintTransformer(BaseTransformer[EvaluatedFormatConstraint, EvaluatedFormatConstraint]):

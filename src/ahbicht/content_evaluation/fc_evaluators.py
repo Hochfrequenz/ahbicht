@@ -17,7 +17,6 @@ from ahbicht.content_evaluation.german_strom_and_gas_tag import has_no_utc_offse
 from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
 
 
-# pylint: disable=no-self-use
 class FcEvaluator(Evaluator, ABC):
     """
     Base of all Format Constraint (FC) evaluators.

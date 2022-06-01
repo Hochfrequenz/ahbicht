@@ -15,7 +15,7 @@ from ahbicht.expressions.condition_nodes import (
 )
 
 
-# pylint: disable=too-few-public-methods, no-self-use, unused-argument
+# pylint: disable=too-few-public-methods, unused-argument
 @attrs.define(auto_attribs=True)
 class ContentEvaluationResult:
     """

@@ -10,7 +10,7 @@ from typing import Callable, Optional
 from maus.edifact import EdifactFormat, EdifactFormatVersion
 
 
-# pylint: disable=no-self-use, too-few-public-methods
+# pylint: disable=too-few-public-methods
 class Evaluator(ABC):
     """
     Base of all evaluators.

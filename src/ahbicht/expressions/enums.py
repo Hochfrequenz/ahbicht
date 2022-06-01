@@ -81,7 +81,7 @@ data element/data element group/segment/segment group at which it is used.
 """
 
 
-# pylint:disable=no-self-use, unused-argument
+# pylint:disable=unused-argument
 class RequirementIndicatorSchema(Schema):
     """
     a helper schema because marshmallow does not support something like fields.Union out of the box

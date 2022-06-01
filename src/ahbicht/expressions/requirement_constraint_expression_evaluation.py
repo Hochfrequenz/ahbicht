@@ -27,7 +27,6 @@ from ahbicht.expressions.condition_nodes import (
 from ahbicht.expressions.expression_builder import FormatConstraintExpressionBuilder, HintExpressionBuilder
 
 
-# pylint: disable=no-self-use
 @v_args(inline=True)  # Children are provided as *args instead of a list argument
 # pylint:disable=inherit-non-class
 class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, EvaluatedComposition]):

@@ -9,7 +9,7 @@ from marshmallow import Schema, fields, post_load, pre_dump
 
 # in the classes/schemata we don't care about if there aren't enough public versions.
 # We also don't care about unused kwargs, or no self-use.
-# pylint: disable=too-few-public-methods,unused-argument,no-self-use
+# pylint: disable=too-few-public-methods,unused-argument
 
 
 class _TokenOrTree:

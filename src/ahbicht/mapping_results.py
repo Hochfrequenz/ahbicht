@@ -39,7 +39,7 @@ class ConditionKeyConditionTextMappingSchema(Schema):
     condition_key = fields.String()
     condition_text = fields.String(load_default=None)
 
-    # pylint:disable=unused-argument,no-self-use
+    # pylint:disable=unused-argument
     @post_load
     def deserialize(self, data, **kwargs) -> ConditionKeyConditionTextMapping:
         """
@@ -82,7 +82,7 @@ class PackageKeyConditionExpressionMappingSchema(Schema):
     package_key = fields.String()
     package_expression = fields.String(load_default=None)
 
-    # pylint:disable=unused-argument,no-self-use
+    # pylint:disable=unused-argument
     @post_load
     def deserialize(self, data, **kwargs) -> PackageKeyConditionExpressionMapping:
         """

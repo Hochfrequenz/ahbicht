@@ -13,8 +13,6 @@ from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, Eval
 from ahbicht.content_evaluation.evaluators import Evaluator
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue
 
-# pylint: disable=no-self-use
-
 
 class RcEvaluator(Evaluator, ABC):
     """
