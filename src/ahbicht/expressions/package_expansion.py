@@ -81,7 +81,7 @@ class JsonFilePackageResolver(DictBasedPackageResolver):
         self.edifact_format_version = edifact_format_version
 
     @staticmethod
-    def _open_and_load_package_mappings(file_path: Path) -> Dict[str, str]:
+    def _open_and_load_package_mappings(file_path: Path) -> Dict[str, Optional[str]]:
         """
         Opens the hint json file and loads it into an attribute of the class.
         The method can read both a dictionary of package key/package expression mappings and a
