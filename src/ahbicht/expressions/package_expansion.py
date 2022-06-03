@@ -92,9 +92,8 @@ class JsonFilePackageResolver(DictBasedPackageResolver):
         if isinstance(json_body, dict):
             # {"1P": "[2] U [3]", "2P": "[4] O [5]"...
             return json_body
-        else:
-            # [{PackageKeyConditionExpressionMapping},...]
-            mapping_list: List[
-                PackageKeyConditionExpressionMapping
-            ] = PackageKeyConditionExpressionMappingSchema().load(json_body, many=True)
-            return {mapping.package_key: mapping.package_expression for mapping in mapping_list}
+        # [{PackageKeyConditionExpressionMapping},...]
+        mapping_list: List[PackageKeyConditionExpressionMapping] = PackageKeyConditionExpressionMappingSchema().load(
+            json_body, many=True
+        )
+        return {mapping.package_key: mapping.package_expression for mapping in mapping_list}
