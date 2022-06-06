@@ -6,6 +6,7 @@ from typing import Dict, List, Tuple, Union
 
 import inject
 
+from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.expressions.condition_expression_parser import extract_categorized_keys_from_tree
 from ahbicht.expressions.condition_nodes import Hint, RequirementConstraint, UnevaluatedFormatConstraint
@@ -60,14 +61,17 @@ class ConditionNodeBuilder:
             unevaluated_format_constraints[condition_key] = UnevaluatedFormatConstraint(condition_key=condition_key)
         return unevaluated_format_constraints
 
-    async def _build_requirement_constraint_nodes(self) -> Dict[str, RequirementConstraint]:
+    @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
+    # search for binder.bind_to_provider(EvaluatableDataProvider, your_function_that_returns_evaluatable_data_goes_here)
+    async def _build_requirement_constraint_nodes(
+        self, evaluatable_data: EvaluatableData
+    ) -> Dict[str, RequirementConstraint]:
         """
         Build requirement constraint nodes by evaluating the constraints
         with the help of the respective Evaluator.
         """
-
         evaluated_conditions_fulfilled_attribute = await self.rc_evaluator.evaluate_conditions(
-            condition_keys=self.requirement_constraints_condition_keys
+            condition_keys=self.requirement_constraints_condition_keys, evaluatable_data=evaluatable_data
         )
         evaluated_requirement_constraints: Dict[str, RequirementConstraint] = {}
         for condition_key in self.requirement_constraints_condition_keys:
@@ -77,11 +81,11 @@ class ConditionNodeBuilder:
             )
         return evaluated_requirement_constraints
 
-    async def requirement_content_evaluation_for_all_condition_keys(
-        self,
-    ) -> Dict[str, TRCTransformerArgument]:
+    async def requirement_content_evaluation_for_all_condition_keys(self) -> Dict[str, TRCTransformerArgument]:
         """Gets input nodes for all condition keys."""
-        requirement_constraint_nodes = await self._build_requirement_constraint_nodes()
+        requirement_constraint_nodes = (
+            await self._build_requirement_constraint_nodes()  # pylint:disable=no-value-for-parameter
+        )
         hint_nodes = await self._build_hint_nodes()
         unevaluated_format_constraint_nodes = self._build_unevaluated_format_constraint_nodes()
         input_nodes: Dict[str, TRCTransformerArgument] = {
