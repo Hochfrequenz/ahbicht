@@ -1,7 +1,6 @@
 """
 Tests that the code can handle RC/FC evaluators that have both async and sync methods.
 """
-from unittest import mock
 
 import inject
 import pytest  # type:ignore[import]
@@ -9,7 +8,7 @@ from maus.edifact import EdifactFormat, EdifactFormatVersion
 
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider, EvaluationContext
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
-from ahbicht.content_evaluation.rc_evaluators import DictBasedRcEvaluator, RcEvaluator
+from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
