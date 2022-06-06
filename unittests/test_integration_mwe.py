@@ -1,6 +1,6 @@
 import inject
 import pytest  # type:ignore[import]
-import pytest_asyncio
+import pytest_asyncio  # type:ignore[import]
 from maus import (
     DataElementFreeText,
     DataElementValuePool,
@@ -15,7 +15,6 @@ from maus.models.anwendungshandbuch import AhbMetaInformation
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider, EvaluationContext
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
-from ahbicht.evaluation_results import FormatConstraintEvaluationResult
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.expressions.hints_provider import DictBasedHintsProvider, HintsProvider
 from ahbicht.expressions.package_expansion import DictBasedPackageResolver, PackageResolver
@@ -31,7 +30,8 @@ class MweRcEvaluator(RcEvaluator):
         self.edifact_format = EdifactFormat.UTILMD
 
     def _get_default_context(self) -> EvaluationContext:
-        return None
+        # we need to implement this method but for now, we don't care about its return value
+        return None  # type:ignore[return-value]
 
     def evaluate_1(self, evaluatable_data, context):
         seed = evaluatable_data.edifact_seed
