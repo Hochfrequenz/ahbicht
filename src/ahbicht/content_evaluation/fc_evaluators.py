@@ -14,6 +14,7 @@ from typing import Coroutine, Dict, List, Optional
 
 from ahbicht.content_evaluation.evaluators import Evaluator
 from ahbicht.content_evaluation.german_strom_and_gas_tag import has_no_utc_offset, is_xtag_limit
+from ahbicht.evaluation_results import FormatConstraintEvaluationResult
 from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
 
 
@@ -93,10 +94,16 @@ class FcEvaluator(Evaluator, ABC):
             result = await evaluation_method(entered_input)
         else:
             result = evaluation_method(entered_input)
-        # Fallback error message if there is no error message even though format constraint isn't fulfilled
-        if result.format_constraint_fulfilled is False and result.error_message is None:
-            result.error_message = f"Condition [{condition_key}] has to be fulfilled."
-
+        try:
+            if result.format_constraint_fulfilled is False and result.error_message is None:
+                result.error_message = f"Condition [{condition_key}] has to be fulfilled."
+        except AttributeError as attribute_error:
+            if isinstance(result, FormatConstraintEvaluationResult):
+                # explicitly raise error with meaningful message, because this is really hard to distinguish for users
+                raise ValueError(
+                    "A FcEvaluator shall return EvaluatedFormatConstraints, _not_ FormatConstraintEvaulationResults"
+                ) from attribute_error
+            raise attribute_error
         return result
 
     async def evaluate_format_constraints(
