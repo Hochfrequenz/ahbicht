@@ -46,6 +46,9 @@ class MweRcEvaluator(RcEvaluator):
             return ConditionFulfilledValue.FULFILLED
         return ConditionFulfilledValue.UNFULFILLED
 
+    def evaluate_3(self, _, __):
+        return ConditionFulfilledValue.UNFULFILLED
+
 
 class MweFcEvaluator(FcEvaluator):
     def __init__(self):
@@ -77,17 +80,17 @@ class MweHintsProvider(DictBasedHintsProvider):
         self.edifact_format = EdifactFormat.UTILMD
 
 
-message_under_test: EvaluatableData = EvaluatableData(edifact_seed={"foo": "bar", "asd": "yxc"})
-
-
 def get_eval_data():
-    return message_under_test
+    return TestIntegrationMwe.message_under_test
 
 
 class TestIntegrationMwe:
     """
-    a class that contains an integration tests that show a full minimal working example (meaning: no mocks at all)
+    Contains an integration tests that show a full minimal working example (meaning: no mocks at all).
+    If any tests break, then first fix all other tests and run these tests last.
     """
+
+    message_under_test: EvaluatableData = EvaluatableData(edifact_seed={"foo": "bar", "asd": "yxc"})
 
     @pytest_asyncio.fixture()
     def setup_and_teardown_injector(self):
@@ -107,7 +110,7 @@ class TestIntegrationMwe:
             lines=[
                 SegmentGroup(
                     discriminator="root",
-                    ahb_expression="X",
+                    ahb_expression="X[4P]",
                     segments=[
                         Segment(
                             discriminator="UNH",
@@ -115,7 +118,7 @@ class TestIntegrationMwe:
                             data_elements=[
                                 DataElementFreeText(
                                     discriminator="Nachrichten-Startsegment",
-                                    ahb_expression="X",
+                                    ahb_expression="X[998][567]",
                                     entered_input=None,
                                     data_element_id="1234",
                                 )
@@ -142,7 +145,7 @@ class TestIntegrationMwe:
                                         ValuePoolEntry(
                                             qualifier="E02",
                                             meaning="Das Eine",
-                                            ahb_expression="X[998][567]",
+                                            ahb_expression="X[3]",
                                         ),
                                     ],
                                     data_element_id="0333",
@@ -174,4 +177,10 @@ class TestIntegrationMwe:
             ],
         )
         results = await validate_deep_anwendungshandbuch(maus)
-        assert results is not None
+        assert results is not None  # no detailed assertions here
+        TestIntegrationMwe.message_under_test = EvaluatableData(
+            edifact_seed={"foo": "baz", "asd": "qwe"}
+        )  # change the message under test to trigger different outcomes
+        results2 = await validate_deep_anwendungshandbuch(maus)
+        assert results2 is not None
+        assert results != results2
