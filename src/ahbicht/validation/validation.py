@@ -16,8 +16,8 @@ from maus.models.edifact_components import (
 )
 
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
-from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 from ahbicht.expressions.enums import ModalMark, PrefixOperator, RequirementIndicator
+from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 from ahbicht.validation.validation_results import (
     DataElementValidationResult,
     SegmentLevelValidationResult,
@@ -190,7 +190,9 @@ async def get_segment_level_requirement_validation_value(
     :return: Validation Result of the data element
     """
 
-    expression_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(segment_level.ahb_expression)
+    expression_tree = await parse_expression_including_unresolved_subexpressions(
+        segment_level.ahb_expression, resolve_packages=True
+    )
     evaluation_result = await evaluate_ahb_expression_tree(expression_tree, entered_input=None)
 
     requirement_validation_without_hierarchy = map_requirement_validation_values(
@@ -242,7 +244,9 @@ async def validate_data_element_freetext(
     :return: Validation Result of the DataElement
     """
 
-    expression_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(data_element.ahb_expression)
+    expression_tree = await parse_expression_including_unresolved_subexpressions(
+        data_element.ahb_expression, resolve_packages=True
+    )
     evaluation_result = await evaluate_ahb_expression_tree(expression_tree, entered_input=data_element.entered_input)
 
     # requirement constraints
@@ -295,8 +299,8 @@ async def validate_data_element_valuepool(
             hints = None
         else:  # len(value_pool) >1
             for value_pool_entry in data_element.value_pool:
-                expression_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(
-                    value_pool_entry.ahb_expression
+                expression_tree = await parse_expression_including_unresolved_subexpressions(
+                    value_pool_entry.ahb_expression, resolve_packages=True
                 )
                 evaluation_result = await evaluate_ahb_expression_tree(expression_tree, entered_input=None)
                 if evaluation_result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled:
