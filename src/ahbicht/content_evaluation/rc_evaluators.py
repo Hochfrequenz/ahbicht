@@ -27,6 +27,7 @@ class RcEvaluator(Evaluator, ABC):
         Instantiate any evaluator by providing some evaluatable data from a message.
         :param evaluatable_data:
         """
+        super().__init__()
         if not evaluatable_data:
             raise ValueError("Evaluatable data have to be provided to any evaluator.")
         self.evaluatable_data = evaluatable_data
