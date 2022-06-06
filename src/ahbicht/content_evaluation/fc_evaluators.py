@@ -101,7 +101,7 @@ class FcEvaluator(Evaluator, ABC):
             if isinstance(result, FormatConstraintEvaluationResult):
                 # explicitly raise error with meaningful message, because this is really hard to distinguish for users
                 raise ValueError(
-                    "A FcEvaluator shall return EvaluatedFormatConstraints, _not_ FormatConstraintEvaulationResults"
+                    "A FcEvaluator shall return EvaluatedFormatConstraints, _not_ FormatConstraintEvaluationResults"
                 ) from attribute_error
             raise attribute_error
         return result
