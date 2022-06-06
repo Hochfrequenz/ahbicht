@@ -8,6 +8,24 @@ and also several modal marks expressions if there are more than one.
 from lark import Lark, Token, Tree
 from lark.exceptions import UnexpectedCharacters, UnexpectedEOF
 
+# pylint: disable=anomalous-backslash-in-string
+GRAMMAR = """
+ahb_expression: modal_mark_expression+
+                | prefix_operator_expression
+                | requirement_indicator
+                | modal_mark_expression+ requirement_indicator
+modal_mark_expression: (MODAL_MARK CONDITION_EXPRESSION) -> single_requirement_indicator_expression
+prefix_operator_expression: PREFIX_OPERATOR CONDITION_EXPRESSION -> single_requirement_indicator_expression
+requirement_indicator: PREFIX_OPERATOR | MODAL_MARK
+PREFIX_OPERATOR: "X"i | "O"i | "U"i
+MODAL_MARK: /M(uss)?|S(oll)?|K(ann)?/i
+// Matches if it looks like a condition expression, but does not yet check if it is a syntactically valid one:
+CONDITION_EXPRESSION: /(?!\BU\B)[\[\]\(\)U∧O∨X⊻\d\sP\.UB]+/i
+"""
+# Regarding the negative lookahead in the condition expression regex see examples https://regex101.com/r/6fFHD4/1
+# and CTRL+F for "Mus[2]" in the unittest that fails if you remove the lookahead.
+_parser = Lark(GRAMMAR, start="ahb_expression")
+
 
 def parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_expression: str) -> Tree[Token]:
     """
@@ -19,26 +37,8 @@ def parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_express
     :param ahb_expression: e.g. 'Muss[45]U[52] Soll[1]'
     :return parsed_tree:
     """
-
-    # pylint: disable=anomalous-backslash-in-string
-    grammar = """
-    ahb_expression: modal_mark_expression+
-                    | prefix_operator_expression
-                    | requirement_indicator
-                    | modal_mark_expression+ requirement_indicator
-    modal_mark_expression: (MODAL_MARK CONDITION_EXPRESSION) -> single_requirement_indicator_expression
-    prefix_operator_expression: PREFIX_OPERATOR CONDITION_EXPRESSION -> single_requirement_indicator_expression
-    requirement_indicator: PREFIX_OPERATOR | MODAL_MARK
-    PREFIX_OPERATOR: "X"i | "O"i | "U"i
-    MODAL_MARK: /M(uss)?|S(oll)?|K(ann)?/i
-    // Matches if it looks like a condition expression, but does not yet check if it is a syntactically valid one:
-    CONDITION_EXPRESSION: /(?!\BU\B)[\[\]\(\)U∧O∨X⊻\d\sP\.UB]+/i
-    """
-    # Regarding the negative lookahead in the condition expression regex see examples https://regex101.com/r/6fFHD4/1
-    # and CTRL+F for "Mus[2]" in the unittest that fails if you remove the lookahead.
-    parser = Lark(grammar, start="ahb_expression")
     try:
-        parsed_tree = parser.parse(ahb_expression)
+        parsed_tree = _parser.parse(ahb_expression)
     except (UnexpectedEOF, UnexpectedCharacters, TypeError) as eof:
         raise SyntaxError(
             """Please make sure that the ahb_expression starts with a requirement indicator \
