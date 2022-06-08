@@ -1,10 +1,15 @@
 # type:ignore[misc]
 """ Tests for the parsing of the conditions tests (Mussfeldprüfung) """
+import asyncio
+import datetime
+import random
 
 import pytest  # type:ignore[import]
 from lark import Token, Tree
 
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
+
+pytestmark = pytest.mark.asyncio
 
 
 class TestConditionParser:
@@ -539,3 +544,16 @@ class TestConditionParser:
         old_tree = parse_condition_expression_to_tree(old_expression)
         new_tree = parse_condition_expression_to_tree(new_expression)
         assert old_tree == new_tree
+
+    async def test_parsing_is_thread_safe(self):
+        async def parse_arbitrary_expression() -> None:
+            random_expr_string = f"[{random.randrange(100,499)}] U [{random.randrange(100,499)}]"
+            tree = parse_condition_expression_to_tree(random_expr_string)
+            await asyncio.sleep(random.randint(500, 1500) / 1000.0)  # wait 0.5-1.5s in each call (avg 1s)
+            assert tree is not None
+
+        tasks = [parse_arbitrary_expression() for _ in range(100)]  # create 1000 threads
+        start = datetime.datetime.utcnow()
+        await asyncio.gather(*tasks)
+        stop = datetime.datetime.utcnow()
+        assert (stop - start).total_seconds() < 10  # meaning: significantly smaller than 100
