@@ -552,7 +552,7 @@ class TestConditionParser:
             await asyncio.sleep(random.randint(500, 1500) / 1000.0)  # wait 0.5-1.5s in each call (avg 1s)
             assert tree is not None
 
-        tasks = [parse_arbitrary_expression() for _ in range(100)]  # create 1000 threads
+        tasks = [parse_arbitrary_expression() for _ in range(100)]  # create 100 threads
         start = datetime.datetime.utcnow()
         await asyncio.gather(*tasks)
         stop = datetime.datetime.utcnow()
