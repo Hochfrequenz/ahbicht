@@ -37,10 +37,10 @@ class DummySyncHintsProvider(HintsProvider):
 class TestHintsProvider:
     """Test Class for JsonFileHintsProvider"""
 
-    @pytest.mark.datafiles("./unittests/resources_condition_hints/FV2104/Hints_FV2104_UTILMD.json")
+    @pytest.mark.datafiles("./unittests/provider_test_files/example_hints_file.json")
     async def test_initiating_hints_provider(self, datafiles):
         """Tests if hints provider is initiated correctly."""
-        path_to_hint_json = datafiles / "Hints_FV2104_UTILMD.json"
+        path_to_hint_json = datafiles / "example_hints_file.json"
         hints_provider = JsonFileHintsProvider(
             edifact_format=EdifactFormat.UTILMD,
             edifact_format_version=EdifactFormatVersion.FV2104,

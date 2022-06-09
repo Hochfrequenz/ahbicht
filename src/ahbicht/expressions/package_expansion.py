@@ -2,12 +2,14 @@
 Package Expansion is the process of finding the condition expression which was abbreviated by using a package.
 e.g. if inside a tree "[123P]" is replaced by "[1] U ([2] O [3])".
 """
+import json
 from abc import ABC, abstractmethod
-from typing import Mapping, Optional
+from pathlib import Path
+from typing import Dict, List, Mapping, Optional
 
 from maus.edifact import EdifactFormat, EdifactFormatVersion
 
-from ahbicht.mapping_results import PackageKeyConditionExpressionMapping
+from ahbicht.mapping_results import PackageKeyConditionExpressionMapping, PackageKeyConditionExpressionMappingSchema
 
 
 # pylint:disable=too-few-public-methods
@@ -66,3 +68,32 @@ class DictBasedPackageResolver(PackageResolver):
             package_expression=None,
             edifact_format=EdifactFormat.UTILMD,
         )
+
+
+class JsonFilePackageResolver(DictBasedPackageResolver):
+    """
+    The JsonFilePackageResolver loads package keys/expressions from a JSON file.
+    """
+
+    def __init__(self, edifact_format: EdifactFormat, edifact_format_version: EdifactFormatVersion, file_path: Path):
+        super().__init__(self._open_and_load_package_mappings(file_path))
+        self.edifact_format = edifact_format
+        self.edifact_format_version = edifact_format_version
+
+    @staticmethod
+    def _open_and_load_package_mappings(file_path: Path) -> Dict[str, Optional[str]]:
+        """
+        Opens the hint json file and loads it into an attribute of the class.
+        The method can read both a dictionary of package key/package expression mappings and a
+        list of PackageKeyConditionExpressionMappings
+        """
+        with open(file_path, encoding="utf-8") as json_infile:
+            json_body = json.load(json_infile)
+        if isinstance(json_body, dict):
+            # {"1P": "[2] U [3]", "2P": "[4] O [5]"...
+            return json_body
+        # [{PackageKeyConditionExpressionMapping},...]
+        mapping_list: List[PackageKeyConditionExpressionMapping] = PackageKeyConditionExpressionMappingSchema().load(
+            json_body, many=True
+        )
+        return {mapping.package_key: mapping.package_expression for mapping in mapping_list}
