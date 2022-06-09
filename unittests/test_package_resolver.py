@@ -13,8 +13,6 @@ from ahbicht.expressions.expression_resolver import expand_packages
 from ahbicht.expressions.package_expansion import DictBasedPackageResolver, JsonFilePackageResolver, PackageResolver
 from ahbicht.mapping_results import PackageKeyConditionExpressionMapping
 
-pytestmark = pytest.mark.asyncio
-
 
 class TestPackageResolver:
     """

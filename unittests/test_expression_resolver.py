@@ -4,8 +4,6 @@ from lark import Token, Tree
 
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 
-pytestmark = pytest.mark.asyncio
-
 
 class TestExpressionResolver:
     @pytest.mark.parametrize(

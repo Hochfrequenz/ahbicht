@@ -17,8 +17,6 @@ from ahbicht.expressions.enums import ModalMark, PrefixOperator, RequirementIndi
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 from ahbicht.expressions.hints_provider import HintsProvider
 
-pytestmark = pytest.mark.asyncio
-
 
 class TestAHBExpressionEvaluation:
     """Test for the evaluation of the ahb expression conditions tests (Mussfeldprüfung)"""

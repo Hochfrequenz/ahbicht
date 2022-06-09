@@ -6,8 +6,6 @@ import pytest  # type:ignore[import]
 from ahbicht.content_evaluation.fc_evaluators import DictBasedFcEvaluator
 from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
 
-pytestmark = pytest.mark.asyncio
-
 
 class TestDictBasedFcEvaluator:
     """Test for the evaluation using the Dict Based FC Evaluator"""

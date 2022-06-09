@@ -14,3 +14,12 @@ profile = "black"
 [tool.pylint."MESSAGES CONTROL"]
 max-line-length = 120
 disable = "fixme"
+
+[tool.pytest.ini_options]
+# When the mode is auto, all discovered async tests are considered asyncio-driven
+# even if they have no @pytest.mark.asyncio marker.
+# https://github.com/pytest-dev/pytest-asyncio#auto-mode
+asyncio_mode = "auto"
+markers = [
+    "datafiles"
+]

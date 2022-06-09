@@ -41,8 +41,6 @@ from ahbicht.validation.validation_values import RequirementValidationValue
 
 T = TypeVar("T")
 
-pytestmark = pytest.mark.asyncio
-
 
 def _test_serialization_roundtrip(serializable_object: T, schema: Schema, expected_json_dict: dict) -> T:
     """

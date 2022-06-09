@@ -15,8 +15,6 @@ from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, Evaluat
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 from ahbicht.expressions.hints_provider import DictBasedHintsProvider, HintsProvider
 
-pytestmark = pytest.mark.asyncio
-
 
 class MixedSyncAsyncRcEvaluator(RcEvaluator):
     """An RC evaluator that has both sync and async methods"""

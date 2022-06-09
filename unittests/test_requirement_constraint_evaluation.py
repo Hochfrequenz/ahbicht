@@ -18,8 +18,6 @@ from ahbicht.expressions.condition_nodes import (
 from ahbicht.expressions.hints_provider import HintsProvider
 from ahbicht.expressions.requirement_constraint_expression_evaluation import requirement_constraint_evaluation
 
-pytestmark = pytest.mark.asyncio
-
 
 class TestRequirementConstraintEvaluation:
     """Test for the evaluation of the condition expression regarding the requirement constraints."""

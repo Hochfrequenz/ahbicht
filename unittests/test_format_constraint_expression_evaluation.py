@@ -14,8 +14,6 @@ from ahbicht.expressions.format_constraint_expression_evaluation import (
     format_constraint_evaluation,
 )
 
-pytestmark = pytest.mark.asyncio
-
 
 class DummyFcEvaluator(FcEvaluator):
     """

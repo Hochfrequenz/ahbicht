@@ -8,8 +8,6 @@ import pytest  # type:ignore[import]
 from ahbicht.mapping_results import Repeatability, parse_repeatability
 from ahbicht.utility_functions import gather_if_necessary
 
-pytestmark = pytest.mark.asyncio
-
 T = TypeVar("T")
 
 

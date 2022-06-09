@@ -17,8 +17,6 @@ from ahbicht.expressions.condition_nodes import (
 )
 from ahbicht.expressions.hints_provider import HintsProvider, JsonFileHintsProvider
 
-pytestmark = pytest.mark.asyncio
-
 
 class DummyRcEvaluator(RcEvaluator):
     """

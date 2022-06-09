@@ -6,8 +6,6 @@ import pytest  # type:ignore[import]
 from ahbicht.content_evaluation.rc_evaluators import DictBasedRcEvaluator
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue
 
-pytestmark = pytest.mark.asyncio
-
 
 class TestDictBasedRcEvaluator:
     """Test for the evaluation using the Dict Based RC Evaluator"""

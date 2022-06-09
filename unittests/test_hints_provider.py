@@ -9,8 +9,6 @@ from maus.edifact import EdifactFormat, EdifactFormatVersion
 
 from ahbicht.expressions.hints_provider import HintsProvider, JsonFileHintsProvider
 
-pytestmark = pytest.mark.asyncio
-
 
 class Dummy1sHintsProvider(HintsProvider):
     """a hints provider that takes 1s for each (dummy) hint text"""
