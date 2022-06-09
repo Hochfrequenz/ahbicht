@@ -9,8 +9,6 @@ from lark import Token, Tree
 
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 
-pytestmark = pytest.mark.asyncio
-
 
 class TestConditionParser:
     """Test for the parsing of the conditions tests (Mussfeldprüfung)"""

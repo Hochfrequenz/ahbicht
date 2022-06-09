@@ -33,8 +33,6 @@ from ahbicht.validation.validation_results import (
 )
 from ahbicht.validation.validation_values import RequirementValidationValue
 
-pytestmark = pytest.mark.asyncio
-
 # TODO: Add testcases for segment_requirement is None & soll_is_required = False
 
 

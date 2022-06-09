@@ -15,8 +15,6 @@ from ahbicht.json_serialization.concise_tree_schema import ConciseTreeSchema
 from ahbicht.json_serialization.tree_schema import TreeSchema
 from unittests.test_json_serialization import _test_serialization_roundtrip  # type:ignore[import]
 
-pytestmark = pytest.mark.asyncio
-
 
 class TestTreeSchemas:
     """

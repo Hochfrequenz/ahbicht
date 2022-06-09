@@ -15,8 +15,6 @@ from ahbicht.expressions.expression_resolver import (
 )
 from ahbicht.expressions.package_expansion import DictBasedPackageResolver, PackageResolver
 
-pytestmark = pytest.mark.asyncio
-
 
 class TestTimeConditionReplacement:
     """

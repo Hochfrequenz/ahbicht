@@ -12,8 +12,6 @@ from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, Evaluat
 from ahbicht.expressions.enums import ModalMark, RequirementIndicator
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 
-pytestmark = pytest.mark.asyncio
-
 
 class TestEvaluatorFactory:
     """Tests, that evaluators are created and injected correctly"""
