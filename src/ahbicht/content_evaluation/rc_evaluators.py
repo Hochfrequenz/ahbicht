@@ -1,6 +1,6 @@
 """
 Requirement Constraint (RC) Evaluators are evaluators that check if data are required under given circumstances.
-Typical usecases are for example
+Typical use-cases are for example
 * you must only provide a Gerätenummer if the Transaktionsgrund is e.g. 'E08'
 * you must only provide an Ausbaudatum if the meter is being removed e.g. 'Z02'
 """

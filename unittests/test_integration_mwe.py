@@ -52,6 +52,7 @@ class MweRcEvaluator(RcEvaluator):
 
 class MweFcEvaluator(FcEvaluator):
     def __init__(self):
+        super().__init__()
         self.edifact_format_version = EdifactFormatVersion.FV2210
         self.edifact_format = EdifactFormat.UTILMD
 
