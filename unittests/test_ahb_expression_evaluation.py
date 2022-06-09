@@ -7,6 +7,7 @@ import pytest  # type:ignore[import]
 import pytest_asyncio  # type:ignore[import]
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
+from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData
 from ahbicht.content_evaluation.evaluator_factory import create_and_inject_hardcoded_evaluators
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.evaluation_results import FormatConstraintEvaluationResult, RequirementConstraintEvaluationResult
@@ -214,7 +215,10 @@ class TestAHBExpressionEvaluation:
         tree_b = await parse_expression_including_unresolved_subexpressions(ahb_expression)
         # it's OK/expected that the trees look different depending on whether sub expressions are resolved or not
         # but in any case the evaluation result should look the same
-        create_and_inject_hardcoded_evaluators(content_evaluation_result)
+        def get_evaluatable_data():
+            return None
+
+        create_and_inject_hardcoded_evaluators(content_evaluation_result, get_evaluatable_data)
         evaluation_input = "something has to be here but it's not important what"
         evaluation_result_a = await evaluate_ahb_expression_tree(tree_a, entered_input=evaluation_input)
         evaluation_result_b = await evaluate_ahb_expression_tree(tree_b, entered_input=evaluation_input)

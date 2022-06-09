@@ -1,6 +1,6 @@
 """
 Requirement Constraint (RC) Evaluators are evaluators that check if data are required under given circumstances.
-Typical usecases are for example
+Typical use-cases are for example
 * you must only provide a Gerätenummer if the Transaktionsgrund is e.g. 'E08'
 * you must only provide an Ausbaudatum if the meter is being removed e.g. 'Z02'
 """
@@ -22,22 +22,12 @@ class RcEvaluator(Evaluator, ABC):
     of the condition it evaluates.
     """
 
-    def __init__(self, evaluatable_data: EvaluatableData):
-        """
-        Instantiate any evaluator by providing some evaluatable data from a message.
-        :param evaluatable_data:
-        """
-        super().__init__()
-        if not evaluatable_data:
-            raise ValueError("Evaluatable data have to be provided to any evaluator.")
-        self.evaluatable_data = evaluatable_data
-
     @abstractmethod
     def _get_default_context(self) -> EvaluationContext:
         raise NotImplementedError("Has to be implemented in inheriting class")
 
     async def evaluate_single_condition(
-        self, condition_key: str, context: Optional[EvaluationContext] = None
+        self, condition_key: str, evaluatable_data: EvaluatableData, context: Optional[EvaluationContext] = None
     ) -> ConditionFulfilledValue:
         """
         Evaluates the condition with the given key.
@@ -51,25 +41,37 @@ class RcEvaluator(Evaluator, ABC):
         if context is None:
             context = self._get_default_context()
         if inspect.iscoroutinefunction(evaluation_method):
-            return await evaluation_method(context)
-        return evaluation_method(context)
+            return await evaluation_method(evaluatable_data, context)
+        return evaluation_method(evaluatable_data, context)
 
     async def evaluate_conditions(
-        self, condition_keys: List[str], condition_keys_with_context: Optional[Dict[str, EvaluationContext]] = None
+        self,
+        condition_keys: List[str],
+        evaluatable_data: EvaluatableData,
+        condition_keys_with_context: Optional[Dict[str, EvaluationContext]] = None,
     ) -> Dict[str, ConditionFulfilledValue]:
         """
         Validate all the conditions provided in condition_keys in their respective context.
         """
         if condition_keys_with_context is None:
-            tasks = [self.evaluate_single_condition(condition_key, None) for condition_key in condition_keys]
+            tasks = [
+                self.evaluate_single_condition(condition_key, evaluatable_data=evaluatable_data, context=None)
+                for condition_key in condition_keys
+            ]
         else:
             tasks = []
             for condition_key in condition_keys:
                 if condition_key not in condition_keys_with_context:
-                    tasks.append(self.evaluate_single_condition(condition_key, None))
+                    tasks.append(
+                        self.evaluate_single_condition(condition_key, evaluatable_data=evaluatable_data, context=None)
+                    )
                 else:
                     tasks.append(
-                        self.evaluate_single_condition(condition_key, condition_keys_with_context[condition_key])
+                        self.evaluate_single_condition(
+                            condition_key,
+                            evaluatable_data=evaluatable_data,
+                            context=condition_keys_with_context[condition_key],
+                        )
                     )
 
         results = await asyncio.gather(*tasks)
@@ -88,7 +90,7 @@ class DictBasedRcEvaluator(RcEvaluator):
         Initialize with a dictionary that contains all the requirement constraint evaluation results.
         :param results:
         """
-        super().__init__(evaluatable_data=EvaluatableData(edifact_seed=results))
+        super().__init__()
         self._results: Dict[str, ConditionFulfilledValue] = results
 
     def _get_default_context(self) -> EvaluationContext:
@@ -96,7 +98,7 @@ class DictBasedRcEvaluator(RcEvaluator):
 
     # pylint:disable=unused-argument
     async def evaluate_single_condition(
-        self, condition_key: str, context: Optional[EvaluationContext] = None
+        self, condition_key: str, evaluatable_data: EvaluatableData, context: Optional[EvaluationContext] = None
     ) -> ConditionFulfilledValue:
         try:
             return self._results[condition_key]

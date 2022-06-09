@@ -5,7 +5,7 @@ This module provides the functions to validate segment groups, segments and data
 import asyncio
 from typing import Awaitable, Dict, List, Optional
 
-from maus import DeepAnwendungshandbuch
+from maus.models.anwendungshandbuch import DeepAnwendungshandbuch
 from maus.models.edifact_components import (
     DataElement,
     DataElementFreeText,
