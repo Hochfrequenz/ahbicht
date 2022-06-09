@@ -6,10 +6,12 @@ from typing import Mapping, Optional
 import inject
 import pytest  # type:ignore[import]
 from _pytest.fixtures import SubRequest  # type:ignore[import]
+from maus.edifact import EdifactFormat, EdifactFormatVersion
 
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.expression_resolver import expand_packages
-from ahbicht.expressions.package_expansion import DictBasedPackageResolver, PackageResolver
+from ahbicht.expressions.package_expansion import DictBasedPackageResolver, JsonFilePackageResolver, PackageResolver
+from ahbicht.mapping_results import PackageKeyConditionExpressionMapping
 
 pytestmark = pytest.mark.asyncio
 
@@ -69,3 +71,26 @@ class TestPackageResolver:
         with pytest.raises(ValueError) as invalid_repeatability_error:
             _ = await expand_packages(parsed_tree=unexpanded_tree)
         assert error_message in str(invalid_repeatability_error)
+
+    @pytest.mark.datafiles("./unittests/provider_test_files/example_package_mapping_dict.json")
+    @pytest.mark.datafiles("./unittests/provider_test_files/example_package_mapping_list.json")
+    @pytest.mark.parametrize(
+        "filename",
+        [pytest.param("example_package_mapping_dict.json"), pytest.param("example_package_mapping_list.json")],
+    )
+    async def test_file_based_package_resolver(self, filename, datafiles):
+        """Tests if package resolver provider is instantiated correctly."""
+        path_to_hint_json = datafiles / filename
+        package_resolver: PackageResolver = JsonFilePackageResolver(
+            edifact_format=EdifactFormat.UTILMD,
+            edifact_format_version=EdifactFormatVersion.FV2104,
+            file_path=path_to_hint_json,
+        )
+        assert package_resolver.edifact_format == EdifactFormat.UTILMD
+        assert package_resolver.edifact_format_version == EdifactFormatVersion.FV2104
+        assert await package_resolver.get_condition_expression("123P") == PackageKeyConditionExpressionMapping(
+            edifact_format=EdifactFormat.UTILMD, package_key="123P", package_expression="[1] U [2] O [3]"
+        )
+        assert await package_resolver.get_condition_expression("456P") == PackageKeyConditionExpressionMapping(
+            edifact_format=EdifactFormat.UTILMD, package_key="456P", package_expression="[4] U [5] X [6]"
+        )
