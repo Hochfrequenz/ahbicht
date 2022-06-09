@@ -13,6 +13,32 @@ from lark.exceptions import UnexpectedCharacters, UnexpectedEOF
 from ahbicht.condition_node_distinction import ConditionNodeType, derive_condition_node_type
 from ahbicht.content_evaluation.categorized_key_extract import CategorizedKeyExtract
 
+GRAMMAR = r"""
+?expression: expression "O"i expression -> or_composition
+            | expression "∨" expression -> or_composition
+            | expression "X"i expression -> xor_composition
+            | expression "⊻" expression -> xor_composition
+            | expression "U"i expression -> and_composition
+            | expression "∧" expression -> and_composition
+            | expression expression -> then_also_composition
+            | brackets
+            | package
+            | condition
+            | time_condition
+?brackets: "(" expression ")"
+time_condition: "[" TIME_CONDITION_KEY "]" // a rule for point in time-conditions
+package: "[" PACKAGE_KEY REPEATABILITY? "]" // a rule for packages
+condition: "[" CONDITION_KEY "]" // a rule for condition keys
+TIME_CONDITION_KEY: /UB(1|2|3)/ // a terminal for "übergreifende Bedingungen für Zeitpunktangaben"
+CONDITION_KEY: INT // a TERMINAL for all the remaining ints (lower priority)
+REPEATABILITY: /\d+\.{2}[1-9]\d*/ // a terminal for repetitions n..m with n>=0 and m>n
+PACKAGE_KEY: INT "P" // a TERMINAL for all INTs followed by "P" (high priority)
+%import common.INT
+%import common.WS
+%ignore WS  // WS = whitespace
+"""
+_parser = Lark(GRAMMAR, start="expression")
+
 
 def parse_condition_expression_to_tree(condition_expression: str) -> Tree[Token]:
     """
@@ -26,33 +52,8 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree[Token]
     :return parsed_tree: Tree
     """
 
-    grammar = r"""
-    ?expression: expression "O"i expression -> or_composition
-                | expression "∨" expression -> or_composition
-                | expression "X"i expression -> xor_composition
-                | expression "⊻" expression -> xor_composition
-                | expression "U"i expression -> and_composition
-                | expression "∧" expression -> and_composition
-                | expression expression -> then_also_composition
-                | brackets
-                | package
-                | condition
-                | time_condition
-    ?brackets: "(" expression ")"
-    time_condition: "[" TIME_CONDITION_KEY "]" // a rule for point in time-conditions
-    package: "[" PACKAGE_KEY REPEATABILITY? "]" // a rule for packages
-    condition: "[" CONDITION_KEY "]" // a rule for condition keys
-    TIME_CONDITION_KEY: /UB(1|2|3)/ // a terminal for "übergreifende Bedingungen für Zeitpunktangaben"
-    CONDITION_KEY: INT // a TERMINAL for all the remaining ints (lower priority)
-    REPEATABILITY: /\d+\.{2}[1-9]\d*/ // a terminal for repetitions n..m with n>=0 and m>n
-    PACKAGE_KEY: INT "P" // a TERMINAL for all INTs followed by "P" (high priority)
-    %import common.INT
-    %import common.WS
-    %ignore WS  // WS = whitespace
-    """
-    parser = Lark(grammar, start="expression")
     try:
-        parsed_tree = parser.parse(condition_expression)
+        parsed_tree = _parser.parse(condition_expression)
     except (UnexpectedEOF, UnexpectedCharacters, TypeError) as eof:
         raise SyntaxError(
             """Please make sure that:

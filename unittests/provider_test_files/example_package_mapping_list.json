@@ -1,0 +1,12 @@
+[
+  {
+    "edifact_format": "UTILMD",
+    "package_key": "123P",
+    "package_expression": "[1] U [2] O [3]"
+  },
+  {
+    "edifact_format": "UTILMD",
+    "package_key": "456P",
+    "package_expression": "[4] U [5] X [6]"
+  }
+]

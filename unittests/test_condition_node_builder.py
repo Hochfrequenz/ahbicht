@@ -46,7 +46,7 @@ class TestConditionNodeBuilder:
         _hints_provider = JsonFileHintsProvider(
             TestConditionNodeBuilder._edifact_format,
             TestConditionNodeBuilder._edifact_format_version,
-            file_path=Path("unittests/resources_condition_hints/FV2104/Hints_FV2104_UTILMD.json"),
+            file_path=Path("unittests/provider_test_files/example_hints_file.json"),
         )
 
         def return_dummy_evaluatable_data():

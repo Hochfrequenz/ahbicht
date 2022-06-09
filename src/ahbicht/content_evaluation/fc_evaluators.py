@@ -131,6 +131,7 @@ class DictBasedFcEvaluator(FcEvaluator):
         Initialize with a dictionary that contains all the format constraint evaluation results.
         :param results:
         """
+        super().__init__()
         self._results: Dict[str, EvaluatedFormatConstraint] = results
 
     # pylint: disable=unused-argument

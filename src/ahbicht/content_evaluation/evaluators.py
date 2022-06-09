@@ -4,8 +4,9 @@ FULFILLED (true), UNFULFILLED (false) or NEUTRAL (None). Their results are used 
 the entire message.
 """
 import inspect
+import re
 from abc import ABC
-from typing import Callable, Optional
+from typing import Callable, Dict, Optional
 
 from maus.edifact import EdifactFormat, EdifactFormatVersion
 
@@ -27,6 +28,18 @@ class Evaluator(ABC):
     edifact_format_version: EdifactFormatVersion = NotImplementedError(  # type:ignore[assignment]
         "The inheriting class needs to define a format version."
     )
+    _evaluation_method_name_pattern = re.compile(r"^evaluate_(?P<condition_key>\d+)$")
+
+    def __init__(self):
+        """
+        initializes a cache with all evaluation methods defined in the (child) class
+        """
+        self._evaluation_methods: Dict[str, Callable] = {}
+        for candidate in inspect.getmembers(self, inspect.ismethod):
+            # a candidate is a tuple of a string (index 0, name of the method) and the bound method itself (index 1)
+            match = Evaluator._evaluation_method_name_pattern.match(candidate[0])
+            if match:
+                self._evaluation_methods[match.groupdict()["condition_key"]] = candidate[1]
 
     def get_evaluation_method(self, condition_key: str) -> Optional[Callable]:
         """
@@ -34,8 +47,6 @@ class Evaluator(ABC):
         :param condition_key: unique key of the condition, e.g. "59"
         :return: The method that can be used for content_evaluation; None if no such method is implemented.
         """
-        for candidate in inspect.getmembers(self, inspect.ismethod):
-            # a candidate is a tuple of a string (index 0, name of the method) and the bound method itself (index 1)
-            if candidate[0] == f"evaluate_{condition_key}":
-                return candidate[1]
+        if condition_key in self._evaluation_methods:
+            return self._evaluation_methods[condition_key]
         return None
