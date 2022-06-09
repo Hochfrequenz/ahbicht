@@ -19,6 +19,16 @@ class EvaluatableData:
     # - pruefidentifikator to tweak the content_evaluation depending on the situation?
 
 
+# pylint:disable=too-few-public-methods
+class EvaluatableDataProvider:
+    """
+    This is just a dummy class that is used for dependency injection.
+    Use it to call binder.bind_to_provider(EvaluatableDataProvider, func_that_returns_evaluatable_data_goes_here)
+    during dependency injection.
+    See https://github.com/ivankorobkov/python-inject#why-no-scopes
+    """
+
+
 @dataclass
 class EvaluationContext:
     """

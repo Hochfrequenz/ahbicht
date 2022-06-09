@@ -48,10 +48,14 @@ class TestConditionNodeBuilder:
             TestConditionNodeBuilder._edifact_format_version,
             file_path=Path("unittests/provider_test_files/example_hints_file.json"),
         )
+
+        def return_dummy_evaluatable_data():
+            return EvaluatableData(edifact_seed=dict())
+
         inject.clear_and_configure(
-            lambda binder: binder.bind(HintsProvider, _hints_provider).bind(
-                RcEvaluator, DummyRcEvaluator(EvaluatableData(edifact_seed=dict()))
-            )
+            lambda binder: binder.bind(HintsProvider, _hints_provider)
+            .bind(RcEvaluator, DummyRcEvaluator())
+            .bind_to_provider(EvaluatableData, return_dummy_evaluatable_data)
         )
         yield
         inject.clear()

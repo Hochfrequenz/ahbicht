@@ -9,11 +9,12 @@ seems like a big overhead. The code representation of "all outcomes are already 
 ContentEvaluationResult. Now the methods below are useful. Simply provide a content evaluation result (the data) and
 the evaluators are created based on the already known outcomes. You do not have to actually touch any evaluator code.
 """
-from typing import Tuple
+from typing import Callable, Optional, Tuple
 
 import inject
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
+from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
 from ahbicht.content_evaluation.fc_evaluators import DictBasedFcEvaluator, FcEvaluator
 from ahbicht.content_evaluation.rc_evaluators import DictBasedRcEvaluator, RcEvaluator
 from ahbicht.expressions.hints_provider import DictBasedHintsProvider, HintsProvider
@@ -36,7 +37,10 @@ def create_hardcoded_evaluators(
     return rc_evaluator, fc_evaluator, hints_provider, package_resolver
 
 
-def create_and_inject_hardcoded_evaluators(content_evaluation_result: ContentEvaluationResult):
+def create_and_inject_hardcoded_evaluators(
+    content_evaluation_result: ContentEvaluationResult,
+    evaluatable_data_provider: Optional[Callable[[], EvaluatableData]] = None,
+):
     """
     Creates evaluators from hardcoded content_evaluation result and injects them
 
@@ -44,9 +48,12 @@ def create_and_inject_hardcoded_evaluators(content_evaluation_result: ContentEva
     :return:
     """
     evaluators = create_hardcoded_evaluators(content_evaluation_result)
-    inject.clear_and_configure(
-        lambda binder: binder.bind(RcEvaluator, evaluators[0])  # type:ignore[arg-type]
-        .bind(FcEvaluator, evaluators[1])
-        .bind(HintsProvider, evaluators[2])
-        .bind(PackageResolver, evaluators[3])
-    )
+
+    def configure(binder):
+        binder.bind(RcEvaluator, evaluators[0]).bind(FcEvaluator, evaluators[1]).bind(
+            HintsProvider, evaluators[2]
+        ).bind(PackageResolver, evaluators[3])
+        if evaluatable_data_provider is not None:
+            binder.bind_to_provider(EvaluatableDataProvider, evaluatable_data_provider)
+
+    inject.clear_and_configure(configure)
