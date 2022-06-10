@@ -4,6 +4,8 @@ Dataclasses that are relevant in the context of the content_evaluation.
 from dataclasses import dataclass, replace
 from typing import Optional, Union
 
+from maus.edifact import EdifactFormat, EdifactFormatVersion
+
 
 @dataclass
 class EvaluatableData:
@@ -14,7 +16,9 @@ class EvaluatableData:
     provided is the meta seed of the message itself. But in the future the data provided might grow.
     """
 
-    edifact_seed: Union[dict, list]  # the meta seed of the message that is being validated
+    edifact_seed: Union[dict, list]  #: the meta seed of the message that is being validated
+    edifact_format: EdifactFormat  #: the format of the evaluatable message (e.g. UTILMD)
+    edifact_format_version: EdifactFormatVersion  #: the format version of the evaluable data (e.g. FV2210)
     # ideas for what else could go here:
     # - pruefidentifikator to tweak the content_evaluation depending on the situation?
 
