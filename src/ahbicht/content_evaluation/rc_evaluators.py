@@ -31,6 +31,7 @@ class RcEvaluator(Evaluator, ABC):
     ) -> ConditionFulfilledValue:
         """
         Evaluates the condition with the given key.
+        :param evaluatable_data: data of the edifact message/transaction
         :param context: optional content_evaluation context, if not the default context will be used
         :param condition_key: key of the condition, e.g. "78"
         :return:
