@@ -6,11 +6,10 @@ from typing import Dict, List, Tuple, Union
 
 import inject
 
+from ahbicht.content_evaluation.ahbicht_provider import AhbichtProvider
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
-from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.expressions.condition_expression_parser import extract_categorized_keys_from_tree
 from ahbicht.expressions.condition_nodes import Hint, RequirementConstraint, UnevaluatedFormatConstraint
-from ahbicht.expressions.hints_provider import HintsProvider
 
 # TRCTransformerArgument is a union of nodes that are already evaluated from a Requirement Constraint (RC) perspective.
 # The Format Constraints (FC) might still be unevaluated. That's why the return type used in the
@@ -29,8 +28,7 @@ class ConditionNodeBuilder:
     """
 
     def __init__(self, condition_keys: List[str]):
-        self.hints_provider: HintsProvider = inject.instance(HintsProvider)  # type:ignore[assignment]
-        self.rc_evaluator: RcEvaluator = inject.instance(RcEvaluator)  # type:ignore[assignment]
+        self.ahbicht_provider: AhbichtProvider = inject.instance(AhbichtProvider)  # type:ignore[assignment]
         self.condition_keys = condition_keys
         (
             self.requirement_constraints_condition_keys,
@@ -52,7 +50,8 @@ class ConditionNodeBuilder:
 
     async def _build_hint_nodes(self) -> Dict[str, Hint]:
         """Builds Hint nodes from their condition keys by getting all hint texts from the HintsProvider."""
-        return await self.hints_provider.get_hints(self.hints_condition_keys)
+        hints_provider = self.ahbicht_provider.get_hints_provider()
+        return await hints_provider.get_hints(self.hints_condition_keys)
 
     def _build_unevaluated_format_constraint_nodes(self) -> Dict[str, UnevaluatedFormatConstraint]:
         """Build unevaluated format constraint nodes."""
@@ -70,7 +69,10 @@ class ConditionNodeBuilder:
         Build requirement constraint nodes by evaluating the constraints
         with the help of the respective Evaluator.
         """
-        evaluated_conditions_fulfilled_attribute = await self.rc_evaluator.evaluate_conditions(
+        rc_evaluator = self.ahbicht_provider.get_rc_evaluator(
+            evaluatable_data.edifact_format, evaluatable_data.edifact_format_version
+        )
+        evaluated_conditions_fulfilled_attribute = await rc_evaluator.evaluate_conditions(
             condition_keys=self.requirement_constraints_condition_keys, evaluatable_data=evaluatable_data
         )
         evaluated_requirement_constraints: Dict[str, RequirementConstraint] = {}

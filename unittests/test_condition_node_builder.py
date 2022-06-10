@@ -7,6 +7,7 @@ import pytest_asyncio  # type:ignore[import]
 from maus.edifact import EdifactFormat, EdifactFormatVersion
 
 from ahbicht.condition_node_builder import ConditionNodeBuilder
+from ahbicht.content_evaluation.ahbicht_provider import AhbichtProvider, ListBasedAhbichtProvider
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluationContext
 from ahbicht.content_evaluation.rc_evaluators import EvaluatableData, RcEvaluator
 from ahbicht.expressions.condition_nodes import (
@@ -51,9 +52,9 @@ class TestConditionNodeBuilder:
             return EvaluatableData(edifact_seed=dict())
 
         inject.clear_and_configure(
-            lambda binder: binder.bind(HintsProvider, _hints_provider)
-            .bind(RcEvaluator, DummyRcEvaluator())
-            .bind_to_provider(EvaluatableData, return_dummy_evaluatable_data)
+            lambda binder: binder.bind(
+                AhbichtProvider, ListBasedAhbichtProvider([_hints_provider, DummyRcEvaluator()])
+            ).bind_to_provider(EvaluatableData, return_dummy_evaluatable_data)
         )
         yield
         inject.clear()
@@ -64,8 +65,6 @@ class TestConditionNodeBuilder:
         condition_keys = ["501", "12", "903"]
         condition_node_builder = ConditionNodeBuilder(condition_keys)
 
-        assert condition_node_builder.hints_provider.edifact_format == self._edifact_format
-        assert condition_node_builder.rc_evaluator.edifact_format_version == self._edifact_format_version
         assert condition_node_builder.condition_keys == condition_keys
         assert condition_node_builder.requirement_constraints_condition_keys == ["12"]
         assert condition_node_builder.hints_condition_keys == ["501"]

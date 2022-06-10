@@ -34,6 +34,7 @@ from ahbicht.validation.validation_results import (
 from ahbicht.validation.validation_values import RequirementValidationValue
 
 # TODO: Add testcases for segment_requirement is None & soll_is_required = False
+from unittests.defaults import default_test_format, default_test_version, empty_default_test_data
 
 
 class TestValidation:
@@ -52,7 +53,15 @@ class TestValidation:
             id=uuid.UUID("d106f335-f663-4d14-9636-4f43a883ad26"),
         )
 
-        create_and_inject_hardcoded_evaluators(content_evaluation_result=content_evaluation_result)
+        def eval_data_provider():
+            return empty_default_test_data
+
+        create_and_inject_hardcoded_evaluators(
+            content_evaluation_result=content_evaluation_result,
+            edifact_format=default_test_format,
+            edifact_format_version=default_test_version,
+            evaluatable_data_provider=eval_data_provider,
+        )
 
     @pytest.mark.parametrize(
         "deep_ahb, expected_validation_result",

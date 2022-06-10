@@ -12,6 +12,7 @@ from maus import (
 from maus.edifact import EdifactFormat, EdifactFormatVersion
 from maus.models.anwendungshandbuch import AhbMetaInformation
 
+from ahbicht.content_evaluation.ahbicht_provider import AhbichtProvider, ListBasedAhbichtProvider
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider, EvaluationContext
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
@@ -91,16 +92,23 @@ class TestIntegrationMwe:
     If any tests break, then first fix all other tests and run these tests last.
     """
 
-    message_under_test: EvaluatableData = EvaluatableData(edifact_seed={"foo": "bar", "asd": "yxc"})
+    message_under_test: EvaluatableData = EvaluatableData(
+        edifact_seed={"foo": "bar", "asd": "yxc"},
+        edifact_format=EdifactFormat.UTILMD,
+        edifact_format_version=EdifactFormatVersion.FV2210,
+    )
 
     @pytest_asyncio.fixture()
     def setup_and_teardown_injector(self):
+        fc_evaluator = MweFcEvaluator()
+        rc_evaluator = MweRcEvaluator()
+        hints_provider = MweHintsProvider({"567": "Hallo Welt"})
+        package_resolver = MwePackageResolver({"4P": "[1] U [2]"})
         inject.clear_and_configure(
-            lambda binder: binder.bind(FcEvaluator, MweFcEvaluator())
-            .bind(RcEvaluator, MweRcEvaluator())
-            .bind(PackageResolver, MwePackageResolver({"4P": "[1] U [2]"}))
-            .bind(HintsProvider, MweHintsProvider({"567": "Hallo Welt"}))
-            .bind_to_provider(EvaluatableDataProvider, get_eval_data)
+            lambda binder: binder.bind(
+                AhbichtProvider,
+                ListBasedAhbichtProvider([fc_evaluator, rc_evaluator, hints_provider, package_resolver]),
+            ).bind_to_provider(EvaluatableDataProvider, get_eval_data)
         )
         yield
         inject.clear()

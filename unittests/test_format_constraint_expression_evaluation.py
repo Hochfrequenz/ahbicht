@@ -6,6 +6,7 @@ import pytest  # type:ignore[import]
 import pytest_asyncio  # type:ignore[import]
 from maus.edifact import EdifactFormat, EdifactFormatVersion
 
+from ahbicht.content_evaluation.ahbicht_provider import AhbichtProvider, ListBasedAhbichtProvider
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
 from ahbicht.evaluation_results import FormatConstraintEvaluationResult
 from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
@@ -60,7 +61,9 @@ class TestFormatConstraintExpressionEvaluation:
 
     @pytest_asyncio.fixture()
     def setup_and_teardown_injector(self):
-        inject.clear_and_configure(lambda binder: binder.bind(FcEvaluator, DummyFcEvaluator()))
+        inject.clear_and_configure(
+            lambda binder: binder.bind(AhbichtProvider, ListBasedAhbichtProvider([DummyFcEvaluator()]))
+        )
         yield
         inject.clear()
 

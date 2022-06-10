@@ -11,6 +11,7 @@ import inject
 from lark import Token, Transformer, Tree
 from lark.exceptions import VisitError
 
+from ahbicht.content_evaluation.ahbicht_provider import AhbichtProvider
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.package_expansion import PackageResolver
@@ -110,7 +111,7 @@ class PackageExpansionTransformer(Transformer):
 
     def __init__(self):
         super().__init__()
-        self._resolver: PackageResolver = inject.instance(PackageResolver)
+        self.ahbicht_provider: AhbichtProvider = inject.instance(AhbichtProvider)
 
     def package(self, tokens: List[Token]) -> Awaitable[Tree]:
         """
@@ -131,11 +132,10 @@ class PackageExpansionTransformer(Transformer):
         return self._package_async(package_key_token)
 
     async def _package_async(self, package_key_token: Token) -> Tree[Token]:
-        resolved_package = await self._resolver.get_condition_expression(package_key_token.value)
+        resolver: PackageResolver = self.ahbicht_provider.get_package_resolver()
+        resolved_package = await resolver.get_condition_expression(package_key_token.value)
         if not resolved_package.has_been_resolved_successfully():
-            raise NotImplementedError(
-                f"The package '{package_key_token.value}' could not be resolved by {self._resolver}"
-            )
+            raise NotImplementedError(f"The package '{package_key_token.value}' could not be resolved by {resolver}")
         # the package_expression is not None because that's the definition of "has been resolved successfully"
         tree_result = parse_condition_expression_to_tree(resolved_package.package_expression)  # type:ignore[arg-type]
         return tree_result

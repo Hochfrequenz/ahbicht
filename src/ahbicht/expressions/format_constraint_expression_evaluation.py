@@ -12,6 +12,7 @@ import inject
 from lark import Token, Tree, v_args
 from lark.exceptions import VisitError
 
+from ahbicht.content_evaluation.ahbicht_provider import AhbichtProvider
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
 from ahbicht.evaluation_results import FormatConstraintEvaluationResult
 from ahbicht.expressions.base_transformer import BaseTransformer
@@ -121,7 +122,8 @@ async def _build_evaluated_format_constraint_nodes(
 ) -> Dict[str, EvaluatedFormatConstraint]:
     """Build evaluated format constraint nodes."""
 
-    evaluator: FcEvaluator = inject.instance(FcEvaluator)
+    ahbicht_provider: AhbichtProvider = inject.instance(AhbichtProvider)
+    evaluator: FcEvaluator = ahbicht_provider.get_fc_evaluator()
     evaluated_format_constraints = await evaluator.evaluate_format_constraints(
         evaluatable_format_constraint_keys, entered_input
     )
