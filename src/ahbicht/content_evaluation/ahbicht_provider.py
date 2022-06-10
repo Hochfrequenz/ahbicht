@@ -66,11 +66,13 @@ class ListBasedAhbichtProvider(AhbichtProvider):
     _unknown_key = "undefined"
 
     @staticmethod
-    def _to_key(edifact_format: EdifactFormat, format_version: EdifactFormatVersion) -> str:
+    def _to_key(edifact_format: Optional[EdifactFormat], format_version: Optional[EdifactFormatVersion]) -> str:
         """
         because a tuple for format and format version is not hashable / usuable as key in a dict this methods
         converts them to a unique and hashable string
         """
+        if edifact_format is None or format_version is None:
+            return ListBasedAhbichtProvider._unknown_key
         # we don't care what the key is, it just has to be unique and consistent
         return f"{edifact_format}-{format_version}"
 
@@ -105,7 +107,9 @@ class ListBasedAhbichtProvider(AhbichtProvider):
                 )
             target_dict[key] = instance
 
-    def get_fc_evaluator(self, edifact_format: EdifactFormat, format_version: EdifactFormatVersion) -> FcEvaluator:
+    def get_fc_evaluator(
+        self, edifact_format: Optional[EdifactFormat] = None, format_version: Optional[EdifactFormatVersion] = None
+    ) -> FcEvaluator:
         try:
             return self._fc_evaluators[ListBasedAhbichtProvider._to_key(edifact_format, format_version)]
         except KeyError as key_error:
@@ -113,7 +117,9 @@ class ListBasedAhbichtProvider(AhbichtProvider):
                 f"No FC Evaluator has been registered for {edifact_format} in {format_version}"
             ) from key_error
 
-    def get_rc_evaluator(self, edifact_format: EdifactFormat, format_version: EdifactFormatVersion) -> RcEvaluator:
+    def get_rc_evaluator(
+        self, edifact_format: Optional[EdifactFormat] = None, format_version: Optional[EdifactFormatVersion] = None
+    ) -> RcEvaluator:
         try:
             return self._rc_evaluators[ListBasedAhbichtProvider._to_key(edifact_format, format_version)]
         except KeyError as key_error:
@@ -124,32 +130,20 @@ class ListBasedAhbichtProvider(AhbichtProvider):
     def get_hints_provider(
         self, edifact_format: Optional[EdifactFormat] = None, format_version: Optional[EdifactFormatVersion] = None
     ) -> HintsProvider:
-        key: str
-        if edifact_format is None or format_version is None:
-            # just get the
-            key = ListBasedAhbichtProvider._unknown_key
-        else:
-            key = ListBasedAhbichtProvider._to_key(edifact_format, format_version)
         try:
-            return self._hints_providers[key]
+            return self._hints_providers[ListBasedAhbichtProvider._to_key(edifact_format, format_version)]
         except KeyError as key_error:
             raise NotImplementedError(
-                f"No HintsProvider has been registered for '{key}'/{edifact_format} in {format_version}"
+                f"No HintsProvider has been registered for {edifact_format} in {format_version}"
             ) from key_error
 
     def get_package_resolver(
         self, edifact_format: Optional[EdifactFormat] = None, format_version: Optional[EdifactFormatVersion] = None
     ) -> PackageResolver:
-        key: str
-        if edifact_format is None or format_version is None:
-            # just get the
-            key = ListBasedAhbichtProvider._unknown_key
-        else:
-            key = ListBasedAhbichtProvider._to_key(edifact_format, format_version)
         try:
-            return self._package_resolvers[key]
+            return self._package_resolvers[ListBasedAhbichtProvider._to_key(edifact_format, format_version)]
         except KeyError as key_error:
             # maybe the user injected a package resolver instead
             raise NotImplementedError(
-                f"No PackageResolver has been registered for '{key}'/{edifact_format} in {format_version}"
+                f"No PackageResolver has been registered for {edifact_format} in {format_version}"
             ) from key_error
