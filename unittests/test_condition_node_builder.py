@@ -4,7 +4,6 @@ from pathlib import Path
 import inject
 import pytest  # type:ignore[import]
 import pytest_asyncio  # type:ignore[import]
-from maus.edifact import EdifactFormat, EdifactFormatVersion
 
 from ahbicht.condition_node_builder import ConditionNodeBuilder
 from ahbicht.content_evaluation.ahbicht_provider import AhbichtProvider, ListBasedAhbichtProvider
@@ -16,7 +15,8 @@ from ahbicht.expressions.condition_nodes import (
     RequirementConstraint,
     UnevaluatedFormatConstraint,
 )
-from ahbicht.expressions.hints_provider import HintsProvider, JsonFileHintsProvider
+from ahbicht.expressions.hints_provider import JsonFileHintsProvider
+from unittests.defaults import default_test_format, default_test_version, empty_default_test_data
 
 
 class DummyRcEvaluator(RcEvaluator):
@@ -27,13 +27,13 @@ class DummyRcEvaluator(RcEvaluator):
     def _get_default_context(self) -> EvaluationContext:
         return None  # type:ignore[return-value]
 
-    edifact_format = EdifactFormat.UTILMD
-    edifact_format_version = EdifactFormatVersion.FV2104
+    edifact_format = default_test_format
+    edifact_format_version = default_test_version
 
 
 class TestConditionNodeBuilder:
-    _edifact_format = EdifactFormat.UTILMD
-    _edifact_format_version = EdifactFormatVersion.FV2104
+    _edifact_format = default_test_format
+    _edifact_format_version = default_test_version
 
     _h_583 = Hint(condition_key="583", hint="[583] Hinweis: Verwendung der ID der Marktlokation")
     _h_584 = Hint(condition_key="584", hint="[584] Hinweis: Verwendung der ID der Messlokation")
@@ -49,7 +49,7 @@ class TestConditionNodeBuilder:
         )
 
         def return_dummy_evaluatable_data():
-            return EvaluatableData(edifact_seed=dict())
+            return empty_default_test_data
 
         inject.clear_and_configure(
             lambda binder: binder.bind(
