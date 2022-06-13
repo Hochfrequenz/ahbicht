@@ -1,19 +1,12 @@
 """
 Test for the expansion of packages.
 """
-from typing import Mapping, Optional
 
-import inject
 import pytest  # type:ignore[import]
 from _pytest.fixtures import SubRequest  # type:ignore[import]
 from lark import Token, Tree
 
-from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
-from ahbicht.expressions.expression_resolver import (
-    expand_packages,
-    parse_expression_including_unresolved_subexpressions,
-)
-from ahbicht.expressions.package_expansion import DictBasedPackageResolver, PackageResolver
+from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 
 
 class TestTimeConditionReplacement:

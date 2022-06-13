@@ -4,7 +4,7 @@ import pytest  # type:ignore[import]
 from _pytest.fixtures import SubRequest  # type:ignore[import]
 from maus.edifact import EdifactFormat, EdifactFormatVersion
 
-from ahbicht.content_evaluation.ahbicht_provider import AhbichtProvider, ListBasedAhbichtProvider
+from ahbicht.content_evaluation.ahbicht_provider import ListBasedAhbichtProvider
 from ahbicht.content_evaluation.evaluators import Evaluator
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator

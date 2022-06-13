@@ -48,9 +48,13 @@ class ConditionNodeBuilder:
             categorized_keys.format_constraint_keys,
         )
 
-    async def _build_hint_nodes(self) -> Dict[str, Hint]:
+    @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
+    # search for binder.bind_to_provider(EvaluatableDataProvider, your_function_that_returns_evaluatable_data_goes_here)
+    async def _build_hint_nodes(self, evaluatable_data: EvaluatableData) -> Dict[str, Hint]:
         """Builds Hint nodes from their condition keys by getting all hint texts from the HintsProvider."""
-        hints_provider = self.ahbicht_provider.get_hints_provider()
+        hints_provider = self.ahbicht_provider.get_hints_provider(
+            evaluatable_data.edifact_format, evaluatable_data.edifact_format_version
+        )
         return await hints_provider.get_hints(self.hints_condition_keys)
 
     def _build_unevaluated_format_constraint_nodes(self) -> Dict[str, UnevaluatedFormatConstraint]:

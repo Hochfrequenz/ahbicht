@@ -13,6 +13,7 @@ from lark import Token, Tree, v_args
 from lark.exceptions import VisitError
 
 from ahbicht.content_evaluation.ahbicht_provider import AhbichtProvider
+from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
 from ahbicht.evaluation_results import FormatConstraintEvaluationResult
 from ahbicht.expressions.base_transformer import BaseTransformer
@@ -117,13 +118,19 @@ async def format_constraint_evaluation(
     )
 
 
+@inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
+# search for binder.bind_to_provider(EvaluatableDataProvider, your_function_that_returns_evaluatable_data_goes_here)
 async def _build_evaluated_format_constraint_nodes(
-    evaluatable_format_constraint_keys: List[str], entered_input: Optional[str]
+    evaluatable_format_constraint_keys: List[str],
+    entered_input: Optional[str],
+    evaluatable_data: EvaluatableData,
 ) -> Dict[str, EvaluatedFormatConstraint]:
     """Build evaluated format constraint nodes."""
 
     ahbicht_provider: AhbichtProvider = inject.instance(AhbichtProvider)
-    evaluator: FcEvaluator = ahbicht_provider.get_fc_evaluator()
+    evaluator: FcEvaluator = ahbicht_provider.get_fc_evaluator(
+        evaluatable_data.edifact_format, evaluatable_data.edifact_format_version
+    )
     evaluated_format_constraints = await evaluator.evaluate_format_constraints(
         evaluatable_format_constraint_keys, entered_input
     )

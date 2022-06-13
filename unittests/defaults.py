@@ -10,3 +10,7 @@ default_test_version: EdifactFormatVersion = EdifactFormatVersion.FV2210
 empty_default_test_data: EvaluatableData = EvaluatableData(
     edifact_seed={}, edifact_format=default_test_format, edifact_format_version=default_test_version
 )
+
+
+def return_empty_dummy_evaluatable_data():
+    return empty_default_test_data

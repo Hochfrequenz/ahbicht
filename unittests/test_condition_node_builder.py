@@ -7,8 +7,8 @@ import pytest_asyncio  # type:ignore[import]
 
 from ahbicht.condition_node_builder import ConditionNodeBuilder
 from ahbicht.content_evaluation.ahbicht_provider import AhbichtProvider, ListBasedAhbichtProvider
-from ahbicht.content_evaluation.evaluationdatatypes import EvaluationContext
-from ahbicht.content_evaluation.rc_evaluators import EvaluatableData, RcEvaluator
+from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider, EvaluationContext
+from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.expressions.condition_nodes import (
     ConditionFulfilledValue,
     Hint,
@@ -16,7 +16,7 @@ from ahbicht.expressions.condition_nodes import (
     UnevaluatedFormatConstraint,
 )
 from ahbicht.expressions.hints_provider import JsonFileHintsProvider
-from unittests.defaults import default_test_format, default_test_version, empty_default_test_data
+from unittests.defaults import default_test_format, default_test_version, return_empty_dummy_evaluatable_data
 
 
 class DummyRcEvaluator(RcEvaluator):
@@ -47,14 +47,10 @@ class TestConditionNodeBuilder:
             TestConditionNodeBuilder._edifact_format_version,
             file_path=Path("unittests/provider_test_files/example_hints_file.json"),
         )
-
-        def return_dummy_evaluatable_data():
-            return empty_default_test_data
-
         inject.clear_and_configure(
             lambda binder: binder.bind(
                 AhbichtProvider, ListBasedAhbichtProvider([_hints_provider, DummyRcEvaluator()])
-            ).bind_to_provider(EvaluatableData, return_dummy_evaluatable_data)
+            ).bind_to_provider(EvaluatableDataProvider, return_empty_dummy_evaluatable_data)
         )
         yield
         inject.clear()

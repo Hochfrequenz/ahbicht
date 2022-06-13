@@ -4,7 +4,6 @@ Tests that the code can handle RC/FC evaluators that have both async and sync me
 
 import inject
 import pytest  # type:ignore[import]
-from maus.edifact import EdifactFormat, EdifactFormatVersion
 
 from ahbicht.content_evaluation.ahbicht_provider import AhbichtProvider, ListBasedAhbichtProvider
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider, EvaluationContext
@@ -13,7 +12,7 @@ from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
-from ahbicht.expressions.hints_provider import DictBasedHintsProvider, HintsProvider
+from ahbicht.expressions.hints_provider import DictBasedHintsProvider
 from unittests.defaults import default_test_format, default_test_version, empty_default_test_data
 
 
@@ -69,10 +68,16 @@ class TestMixedSyncAsyncEvaluation:
         def get_evaluatable_data():
             return empty_default_test_data
 
+        class MweHintsProvider(DictBasedHintsProvider):
+            def __init__(self, mappings):
+                super().__init__(mappings)
+                self.edifact_format = default_test_format
+                self.edifact_format_version = default_test_version
+
         rc_evaluator = MixedSyncAsyncRcEvaluator()
         inject.clear_and_configure(
             lambda binder: binder.bind(
-                AhbichtProvider, ListBasedAhbichtProvider([rc_evaluator, fc_evaluator, DictBasedHintsProvider({})])
+                AhbichtProvider, ListBasedAhbichtProvider([rc_evaluator, fc_evaluator, MweHintsProvider({})])
             ).bind_to_provider(EvaluatableDataProvider, get_evaluatable_data)
         )
         evaluation_input = "something has to be here but it's not important what"

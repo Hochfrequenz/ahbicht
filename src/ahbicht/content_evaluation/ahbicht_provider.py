@@ -143,7 +143,6 @@ class ListBasedAhbichtProvider(AhbichtProvider):
         try:
             return self._package_resolvers[ListBasedAhbichtProvider._to_key(edifact_format, format_version)]
         except KeyError as key_error:
-            # maybe the user injected a package resolver instead
             raise NotImplementedError(
                 f"No PackageResolver has been registered for {edifact_format} in {format_version}"
             ) from key_error
