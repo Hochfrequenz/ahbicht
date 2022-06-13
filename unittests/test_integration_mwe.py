@@ -9,16 +9,17 @@ from maus import (
     SegmentGroup,
     ValuePoolEntry,
 )
-from maus.edifact import EdifactFormat, EdifactFormatVersion
 from maus.models.anwendungshandbuch import AhbMetaInformation
 
+from ahbicht.content_evaluation.ahbicht_provider import AhbichtProvider, ListBasedAhbichtProvider
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider, EvaluationContext
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
-from ahbicht.expressions.hints_provider import DictBasedHintsProvider, HintsProvider
-from ahbicht.expressions.package_expansion import DictBasedPackageResolver, PackageResolver
+from ahbicht.expressions.hints_provider import DictBasedHintsProvider
+from ahbicht.expressions.package_expansion import DictBasedPackageResolver
 from ahbicht.validation.validation import validate_deep_anwendungshandbuch
+from unittests.defaults import default_test_format, default_test_version
 
 pytestmark = pytest.mark.asyncio
 
@@ -26,8 +27,8 @@ pytestmark = pytest.mark.asyncio
 class MweRcEvaluator(RcEvaluator):
     def __init__(self):
         super().__init__()
-        self.edifact_format_version = EdifactFormatVersion.FV2210
-        self.edifact_format = EdifactFormat.UTILMD
+        self.edifact_format = default_test_format
+        self.edifact_format_version = default_test_version
 
     def _get_default_context(self) -> EvaluationContext:
         # we need to implement this method but for now, we don't care about its return value
@@ -53,8 +54,8 @@ class MweRcEvaluator(RcEvaluator):
 class MweFcEvaluator(FcEvaluator):
     def __init__(self):
         super().__init__()
-        self.edifact_format_version = EdifactFormatVersion.FV2210
-        self.edifact_format = EdifactFormat.UTILMD
+        self.edifact_format = default_test_format
+        self.edifact_format_version = default_test_version
 
     def evaluate_998(self, entered_input):
         """fantasy FC: input must be all upper case"""
@@ -70,15 +71,15 @@ class MweFcEvaluator(FcEvaluator):
 class MwePackageResolver(DictBasedPackageResolver):
     def __init__(self, mappings):
         super().__init__(mappings)
-        self.edifact_format_version = EdifactFormatVersion.FV2210
-        self.edifact_format = EdifactFormat.UTILMD
+        self.edifact_format = default_test_format
+        self.edifact_format_version = default_test_version
 
 
 class MweHintsProvider(DictBasedHintsProvider):
     def __init__(self, mappings):
         super().__init__(mappings)
-        self.edifact_format_version = EdifactFormatVersion.FV2210
-        self.edifact_format = EdifactFormat.UTILMD
+        self.edifact_format = default_test_format
+        self.edifact_format_version = default_test_version
 
 
 def get_eval_data():
@@ -91,16 +92,23 @@ class TestIntegrationMwe:
     If any tests break, then first fix all other tests and run these tests last.
     """
 
-    message_under_test: EvaluatableData = EvaluatableData(edifact_seed={"foo": "bar", "asd": "yxc"})
+    message_under_test: EvaluatableData = EvaluatableData(
+        edifact_seed={"foo": "bar", "asd": "yxc"},
+        edifact_format=default_test_format,
+        edifact_format_version=default_test_version,
+    )
 
     @pytest_asyncio.fixture()
     def setup_and_teardown_injector(self):
+        fc_evaluator = MweFcEvaluator()
+        rc_evaluator = MweRcEvaluator()
+        hints_provider = MweHintsProvider({"567": "Hallo Welt"})
+        package_resolver = MwePackageResolver({"4P": "[1] U [2]"})
         inject.clear_and_configure(
-            lambda binder: binder.bind(FcEvaluator, MweFcEvaluator())
-            .bind(RcEvaluator, MweRcEvaluator())
-            .bind(PackageResolver, MwePackageResolver({"4P": "[1] U [2]"}))
-            .bind(HintsProvider, MweHintsProvider({"567": "Hallo Welt"}))
-            .bind_to_provider(EvaluatableDataProvider, get_eval_data)
+            lambda binder: binder.bind(
+                AhbichtProvider,
+                ListBasedAhbichtProvider([fc_evaluator, rc_evaluator, hints_provider, package_resolver]),
+            ).bind_to_provider(EvaluatableDataProvider, get_eval_data)
         )
         yield
         inject.clear()
@@ -180,7 +188,9 @@ class TestIntegrationMwe:
         results = await validate_deep_anwendungshandbuch(maus)
         assert results is not None  # no detailed assertions here
         TestIntegrationMwe.message_under_test = EvaluatableData(
-            edifact_seed={"foo": "baz", "asd": "qwe"}
+            edifact_seed={"foo": "baz", "asd": "qwe"},
+            edifact_format=default_test_format,
+            edifact_format_version=default_test_version,
         )  # change the message under test to trigger different outcomes
         results2 = await validate_deep_anwendungshandbuch(maus)
         assert results2 is not None

@@ -6,8 +6,9 @@ import inject
 import pytest  # type:ignore[import]
 import pytest_asyncio  # type:ignore[import]
 
+from ahbicht.content_evaluation.ahbicht_provider import AhbichtProvider, ListBasedAhbichtProvider
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
-from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData
+from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
 from ahbicht.content_evaluation.evaluator_factory import create_and_inject_hardcoded_evaluators
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.evaluation_results import FormatConstraintEvaluationResult, RequirementConstraintEvaluationResult
@@ -16,7 +17,8 @@ from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_si
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.expressions.enums import ModalMark, PrefixOperator, RequirementIndicator
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
-from ahbicht.expressions.hints_provider import HintsProvider
+from ahbicht.expressions.hints_provider import DictBasedHintsProvider
+from unittests.defaults import default_test_format, default_test_version, return_empty_dummy_evaluatable_data
 
 
 class TestAHBExpressionEvaluation:
@@ -24,10 +26,24 @@ class TestAHBExpressionEvaluation:
 
     @pytest_asyncio.fixture()
     def setup_and_teardown_injector(self):
+        class MweHintsProvider(DictBasedHintsProvider):
+            def __init__(self, mappings):
+                super().__init__(mappings)
+                self.edifact_format = default_test_format
+                self.edifact_format_version = default_test_version
+
+        class MweRcEvaluator(RcEvaluator):
+            def _get_default_context(self):
+                return None
+
+            def __init__(self):
+                self.edifact_format = default_test_format
+                self.edifact_format_version = default_test_version
+
         inject.clear_and_configure(
-            lambda binder: binder.bind(HintsProvider, AsyncMock(wraps=HintsProvider)).bind(
-                RcEvaluator, AsyncMock(wraps=RcEvaluator)
-            )
+            lambda binder: binder.bind(
+                AhbichtProvider, ListBasedAhbichtProvider([MweHintsProvider({}), MweRcEvaluator()])
+            ).bind_to_provider(EvaluatableDataProvider, return_empty_dummy_evaluatable_data)
         )
         yield
         inject.clear()
@@ -215,10 +231,12 @@ class TestAHBExpressionEvaluation:
         tree_b = await parse_expression_including_unresolved_subexpressions(ahb_expression)
         # it's OK/expected that the trees look different depending on whether sub expressions are resolved or not
         # but in any case the evaluation result should look the same
-        def get_evaluatable_data():
-            return None
-
-        create_and_inject_hardcoded_evaluators(content_evaluation_result, get_evaluatable_data)
+        create_and_inject_hardcoded_evaluators(
+            content_evaluation_result,
+            evaluatable_data_provider=return_empty_dummy_evaluatable_data,
+            edifact_format=default_test_format,
+            edifact_format_version=default_test_version,
+        )
         evaluation_input = "something has to be here but it's not important what"
         evaluation_result_a = await evaluate_ahb_expression_tree(tree_a, entered_input=evaluation_input)
         evaluation_result_b = await evaluate_ahb_expression_tree(tree_b, entered_input=evaluation_input)

@@ -3,9 +3,9 @@ from unittest import mock
 
 import pytest  # type:ignore[import]
 
-from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData
 from ahbicht.content_evaluation.rc_evaluators import DictBasedRcEvaluator
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue
+from unittests.defaults import empty_default_test_data
 
 
 class TestDictBasedRcEvaluator:
@@ -19,7 +19,7 @@ class TestDictBasedRcEvaluator:
             "4": ConditionFulfilledValue.UNKNOWN,
         }
         evaluator = DictBasedRcEvaluator(hardcoded_results)
-        dummy_eval_data = EvaluatableData(edifact_seed={})
+        dummy_eval_data = empty_default_test_data
         assert (
             await evaluator.evaluate_single_condition("1", evaluatable_data=dummy_eval_data)
             == ConditionFulfilledValue.NEUTRAL

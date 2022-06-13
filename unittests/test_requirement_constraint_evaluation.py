@@ -1,11 +1,11 @@
 """ Test for the requirement constraint evaluation of the condition expressions. """
 
-from unittest.mock import AsyncMock
-
 import inject
 import pytest  # type:ignore[import]
 import pytest_asyncio  # type:ignore[import]
 
+from ahbicht.content_evaluation.ahbicht_provider import AhbichtProvider, ListBasedAhbichtProvider
+from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.evaluation_results import RequirementConstraintEvaluationResult
 from ahbicht.expressions.condition_nodes import (
@@ -15,8 +15,9 @@ from ahbicht.expressions.condition_nodes import (
     RequirementConstraint,
     UnevaluatedFormatConstraint,
 )
-from ahbicht.expressions.hints_provider import HintsProvider
+from ahbicht.expressions.hints_provider import DictBasedHintsProvider
 from ahbicht.expressions.requirement_constraint_expression_evaluation import requirement_constraint_evaluation
+from unittests.defaults import default_test_format, default_test_version, return_empty_dummy_evaluatable_data
 
 
 class TestRequirementConstraintEvaluation:
@@ -36,11 +37,26 @@ class TestRequirementConstraintEvaluation:
 
     @pytest_asyncio.fixture()
     def setup_and_teardown_injector(self):
+        class MweHintsProvider(DictBasedHintsProvider):
+            def __init__(self, mappings):
+                super().__init__(mappings)
+                self.edifact_format = default_test_format
+                self.edifact_format_version = default_test_version
+
+        class MweRcEvaluator(RcEvaluator):
+            def _get_default_context(self):
+                return None
+
+            def __init__(self):
+                self.edifact_format = default_test_format
+                self.edifact_format_version = default_test_version
+
         inject.clear_and_configure(
-            lambda binder: binder.bind(HintsProvider, AsyncMock(wraps=HintsProvider)).bind(
-                RcEvaluator, AsyncMock(wraps=RcEvaluator)
-            )
+            lambda binder: binder.bind(
+                AhbichtProvider, ListBasedAhbichtProvider([MweHintsProvider({}), MweRcEvaluator()])
+            ).bind_to_provider(EvaluatableDataProvider, return_empty_dummy_evaluatable_data),
         )
+
         yield
         inject.clear()
 
