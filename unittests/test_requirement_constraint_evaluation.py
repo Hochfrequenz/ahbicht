@@ -1,7 +1,5 @@
 """ Test for the requirement constraint evaluation of the condition expressions. """
 
-from unittest.mock import AsyncMock
-
 import inject
 import pytest  # type:ignore[import]
 import pytest_asyncio  # type:ignore[import]
@@ -17,7 +15,7 @@ from ahbicht.expressions.condition_nodes import (
     RequirementConstraint,
     UnevaluatedFormatConstraint,
 )
-from ahbicht.expressions.hints_provider import DictBasedHintsProvider, HintsProvider
+from ahbicht.expressions.hints_provider import DictBasedHintsProvider
 from ahbicht.expressions.requirement_constraint_expression_evaluation import requirement_constraint_evaluation
 from unittests.defaults import default_test_format, default_test_version, return_empty_dummy_evaluatable_data
 
