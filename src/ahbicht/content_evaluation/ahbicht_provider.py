@@ -4,7 +4,6 @@ Contains a class that is able to provide any RC/FC Evaluator, HintsProvider or P
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional, Union
 
-import inject
 from maus.edifact import EdifactFormat, EdifactFormatVersion
 
 from ahbicht.content_evaluation.evaluators import Evaluator
@@ -102,8 +101,9 @@ class ListBasedAhbichtProvider(AhbichtProvider):
             else:
                 raise ValueError(f"The type of '{instance}' is not supported. Expected either RC or FC evaluator")
             if key in target_dict:
+                conflict = target_dict[key]
                 raise ValueError(
-                    f"The key '{key}' is already used by {target_dict[key]}. For this reason you cannot add '{instance}'"
+                    f"The key '{key}' is already used by {conflict}. For this reason you cannot add '{instance}'"
                 )
             target_dict[key] = instance
 

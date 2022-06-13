@@ -130,7 +130,7 @@ class PackageExpansionTransformer(Transformer):
             repeatability = parse_repeatability(repeatability_tokens[0].value)
         else:
             repeatability = None
-        return self._package_async(package_key_token)
+        return self._package_async(package_key_token)  # pylint:disable=no-value-for-parameter
 
     @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
     # search for binder.bind_to_provider(EvaluatableDataProvider, your_function_that_returns_evaluatable_data_goes_here)

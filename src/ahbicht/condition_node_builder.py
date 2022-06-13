@@ -92,7 +92,8 @@ class ConditionNodeBuilder:
         requirement_constraint_nodes = (
             await self._build_requirement_constraint_nodes()  # pylint:disable=no-value-for-parameter
         )
-        hint_nodes = await self._build_hint_nodes()
+        # the missing value is injected automatically
+        hint_nodes = await self._build_hint_nodes()  # pylint:disable=no-value-for-parameter
         unevaluated_format_constraint_nodes = self._build_unevaluated_format_constraint_nodes()
         input_nodes: Dict[str, TRCTransformerArgument] = {
             **requirement_constraint_nodes,
