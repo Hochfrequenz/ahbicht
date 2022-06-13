@@ -129,7 +129,7 @@ async def _build_evaluated_format_constraint_nodes(
 ) -> Dict[str, EvaluatedFormatConstraint]:
     """Build evaluated format constraint nodes."""
 
-    ahbicht_provider: AhbichtProvider = inject.instance(AhbichtProvider)
+    ahbicht_provider: AhbichtProvider = inject.instance(AhbichtProvider)  # type:ignore[assignment]
     evaluator: FcEvaluator = ahbicht_provider.get_fc_evaluator(
         evaluatable_data.edifact_format, evaluatable_data.edifact_format_version
     )

@@ -76,7 +76,7 @@ class TestMixedSyncAsyncEvaluation:
 
         rc_evaluator = MixedSyncAsyncRcEvaluator()
         inject.clear_and_configure(
-            lambda binder: binder.bind(
+            lambda binder: binder.bind(  # type:ignore[arg-type]
                 AhbichtProvider, ListBasedAhbichtProvider([rc_evaluator, fc_evaluator, MweHintsProvider({})])
             ).bind_to_provider(EvaluatableDataProvider, get_evaluatable_data)
         )

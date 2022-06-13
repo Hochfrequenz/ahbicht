@@ -35,7 +35,9 @@ class TestPackageResolver:
 
         resolver = MweResolver(result_dict)
         inject.clear_and_configure(
-            lambda binder: binder.bind(AhbichtProvider, ListBasedAhbichtProvider([resolver])).bind_to_provider(
+            lambda binder: binder.bind(
+                AhbichtProvider, ListBasedAhbichtProvider([resolver])
+            ).bind_to_provider(  # type:ignore[arg-type]
                 EvaluatableDataProvider, return_empty_dummy_evaluatable_data
             )
         )
