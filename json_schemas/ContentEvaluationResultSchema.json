@@ -37,6 +37,7 @@
                     "enum": [
                         "APERAK",
                         "COMDIS",
+                        "CONTRL",
                         "IFTSTA",
                         "INSRPT",
                         "INVOIC",
@@ -161,6 +162,7 @@
                     "enum": [
                         "APERAK",
                         "COMDIS",
+                        "CONTRL",
                         "IFTSTA",
                         "INSRPT",
                         "INVOIC",
