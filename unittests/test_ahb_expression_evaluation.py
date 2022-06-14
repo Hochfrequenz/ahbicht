@@ -10,15 +10,19 @@ from ahbicht.content_evaluation.ahbicht_provider import AhbichtProvider, ListBas
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
 from ahbicht.content_evaluation.evaluator_factory import create_and_inject_hardcoded_evaluators
-from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.evaluation_results import FormatConstraintEvaluationResult, RequirementConstraintEvaluationResult
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.expressions.enums import ModalMark, PrefixOperator, RequirementIndicator
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
-from ahbicht.expressions.hints_provider import DictBasedHintsProvider
-from unittests.defaults import default_test_format, default_test_version, return_empty_dummy_evaluatable_data
+from unittests.defaults import (
+    default_test_format,
+    default_test_version,
+    empty_default_hints_provider,
+    empty_default_rc_evaluator,
+    return_empty_dummy_evaluatable_data,
+)
 
 
 class TestAHBExpressionEvaluation:
@@ -26,23 +30,10 @@ class TestAHBExpressionEvaluation:
 
     @pytest_asyncio.fixture()
     def setup_and_teardown_injector(self):
-        class MweHintsProvider(DictBasedHintsProvider):
-            def __init__(self, mappings):
-                super().__init__(mappings)
-                self.edifact_format = default_test_format
-                self.edifact_format_version = default_test_version
-
-        class MweRcEvaluator(RcEvaluator):
-            def _get_default_context(self):
-                return None
-
-            def __init__(self):
-                self.edifact_format = default_test_format
-                self.edifact_format_version = default_test_version
 
         inject.clear_and_configure(
             lambda binder: binder.bind(
-                AhbichtProvider, ListBasedAhbichtProvider([MweHintsProvider({}), MweRcEvaluator()])
+                AhbichtProvider, ListBasedAhbichtProvider([empty_default_hints_provider, empty_default_rc_evaluator])
             ).bind_to_provider(EvaluatableDataProvider, return_empty_dummy_evaluatable_data)
         )
         yield

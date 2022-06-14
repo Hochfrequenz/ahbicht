@@ -12,8 +12,12 @@ from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
-from ahbicht.expressions.hints_provider import DictBasedHintsProvider
-from unittests.defaults import default_test_format, default_test_version, empty_default_test_data
+from unittests.defaults import (
+    default_test_format,
+    default_test_version,
+    empty_default_hints_provider,
+    return_empty_dummy_evaluatable_data,
+)
 
 
 class MixedSyncAsyncRcEvaluator(RcEvaluator):
@@ -64,21 +68,11 @@ class TestMixedSyncAsyncEvaluation:
         self, expression: str, expected_rc_fulfilled: bool, expected_fc_fulfilled: bool
     ):
         fc_evaluator = MixedSyncAsyncFcEvaluator()
-
-        def get_evaluatable_data():
-            return empty_default_test_data
-
-        class MweHintsProvider(DictBasedHintsProvider):
-            def __init__(self, mappings):
-                super().__init__(mappings)
-                self.edifact_format = default_test_format
-                self.edifact_format_version = default_test_version
-
         rc_evaluator = MixedSyncAsyncRcEvaluator()
         inject.clear_and_configure(
             lambda binder: binder.bind(  # type:ignore[arg-type]
-                AhbichtProvider, ListBasedAhbichtProvider([rc_evaluator, fc_evaluator, MweHintsProvider({})])
-            ).bind_to_provider(EvaluatableDataProvider, get_evaluatable_data)
+                AhbichtProvider, ListBasedAhbichtProvider([rc_evaluator, fc_evaluator, empty_default_hints_provider])
+            ).bind_to_provider(EvaluatableDataProvider, return_empty_dummy_evaluatable_data)
         )
         evaluation_input = "something has to be here but it's not important what"
         tree = await parse_expression_including_unresolved_subexpressions(expression)

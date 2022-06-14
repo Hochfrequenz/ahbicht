@@ -12,9 +12,9 @@ from ahbicht.content_evaluation.ahbicht_provider import AhbichtProvider, ListBas
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.expression_resolver import expand_packages
-from ahbicht.expressions.package_expansion import DictBasedPackageResolver, JsonFilePackageResolver, PackageResolver
+from ahbicht.expressions.package_expansion import JsonFilePackageResolver, PackageResolver
 from ahbicht.mapping_results import PackageKeyConditionExpressionMapping
-from unittests.defaults import default_test_format, default_test_version, return_empty_dummy_evaluatable_data
+from unittests.defaults import DefaultPackageResolver, return_empty_dummy_evaluatable_data
 
 
 class TestPackageResolver:
@@ -27,13 +27,7 @@ class TestPackageResolver:
 
         result_dict: Mapping[str, Optional[str]] = request.param
 
-        class MweResolver(DictBasedPackageResolver):
-            def __init__(self, mappings):
-                super().__init__(mappings)
-                self.edifact_format = default_test_format
-                self.edifact_format_version = default_test_version
-
-        resolver = MweResolver(result_dict)
+        resolver = DefaultPackageResolver(result_dict)
         inject.clear_and_configure(
             lambda binder: binder.bind(  # type:ignore[arg-type]
                 AhbichtProvider, ListBasedAhbichtProvider([resolver])
