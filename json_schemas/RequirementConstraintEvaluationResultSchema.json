@@ -1,32 +1,38 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "definitions": {
-    "RequirementConstraintEvaluationResultSchema": {
-      "additionalProperties": false,
-      "properties": {
-        "format_constraints_expression": {
-          "title": "format_constraints_expression",
-          "type": ["string", "null"]
-        },
-        "hints": {
-          "title": "hints",
-          "type": ["string", "null"]
-        },
-        "requirement_constraints_fulfilled": {
-          "title": "requirement_constraints_fulfilled",
-          "type": "boolean"
-        },
-        "requirement_is_conditional": {
-          "title": "requirement_is_conditional",
-          "type": "boolean"
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+        "RequirementConstraintEvaluationResultSchema": {
+            "additionalProperties": false,
+            "properties": {
+                "format_constraints_expression": {
+                    "title": "format_constraints_expression",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "hints": {
+                    "title": "hints",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "requirement_constraints_fulfilled": {
+                    "title": "requirement_constraints_fulfilled",
+                    "type": "boolean"
+                },
+                "requirement_is_conditional": {
+                    "title": "requirement_is_conditional",
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
         }
-      },
-      "type": "object"
-    }
-  },
-  "properties": {
-    "$ref": "#/definitions/RequirementConstraintEvaluationResultSchema/properties"
-  },
-  "title": "RequirementConstraintEvaluationResultSchema",
-  "type": "object"
+    },
+    "properties": {
+        "$ref": "#/definitions/RequirementConstraintEvaluationResultSchema/properties"
+    },
+    "title": "RequirementConstraintEvaluationResultSchema",
+    "type": "object"
 }
