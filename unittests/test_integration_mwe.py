@@ -12,14 +12,14 @@ from maus import (
 from maus.models.anwendungshandbuch import AhbMetaInformation
 
 from ahbicht.content_evaluation.ahbicht_provider import AhbichtProvider, ListBasedAhbichtProvider
-from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider, EvaluationContext
-from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
+from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.validation.validation import validate_deep_anwendungshandbuch
 from unittests.defaults import (
     DefaultHintsProvider,
     DefaultPackageResolver,
     EmptyDefaultFcEvaluator,
+    EmptyDefaultRcEvaluator,
     default_test_format,
     default_test_version,
 )
@@ -27,11 +27,7 @@ from unittests.defaults import (
 pytestmark = pytest.mark.asyncio
 
 
-class MweRcEvaluator(RcEvaluator):
-    def _get_default_context(self) -> EvaluationContext:
-        # we need to implement this method but for now, we don't care about its return value
-        return None  # type:ignore[return-value]
-
+class MweRcEvaluator(EmptyDefaultRcEvaluator):
     def evaluate_1(self, evaluatable_data, context):
         seed = evaluatable_data.edifact_seed
         if "foo" in seed and seed["foo"] == "bar":
