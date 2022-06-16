@@ -4,15 +4,17 @@ from typing import Optional
 import inject
 import pytest  # type:ignore[import]
 import pytest_asyncio  # type:ignore[import]
-from maus.edifact import EdifactFormat, EdifactFormatVersion
 
+from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
+from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
 from ahbicht.evaluation_results import FormatConstraintEvaluationResult
 from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
 from ahbicht.expressions.format_constraint_expression_evaluation import (
     _build_evaluated_format_constraint_nodes,
     format_constraint_evaluation,
 )
+from unittests.defaults import default_test_format, default_test_version, return_empty_dummy_evaluatable_data
 
 
 class DummyFcEvaluator(FcEvaluator):
@@ -20,8 +22,8 @@ class DummyFcEvaluator(FcEvaluator):
     A dummy Format Constraint Evaluator
     """
 
-    edifact_format = EdifactFormat.UTILMD
-    edifact_format_version = EdifactFormatVersion.FV2104
+    edifact_format = default_test_format
+    edifact_format_version = default_test_version
 
     async def evaluate_950(self, entered_input: str) -> EvaluatedFormatConstraint:
         """
@@ -60,7 +62,11 @@ class TestFormatConstraintExpressionEvaluation:
 
     @pytest_asyncio.fixture()
     def setup_and_teardown_injector(self):
-        inject.clear_and_configure(lambda binder: binder.bind(FcEvaluator, DummyFcEvaluator()))
+        inject.clear_and_configure(
+            lambda binder: binder.bind(
+                TokenLogicProvider, SingletonTokenLogicProvider([DummyFcEvaluator()])
+            ).bind_to_provider(EvaluatableDataProvider, return_empty_dummy_evaluatable_data)
+        )
         yield
         inject.clear()
 

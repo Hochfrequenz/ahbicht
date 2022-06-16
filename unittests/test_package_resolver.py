@@ -8,10 +8,13 @@ import pytest  # type:ignore[import]
 from _pytest.fixtures import SubRequest  # type:ignore[import]
 from maus.edifact import EdifactFormat, EdifactFormatVersion
 
+from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
+from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.expression_resolver import expand_packages
-from ahbicht.expressions.package_expansion import DictBasedPackageResolver, JsonFilePackageResolver, PackageResolver
+from ahbicht.expressions.package_expansion import JsonFilePackageResolver, PackageResolver
 from ahbicht.mapping_results import PackageKeyConditionExpressionMapping
+from unittests.defaults import DefaultPackageResolver, return_empty_dummy_evaluatable_data
 
 
 class TestPackageResolver:
@@ -21,11 +24,17 @@ class TestPackageResolver:
 
     @pytest.fixture
     def inject_package_resolver(self, request: SubRequest):
+
         result_dict: Mapping[str, Optional[str]] = request.param
-        resolver = DictBasedPackageResolver(result_dict)
+
+        resolver = DefaultPackageResolver(result_dict)
         inject.clear_and_configure(
-            lambda binder: binder.bind(PackageResolver, resolver)  # type:ignore[arg-type]
+            lambda binder: binder.bind(  # type:ignore[arg-type]
+                TokenLogicProvider, SingletonTokenLogicProvider([resolver])
+            ).bind_to_provider(EvaluatableDataProvider, return_empty_dummy_evaluatable_data)
         )
+        yield
+        inject.clear()
 
     @pytest.mark.parametrize(
         "inject_package_resolver",

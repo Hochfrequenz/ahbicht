@@ -2,6 +2,7 @@
 import uuid
 from typing import Optional
 
+import inject
 import pytest  # type:ignore[import]
 from _pytest.fixtures import SubRequest  # type:ignore[import]
 
@@ -11,6 +12,7 @@ from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expressio
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.expressions.enums import ModalMark, RequirementIndicator
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
+from unittests.defaults import default_test_format, default_test_version, return_empty_dummy_evaluatable_data
 
 
 class TestEvaluatorFactory:
@@ -20,7 +22,14 @@ class TestEvaluatorFactory:
     def inject_content_evaluation_result(self, request: SubRequest):
         # indirect parametrization: https://stackoverflow.com/a/33879151/10009545
         content_evaluation_result = request.param
-        create_and_inject_hardcoded_evaluators(content_evaluation_result=content_evaluation_result)
+        create_and_inject_hardcoded_evaluators(
+            content_evaluation_result=content_evaluation_result,
+            evaluatable_data_provider=return_empty_dummy_evaluatable_data,
+            edifact_format=default_test_format,
+            edifact_format_version=default_test_version,
+        )
+        yield
+        inject.clear()
 
     @pytest.mark.parametrize(
         "inject_content_evaluation_result",
