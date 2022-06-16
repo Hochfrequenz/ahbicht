@@ -10,8 +10,9 @@ from typing import Callable, Dict, Optional
 
 from maus.edifact import EdifactFormat, EdifactFormatVersion
 
-
 # pylint: disable=too-few-public-methods
+
+
 class Evaluator(ABC):
     """
     Base of all evaluators.

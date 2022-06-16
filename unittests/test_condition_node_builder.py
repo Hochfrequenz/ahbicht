@@ -4,18 +4,19 @@ from pathlib import Path
 import inject
 import pytest  # type:ignore[import]
 import pytest_asyncio  # type:ignore[import]
-from maus.edifact import EdifactFormat, EdifactFormatVersion
 
 from ahbicht.condition_node_builder import ConditionNodeBuilder
-from ahbicht.content_evaluation.evaluationdatatypes import EvaluationContext
-from ahbicht.content_evaluation.rc_evaluators import EvaluatableData, RcEvaluator
+from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider, EvaluationContext
+from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
+from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
 from ahbicht.expressions.condition_nodes import (
     ConditionFulfilledValue,
     Hint,
     RequirementConstraint,
     UnevaluatedFormatConstraint,
 )
-from ahbicht.expressions.hints_provider import HintsProvider, JsonFileHintsProvider
+from ahbicht.expressions.hints_provider import JsonFileHintsProvider
+from unittests.defaults import default_test_format, default_test_version, return_empty_dummy_evaluatable_data
 
 
 class DummyRcEvaluator(RcEvaluator):
@@ -26,13 +27,13 @@ class DummyRcEvaluator(RcEvaluator):
     def _get_default_context(self) -> EvaluationContext:
         return None  # type:ignore[return-value]
 
-    edifact_format = EdifactFormat.UTILMD
-    edifact_format_version = EdifactFormatVersion.FV2104
+    edifact_format = default_test_format
+    edifact_format_version = default_test_version
 
 
 class TestConditionNodeBuilder:
-    _edifact_format = EdifactFormat.UTILMD
-    _edifact_format_version = EdifactFormatVersion.FV2104
+    _edifact_format = default_test_format
+    _edifact_format_version = default_test_version
 
     _h_583 = Hint(condition_key="583", hint="[583] Hinweis: Verwendung der ID der Marktlokation")
     _h_584 = Hint(condition_key="584", hint="[584] Hinweis: Verwendung der ID der Messlokation")
@@ -46,14 +47,10 @@ class TestConditionNodeBuilder:
             TestConditionNodeBuilder._edifact_format_version,
             file_path=Path("unittests/provider_test_files/example_hints_file.json"),
         )
-
-        def return_dummy_evaluatable_data():
-            return EvaluatableData(edifact_seed=dict())
-
         inject.clear_and_configure(
-            lambda binder: binder.bind(HintsProvider, _hints_provider)
-            .bind(RcEvaluator, DummyRcEvaluator())
-            .bind_to_provider(EvaluatableData, return_dummy_evaluatable_data)
+            lambda binder: binder.bind(
+                TokenLogicProvider, SingletonTokenLogicProvider([_hints_provider, DummyRcEvaluator()])
+            ).bind_to_provider(EvaluatableDataProvider, return_empty_dummy_evaluatable_data)
         )
         yield
         inject.clear()
@@ -64,8 +61,6 @@ class TestConditionNodeBuilder:
         condition_keys = ["501", "12", "903"]
         condition_node_builder = ConditionNodeBuilder(condition_keys)
 
-        assert condition_node_builder.hints_provider.edifact_format == self._edifact_format
-        assert condition_node_builder.rc_evaluator.edifact_format_version == self._edifact_format_version
         assert condition_node_builder.condition_keys == condition_keys
         assert condition_node_builder.requirement_constraints_condition_keys == ["12"]
         assert condition_node_builder.hints_condition_keys == ["501"]

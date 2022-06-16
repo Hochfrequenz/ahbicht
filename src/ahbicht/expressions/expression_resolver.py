@@ -11,6 +11,8 @@ import inject
 from lark import Token, Transformer, Tree
 from lark.exceptions import VisitError
 
+from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
+from ahbicht.content_evaluation.token_logic_provider import TokenLogicProvider
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.package_expansion import PackageResolver
@@ -110,7 +112,7 @@ class PackageExpansionTransformer(Transformer):
 
     def __init__(self):
         super().__init__()
-        self._resolver: PackageResolver = inject.instance(PackageResolver)
+        self.token_logic_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)
 
     def package(self, tokens: List[Token]) -> Awaitable[Tree]:
         """
@@ -128,14 +130,17 @@ class PackageExpansionTransformer(Transformer):
             repeatability = parse_repeatability(repeatability_tokens[0].value)
         else:
             repeatability = None
-        return self._package_async(package_key_token)
+        return self._package_async(package_key_token)  # pylint:disable=no-value-for-parameter
 
-    async def _package_async(self, package_key_token: Token) -> Tree[Token]:
-        resolved_package = await self._resolver.get_condition_expression(package_key_token.value)
+    @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
+    # search for binder.bind_to_provider(EvaluatableDataProvider, your_function_that_returns_evaluatable_data_goes_here)
+    async def _package_async(self, package_key_token: Token, evaluatable_data: EvaluatableData) -> Tree[Token]:
+        resolver: PackageResolver = self.token_logic_provider.get_package_resolver(
+            evaluatable_data.edifact_format, evaluatable_data.edifact_format_version
+        )
+        resolved_package = await resolver.get_condition_expression(package_key_token.value)
         if not resolved_package.has_been_resolved_successfully():
-            raise NotImplementedError(
-                f"The package '{package_key_token.value}' could not be resolved by {self._resolver}"
-            )
+            raise NotImplementedError(f"The package '{package_key_token.value}' could not be resolved by {resolver}")
         # the package_expression is not None because that's the definition of "has been resolved successfully"
         tree_result = parse_condition_expression_to_tree(resolved_package.package_expression)  # type:ignore[arg-type]
         return tree_result

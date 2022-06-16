@@ -12,7 +12,9 @@ import inject
 from lark import Token, Tree, v_args
 from lark.exceptions import VisitError
 
+from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
+from ahbicht.content_evaluation.token_logic_provider import TokenLogicProvider
 from ahbicht.evaluation_results import FormatConstraintEvaluationResult
 from ahbicht.expressions.base_transformer import BaseTransformer
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
@@ -102,7 +104,9 @@ async def format_constraint_evaluation(
         all_evaluatable_format_constraint_keys: List[str] = [
             t.value for t in parsed_tree_fc.scan_values(lambda v: isinstance(v, Token))  # type:ignore[attr-defined]
         ]
-        input_values: Dict[str, EvaluatedFormatConstraint] = await _build_evaluated_format_constraint_nodes(
+        input_values: Dict[
+            str, EvaluatedFormatConstraint
+        ] = await _build_evaluated_format_constraint_nodes(  # pylint:disable=no-value-for-parameter
             all_evaluatable_format_constraint_keys, entered_input
         )
         resulting_evaluated_format_constraint_node: EvaluatedFormatConstraint = evaluate_format_constraint_tree(
@@ -116,12 +120,19 @@ async def format_constraint_evaluation(
     )
 
 
+@inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
+# search for binder.bind_to_provider(EvaluatableDataProvider, your_function_that_returns_evaluatable_data_goes_here)
 async def _build_evaluated_format_constraint_nodes(
-    evaluatable_format_constraint_keys: List[str], entered_input: Optional[str]
+    evaluatable_format_constraint_keys: List[str],
+    entered_input: Optional[str],
+    evaluatable_data: EvaluatableData,
 ) -> Dict[str, EvaluatedFormatConstraint]:
     """Build evaluated format constraint nodes."""
 
-    evaluator: FcEvaluator = inject.instance(FcEvaluator)
+    token_logic_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)  # type:ignore[assignment]
+    evaluator: FcEvaluator = token_logic_provider.get_fc_evaluator(
+        evaluatable_data.edifact_format, evaluatable_data.edifact_format_version
+    )
     evaluated_format_constraints = await evaluator.evaluate_format_constraints(
         evaluatable_format_constraint_keys, entered_input
     )
