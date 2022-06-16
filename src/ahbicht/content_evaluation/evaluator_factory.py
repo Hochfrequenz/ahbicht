@@ -69,9 +69,6 @@ def create_and_inject_hardcoded_evaluators(
 
     def configure(binder):
         binder.bind(TokenLogicProvider, ListBasedTokenLogicProvider([*evaluators]))
-        # binder.bind(RcEvaluator, evaluators[0]).bind(FcEvaluator, evaluators[1]).bind(
-        #    HintsProvider, evaluators[2]
-        # ).bind(PackageResolver, evaluators[3])
         if evaluatable_data_provider is not None:
             binder.bind_to_provider(EvaluatableDataProvider, evaluatable_data_provider)
 
