@@ -68,6 +68,14 @@ ahbicht.content\_evaluation.rc\_evaluators module
    :undoc-members:
    :show-inheritance:
 
+ahbicht.content\_evaluation.token\_logic\_provider module
+---------------------------------------------------------
+
+.. automodule:: ahbicht.content_evaluation.token_logic_provider
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 
