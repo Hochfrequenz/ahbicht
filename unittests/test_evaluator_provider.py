@@ -7,7 +7,7 @@ from maus.edifact import EdifactFormat, EdifactFormatVersion
 from ahbicht.content_evaluation.evaluators import Evaluator
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
-from ahbicht.content_evaluation.token_logic_provider import ListBasedTokenLogicProvider, TokenLogicProvider
+from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
 
 
 class TestEvaluatorProvider:
@@ -44,7 +44,7 @@ class TestEvaluatorProvider:
                 evaluators.append(example_rc_evaluator)
                 evaluators.append(example_fc_evaluator)
         # here's where the setup is over and the actual test begins
-        evaluator_provider: TokenLogicProvider = ListBasedTokenLogicProvider(evaluators)
+        evaluator_provider: TokenLogicProvider = SingletonTokenLogicProvider(evaluators)
         for edifact_format in EdifactFormat:
             for edifact_format_version in EdifactFormatVersion:
                 if edifact_format == EdifactFormat.COMDIS:

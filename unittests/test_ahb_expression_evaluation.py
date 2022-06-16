@@ -9,7 +9,7 @@ import pytest_asyncio  # type:ignore[import]
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
 from ahbicht.content_evaluation.evaluator_factory import create_and_inject_hardcoded_evaluators
-from ahbicht.content_evaluation.token_logic_provider import ListBasedTokenLogicProvider, TokenLogicProvider
+from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
 from ahbicht.evaluation_results import FormatConstraintEvaluationResult, RequirementConstraintEvaluationResult
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
@@ -34,7 +34,7 @@ class TestAHBExpressionEvaluation:
         inject.clear_and_configure(
             lambda binder: binder.bind(
                 TokenLogicProvider,
-                ListBasedTokenLogicProvider([empty_default_hints_provider, empty_default_rc_evaluator]),
+                SingletonTokenLogicProvider([empty_default_hints_provider, empty_default_rc_evaluator]),
             ).bind_to_provider(EvaluatableDataProvider, return_empty_dummy_evaluatable_data)
         )
         yield

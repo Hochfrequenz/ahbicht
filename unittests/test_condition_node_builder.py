@@ -8,7 +8,7 @@ import pytest_asyncio  # type:ignore[import]
 from ahbicht.condition_node_builder import ConditionNodeBuilder
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider, EvaluationContext
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
-from ahbicht.content_evaluation.token_logic_provider import ListBasedTokenLogicProvider, TokenLogicProvider
+from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
 from ahbicht.expressions.condition_nodes import (
     ConditionFulfilledValue,
     Hint,
@@ -49,7 +49,7 @@ class TestConditionNodeBuilder:
         )
         inject.clear_and_configure(
             lambda binder: binder.bind(
-                TokenLogicProvider, ListBasedTokenLogicProvider([_hints_provider, DummyRcEvaluator()])
+                TokenLogicProvider, SingletonTokenLogicProvider([_hints_provider, DummyRcEvaluator()])
             ).bind_to_provider(EvaluatableDataProvider, return_empty_dummy_evaluatable_data)
         )
         yield

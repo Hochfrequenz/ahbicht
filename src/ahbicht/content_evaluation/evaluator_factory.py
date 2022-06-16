@@ -18,7 +18,7 @@ from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluati
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
 from ahbicht.content_evaluation.fc_evaluators import DictBasedFcEvaluator, FcEvaluator
 from ahbicht.content_evaluation.rc_evaluators import DictBasedRcEvaluator, RcEvaluator
-from ahbicht.content_evaluation.token_logic_provider import ListBasedTokenLogicProvider, TokenLogicProvider
+from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
 from ahbicht.expressions.hints_provider import DictBasedHintsProvider, HintsProvider
 from ahbicht.expressions.package_expansion import DictBasedPackageResolver, PackageResolver
 
@@ -68,7 +68,7 @@ def create_and_inject_hardcoded_evaluators(
     )
 
     def configure(binder):
-        binder.bind(TokenLogicProvider, ListBasedTokenLogicProvider([*evaluators]))
+        binder.bind(TokenLogicProvider, SingletonTokenLogicProvider([*evaluators]))
         if evaluatable_data_provider is not None:
             binder.bind_to_provider(EvaluatableDataProvider, evaluatable_data_provider)
 

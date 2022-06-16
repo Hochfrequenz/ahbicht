@@ -57,9 +57,10 @@ class TokenLogicProvider(ABC):
         raise NotImplementedError("The inheriting sub class has to implement this method")
 
 
-class ListBasedTokenLogicProvider(TokenLogicProvider):
+class SingletonTokenLogicProvider(TokenLogicProvider):
     """
-    An TokenLogicProvider that is instantiated with a list of evaluators/providers/resolvers.
+    An TokenLogicProvider that is instantiated with a list of evaluators/providers/resolvers of which the same instances
+    will be used during the entire uptime of the application (singleton style).
     """
 
     _unknown_key = "undefined"
@@ -71,7 +72,7 @@ class ListBasedTokenLogicProvider(TokenLogicProvider):
         converts them to a unique and hashable string
         """
         if edifact_format is None or format_version is None:
-            return ListBasedTokenLogicProvider._unknown_key
+            return SingletonTokenLogicProvider._unknown_key
         # we don't care what the key is, it just has to be unique and consistent
         return f"{edifact_format}-{format_version}"
 
@@ -83,12 +84,12 @@ class ListBasedTokenLogicProvider(TokenLogicProvider):
         for instance in inputs:
             key: str
             try:
-                key = ListBasedTokenLogicProvider._to_key(instance.edifact_format, instance.edifact_format_version)
+                key = SingletonTokenLogicProvider._to_key(instance.edifact_format, instance.edifact_format_version)
             except NotImplementedError:
                 # this is ok, if there's only one of the kind (e.g. only one package resolver, only one hints provider)
                 # if the user tries to provide more than 1 instance of the same kind without specifying format(version)
                 # they'll run into an value error below
-                key = ListBasedTokenLogicProvider._unknown_key
+                key = SingletonTokenLogicProvider._unknown_key
             target_dict: Dict[str, Any]
             if isinstance(instance, RcEvaluator):
                 target_dict = self._rc_evaluators
@@ -111,7 +112,7 @@ class ListBasedTokenLogicProvider(TokenLogicProvider):
         self, edifact_format: Optional[EdifactFormat] = None, format_version: Optional[EdifactFormatVersion] = None
     ) -> FcEvaluator:
         try:
-            return self._fc_evaluators[ListBasedTokenLogicProvider._to_key(edifact_format, format_version)]
+            return self._fc_evaluators[SingletonTokenLogicProvider._to_key(edifact_format, format_version)]
         except KeyError as key_error:
             raise NotImplementedError(
                 f"No FC Evaluator has been registered for {edifact_format} in {format_version}"
@@ -121,7 +122,7 @@ class ListBasedTokenLogicProvider(TokenLogicProvider):
         self, edifact_format: Optional[EdifactFormat] = None, format_version: Optional[EdifactFormatVersion] = None
     ) -> RcEvaluator:
         try:
-            return self._rc_evaluators[ListBasedTokenLogicProvider._to_key(edifact_format, format_version)]
+            return self._rc_evaluators[SingletonTokenLogicProvider._to_key(edifact_format, format_version)]
         except KeyError as key_error:
             raise NotImplementedError(
                 f"No RC Evaluator has been registered for {edifact_format} in {format_version}"
@@ -131,7 +132,7 @@ class ListBasedTokenLogicProvider(TokenLogicProvider):
         self, edifact_format: Optional[EdifactFormat] = None, format_version: Optional[EdifactFormatVersion] = None
     ) -> HintsProvider:
         try:
-            return self._hints_providers[ListBasedTokenLogicProvider._to_key(edifact_format, format_version)]
+            return self._hints_providers[SingletonTokenLogicProvider._to_key(edifact_format, format_version)]
         except KeyError as key_error:
             raise NotImplementedError(
                 f"No HintsProvider has been registered for {edifact_format} in {format_version}"
@@ -141,7 +142,7 @@ class ListBasedTokenLogicProvider(TokenLogicProvider):
         self, edifact_format: Optional[EdifactFormat] = None, format_version: Optional[EdifactFormatVersion] = None
     ) -> PackageResolver:
         try:
-            return self._package_resolvers[ListBasedTokenLogicProvider._to_key(edifact_format, format_version)]
+            return self._package_resolvers[SingletonTokenLogicProvider._to_key(edifact_format, format_version)]
         except KeyError as key_error:
             raise NotImplementedError(
                 f"No PackageResolver has been registered for {edifact_format} in {format_version}"

@@ -5,7 +5,7 @@ import pytest  # type:ignore[import]
 import pytest_asyncio  # type:ignore[import]
 
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
-from ahbicht.content_evaluation.token_logic_provider import ListBasedTokenLogicProvider, TokenLogicProvider
+from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
 from ahbicht.evaluation_results import RequirementConstraintEvaluationResult
 from ahbicht.expressions.condition_nodes import (
     ConditionFulfilledValue,
@@ -42,7 +42,7 @@ class TestRequirementConstraintEvaluation:
         inject.clear_and_configure(
             lambda binder: binder.bind(
                 TokenLogicProvider,
-                ListBasedTokenLogicProvider([empty_default_hints_provider, empty_default_rc_evaluator]),
+                SingletonTokenLogicProvider([empty_default_hints_provider, empty_default_rc_evaluator]),
             ).bind_to_provider(EvaluatableDataProvider, return_empty_dummy_evaluatable_data),
         )
 

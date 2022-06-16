@@ -7,7 +7,7 @@ import pytest_asyncio  # type:ignore[import]
 
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
-from ahbicht.content_evaluation.token_logic_provider import ListBasedTokenLogicProvider, TokenLogicProvider
+from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
 from ahbicht.evaluation_results import FormatConstraintEvaluationResult
 from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
 from ahbicht.expressions.format_constraint_expression_evaluation import (
@@ -64,7 +64,7 @@ class TestFormatConstraintExpressionEvaluation:
     def setup_and_teardown_injector(self):
         inject.clear_and_configure(
             lambda binder: binder.bind(
-                TokenLogicProvider, ListBasedTokenLogicProvider([DummyFcEvaluator()])
+                TokenLogicProvider, SingletonTokenLogicProvider([DummyFcEvaluator()])
             ).bind_to_provider(EvaluatableDataProvider, return_empty_dummy_evaluatable_data)
         )
         yield

@@ -12,7 +12,7 @@ from maus import (
 from maus.models.anwendungshandbuch import AhbMetaInformation
 
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
-from ahbicht.content_evaluation.token_logic_provider import ListBasedTokenLogicProvider, TokenLogicProvider
+from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.validation.validation import validate_deep_anwendungshandbuch
 from unittests.defaults import (
@@ -82,7 +82,7 @@ class TestIntegrationMwe:
         inject.clear_and_configure(
             lambda binder: binder.bind(
                 TokenLogicProvider,
-                ListBasedTokenLogicProvider([fc_evaluator, rc_evaluator, hints_provider, package_resolver]),
+                SingletonTokenLogicProvider([fc_evaluator, rc_evaluator, hints_provider, package_resolver]),
             ).bind_to_provider(EvaluatableDataProvider, get_eval_data)
         )
         yield
