@@ -28,7 +28,7 @@ class ConditionNodeBuilder:
     """
 
     def __init__(self, condition_keys: List[str]):
-        self.ahbicht_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)  # type:ignore[assignment]
+        self.token_logic_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)  # type:ignore[assignment]
         self.condition_keys = condition_keys
         (
             self.requirement_constraints_condition_keys,
@@ -52,7 +52,7 @@ class ConditionNodeBuilder:
     # search for binder.bind_to_provider(EvaluatableDataProvider, your_function_that_returns_evaluatable_data_goes_here)
     async def _build_hint_nodes(self, evaluatable_data: EvaluatableData) -> Dict[str, Hint]:
         """Builds Hint nodes from their condition keys by getting all hint texts from the HintsProvider."""
-        hints_provider = self.ahbicht_provider.get_hints_provider(
+        hints_provider = self.token_logic_provider.get_hints_provider(
             evaluatable_data.edifact_format, evaluatable_data.edifact_format_version
         )
         return await hints_provider.get_hints(self.hints_condition_keys)
@@ -73,7 +73,7 @@ class ConditionNodeBuilder:
         Build requirement constraint nodes by evaluating the constraints
         with the help of the respective Evaluator.
         """
-        rc_evaluator = self.ahbicht_provider.get_rc_evaluator(
+        rc_evaluator = self.token_logic_provider.get_rc_evaluator(
             evaluatable_data.edifact_format, evaluatable_data.edifact_format_version
         )
         evaluated_conditions_fulfilled_attribute = await rc_evaluator.evaluate_conditions(

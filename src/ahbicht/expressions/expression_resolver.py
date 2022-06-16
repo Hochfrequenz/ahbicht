@@ -112,7 +112,7 @@ class PackageExpansionTransformer(Transformer):
 
     def __init__(self):
         super().__init__()
-        self.ahbicht_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)
+        self.token_logic_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)
 
     def package(self, tokens: List[Token]) -> Awaitable[Tree]:
         """
@@ -135,7 +135,7 @@ class PackageExpansionTransformer(Transformer):
     @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
     # search for binder.bind_to_provider(EvaluatableDataProvider, your_function_that_returns_evaluatable_data_goes_here)
     async def _package_async(self, package_key_token: Token, evaluatable_data: EvaluatableData) -> Tree[Token]:
-        resolver: PackageResolver = self.ahbicht_provider.get_package_resolver(
+        resolver: PackageResolver = self.token_logic_provider.get_package_resolver(
             evaluatable_data.edifact_format, evaluatable_data.edifact_format_version
         )
         resolved_package = await resolver.get_condition_expression(package_key_token.value)
