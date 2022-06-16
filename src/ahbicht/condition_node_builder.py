@@ -6,8 +6,8 @@ from typing import Dict, List, Tuple, Union
 
 import inject
 
-from ahbicht.content_evaluation.ahbicht_provider import AhbichtProvider
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
+from ahbicht.content_evaluation.token_logic_provider import TokenLogicProvider
 from ahbicht.expressions.condition_expression_parser import extract_categorized_keys_from_tree
 from ahbicht.expressions.condition_nodes import Hint, RequirementConstraint, UnevaluatedFormatConstraint
 
@@ -28,7 +28,7 @@ class ConditionNodeBuilder:
     """
 
     def __init__(self, condition_keys: List[str]):
-        self.ahbicht_provider: AhbichtProvider = inject.instance(AhbichtProvider)  # type:ignore[assignment]
+        self.ahbicht_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)  # type:ignore[assignment]
         self.condition_keys = condition_keys
         (
             self.requirement_constraints_condition_keys,

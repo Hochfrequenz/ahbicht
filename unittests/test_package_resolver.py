@@ -8,8 +8,8 @@ import pytest  # type:ignore[import]
 from _pytest.fixtures import SubRequest  # type:ignore[import]
 from maus.edifact import EdifactFormat, EdifactFormatVersion
 
-from ahbicht.content_evaluation.ahbicht_provider import AhbichtProvider, ListBasedAhbichtProvider
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
+from ahbicht.content_evaluation.token_logic_provider import ListBasedTokenLogicProvider, TokenLogicProvider
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.expression_resolver import expand_packages
 from ahbicht.expressions.package_expansion import JsonFilePackageResolver, PackageResolver
@@ -30,7 +30,7 @@ class TestPackageResolver:
         resolver = DefaultPackageResolver(result_dict)
         inject.clear_and_configure(
             lambda binder: binder.bind(  # type:ignore[arg-type]
-                AhbichtProvider, ListBasedAhbichtProvider([resolver])
+                TokenLogicProvider, ListBasedTokenLogicProvider([resolver])
             ).bind_to_provider(EvaluatableDataProvider, return_empty_dummy_evaluatable_data)
         )
         yield

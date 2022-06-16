@@ -11,8 +11,8 @@ import inject
 from lark import Token, Transformer, Tree
 from lark.exceptions import VisitError
 
-from ahbicht.content_evaluation.ahbicht_provider import AhbichtProvider
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
+from ahbicht.content_evaluation.token_logic_provider import TokenLogicProvider
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.package_expansion import PackageResolver
@@ -112,7 +112,7 @@ class PackageExpansionTransformer(Transformer):
 
     def __init__(self):
         super().__init__()
-        self.ahbicht_provider: AhbichtProvider = inject.instance(AhbichtProvider)
+        self.ahbicht_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)
 
     def package(self, tokens: List[Token]) -> Awaitable[Tree]:
         """

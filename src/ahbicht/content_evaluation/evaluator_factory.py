@@ -14,11 +14,11 @@ from typing import Callable, Optional, Tuple
 import inject
 from maus.edifact import EdifactFormat, EdifactFormatVersion
 
-from ahbicht.content_evaluation.ahbicht_provider import AhbichtProvider, ListBasedAhbichtProvider
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
 from ahbicht.content_evaluation.fc_evaluators import DictBasedFcEvaluator, FcEvaluator
 from ahbicht.content_evaluation.rc_evaluators import DictBasedRcEvaluator, RcEvaluator
+from ahbicht.content_evaluation.token_logic_provider import ListBasedTokenLogicProvider, TokenLogicProvider
 from ahbicht.expressions.hints_provider import DictBasedHintsProvider, HintsProvider
 from ahbicht.expressions.package_expansion import DictBasedPackageResolver, PackageResolver
 
@@ -68,7 +68,7 @@ def create_and_inject_hardcoded_evaluators(
     )
 
     def configure(binder):
-        binder.bind(AhbichtProvider, ListBasedAhbichtProvider([*evaluators]))
+        binder.bind(TokenLogicProvider, ListBasedTokenLogicProvider([*evaluators]))
         # binder.bind(RcEvaluator, evaluators[0]).bind(FcEvaluator, evaluators[1]).bind(
         #    HintsProvider, evaluators[2]
         # ).bind(PackageResolver, evaluators[3])

@@ -12,9 +12,9 @@ import inject
 from lark import Token, Tree, v_args
 from lark.exceptions import VisitError
 
-from ahbicht.content_evaluation.ahbicht_provider import AhbichtProvider
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
+from ahbicht.content_evaluation.token_logic_provider import TokenLogicProvider
 from ahbicht.evaluation_results import FormatConstraintEvaluationResult
 from ahbicht.expressions.base_transformer import BaseTransformer
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
@@ -129,7 +129,7 @@ async def _build_evaluated_format_constraint_nodes(
 ) -> Dict[str, EvaluatedFormatConstraint]:
     """Build evaluated format constraint nodes."""
 
-    ahbicht_provider: AhbichtProvider = inject.instance(AhbichtProvider)  # type:ignore[assignment]
+    ahbicht_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)  # type:ignore[assignment]
     evaluator: FcEvaluator = ahbicht_provider.get_fc_evaluator(
         evaluatable_data.edifact_format, evaluatable_data.edifact_format_version
     )

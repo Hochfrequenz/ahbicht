@@ -5,10 +5,10 @@ Tests that the code can handle RC/FC evaluators that have both async and sync me
 import inject
 import pytest  # type:ignore[import]
 
-from ahbicht.content_evaluation.ahbicht_provider import AhbichtProvider, ListBasedAhbichtProvider
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider, EvaluationContext
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
+from ahbicht.content_evaluation.token_logic_provider import ListBasedTokenLogicProvider, TokenLogicProvider
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
@@ -71,7 +71,8 @@ class TestMixedSyncAsyncEvaluation:
         rc_evaluator = MixedSyncAsyncRcEvaluator()
         inject.clear_and_configure(
             lambda binder: binder.bind(  # type:ignore[arg-type]
-                AhbichtProvider, ListBasedAhbichtProvider([rc_evaluator, fc_evaluator, empty_default_hints_provider])
+                TokenLogicProvider,
+                ListBasedTokenLogicProvider([rc_evaluator, fc_evaluator, empty_default_hints_provider]),
             ).bind_to_provider(EvaluatableDataProvider, return_empty_dummy_evaluatable_data)
         )
         evaluation_input = "something has to be here but it's not important what"

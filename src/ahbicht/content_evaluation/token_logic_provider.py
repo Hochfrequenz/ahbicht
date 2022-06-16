@@ -13,10 +13,10 @@ from ahbicht.expressions.hints_provider import HintsProvider
 from ahbicht.expressions.package_expansion import PackageResolver
 
 
-class AhbichtProvider(ABC):  # todo @reviewers: is there any better name for this class?
+class TokenLogicProvider(ABC):
     """
-    An AhbichtProvider is a class that can provide you with the correct evaluator/hints provider/package resolver
-    for your use case.
+    A TokenLogicProvider is a class that can provide you with the correct evaluator/hints provider/package resolver
+    for your use case/for any token in the parsed expression tree.
     """
 
     @abstractmethod
@@ -57,9 +57,9 @@ class AhbichtProvider(ABC):  # todo @reviewers: is there any better name for thi
         raise NotImplementedError("The inheriting sub class has to implement this method")
 
 
-class ListBasedAhbichtProvider(AhbichtProvider):
+class ListBasedTokenLogicProvider(TokenLogicProvider):
     """
-    An AHBicht Provider that is instantiated with a list of evaluators.
+    An TokenLogicProvider that is instantiated with a list of evaluators/providers/resolvers.
     """
 
     _unknown_key = "undefined"
@@ -71,7 +71,7 @@ class ListBasedAhbichtProvider(AhbichtProvider):
         converts them to a unique and hashable string
         """
         if edifact_format is None or format_version is None:
-            return ListBasedAhbichtProvider._unknown_key
+            return ListBasedTokenLogicProvider._unknown_key
         # we don't care what the key is, it just has to be unique and consistent
         return f"{edifact_format}-{format_version}"
 
@@ -83,12 +83,12 @@ class ListBasedAhbichtProvider(AhbichtProvider):
         for instance in inputs:
             key: str
             try:
-                key = ListBasedAhbichtProvider._to_key(instance.edifact_format, instance.edifact_format_version)
+                key = ListBasedTokenLogicProvider._to_key(instance.edifact_format, instance.edifact_format_version)
             except NotImplementedError:
                 # this is ok, if there's only one of the kind (e.g. only one package resolver, only one hints provider)
                 # if the user tries to provide more than 1 instance of the same kind without specifying format(version)
                 # they'll run into an value error below
-                key = ListBasedAhbichtProvider._unknown_key
+                key = ListBasedTokenLogicProvider._unknown_key
             target_dict: Dict[str, Any]
             if isinstance(instance, RcEvaluator):
                 target_dict = self._rc_evaluators
@@ -111,7 +111,7 @@ class ListBasedAhbichtProvider(AhbichtProvider):
         self, edifact_format: Optional[EdifactFormat] = None, format_version: Optional[EdifactFormatVersion] = None
     ) -> FcEvaluator:
         try:
-            return self._fc_evaluators[ListBasedAhbichtProvider._to_key(edifact_format, format_version)]
+            return self._fc_evaluators[ListBasedTokenLogicProvider._to_key(edifact_format, format_version)]
         except KeyError as key_error:
             raise NotImplementedError(
                 f"No FC Evaluator has been registered for {edifact_format} in {format_version}"
@@ -121,7 +121,7 @@ class ListBasedAhbichtProvider(AhbichtProvider):
         self, edifact_format: Optional[EdifactFormat] = None, format_version: Optional[EdifactFormatVersion] = None
     ) -> RcEvaluator:
         try:
-            return self._rc_evaluators[ListBasedAhbichtProvider._to_key(edifact_format, format_version)]
+            return self._rc_evaluators[ListBasedTokenLogicProvider._to_key(edifact_format, format_version)]
         except KeyError as key_error:
             raise NotImplementedError(
                 f"No RC Evaluator has been registered for {edifact_format} in {format_version}"
@@ -131,7 +131,7 @@ class ListBasedAhbichtProvider(AhbichtProvider):
         self, edifact_format: Optional[EdifactFormat] = None, format_version: Optional[EdifactFormatVersion] = None
     ) -> HintsProvider:
         try:
-            return self._hints_providers[ListBasedAhbichtProvider._to_key(edifact_format, format_version)]
+            return self._hints_providers[ListBasedTokenLogicProvider._to_key(edifact_format, format_version)]
         except KeyError as key_error:
             raise NotImplementedError(
                 f"No HintsProvider has been registered for {edifact_format} in {format_version}"
@@ -141,7 +141,7 @@ class ListBasedAhbichtProvider(AhbichtProvider):
         self, edifact_format: Optional[EdifactFormat] = None, format_version: Optional[EdifactFormatVersion] = None
     ) -> PackageResolver:
         try:
-            return self._package_resolvers[ListBasedAhbichtProvider._to_key(edifact_format, format_version)]
+            return self._package_resolvers[ListBasedTokenLogicProvider._to_key(edifact_format, format_version)]
         except KeyError as key_error:
             raise NotImplementedError(
                 f"No PackageResolver has been registered for {edifact_format} in {format_version}"

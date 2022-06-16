@@ -4,8 +4,8 @@ import inject
 import pytest  # type:ignore[import]
 import pytest_asyncio  # type:ignore[import]
 
-from ahbicht.content_evaluation.ahbicht_provider import AhbichtProvider, ListBasedAhbichtProvider
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
+from ahbicht.content_evaluation.token_logic_provider import ListBasedTokenLogicProvider, TokenLogicProvider
 from ahbicht.evaluation_results import RequirementConstraintEvaluationResult
 from ahbicht.expressions.condition_nodes import (
     ConditionFulfilledValue,
@@ -41,7 +41,8 @@ class TestRequirementConstraintEvaluation:
     def setup_and_teardown_injector(self):
         inject.clear_and_configure(
             lambda binder: binder.bind(
-                AhbichtProvider, ListBasedAhbichtProvider([empty_default_hints_provider, empty_default_rc_evaluator])
+                TokenLogicProvider,
+                ListBasedTokenLogicProvider([empty_default_hints_provider, empty_default_rc_evaluator]),
             ).bind_to_provider(EvaluatableDataProvider, return_empty_dummy_evaluatable_data),
         )
 
