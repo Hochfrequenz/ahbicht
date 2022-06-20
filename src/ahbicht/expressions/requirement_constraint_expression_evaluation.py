@@ -85,10 +85,35 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
                 and left.conditions_fulfilled != ConditionFulfilledValue.NEUTRAL
             )
         ):
-            raise NotImplementedError(
-                "Combining a neutral element with a boolean value in an"
-                f"{composition} is not implemented as it has no useful result."
+            neutral_element: ConditionNode
+            boolean_element: ConditionNode
+            if right.conditions_fulfilled == ConditionFulfilledValue.NEUTRAL:
+                neutral_element = right
+                boolean_element = left
+            else:
+                neutral_element = left
+                boolean_element = right
+            error_message = (
+                f"Combining a neutral element '{neutral_element}' with a boolean value {boolean_element} "
+                f"in an {composition} is not implemented as it has no useful result."
             )
+            if isinstance(neutral_element, Hint):
+                # This error is quite popular in AHBs.
+                # The BDEW tends to write stuff like "[123] O [584]" where [123] is a regular RC and [584] is
+                # something like "Verwendung der ID der Markt/Messlokation". Their intention is that the hint on the
+                # right side should be evaluated as if it was a self-referencing Requirement Constraint that
+                # magically evaluates to Fulfilled/Unfulfilled instead of being treated as what it is: A plain hint.
+                # This is similar to what they tried with [93x] (german datetime) format constraints.
+                # But other than the 931-935 FCs this kind of expression is not only a bad idea but also not even
+                # valid according to their own set of rules.
+                # If you encounter such an error in the AHBs, please message the EDI@Energy Arbeitsgruppe to fix it.
+                # The easiest workaround (beyond ignoring it) is probably to convert it to an _xor_ expression:
+                # Instead of "[123] O [584]" write "[984][123] X [983][1]" where
+                # - [1] is an artificial requirement constraint, that should always evaluate to FULFILLED
+                # - [984] is the proper format constraint that has the same meaning as the hint [584]
+                # - [983] is the complementary FC to [984] ("not [984]")
+                error_message += " This is probably an error in the AHB itself."
+            raise NotImplementedError(error_message)
         if composition == "or_composition":
             resulting_conditions_fulfilled = left.conditions_fulfilled | right.conditions_fulfilled
         elif composition == "xor_composition":
