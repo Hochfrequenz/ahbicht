@@ -108,7 +108,7 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
                 # valid according to their own set of rules.
                 # If you encounter such an error in the AHBs, please message the EDI@Energy Arbeitsgruppe to fix it.
                 # The easiest workaround (beyond ignoring it) is probably to convert it to an _xor_ expression:
-                # Instead of "[123] O [584]" write "[984][123] X [983][1]" where
+                # Instead of "[123] O [584]" write "[983][123] X [984][1]" where
                 # - [1] is an artificial requirement constraint, that should always evaluate to FULFILLED
                 # - [984] is the proper format constraint that has the same meaning as the hint [584]
                 # - [983] is the complementary FC to [984] ("not [984]")
