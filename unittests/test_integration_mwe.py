@@ -37,10 +37,6 @@ class SomethingInjectable:
     pass
 
 
-class MweRcEvaluatorThatUsesInjectAttr(EmptyDefaultRcEvaluator):
-    something_injectable = inject.attr(SomethingInjectable)  # this won't work and the test proves it
-
-
 class MweRcEvaluator(EmptyDefaultRcEvaluator):
     # do _not_use inject.attr! It breaks in the inspection inside the Evaluator __init__ method
 
