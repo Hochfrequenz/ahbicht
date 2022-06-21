@@ -17,9 +17,18 @@ class TestCaching:
 
     # test expressions have to be unique per test case because the tests interfere (they share the same "global" cache)
 
-    def test_ahb_expression_cache_performance(self):
+    @pytest.mark.parametrize(
+        "ahb_expression",
+        [
+            pytest.param("Muss [7] U [8]", id="simple expression"),
+            pytest.param(
+                "Muss [7] U [8] X ([112] O [2343] X [3] U [9]) O ([1] U [2] U ([12] O [13]) O [12 U [222])",
+                id="longer expression",
+            ),
+        ],
+    )
+    def test_ahb_expression_cache_performance(self, ahb_expression: str):
         # be careful with performance tests. they naturally behave different on different systems
-        ahb_expression = "Muss [7] U [8]"
         calls = 1000
         time_with_cache = timeit.timeit(
             lambda: parse_ahb_expression_to_single_requirement_indicator_expressions(
@@ -33,8 +42,12 @@ class TestCaching:
             ),
             number=calls,
         )
+
+        avg_time_per_parsing_with_cache = time_with_cache / calls
+        avg_time_per_parsing_without_cache = time_without_cache / calls
+        assert avg_time_per_parsing_with_cache < avg_time_per_parsing_without_cache / 100
         # a 100-fold performance improvement for 1000 calls of a simple expression seems fair
-        assert time_with_cache < time_without_cache / 100
+        # still, the overall time spent in parsing is not large: the order of magnitude for parsing without cache is 1ms
 
     def test_ahb_expression_cache_disabled(self, mocker):
         ahb_expression = "Muss [1] U [2]"
