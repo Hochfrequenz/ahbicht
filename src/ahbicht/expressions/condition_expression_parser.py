@@ -5,7 +5,7 @@ the parsing library lark: https://lark-parser.readthedocs.io/en/latest/
 The used terms are defined in the README_conditions.md.
 """
 # pylint:disable=cyclic-import
-from typing import List, Union
+from typing import Dict, List, Union
 
 from lark import Lark, Token, Tree
 from lark.exceptions import UnexpectedCharacters, UnexpectedEOF
@@ -39,8 +39,10 @@ PACKAGE_KEY: INT "P" // a TERMINAL for all INTs followed by "P" (high priority)
 """
 _parser = Lark(GRAMMAR, start="expression")
 
+_cache: Dict[str, Tree[Token]] = {}  #: holds the condition expression as key and the parsed Tree as value
 
-def parse_condition_expression_to_tree(condition_expression: str) -> Tree[Token]:
+
+def parse_condition_expression_to_tree(condition_expression: str, disable_cache: bool = False) -> Tree[Token]:
     """
     Parse a given condition expression with the help of the here defined grammar to a lark tree.
     The grammar starts with condition keys, e.g. [45] and combines them with
@@ -49,11 +51,14 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree[Token]
     Whitespaces are ignored.
 
     :param condition_expression: str, e.g. '[45]U[502]O[1][906]'
+    :param disable_cache: set to true to disable caching
     :return parsed_tree: Tree
     """
-
+    if (not disable_cache) and condition_expression in _cache:
+        return _cache[condition_expression]
     try:
         parsed_tree = _parser.parse(condition_expression)
+        _cache.update({condition_expression: parsed_tree})
     except (UnexpectedEOF, UnexpectedCharacters, TypeError) as eof:
         raise SyntaxError(
             """Please make sure that:
