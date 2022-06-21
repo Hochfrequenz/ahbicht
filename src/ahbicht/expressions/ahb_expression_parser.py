@@ -20,10 +20,11 @@ requirement_indicator: PREFIX_OPERATOR | MODAL_MARK
 PREFIX_OPERATOR: "X"i | "O"i | "U"i
 MODAL_MARK: /M(uss)?|S(oll)?|K(ann)?/i
 // Matches if it looks like a condition expression, but does not yet check if it is a syntactically valid one:
-CONDITION_EXPRESSION: /(?!\BU\B)[\[\]\(\)U∧O∨X⊻\d\sP\.UB]+/i
+CONDITION_EXPRESSION: /(?!\BU\B)(?:[\[\]\(\)U∧O∨X⊻\d\sP\.UB]|(?:\bFC_UNFULFILLED\b)|(?:\bFC_FULFILLED\b)|(?:\bRC_UNFULFILLED\b)|(?:\bRC_FULFILLED\b)|(?:\bRC_UNKNOWN\b)|(?:\bRC_NEUTRAL\b))+/i
 """
 # Regarding the negative lookahead in the condition expression regex see examples https://regex101.com/r/6fFHD4/1
 # and CTRL+F for "Mus[2]" in the unittest that fails if you remove the lookahead.
+# The combination with the hardcoded RC/FC placeholders is explained here: https://regex101.com/r/7Fjlb9/2
 _parser = Lark(GRAMMAR, start="ahb_expression")
 
 
