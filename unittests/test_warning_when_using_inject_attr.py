@@ -1,6 +1,6 @@
 import inject
 import pytest  # type:ignore[import]
-import pytest_asyncio
+import pytest_asyncio  # type:ignore[import]
 
 from unittests.defaults import EmptyDefaultRcEvaluator
 
