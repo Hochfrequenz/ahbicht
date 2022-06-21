@@ -27,7 +27,19 @@ from unittests.defaults import (
 pytestmark = pytest.mark.asyncio
 
 
+class SomethingInjectable:
+    """
+    This class is used by one of our custom Evaluators.
+    The evaluators a bit fragile because of https://github.com/ivankorobkov/python-inject/issues/77
+    This means you _cannot_ use inject.attr(...) in your custom evaluators
+    """
+
+    pass
+
+
 class MweRcEvaluator(EmptyDefaultRcEvaluator):
+    # do _not_use inject.attr! It breaks in the inspection inside the Evaluator __init__ method
+
     def evaluate_1(self, evaluatable_data, context):
         seed = evaluatable_data.edifact_seed
         if "foo" in seed and seed["foo"] == "bar":
@@ -42,6 +54,8 @@ class MweRcEvaluator(EmptyDefaultRcEvaluator):
         return ConditionFulfilledValue.UNFULFILLED
 
     def evaluate_3(self, _, __):
+        something_injected = inject.instance(SomethingInjectable)  # this is fine (other than inject.attr, see above)
+        assert isinstance(something_injected, SomethingInjectable)
         return ConditionFulfilledValue.UNFULFILLED
 
 
