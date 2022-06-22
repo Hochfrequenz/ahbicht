@@ -2,6 +2,7 @@
 Module for taking all the condition keys of a condition expression and building their respective ConditionNodes.
 If necessary it evaluates the needed attributes.
 """
+import sys
 from typing import Dict, List, Tuple, Union
 
 import inject
@@ -95,9 +96,11 @@ class ConditionNodeBuilder:
             )
             # the missing value is injected automatically
         except AttributeError as attribute_error:
-            if attribute_error.name == "edifact_format" and attribute_error.args[0].startswith(
-                "'EvaluatableDataProvider' object has no attribute"
-            ):
+            # the 'name' attribute of the Attribute error has been added in Python3.10
+            # https://docs.python.org/3/library/exceptions.html#AttributeError
+            if (sys.version_info.minor < 10 or attribute_error.name == "edifact_format") and attribute_error.args[
+                0
+            ].startswith("'EvaluatableDataProvider' object has no attribute"):
                 # This means the injection was not setup correctly.
                 # Instead of the EvaluatableDataProvider being called (which would return EvaluatableData),
                 # an instance the EvaluatableDataProvider itself was instantiated.
