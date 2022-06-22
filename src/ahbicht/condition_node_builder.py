@@ -98,7 +98,7 @@ class ConditionNodeBuilder:
             if attribute_error.name == "edifact_format" and attribute_error.args[0].startswith(
                 "'EvaluatableDataProvider' object has no attribute"
             ):
-                # This means the injection was not setup correctly.
+                # This means the injection was not set up correctly.
                 # Instead of the EvaluatableDataProvider being called (which would return EvaluatableData),
                 # an instance the EvaluatableDataProvider itself was instantiated.
                 # Most likely you're missing binder.bind_to_provider(EvaluatableDataProvider, callable_goes_here)
