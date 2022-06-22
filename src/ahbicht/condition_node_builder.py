@@ -100,7 +100,7 @@ class ConditionNodeBuilder:
             ):
                 # This means the injection was not set up correctly.
                 # Instead of the EvaluatableDataProvider being called (which would return EvaluatableData),
-                # an instance the EvaluatableDataProvider itself was instantiated.
+                # an instance of the EvaluatableDataProvider itself was instantiated.
                 # Most likely you're missing binder.bind_to_provider(EvaluatableDataProvider, callable_goes_here)
                 attribute_error.args = (
                     attribute_error.args[0] + ". Are you sure you called .bind_to_provider before?",
