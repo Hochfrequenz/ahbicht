@@ -94,16 +94,16 @@ class ConditionNodeBuilder:
             requirement_constraint_nodes = (
                 await self._build_requirement_constraint_nodes()  # pylint:disable=no-value-for-parameter
             )
-            # the missing value is injected automatically
+            # the missing value should be injected automatically
         except AttributeError as attribute_error:
             # the 'name' attribute of the Attribute error has been added in Python3.10
             # https://docs.python.org/3/library/exceptions.html#AttributeError
             if (sys.version_info.minor < 10 or attribute_error.name == "edifact_format") and attribute_error.args[
                 0
             ].startswith("'EvaluatableDataProvider' object has no attribute"):
-                # This means the injection was not setup correctly.
+                # This means the injection was not set up correctly.
                 # Instead of the EvaluatableDataProvider being called (which would return EvaluatableData),
-                # an instance the EvaluatableDataProvider itself was instantiated.
+                # an instance of the EvaluatableDataProvider itself was instantiated.
                 # Most likely you're missing binder.bind_to_provider(EvaluatableDataProvider, callable_goes_here)
                 attribute_error.args = (
                     attribute_error.args[0] + ". Are you sure you called .bind_to_provider before?",
