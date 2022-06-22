@@ -216,7 +216,7 @@ class TestAHBExpressionEvaluation:
             await evaluate_ahb_expression_tree(
                 parsed_tree, entered_input=None  # type:ignore[arg-type] # ok because error test
             )
-        assert "forgot .bind_to_provider" in str(excinfo.value)
+        assert "Are you sure you called .bind_to_provider" in str(excinfo.value)
 
     @pytest.mark.parametrize(
         "ahb_expression, content_evaluation_result",
