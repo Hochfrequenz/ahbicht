@@ -93,7 +93,7 @@ class ConditionNodeBuilder:
             requirement_constraint_nodes = (
                 await self._build_requirement_constraint_nodes()  # pylint:disable=no-value-for-parameter
             )
-            # the missing value is injected automatically
+            # the missing value should be injected automatically
         except AttributeError as attribute_error:
             if attribute_error.name == "edifact_format" and attribute_error.args[0].startswith(
                 "'EvaluatableDataProvider' object has no attribute"
