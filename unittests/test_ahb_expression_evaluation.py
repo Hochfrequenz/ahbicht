@@ -40,6 +40,18 @@ class TestAHBExpressionEvaluation:
         yield
         inject.clear()
 
+    @pytest_asyncio.fixture()
+    def setup_and_teardown_injector_without_evaluatable_data_provider(self):
+        inject.clear_and_configure(
+            lambda binder: binder.bind(
+                TokenLogicProvider,
+                SingletonTokenLogicProvider([empty_default_hints_provider, empty_default_rc_evaluator]),
+            )
+            # similar to the fixture above but without the evaluatable data provider => leads to injection errors
+        )
+        yield
+        inject.clear()
+
     @pytest.mark.parametrize(
         """ahb_expression, expected_requirement_indicator, expected_requirement_constraints_fulfilled,
         expected_requirement_is_conditional, expected_format_constraints_expression, expected_hints""",
@@ -195,6 +207,16 @@ class TestAHBExpressionEvaluation:
             )
 
         assert expected_error_message in str(excinfo.value)
+
+    async def test_missing_bind_to_provider_error(self, setup_and_teardown_injector_without_evaluatable_data_provider):
+        """Tests that a meaningful error raised when the user forgot to setup bind_to_provider"""
+
+        parsed_tree = parse_ahb_expression_to_single_requirement_indicator_expressions("Muss [1] U [2]")
+        with pytest.raises(AttributeError) as excinfo:  # type: ignore[var-annotated]
+            await evaluate_ahb_expression_tree(
+                parsed_tree, entered_input=None  # type:ignore[arg-type] # ok because error test
+            )
+        assert "forgot .bind_to_provider" in str(excinfo.value)
 
     @pytest.mark.parametrize(
         "ahb_expression, content_evaluation_result",

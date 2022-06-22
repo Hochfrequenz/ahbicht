@@ -89,10 +89,23 @@ class ConditionNodeBuilder:
 
     async def requirement_content_evaluation_for_all_condition_keys(self) -> Dict[str, TRCTransformerArgument]:
         """Gets input nodes for all condition keys."""
-        requirement_constraint_nodes = (
-            await self._build_requirement_constraint_nodes()  # pylint:disable=no-value-for-parameter
-        )
-        # the missing value is injected automatically
+        try:
+            requirement_constraint_nodes = (
+                await self._build_requirement_constraint_nodes()  # pylint:disable=no-value-for-parameter
+            )
+            # the missing value is injected automatically
+        except AttributeError as attribute_error:
+            if attribute_error.name == "edifact_format" and attribute_error.args[0].startswith(
+                "'EvaluatableDataProvider' object has no attribute"
+            ):
+                # This means the injection was not setup correctly.
+                # Instead of the EvaluatableDataProvider being called (which would return EvaluatableData),
+                # an instance the EvaluatableDataProvider itself was instantiated.
+                # Most likely you're missing binder.bind_to_provider(EvaluatableDataProvider, callable_goes_here)
+                attribute_error.args = (
+                    attribute_error.args[0] + ". Are you sure you called .bind_to_provider before?",
+                )
+            raise  # re-raise with an eventually slightly modified error message
         hint_nodes = await self._build_hint_nodes()  # pylint:disable=no-value-for-parameter
         unevaluated_format_constraint_nodes = self._build_unevaluated_format_constraint_nodes()
         input_nodes: Dict[str, TRCTransformerArgument] = {
