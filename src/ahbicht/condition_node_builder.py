@@ -2,6 +2,7 @@
 Module for taking all the condition keys of a condition expression and building their respective ConditionNodes.
 If necessary it evaluates the needed attributes.
 """
+import sys
 from typing import Dict, List, Tuple, Union
 
 import inject
@@ -89,10 +90,25 @@ class ConditionNodeBuilder:
 
     async def requirement_content_evaluation_for_all_condition_keys(self) -> Dict[str, TRCTransformerArgument]:
         """Gets input nodes for all condition keys."""
-        requirement_constraint_nodes = (
-            await self._build_requirement_constraint_nodes()  # pylint:disable=no-value-for-parameter
-        )
-        # the missing value is injected automatically
+        try:
+            requirement_constraint_nodes = (
+                await self._build_requirement_constraint_nodes()  # pylint:disable=no-value-for-parameter
+            )
+            # the missing value should be injected automatically
+        except AttributeError as attribute_error:
+            # the 'name' attribute of the Attribute error has been added in Python3.10
+            # https://docs.python.org/3/library/exceptions.html#AttributeError
+            if (sys.version_info.minor < 10 or attribute_error.name == "edifact_format") and attribute_error.args[
+                0
+            ].startswith("'EvaluatableDataProvider' object has no attribute"):
+                # This means the injection was not set up correctly.
+                # Instead of the EvaluatableDataProvider being called (which would return EvaluatableData),
+                # an instance of the EvaluatableDataProvider itself was instantiated.
+                # Most likely you're missing binder.bind_to_provider(EvaluatableDataProvider, callable_goes_here)
+                attribute_error.args = (
+                    attribute_error.args[0] + ". Are you sure you called .bind_to_provider before?",
+                )
+            raise  # re-raise with an eventually slightly modified error message
         hint_nodes = await self._build_hint_nodes()  # pylint:disable=no-value-for-parameter
         unevaluated_format_constraint_nodes = self._build_unevaluated_format_constraint_nodes()
         input_nodes: Dict[str, TRCTransformerArgument] = {
