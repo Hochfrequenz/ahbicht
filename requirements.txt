@@ -14,7 +14,7 @@ lark==1.1.2
     # via -r requirements.in
 lxml==4.8.0
     # via maus
-marshmallow==3.16.0
+marshmallow==3.17.0
     # via
     #   -r requirements.in
     #   marshmallow-enum
