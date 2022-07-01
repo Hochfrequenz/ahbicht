@@ -1,6 +1,7 @@
 """
 Dataclasses that are relevant in the context of the content_evaluation.
 """
+import threading
 from dataclasses import dataclass, replace
 from typing import Optional, Union
 
@@ -31,6 +32,34 @@ class EvaluatableDataProvider:
     during dependency injection.
     See https://github.com/ivankorobkov/python-inject#why-no-scopes
     """
+
+
+# Create a thread-local storage for the message/evaluatable data under test
+# see https://github.com/ivankorobkov/python-inject#why-no-scopes
+_LOCAL = threading.local()
+
+
+def get_thread_local_evaluatable_data() -> EvaluatableData:
+    """
+    returns the evaluatable data that have been set using set_thread_local_evaluatable_data before
+    raises an exception if the set call is missing
+    :return:
+    """
+    result: Optional[EvaluatableData] = getattr(_LOCAL, "evaluatable_data", None)
+    if result is None:
+        raise AttributeError(
+            # pylint:disable=line-too-long
+            f"No thread local evaluatable data have been found. Did you call '{set_thread_local_evaluatable_data.__name__}' before?"
+        )
+    return result
+
+
+def set_thread_local_evaluatable_data(evaluatable_data: EvaluatableData):
+    """
+    set thread local evaluatable data (meaning they might be different in each call/request)
+    :param evaluatable_data: the evaluatable data to be set
+    """
+    _LOCAL.evaluatable_data = evaluatable_data
 
 
 @dataclass

@@ -11,7 +11,12 @@ from maus import (
 )
 from maus.models.anwendungshandbuch import AhbMetaInformation
 
-from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
+from ahbicht.content_evaluation.evaluationdatatypes import (
+    EvaluatableData,
+    EvaluatableDataProvider,
+    get_thread_local_evaluatable_data,
+    set_thread_local_evaluatable_data,
+)
 from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.validation.validation import validate_deep_anwendungshandbuch
@@ -71,21 +76,11 @@ class MweFcEvaluator(EmptyDefaultFcEvaluator):
         )
 
 
-def get_eval_data():
-    return TestIntegrationMwe.message_under_test
-
-
 class TestIntegrationMwe:
     """
     Contains an integration tests that show a full minimal working example (meaning: no mocks at all).
     If any tests break, then first fix all other tests and run these tests last.
     """
-
-    message_under_test: EvaluatableData = EvaluatableData(
-        edifact_seed={"foo": "bar", "asd": "yxc"},
-        edifact_format=default_test_format,
-        edifact_format_version=default_test_version,
-    )
 
     @pytest_asyncio.fixture()
     def setup_and_teardown_injector(self):
@@ -97,7 +92,7 @@ class TestIntegrationMwe:
             lambda binder: binder.bind(
                 TokenLogicProvider,
                 SingletonTokenLogicProvider([fc_evaluator, rc_evaluator, hints_provider, package_resolver]),
-            ).bind_to_provider(EvaluatableDataProvider, get_eval_data)
+            ).bind_to_provider(EvaluatableDataProvider, get_thread_local_evaluatable_data)
         )
         yield
         inject.clear()
@@ -174,12 +169,22 @@ class TestIntegrationMwe:
                 ),
             ],
         )
+        set_thread_local_evaluatable_data(
+            EvaluatableData(
+                edifact_seed={"foo": "bar", "asd": "yxc"},
+                edifact_format=default_test_format,
+                edifact_format_version=default_test_version,
+            )
+        )
         results = await validate_deep_anwendungshandbuch(maus)
         assert results is not None  # no detailed assertions here
-        TestIntegrationMwe.message_under_test = EvaluatableData(
-            edifact_seed={"foo": "baz", "asd": "qwe"},
-            edifact_format=default_test_format,
-            edifact_format_version=default_test_version,
+
+        set_thread_local_evaluatable_data(
+            EvaluatableData(
+                edifact_seed={"foo": "baz", "asd": "qwd"},
+                edifact_format=default_test_format,
+                edifact_format_version=default_test_version,
+            )
         )  # change the message under test to trigger different outcomes
         results2 = await validate_deep_anwendungshandbuch(maus)
         assert results2 is not None
