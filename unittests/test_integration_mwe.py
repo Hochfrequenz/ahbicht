@@ -1,3 +1,6 @@
+import asyncio
+from contextvars import ContextVar
+
 import inject
 import pytest  # type:ignore[import]
 import pytest_asyncio  # type:ignore[import]
@@ -71,8 +74,11 @@ class MweFcEvaluator(EmptyDefaultFcEvaluator):
         )
 
 
-def get_eval_data():
-    return TestIntegrationMwe.message_under_test
+current_evaluatable_data: ContextVar[EvaluatableData] = ContextVar("current_evaluatable_data")
+
+
+def get_current_evaluatable_data() -> EvaluatableData:
+    return current_evaluatable_data.get()
 
 
 class TestIntegrationMwe:
@@ -80,12 +86,6 @@ class TestIntegrationMwe:
     Contains an integration tests that show a full minimal working example (meaning: no mocks at all).
     If any tests break, then first fix all other tests and run these tests last.
     """
-
-    message_under_test: EvaluatableData = EvaluatableData(
-        edifact_seed={"foo": "bar", "asd": "yxc"},
-        edifact_format=default_test_format,
-        edifact_format_version=default_test_version,
-    )
 
     @pytest_asyncio.fixture()
     def setup_and_teardown_injector(self):
@@ -97,7 +97,7 @@ class TestIntegrationMwe:
             lambda binder: binder.bind(
                 TokenLogicProvider,
                 SingletonTokenLogicProvider([fc_evaluator, rc_evaluator, hints_provider, package_resolver]),
-            ).bind_to_provider(EvaluatableDataProvider, get_eval_data)
+            ).bind_to_provider(EvaluatableDataProvider, get_current_evaluatable_data)
         )
         yield
         inject.clear()
@@ -174,13 +174,28 @@ class TestIntegrationMwe:
                 ),
             ],
         )
-        results = await validate_deep_anwendungshandbuch(maus)
-        assert results is not None  # no detailed assertions here
-        TestIntegrationMwe.message_under_test = EvaluatableData(
-            edifact_seed={"foo": "baz", "asd": "qwe"},
-            edifact_format=default_test_format,
-            edifact_format_version=default_test_version,
-        )  # change the message under test to trigger different outcomes
-        results2 = await validate_deep_anwendungshandbuch(maus)
+
+        async def first_evaluation():
+            current_evaluatable_data.set(
+                EvaluatableData(
+                    edifact_seed={"foo": "bar", "asd": "yxc"},
+                    edifact_format=default_test_format,
+                    edifact_format_version=default_test_version,
+                )
+            )
+            return await validate_deep_anwendungshandbuch(maus)
+
+        async def second_evaluation():
+            current_evaluatable_data.set(
+                EvaluatableData(
+                    edifact_seed={"foo": "baz", "asd": "qwe"},
+                    edifact_format=default_test_format,
+                    edifact_format_version=default_test_version,
+                )
+            )  # use a different message under test to trigger different outcomes
+            # you can set a breakpoint in evaluate_1 and evaluate_2 to manually verify the different data they access
+            return await validate_deep_anwendungshandbuch(maus)
+
+        results1, results2 = await asyncio.gather(*[first_evaluation(), second_evaluation()])
         assert results2 is not None
-        assert results != results2
+        assert results1 != results2  # this shows, that the evaluatable data used are indeed different in each call
