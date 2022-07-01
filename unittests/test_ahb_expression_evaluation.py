@@ -156,7 +156,7 @@ class TestAHBExpressionEvaluation:
         )
 
         parsed_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_expression)
-        result = await evaluate_ahb_expression_tree(parsed_tree, entered_input=None)  # type:ignore[arg-type]
+        result = await evaluate_ahb_expression_tree(parsed_tree)
 
         assert result.requirement_indicator == expected_requirement_indicator
         assert (

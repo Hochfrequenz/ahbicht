@@ -39,14 +39,11 @@ class AhbExpressionTransformer(Transformer):
     their respective condition expressions already evaluated to booleans.
     """
 
-    def __init__(self, entered_input: Optional[str]):
+    def __init__(self):
         """
         The input are the evaluated format constraint conditions in the form of ConditionNodes.
-
-        :param entered_input: dict(condition_keys, ConditionNode)
         """
         super().__init__()
-        self.entered_input = entered_input
 
     def CONDITION_EXPRESSION(self, condition_expression: Token) -> str:
         """Returns the condition expression."""
@@ -150,18 +147,17 @@ class AhbExpressionTransformer(Transformer):
 
 
 async def evaluate_ahb_expression_tree(
-    parsed_tree: Tree, entered_input: Optional[str]
+    parsed_tree: Tree,
 ) -> AhbExpressionEvaluationResult:
     """
     Evaluates the tree built from the ahb expressions with the help of the AhbExpressionTransformer.
 
     :param parsed_tree: Tree
-    :param entered_input: the conditions as defined in the AHBs in the form of ConditionNodes
     :return: the result of the overall condition check (including requirement constraints, format constraints,
         several modal marks)
     """
     try:
-        result = AhbExpressionTransformer(entered_input).transform(parsed_tree)
+        result = AhbExpressionTransformer().transform(parsed_tree)
     except VisitError as visit_err:
         raise visit_err.orig_exc
 

@@ -193,7 +193,7 @@ async def get_segment_level_requirement_validation_value(
     expression_tree = await parse_expression_including_unresolved_subexpressions(
         segment_level.ahb_expression, resolve_packages=True
     )
-    evaluation_result = await evaluate_ahb_expression_tree(expression_tree, entered_input=None)
+    evaluation_result = await evaluate_ahb_expression_tree(expression_tree)
 
     requirement_validation_without_hierarchy = map_requirement_validation_values(
         evaluation_result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled,
@@ -302,7 +302,7 @@ async def validate_data_element_valuepool(
                 expression_tree = await parse_expression_including_unresolved_subexpressions(
                     value_pool_entry.ahb_expression, resolve_packages=True
                 )
-                evaluation_result = await evaluate_ahb_expression_tree(expression_tree, entered_input=None)
+                evaluation_result = await evaluate_ahb_expression_tree(expression_tree)
                 if evaluation_result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled:
                     possible_values[value_pool_entry.qualifier] = value_pool_entry.meaning
                 hints = None  # TODO: Get all hints from possible values
