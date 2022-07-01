@@ -72,4 +72,4 @@ def create_and_inject_hardcoded_evaluators(
         if evaluatable_data_provider is not None:
             binder.bind_to_provider(EvaluatableDataProvider, evaluatable_data_provider)
 
-    inject.clear_and_configure(configure)
+    inject.configure_once(configure)
