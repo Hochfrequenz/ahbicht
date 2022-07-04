@@ -10,12 +10,38 @@ validate already required data.
 import asyncio
 import inspect
 from abc import ABC
+from contextvars import ContextVar
 from typing import Coroutine, Dict, List, Optional
 
 from ahbicht.content_evaluation.evaluators import Evaluator
 from ahbicht.content_evaluation.german_strom_and_gas_tag import has_no_utc_offset, is_xtag_limit
 from ahbicht.evaluation_results import FormatConstraintEvaluationResult
 from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
+
+text_to_be_evaluated_by_format_constraint: ContextVar[Optional[str]] = ContextVar(
+    "text_to_be_evaluated_by_format_constraint", default=None
+)
+"""
+This context variable holds the text that is to be analysed/evaluated by the format constraint evaluator.
+It will always return the "correct" value in your context. You only have to manually set this context variable if you're
+evaluating an expression outside the validation framework.
+The conceptual difference to the EvaluatableData which are dependency injected using the EvaluatableDataProvider is,
+that the data evaluated in a format constraint (via the context variable) vary over the time span of one validation run.
+The EvaluatableData are stable in that regard.
+"""
+
+# The idea behind the context variable is to avoid passing the string/text to be evaluated by FC evaluators through many
+# layers of code (including lark classes like transformers where we formerly had the string as constructor argument).
+# Now it needs to be set once and only once when the entered input is determined (e.g. when reading user input).
+# Then we can forget about it, it does not bloat our function signatures (where in >90% of the cases it has just been
+# forwarded to the next layer of code).
+# The context variable also greatly simplifies the debugging/error analysis.
+# Instead of tracing the entered input all the way down from the ahbicht API to the FC Evaluator method,
+# you now just need to watch the two places in the code where the values are actually set:
+# 1. in the ahbicht code base in the validation
+# 2. in custom code using ahbicht(?)
+# The single evaluation methods of the FC evaluators (e.g. "def evaluate_987") are still provided with the value as a
+# usual function argument to prevent the methods from needing to access the context variable themselves.
 
 
 class FcEvaluator(Evaluator, ABC):
@@ -77,23 +103,21 @@ class FcEvaluator(Evaluator, ABC):
         """
         return is_xtag_limit(entered_input, "Gas")
 
-    async def evaluate_single_format_constraint(
-        self, condition_key: str, entered_input: Optional[str]
-    ) -> EvaluatedFormatConstraint:
+    async def evaluate_single_format_constraint(self, condition_key: str) -> EvaluatedFormatConstraint:
         """
         Evaluates the format constraint with the given key.
         :param condition_key: key of the condition, e.g. "950"
-        :param entered_input: the entered input whose format should be checked, e.g. "12345678913"
         :return: If the format constraint is fulfilled and an optional error_message.
         """
+        text_to_be_evaluated = text_to_be_evaluated_by_format_constraint.get()
         evaluation_method = self.get_evaluation_method(condition_key)
         if evaluation_method is None:
             raise NotImplementedError(f"There is no content_evaluation method for format constraint '{condition_key}'")
         result: EvaluatedFormatConstraint
         if inspect.iscoroutinefunction(evaluation_method):
-            result = await evaluation_method(entered_input)
+            result = await evaluation_method(text_to_be_evaluated)
         else:
-            result = evaluation_method(entered_input)
+            result = evaluation_method(text_to_be_evaluated)
         try:
             if result.format_constraint_fulfilled is False and result.error_message is None:
                 result.error_message = f"Condition [{condition_key}] has to be fulfilled."
@@ -106,14 +130,12 @@ class FcEvaluator(Evaluator, ABC):
             raise attribute_error
         return result
 
-    async def evaluate_format_constraints(
-        self, condition_keys: List[str], entered_input: Optional[str]
-    ) -> Dict[str, EvaluatedFormatConstraint]:
+    async def evaluate_format_constraints(self, condition_keys: List[str]) -> Dict[str, EvaluatedFormatConstraint]:
         """
         Evaluate the entered_input in regard to all the formats provided in condition_keys.
         """
         tasks: List[Coroutine] = [
-            self.evaluate_single_format_constraint(condition_key, entered_input) for condition_key in condition_keys
+            self.evaluate_single_format_constraint(condition_key) for condition_key in condition_keys
         ]
         results: List[EvaluatedFormatConstraint] = await asyncio.gather(*tasks)
 
@@ -135,9 +157,7 @@ class DictBasedFcEvaluator(FcEvaluator):
         self._results: Dict[str, EvaluatedFormatConstraint] = results
 
     # pylint: disable=unused-argument
-    async def evaluate_single_format_constraint(
-        self, condition_key: str, entered_input: Optional[str]
-    ) -> EvaluatedFormatConstraint:
+    async def evaluate_single_format_constraint(self, condition_key: str) -> EvaluatedFormatConstraint:
         try:
             return self._results[condition_key]
         except KeyError as key_error:

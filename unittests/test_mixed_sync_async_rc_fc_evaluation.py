@@ -75,9 +75,8 @@ class TestMixedSyncAsyncEvaluation:
                 SingletonTokenLogicProvider([rc_evaluator, fc_evaluator, empty_default_hints_provider]),
             ).bind_to_provider(EvaluatableDataProvider, return_empty_dummy_evaluatable_data)
         )
-        evaluation_input = "something has to be here but it's not important what"
         tree = await parse_expression_including_unresolved_subexpressions(expression)
-        evaluation_result = await evaluate_ahb_expression_tree(tree, entered_input=evaluation_input)
+        evaluation_result = await evaluate_ahb_expression_tree(tree)
         assert (
             evaluation_result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled
             is expected_rc_fulfilled

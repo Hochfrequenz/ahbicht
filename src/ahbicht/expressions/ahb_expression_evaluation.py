@@ -4,7 +4,7 @@ The AhbExpressionTransformer defines the rules how the different parts of the pa
 
 The used terms are defined in the README.md.
 """
-from typing import Awaitable, Dict, List, Optional, Union
+from typing import Awaitable, Dict, List, Union
 
 from lark import Token, Transformer, Tree, v_args
 from lark.exceptions import VisitError
@@ -39,14 +39,11 @@ class AhbExpressionTransformer(Transformer):
     their respective condition expressions already evaluated to booleans.
     """
 
-    def __init__(self, entered_input: Optional[str]):
+    def __init__(self):
         """
         The input are the evaluated format constraint conditions in the form of ConditionNodes.
-
-        :param entered_input: dict(condition_keys, ConditionNode)
         """
         super().__init__()
-        self.entered_input = entered_input
 
     def CONDITION_EXPRESSION(self, condition_expression: Token) -> str:
         """Returns the condition expression."""
@@ -79,9 +76,8 @@ class AhbExpressionTransformer(Transformer):
         requirement_constraint_evaluation_result: RequirementConstraintEvaluationResult = (
             await requirement_constraint_evaluation(condition_expression)
         )
-
         format_constraint_evaluation_result: FormatConstraintEvaluationResult = await format_constraint_evaluation(
-            requirement_constraint_evaluation_result.format_constraints_expression, self.entered_input
+            requirement_constraint_evaluation_result.format_constraints_expression
         )
 
         result_of_ahb_expression_evaluation: AhbExpressionEvaluationResult = AhbExpressionEvaluationResult(
@@ -150,18 +146,17 @@ class AhbExpressionTransformer(Transformer):
 
 
 async def evaluate_ahb_expression_tree(
-    parsed_tree: Tree, entered_input: Optional[str]
+    parsed_tree: Tree,
 ) -> AhbExpressionEvaluationResult:
     """
     Evaluates the tree built from the ahb expressions with the help of the AhbExpressionTransformer.
 
     :param parsed_tree: Tree
-    :param entered_input: the conditions as defined in the AHBs in the form of ConditionNodes
     :return: the result of the overall condition check (including requirement constraints, format constraints,
         several modal marks)
     """
     try:
-        result = AhbExpressionTransformer(entered_input).transform(parsed_tree)
+        result = AhbExpressionTransformer().transform(parsed_tree)
     except VisitError as visit_err:
         raise visit_err.orig_exc
 
