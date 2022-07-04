@@ -25,6 +25,9 @@ text_to_be_evaluated_by_format_constraint: ContextVar[Optional[str]] = ContextVa
 This context variable holds the text that is to be analysed/evaluated by the format constraint evaluator.
 It will always return the "correct" value in your context. You only have to manually set this context variable if you're
 evaluating an expression outside the validation framework.
+The conceptual difference to the EvaluatableData which are dependency injected using the EvaluatableDataProvider is,
+that the data evaluated in a format constraint (via the context variable) vary over the time span of one validation run.
+The EvaluatableData are stable in that regard.
 """
 
 # The idea behind the context variable is to avoid passing the string/text to be evaluated by FC evaluators through many
