@@ -202,9 +202,7 @@ class TestAHBExpressionEvaluation:
         parsed_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(expression)
 
         with pytest.raises(expected_error) as excinfo:  # type: ignore[var-annotated]
-            await evaluate_ahb_expression_tree(
-                parsed_tree, entered_input=None  # type:ignore[arg-type] # ok because error test
-            )
+            await evaluate_ahb_expression_tree(parsed_tree)
 
         assert expected_error_message in str(excinfo.value)
 
@@ -213,9 +211,7 @@ class TestAHBExpressionEvaluation:
 
         parsed_tree = parse_ahb_expression_to_single_requirement_indicator_expressions("Muss [1] U [2]")
         with pytest.raises(AttributeError) as excinfo:  # type: ignore[var-annotated]
-            await evaluate_ahb_expression_tree(
-                parsed_tree, entered_input=None  # type:ignore[arg-type] # ok because error test
-            )
+            await evaluate_ahb_expression_tree(parsed_tree)
         assert "Are you sure you called .bind_to_provider" in str(excinfo.value)
 
     @pytest.mark.parametrize(
@@ -251,7 +247,6 @@ class TestAHBExpressionEvaluation:
             edifact_format=default_test_format,
             edifact_format_version=default_test_version,
         )
-        evaluation_input = "something has to be here but it's not important what"
-        evaluation_result_a = await evaluate_ahb_expression_tree(tree_a, entered_input=evaluation_input)
-        evaluation_result_b = await evaluate_ahb_expression_tree(tree_b, entered_input=evaluation_input)
+        evaluation_result_a = await evaluate_ahb_expression_tree(tree_a)
+        evaluation_result_b = await evaluate_ahb_expression_tree(tree_b)
         assert evaluation_result_a == evaluation_result_b

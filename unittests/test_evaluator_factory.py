@@ -68,7 +68,7 @@ class TestEvaluatorFactory:
     ):
         tree = await parse_expression_including_unresolved_subexpressions(expression=expression, resolve_packages=True)
         assert tree is not None
-        expression_evaluation_result = await evaluate_ahb_expression_tree(tree, entered_input="hello")
+        expression_evaluation_result = await evaluate_ahb_expression_tree(tree)
         assert (
             expression_evaluation_result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled
             is True

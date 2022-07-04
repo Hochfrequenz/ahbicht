@@ -5,6 +5,7 @@ import inject
 import pytest  # type:ignore[import]
 import pytest_asyncio  # type:ignore[import]
 
+from ahbicht.content_evaluation import fc_evaluators
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
 from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
@@ -116,7 +117,7 @@ class TestFormatConstraintExpressionEvaluation:
             return_value=self._input_values,
         )
 
-        result = await format_constraint_evaluation(format_constraint_expression, entered_input=None)
+        result = await format_constraint_evaluation(format_constraint_expression)
 
         assert isinstance(result, FormatConstraintEvaluationResult)
         assert result.format_constraints_fulfilled == expected_format_constraints_fulfilled
@@ -151,9 +152,7 @@ class TestFormatConstraintExpressionEvaluation:
         )
 
         with pytest.raises(ValueError) as excinfo:
-            await format_constraint_evaluation(
-                format_constraints_expression, entered_input=None  # type:ignore[arg-type]
-            )
+            await format_constraint_evaluation(format_constraints_expression)
 
         assert expected_error_message in str(excinfo.value)
 
@@ -188,7 +187,8 @@ class TestFormatConstraintExpressionEvaluation:
         self, condition_keys, entered_input, expected_evaluated_fc_nodes, setup_and_teardown_injector
     ):
         """Tests that evaluated format constraints nodes are build correctly."""
-        evaluated_fc_nodes = await _build_evaluated_format_constraint_nodes(condition_keys, entered_input)
+        fc_evaluators.text_to_be_evaluated_by_format_constraint.set(entered_input)
+        evaluated_fc_nodes = await _build_evaluated_format_constraint_nodes(condition_keys)
         assert evaluated_fc_nodes == expected_evaluated_fc_nodes
 
     @pytest.mark.parametrize(
@@ -221,7 +221,8 @@ class TestFormatConstraintExpressionEvaluation:
         """
         Tests that the default FC evaluator ships evaluation methods for 932, 933, 934 and 935 (those expanded from UBx)
         """
-        result = await format_constraint_evaluation(format_constraint_expression, entered_input=entered_input)
+        fc_evaluators.text_to_be_evaluated_by_format_constraint.set(entered_input)
+        result = await format_constraint_evaluation(format_constraint_expression)
         assert result is not None
         assert result.format_constraints_fulfilled == is_successful
         if is_successful is False and error_message is not None:

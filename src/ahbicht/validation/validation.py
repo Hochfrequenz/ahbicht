@@ -15,6 +15,7 @@ from maus.models.edifact_components import (
     SegmentLevel,
 )
 
+from ahbicht.content_evaluation import fc_evaluators
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
 from ahbicht.expressions.enums import ModalMark, PrefixOperator, RequirementIndicator
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
@@ -247,7 +248,8 @@ async def validate_data_element_freetext(
     expression_tree = await parse_expression_including_unresolved_subexpressions(
         data_element.ahb_expression, resolve_packages=True
     )
-    evaluation_result = await evaluate_ahb_expression_tree(expression_tree, entered_input=data_element.entered_input)
+    fc_evaluators.text_to_be_evaluated_by_format_constraint.set(data_element.entered_input)
+    evaluation_result = await evaluate_ahb_expression_tree(expression_tree)
 
     # requirement constraints
     requirement_validation_without_input_without_hierarchy = map_requirement_validation_values(

@@ -90,7 +90,7 @@ def evaluate_format_constraint_tree(
 
 
 async def format_constraint_evaluation(
-    format_constraints_expression: Optional[str], entered_input: Optional[str]
+    format_constraints_expression: Optional[str],
 ) -> FormatConstraintEvaluationResult:
     """
     Evaluation of the format constraint expression.
@@ -107,7 +107,7 @@ async def format_constraint_evaluation(
         input_values: Dict[
             str, EvaluatedFormatConstraint
         ] = await _build_evaluated_format_constraint_nodes(  # pylint:disable=no-value-for-parameter
-            all_evaluatable_format_constraint_keys, entered_input
+            all_evaluatable_format_constraint_keys
         )
         resulting_evaluated_format_constraint_node: EvaluatedFormatConstraint = evaluate_format_constraint_tree(
             parsed_tree_fc, input_values
@@ -124,7 +124,6 @@ async def format_constraint_evaluation(
 # search for binder.bind_to_provider(EvaluatableDataProvider, your_function_that_returns_evaluatable_data_goes_here)
 async def _build_evaluated_format_constraint_nodes(
     evaluatable_format_constraint_keys: List[str],
-    entered_input: Optional[str],
     evaluatable_data: EvaluatableData,
 ) -> Dict[str, EvaluatedFormatConstraint]:
     """Build evaluated format constraint nodes."""
@@ -133,7 +132,5 @@ async def _build_evaluated_format_constraint_nodes(
     evaluator: FcEvaluator = token_logic_provider.get_fc_evaluator(
         evaluatable_data.edifact_format, evaluatable_data.edifact_format_version
     )
-    evaluated_format_constraints = await evaluator.evaluate_format_constraints(
-        evaluatable_format_constraint_keys, entered_input
-    )
+    evaluated_format_constraints = await evaluator.evaluate_format_constraints(evaluatable_format_constraint_keys)
     return evaluated_format_constraints

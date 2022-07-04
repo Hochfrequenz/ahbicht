@@ -4,7 +4,7 @@ The AhbExpressionTransformer defines the rules how the different parts of the pa
 
 The used terms are defined in the README.md.
 """
-from typing import Awaitable, Dict, List, Optional, Union
+from typing import Awaitable, Dict, List, Union
 
 from lark import Token, Transformer, Tree, v_args
 from lark.exceptions import VisitError
@@ -76,9 +76,8 @@ class AhbExpressionTransformer(Transformer):
         requirement_constraint_evaluation_result: RequirementConstraintEvaluationResult = (
             await requirement_constraint_evaluation(condition_expression)
         )
-
         format_constraint_evaluation_result: FormatConstraintEvaluationResult = await format_constraint_evaluation(
-            requirement_constraint_evaluation_result.format_constraints_expression, self.entered_input
+            requirement_constraint_evaluation_result.format_constraints_expression
         )
 
         result_of_ahb_expression_evaluation: AhbExpressionEvaluationResult = AhbExpressionEvaluationResult(
