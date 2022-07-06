@@ -3,6 +3,8 @@ Tests the hints provider module.
 """
 import asyncio
 import datetime
+from logging import LogRecord
+from typing import List
 
 import pytest  # type:ignore[import]
 from maus.edifact import EdifactFormat, EdifactFormatVersion
@@ -60,10 +62,14 @@ class TestHintsProvider:
         end = datetime.datetime.now()
         assert (end - start).total_seconds() < len(dummy_keys)
 
-    async def test_sync_hint_text_resolving(self):
+    async def test_sync_hint_text_resolving(self, caplog):
         hints_provider = DummySyncHintsProvider()
         dummy_keys = ["1", "2", "3"]
         await hints_provider.get_hints(dummy_keys)
+        log_entries: List[LogRecord] = caplog.records
+        assert len(log_entries) == 2
+        assert log_entries[0].message == "Instantiated DummySyncHintsProvider"
+        assert log_entries[1].message == "Found 3 hints for 1, 2, 3"
 
     async def test_async_hint_text_resolving(self):
         hints_provider = DummyAsyncHintsProvider()

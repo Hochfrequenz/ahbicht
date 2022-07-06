@@ -128,6 +128,9 @@ class FcEvaluator(Evaluator, ABC):
                     "A FcEvaluator shall return EvaluatedFormatConstraints, _not_ FormatConstraintEvaluationResults"
                 ) from attribute_error
             raise attribute_error
+        self.logger.debug(
+            "The format constraint %s with input '%s' evaluated to %s", condition_key, text_to_be_evaluated, str(result)
+        )
         return result
 
     async def evaluate_format_constraints(self, condition_keys: List[str]) -> Dict[str, EvaluatedFormatConstraint]:

@@ -5,6 +5,7 @@ as dictionary with the condition keys as keys and the hint texts as values.
 import asyncio
 import inspect
 import json
+import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Dict, List, Mapping, Optional
@@ -29,6 +30,11 @@ class HintsProvider(ABC):
     edifact_format_version: EdifactFormatVersion = NotImplementedError(  # type:ignore[assignment]
         "The inheriting class needs to define a format version."
     )
+
+    def __init__(self):
+        self.logger = logging.getLogger(self.__module__)
+        self.logger.setLevel(logging.DEBUG)
+        self.logger.info("Instantiated %s", self.__class__.__name__)
 
     @abstractmethod
     async def get_hint_text(self, condition_key: str) -> Optional[str]:
@@ -56,6 +62,7 @@ class HintsProvider(ABC):
                     raise KeyError(f"There seems to be no hint implemented with condition key '{key}'.")
             else:
                 result[key] = Hint(hint=value, condition_key=key)
+        self.logger.debug("Found %i hints for %s", len(results), ", ".join(result.keys()))
         return result
 
 
@@ -69,6 +76,7 @@ class DictBasedHintsProvider(HintsProvider):
         Initialize with a dictionary that contains all the Hinweis texts.
         :param results:
         """
+        super().__init__()
         self._all_hints: Mapping[str, Optional[str]] = results
 
     async def get_hint_text(self, condition_key: str) -> Optional[str]:

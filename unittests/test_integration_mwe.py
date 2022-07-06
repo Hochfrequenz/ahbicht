@@ -1,5 +1,7 @@
 import asyncio
 from contextvars import ContextVar
+from logging import LogRecord
+from typing import List
 
 import inject
 import pytest  # type:ignore[import]
@@ -102,7 +104,7 @@ class TestIntegrationMwe:
         yield
         inject.clear()
 
-    async def test_integration(self, setup_and_teardown_injector):
+    async def test_integration(self, setup_and_teardown_injector, caplog):
         maus = DeepAnwendungshandbuch(
             meta=AhbMetaInformation(pruefidentifikator="12345"),
             lines=[
@@ -199,3 +201,6 @@ class TestIntegrationMwe:
         results1, results2 = await asyncio.gather(*[first_evaluation(), second_evaluation()])
         assert results2 is not None
         assert results1 != results2  # this shows, that the evaluatable data used are indeed different in each call
+        log_entries: List[LogRecord] = caplog.records
+        assert len([le for le in log_entries if le.message.startswith("The requirement constraint")]) == 12
+        assert len([le for le in log_entries if le.message.startswith("The format constraint")]) == 1

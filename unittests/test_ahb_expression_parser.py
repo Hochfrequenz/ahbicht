@@ -4,7 +4,10 @@
 import pytest  # type:ignore[import]
 from lark import Token, Tree
 
-from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
+from ahbicht.expressions.ahb_expression_parser import (
+    _cache,
+    parse_ahb_expression_to_single_requirement_indicator_expressions,
+)
 
 
 class TestAhbExpressionParser:
@@ -341,7 +344,7 @@ class TestAhbExpressionParser:
         ],
     )
     def test_parse_valid_ahb_expression_to_to_single_requirement_indicator_expressions(
-        self, ahb_expression: str, expected_tree: Tree[Token]
+        self, caplog, ahb_expression: str, expected_tree: Tree[Token]
     ):
         """
         Tests that valid ahb expressions are parsed as expected.
@@ -350,6 +353,12 @@ class TestAhbExpressionParser:
 
         assert isinstance(parsed_tree, Tree)
         assert parsed_tree == expected_tree
+        log_entries = caplog.records
+        if len(log_entries) > 0:
+            assert caplog.records[0].message == f"Successfully parsed '{ahb_expression}' as AHB expression"
+        else:
+            # if the tree is not actually parsed but loaded from the cache we don't expect a logging message
+            assert ahb_expression in _cache
 
     @pytest.mark.parametrize(
         "ahb_expression",

@@ -4,6 +4,7 @@ FULFILLED (true), UNFULFILLED (false) or NEUTRAL (None). Their results are used 
 the entire message.
 """
 import inspect
+import logging
 import re
 from abc import ABC
 from typing import Callable, Dict, Optional
@@ -37,6 +38,8 @@ class Evaluator(ABC):
         initializes a cache with all evaluation methods defined in the (child) class
         """
         self._evaluation_methods: Dict[str, Callable] = {}
+        self.logger: logging.Logger = logging.getLogger(self.__module__)
+        self.logger.setLevel(logging.DEBUG)
         try:
             candidates = inspect.getmembers(self, inspect.ismethod)
         except inject.InjectorException as injector_exception:
@@ -53,6 +56,9 @@ class Evaluator(ABC):
             match = Evaluator._evaluation_method_name_pattern.match(candidate[0])
             if match:
                 self._evaluation_methods[match.groupdict()["condition_key"]] = candidate[1]
+        self.logger.info(
+            "Instantiated %s and found %i evaluation methods", self.__class__.__name__, len(self._evaluation_methods)
+        )
 
     def get_evaluation_method(self, condition_key: str) -> Optional[Callable]:
         """
