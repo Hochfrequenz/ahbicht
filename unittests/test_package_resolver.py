@@ -1,7 +1,8 @@
 """
 Test for the expansion of packages.
 """
-from typing import Mapping, Optional
+from logging import LogRecord
+from typing import List, Mapping, Optional
 
 import inject
 import pytest  # type:ignore[import]
@@ -24,9 +25,7 @@ class TestPackageResolver:
 
     @pytest.fixture
     def inject_package_resolver(self, request: SubRequest):
-
         result_dict: Mapping[str, Optional[str]] = request.param
-
         resolver = DefaultPackageResolver(result_dict)
         inject.clear_and_configure(
             lambda binder: binder.bind(  # type:ignore[arg-type]
@@ -85,7 +84,7 @@ class TestPackageResolver:
         "filename",
         [pytest.param("example_package_mapping_dict.json"), pytest.param("example_package_mapping_list.json")],
     )
-    async def test_file_based_package_resolver(self, filename, datafiles):
+    async def test_file_based_package_resolver(self, caplog, filename, datafiles):
         """Tests if package resolver provider is instantiated correctly."""
         path_to_hint_json = datafiles / filename
         package_resolver: PackageResolver = JsonFilePackageResolver(
@@ -101,3 +100,6 @@ class TestPackageResolver:
         assert await package_resolver.get_condition_expression("456P") == PackageKeyConditionExpressionMapping(
             edifact_format=EdifactFormat.UTILMD, package_key="456P", package_expression="[4] U [5] X [6]"
         )
+        log_entries: List[LogRecord] = caplog.records
+        assert log_entries[0].message == "Instantiated JsonFilePackageResolver"
+        assert log_entries[1].message.startswith("Resolved expression")

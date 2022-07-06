@@ -482,12 +482,13 @@ class TestConditionParser:
             ),
         ],
     )
-    def test_parse_valid_expression_with_brackets_to_tree(self, expression: str, expected_tree: Tree):
+    def test_parse_valid_expression_with_brackets_to_tree(self, caplog, expression: str, expected_tree: Tree):
         """Tests that valid strings that contain brackets are parsed as expected."""
         parsed_tree = parse_condition_expression_to_tree(expression)
 
         assert isinstance(parsed_tree, Tree)
         assert parsed_tree == expected_tree
+        assert caplog.records[0].message == f"Successfully parsed '{expression}' as condition expression"
 
     @pytest.mark.parametrize(
         "expression",

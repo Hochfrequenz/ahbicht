@@ -10,6 +10,8 @@ from lark import Lark, Token, Tree
 from lark.exceptions import UnexpectedCharacters, UnexpectedEOF
 
 # pylint: disable=anomalous-backslash-in-string
+from ahbicht.expressions import parsing_logger
+
 GRAMMAR = """
 ahb_expression: modal_mark_expression+
                 | prefix_operator_expression
@@ -48,6 +50,7 @@ def parse_ahb_expression_to_single_requirement_indicator_expressions(
     try:
         parsed_tree = _parser.parse(ahb_expression)
         _cache.update({ahb_expression: parsed_tree})
+        parsing_logger.debug("Successfully parsed '%s' as AHB expression", ahb_expression)
     except (UnexpectedEOF, UnexpectedCharacters, TypeError) as eof:
         raise SyntaxError(
             """Please make sure that the ahb_expression starts with a requirement indicator \

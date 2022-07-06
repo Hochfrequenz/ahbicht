@@ -1,5 +1,6 @@
 """ Test for the evaluation of the format constraint expression. """
-from typing import Optional
+from logging import LogRecord
+from typing import List, Optional
 
 import inject
 import pytest  # type:ignore[import]
@@ -184,12 +185,17 @@ class TestFormatConstraintExpressionEvaluation:
         ],
     )
     async def test_build_evaluated_format_constraint_nodes(
-        self, condition_keys, entered_input, expected_evaluated_fc_nodes, setup_and_teardown_injector
+        self, caplog, condition_keys, entered_input, expected_evaluated_fc_nodes, setup_and_teardown_injector
     ):
         """Tests that evaluated format constraints nodes are build correctly."""
         fc_evaluators.text_to_be_evaluated_by_format_constraint.set(entered_input)
         evaluated_fc_nodes = await _build_evaluated_format_constraint_nodes(condition_keys)
         assert evaluated_fc_nodes == expected_evaluated_fc_nodes
+        log_entries: List[LogRecord] = list(caplog.records)
+        assert len(log_entries) == 2  # because in both parametrized test cases we evaluate 2 FCs
+        for log_entry in log_entries:
+            assert log_entry.message.startswith("The format constraint")
+            assert "evaluated to " in log_entry.message
 
     @pytest.mark.parametrize(
         "format_constraint_expression, entered_input, is_successful, error_message",

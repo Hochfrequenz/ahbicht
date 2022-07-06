@@ -19,6 +19,7 @@ from ahbicht.content_evaluation import fc_evaluators
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
 from ahbicht.expressions.enums import ModalMark, PrefixOperator, RequirementIndicator
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
+from ahbicht.validation import validation_logger
 from ahbicht.validation.validation_results import (
     DataElementValidationResult,
     SegmentLevelValidationResult,
@@ -48,12 +49,11 @@ async def validate_deep_anwendungshandbuch(
         )
 
     validation_results_of_segment_groups: List[List[ValidationResultInContext]] = await asyncio.gather(*tasks)
-
     deep_ahb_validation_result: List[ValidationResultInContext] = []
     for sublist in validation_results_of_segment_groups:
         for item in sublist:
             deep_ahb_validation_result.append(item)
-
+    validation_logger.debug("Validated %i segment groups", len(deep_ahb_validation_result))
     return deep_ahb_validation_result
 
 
@@ -220,7 +220,7 @@ async def validate_data_element(
 ) -> ValidationResultInContext:
     """
     Validates data elements by handing them over to specialized functions for freetext or value pool data elements.
-    :param dat_aelement: the data element that should be validated
+    :param data_element: the data element that should be validated
     :param segment_requirement: the requirement of the data element's parent segment, e.g. IS_REQUIRED
     :param soll_is_required: true (default) if SOLL should be handled like MUSS, false if it should be handled like KANN
     :return: Validation Result of the Data element
@@ -265,15 +265,21 @@ async def validate_data_element_freetext(
         requirement_validation = RequirementValidationValue(str(requirement_validation_without_input) + "_AND_FILLED")
     else:
         requirement_validation = RequirementValidationValue(str(requirement_validation_without_input) + "_AND_EMPTY")
-
+    result = DataElementValidationResult(
+        requirement_validation=requirement_validation,
+        format_validation_fulfilled=evaluation_result.format_constraint_evaluation_result.format_constraints_fulfilled,  # pylint: disable=line-too-long
+        format_error_message=evaluation_result.format_constraint_evaluation_result.error_message,
+        hints=evaluation_result.requirement_constraint_evaluation_result.hints,
+    )
+    validation_logger.debug(
+        "The validation of expression '%s' for the data element with discriminator '%s' resulted in %s",
+        data_element.ahb_expression,
+        data_element.discriminator,
+        str(result),
+    )
     return ValidationResultInContext(
         discriminator=data_element.discriminator,
-        validation_result=DataElementValidationResult(
-            requirement_validation=requirement_validation,
-            format_validation_fulfilled=evaluation_result.format_constraint_evaluation_result.format_constraints_fulfilled,  # pylint: disable=line-too-long
-            format_error_message=evaluation_result.format_constraint_evaluation_result.error_message,
-            hints=evaluation_result.requirement_constraint_evaluation_result.hints,
-        ),
+        validation_result=result,
     )
 
 
@@ -305,6 +311,11 @@ async def validate_data_element_valuepool(
                     value_pool_entry.ahb_expression, resolve_packages=True
                 )
                 evaluation_result = await evaluate_ahb_expression_tree(expression_tree)
+                validation_logger.debug(
+                    "The validation of value pool entry %s resulted in %s",
+                    str(value_pool_entry),
+                    str(evaluation_result),
+                )
                 if evaluation_result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled:
                     possible_values[value_pool_entry.qualifier] = value_pool_entry.meaning
                 hints = None  # TODO: Get all hints from possible values
@@ -315,15 +326,20 @@ async def validate_data_element_valuepool(
     if not possible_values:
         requirement_validation_data_element is RequirementValidationValue.IS_FORBIDDEN
         hints = None
-
+    result = DataElementValidationResult(
+        requirement_validation=requirement_validation_data_element,
+        format_validation_fulfilled=True,
+        hints=hints,  # todo: hints might be referenced before assignment
+        possible_values=possible_values,
+    )
+    validation_logger.debug(
+        "The validation for the data element with discriminator '%s' resulted in %s",
+        data_element.discriminator,
+        str(result),
+    )
     return ValidationResultInContext(
         discriminator=data_element.discriminator,
-        validation_result=DataElementValidationResult(
-            requirement_validation=requirement_validation_data_element,
-            format_validation_fulfilled=True,
-            hints=hints,  # todo: hints might be referenced before assignment
-            possible_values=possible_values,
-        ),
+        validation_result=result,
     )
 
 

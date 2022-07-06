@@ -521,10 +521,13 @@ class TestValidation:
         ],
     )
     async def test_validate_data_element_freetext(
-        self, data_element, segment_requirement, expected_validation, inject_content_evaluation_result
+        self, caplog, data_element, segment_requirement, expected_validation, inject_content_evaluation_result
     ):
         result = await validate_data_element_freetext(data_element, segment_requirement)
         assert result == expected_validation
+        validation_log_entries = [record for record in caplog.records if record.name == "ahbicht.validation"]
+        assert len(validation_log_entries) > 0
+        assert validation_log_entries[0].message.startswith("The validation of expression")
 
     @pytest.mark.parametrize(
         "data_element, segment_requirement, expected_validation",
@@ -682,10 +685,12 @@ class TestValidation:
         ],
     )
     async def test_validate_data_element_valuepool(
-        self, data_element, segment_requirement, expected_validation, inject_content_evaluation_result
+        self, caplog, data_element, segment_requirement, expected_validation, inject_content_evaluation_result
     ):
         result = await validate_data_element_valuepool(data_element, segment_requirement)
         assert result == expected_validation
+        validation_log_entries = [record for record in caplog.records if record.name == "ahbicht.validation"]
+        assert len(validation_log_entries) > 0
 
     @pytest.mark.parametrize(
         "requirement_constraints_are_fulfilled, requirement_indicator, expected_requirement_validation_value",

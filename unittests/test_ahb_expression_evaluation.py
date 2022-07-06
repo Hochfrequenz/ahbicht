@@ -30,7 +30,6 @@ class TestAHBExpressionEvaluation:
 
     @pytest_asyncio.fixture()
     def setup_and_teardown_injector(self):
-
         inject.clear_and_configure(
             lambda binder: binder.bind(
                 TokenLogicProvider,
