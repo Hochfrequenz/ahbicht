@@ -87,7 +87,7 @@ class TestCaching:
         cond_expression = "[1] U [2]"
         parse_spy = mocker.spy(cond_expr_parser, "parse")
         for _ in range(100):
-            _ = parse_condition_expression_to_tree(cond_expression)
+            _ = parse_condition_expression_to_tree(cond_expression, disable_cache=False)
         parse_spy.assert_called_once_with(cond_expression)
 
     async def test_condition_expression_cache_async(self, clear_caches, mocker):
@@ -96,7 +96,7 @@ class TestCaching:
         parse_spy = mocker.spy(cond_expr_parser, "parse")
 
         async def parsing_task():
-            parse_condition_expression_to_tree(cond_expression)
+            parse_condition_expression_to_tree(cond_expression, disable_cache=False)
 
         tasks = [parsing_task() for _ in range(100)]
         await asyncio.gather(*tasks)

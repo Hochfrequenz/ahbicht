@@ -43,7 +43,7 @@ _parser = Lark(GRAMMAR, start="expression")
 _cache: Dict[str, Tree[Token]] = {}  #: holds the condition expression as key and the parsed Tree as value
 
 
-def parse_condition_expression_to_tree(condition_expression: str, disable_cache: bool = False) -> Tree[Token]:
+def parse_condition_expression_to_tree(condition_expression: str, disable_cache: bool = True) -> Tree[Token]:
     """
     Parse a given condition expression with the help of the here defined grammar to a lark tree.
     The grammar starts with condition keys, e.g. [45] and combines them with
@@ -52,7 +52,7 @@ def parse_condition_expression_to_tree(condition_expression: str, disable_cache:
     Whitespaces are ignored.
 
     :param condition_expression: str, e.g. '[45]U[502]O[1][906]'
-    :param disable_cache: set to true to disable caching
+    :param disable_cache: set to False to enable caching
     :return parsed_tree: Tree
     """
     if (not disable_cache) and condition_expression in _cache:
