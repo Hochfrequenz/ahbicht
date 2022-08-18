@@ -1,7 +1,7 @@
 "This module contains the classes for the validation results."
 
 from abc import ABC
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 import attrs
 from marshmallow import Schema, fields, post_load
@@ -50,19 +50,19 @@ class ValidationResultSchema(ValidationResultAttributesSchema):
         """
         return ValidationResult(**data)
 
-    def dump(self, data, **kwargs) -> str:
+    def dump(self, obj, **kwargs) -> (Any | list):
         """
         A way to dump the subclasses DataElementValidationResult and SegmentLevelValidationResult
         of ValidationResult
-        :param data:
+        :param obj:
         :param kwargs:
         :return:
         """
-        if isinstance(data, DataElementValidationResult):
-            return DataElementValidationResultSchema().dump(data)
-        elif isinstance(data, SegmentLevelValidationResult):
-            return SegmentLevelValidationResultSchema().dump(data)
-        raise NotImplementedError(f"Data type of {data} is not implemented for JSON serialization")
+        if isinstance(obj, DataElementValidationResult):
+            return DataElementValidationResultSchema().dump(obj)
+        if isinstance(obj, SegmentLevelValidationResult):
+            return SegmentLevelValidationResultSchema().dump(obj)
+        raise NotImplementedError(f"Data type of {obj} is not implemented for JSON serialization")
 
 
 @attrs.define(auto_attribs=True, kw_only=True)
