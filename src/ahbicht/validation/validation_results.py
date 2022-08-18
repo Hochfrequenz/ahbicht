@@ -26,13 +26,19 @@ class ValidationResult(ABC):
     )
 
 
-class ValidationResultSchema(Schema):
+class ValidationResultAttributesSchema(Schema):
     """
-    A schema to (de-)serialize ValidationResult
+    A schema to pass on the attributes of ValidationResult
     """
 
     requirement_validation = EnumField(RequirementValidationValue)
     hints = fields.String(load_default=None)
+
+
+class ValidationResultSchema(ValidationResultAttributesSchema):
+    """
+    A schema to (de-)serialize ValidationResult
+    """
 
     @post_load
     def deserialize(self, data, **kwargs) -> ValidationResult:
@@ -44,13 +50,27 @@ class ValidationResultSchema(Schema):
         """
         return ValidationResult(**data)
 
+    def dump(self, data, **kwargs) -> str:
+        """
+        A way to dump the subclasses DataElementValidationResult and SegmentLevelValidationResult
+        of ValidationResult
+        :param data:
+        :param kwargs:
+        :return:
+        """
+        if isinstance(data, DataElementValidationResult):
+            return DataElementValidationResultSchema().dump(data)
+        elif isinstance(data, SegmentLevelValidationResult):
+            return SegmentLevelValidationResultSchema().dump(data)
+        raise NotImplementedError(f"Data type of {data} is not implemented for JSON serialization")
+
 
 @attrs.define(auto_attribs=True, kw_only=True)
 class SegmentLevelValidationResult(ValidationResult):
     """Result of the validation of a segment or segment group"""
 
 
-class SegmentLevelValidationResultSchema(ValidationResultSchema):
+class SegmentLevelValidationResultSchema(ValidationResultAttributesSchema):
     """
     A schema to (de-)serialize SegmentLevelValidationResult
     """
@@ -89,7 +109,7 @@ class DataElementValidationResult(ValidationResult):
     )
 
 
-class DataElementValidationResultSchema(ValidationResultSchema):
+class DataElementValidationResultSchema(ValidationResultAttributesSchema):
     """
     A schema to (de-)serialize DataElementValidationResult
     """
