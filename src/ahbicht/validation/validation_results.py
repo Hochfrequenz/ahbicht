@@ -1,7 +1,7 @@
 "This module contains the classes for the validation results."
 
 from abc import ABC
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 import attrs
 from marshmallow import Schema, fields, post_load
@@ -50,7 +50,7 @@ class ValidationResultSchema(ValidationResultAttributesSchema):
         """
         return ValidationResult(**data)
 
-    def dump(self, obj, **kwargs) -> (Any | list):
+    def dump(self, obj, **kwargs) -> Union[Any, list]:
         """
         A way to dump the subclasses DataElementValidationResult and SegmentLevelValidationResult
         of ValidationResult
