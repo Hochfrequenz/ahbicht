@@ -351,6 +351,27 @@ class TestJsonSerialization:
                     },
                 },
             ),
+            pytest.param(
+                ValidationResultInContext(
+                    discriminator="foo_dataelement",
+                    validation_result=DataElementValidationResult(
+                        requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_FILLED,
+                        hints="foo",
+                        format_validation_fulfilled=False,
+                        format_error_message="bar",
+                    ),
+                ),
+                {
+                    "discriminator": "foo_dataelement",
+                    "validation_result": {
+                        "requirement_validation": "IS_REQUIRED_AND_FILLED",
+                        "hints": "foo",
+                        "format_validation_fulfilled": False,
+                        "format_error_message": "bar",
+                        "possible_values": None,
+                    },
+                },
+            ),
         ],
     )
     def test_validation_result_in_context_serialization(
