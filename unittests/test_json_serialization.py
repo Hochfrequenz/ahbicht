@@ -381,6 +381,9 @@ class TestJsonSerialization:
         assert json_string is not None
         actual_json_dict = json.loads(json_string)
         assert actual_json_dict == expected_json_dict
+        # the way back (json➡python object) is a bit tricky, because we don't know yet, which type we're dealing with
+        deserialized_validation_result_in_context = ValidationResultInContextSchema().load(actual_json_dict)
+        assert deserialized_validation_result_in_context == validation_result_in_context
 
     @pytest.mark.parametrize(
         "list_of_validation_result_in_context, expected_json_dict",
