@@ -1,7 +1,7 @@
 "This module contains the classes for the validation results."
 
 from abc import ABC
-from typing import Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 import attrs
 from marshmallow import Schema, fields, post_load
@@ -26,13 +26,19 @@ class ValidationResult(ABC):
     )
 
 
-class ValidationResultSchema(Schema):
+class ValidationResultAttributesSchema(Schema):
     """
-    A schema to (de-)serialize ValidationResult
+    A schema to pass on the attributes of ValidationResult
     """
 
     requirement_validation = EnumField(RequirementValidationValue)
     hints = fields.String(load_default=None)
+
+
+class ValidationResultSchema(ValidationResultAttributesSchema):
+    """
+    A schema to (de-)serialize ValidationResult
+    """
 
     @post_load
     def deserialize(self, data, **kwargs) -> ValidationResult:
@@ -44,13 +50,27 @@ class ValidationResultSchema(Schema):
         """
         return ValidationResult(**data)
 
+    def dump(self, obj, **kwargs) -> Union[Any, list]:
+        """
+        A way to dump the subclasses DataElementValidationResult and SegmentLevelValidationResult
+        of ValidationResult
+        :param obj:
+        :param kwargs:
+        :return:
+        """
+        if isinstance(obj, DataElementValidationResult):
+            return DataElementValidationResultSchema().dump(obj)
+        if isinstance(obj, SegmentLevelValidationResult):
+            return SegmentLevelValidationResultSchema().dump(obj)
+        raise NotImplementedError(f"Data type of {obj} is not implemented for JSON serialization")
+
 
 @attrs.define(auto_attribs=True, kw_only=True)
 class SegmentLevelValidationResult(ValidationResult):
     """Result of the validation of a segment or segment group"""
 
 
-class SegmentLevelValidationResultSchema(ValidationResultSchema):
+class SegmentLevelValidationResultSchema(ValidationResultAttributesSchema):
     """
     A schema to (de-)serialize SegmentLevelValidationResult
     """
@@ -89,7 +109,7 @@ class DataElementValidationResult(ValidationResult):
     )
 
 
-class DataElementValidationResultSchema(ValidationResultSchema):
+class DataElementValidationResultSchema(ValidationResultAttributesSchema):
     """
     A schema to (de-)serialize DataElementValidationResult
     """

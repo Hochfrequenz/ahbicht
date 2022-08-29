@@ -12,6 +12,7 @@ from lark.exceptions import UnexpectedCharacters, UnexpectedEOF
 
 from ahbicht.condition_node_distinction import ConditionNodeType, derive_condition_node_type
 from ahbicht.content_evaluation.categorized_key_extract import CategorizedKeyExtract
+from ahbicht.expressions import parsing_logger
 
 GRAMMAR = r"""
 ?expression: expression "O"i expression -> or_composition
@@ -59,6 +60,7 @@ def parse_condition_expression_to_tree(condition_expression: str, disable_cache:
     try:
         parsed_tree = _parser.parse(condition_expression)
         _cache.update({condition_expression: parsed_tree})
+        parsing_logger.debug("Successfully parsed '%s' as condition expression", condition_expression)
     except (UnexpectedEOF, UnexpectedCharacters, TypeError) as eof:
         raise SyntaxError(
             """Please make sure that:

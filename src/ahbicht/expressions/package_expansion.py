@@ -3,6 +3,7 @@ Package Expansion is the process of finding the condition expression which was a
 e.g. if inside a tree "[123P]" is replaced by "[1] U ([2] O [3])".
 """
 import json
+import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Dict, List, Mapping, Optional
@@ -26,6 +27,11 @@ class PackageResolver(ABC):
         "The inheriting package resolver needs to define a format version."
     )  #: the format version for which the resolver may be used
 
+    def __init__(self):
+        self.logger = logging.getLogger(self.__module__)
+        self.logger.setLevel(logging.DEBUG)
+        self.logger.info("Instantiated %s", self.__class__.__name__)
+
     @abstractmethod
     async def get_condition_expression(self, package_key: str) -> PackageKeyConditionExpressionMapping:
         """
@@ -47,6 +53,7 @@ class DictBasedPackageResolver(PackageResolver):
         Initialize with a dictionary that contains all the condition expressions.
         :param results: maps the package key (e.g. '123') to the package expression (e.g. '[1] U [2]')
         """
+        super().__init__()
         for key in results.keys():
             if not key.endswith("P"):
                 raise ValueError("The keys should end with 'P' to avoid ambiguities. Use '123P' instead of '123'.")
@@ -57,17 +64,21 @@ class DictBasedPackageResolver(PackageResolver):
             raise ValueError(f"The package key must not be None/empty but was '{package_key}'")
         if not package_key.endswith("P"):
             raise ValueError("The package key should be provided with a trailing 'P'.")
+        result: PackageKeyConditionExpressionMapping
         if package_key in self._all_packages:
-            return PackageKeyConditionExpressionMapping(
+            result = PackageKeyConditionExpressionMapping(
                 package_key=package_key,
                 package_expression=self._all_packages[package_key],
                 edifact_format=EdifactFormat.UTILMD,
             )
-        return PackageKeyConditionExpressionMapping(
-            package_key=package_key,
-            package_expression=None,
-            edifact_format=EdifactFormat.UTILMD,
-        )
+        else:
+            result = PackageKeyConditionExpressionMapping(
+                package_key=package_key,
+                package_expression=None,
+                edifact_format=EdifactFormat.UTILMD,
+            )
+        self.logger.debug("Resolved expression '%s' for package key %s", result.package_expression, result.package_key)
+        return result
 
 
 class JsonFilePackageResolver(DictBasedPackageResolver):

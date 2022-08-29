@@ -43,6 +43,7 @@ class TestCaching:
             ),
             number=calls,
         )
+
         time_without_cache = timeit.timeit(
             lambda: parse_ahb_expression_to_single_requirement_indicator_expressions(
                 ahb_expression, disable_cache=True

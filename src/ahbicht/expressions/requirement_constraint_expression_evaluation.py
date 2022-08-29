@@ -270,7 +270,15 @@ async def requirement_constraint_evaluation(
         requirement_constraints_fulfilled = True
         requirement_is_conditional = False
     if resulting_condition_node.conditions_fulfilled == ConditionFulfilledValue.UNKNOWN:  # pylint:disable=no-member
-        raise NotImplementedError("It is unknown if the conditions are fulfilled due to missing information.")
+        unknown_keys = [
+            node_key
+            for node_key, node_value in input_nodes.items()
+            if isinstance(node_value, RequirementConstraint)
+            and node_value.conditions_fulfilled == ConditionFulfilledValue.UNKNOWN
+        ]
+        raise NotImplementedError(
+            f"It is unknown if the conditions ({','.join(unknown_keys)}) are fulfilled due to missing information."
+        )
 
     format_constraints_expression = getattr(resulting_condition_node, "format_constraints_expression", None)
     if isinstance(resulting_condition_node, UnevaluatedFormatConstraint):

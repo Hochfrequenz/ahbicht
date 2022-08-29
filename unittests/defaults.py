@@ -3,6 +3,7 @@ contains reusable classes and instances of AHBicht Evaluators and Resolvers.
 They are supposed to be used in unittests where they need to be injected but don't have a real purpose.
 Inject them to have a concise test setup.
 """
+
 from maus.edifact import EdifactFormat, EdifactFormatVersion
 
 #: the default edifact format used in the unit tests

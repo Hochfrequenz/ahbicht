@@ -41,9 +41,13 @@ class RcEvaluator(Evaluator, ABC):
             raise NotImplementedError(f"There is no content_evaluation method for condition '{condition_key}'")
         if context is None:
             context = self._get_default_context()
+        result: ConditionFulfilledValue
         if inspect.iscoroutinefunction(evaluation_method):
-            return await evaluation_method(evaluatable_data, context)
-        return evaluation_method(evaluatable_data, context)
+            result = await evaluation_method(evaluatable_data, context)
+        else:
+            result = evaluation_method(evaluatable_data, context)
+        self.logger.debug("The requirement constraint %s evaluated to %s", condition_key, result)
+        return result
 
     async def evaluate_conditions(
         self,
