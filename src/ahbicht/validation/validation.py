@@ -8,6 +8,7 @@ from typing import Awaitable, Dict, List, Optional
 from maus.models.anwendungshandbuch import DeepAnwendungshandbuch
 from maus.models.edifact_components import (
     DataElement,
+    DataElementDataType,
     DataElementFreeText,
     DataElementValuePool,
     Segment,
@@ -270,7 +271,10 @@ async def validate_data_element_freetext(
         format_validation_fulfilled=evaluation_result.format_constraint_evaluation_result.format_constraints_fulfilled,  # pylint: disable=line-too-long
         format_error_message=evaluation_result.format_constraint_evaluation_result.error_message,
         hints=evaluation_result.requirement_constraint_evaluation_result.hints,
+        data_element_data_type=DataElementDataType.TEXT,  # set text by default, later check if it might be a date
     )
+    if data_element.value_type is not None:
+        result.data_element_data_type = data_element.value_type  # this will set the type to DATE, if necessary
     validation_logger.debug(
         "The validation of expression '%s' for the data element with discriminator '%s' resulted in %s",
         data_element.ahb_expression,
@@ -331,6 +335,7 @@ async def validate_data_element_valuepool(
         format_validation_fulfilled=True,
         hints=hints,  # todo: hints might be referenced before assignment
         possible_values=possible_values,
+        data_element_data_type=DataElementDataType.VALUE_POOL,
     )
     validation_logger.debug(
         "The validation for the data element with discriminator '%s' resulted in %s",

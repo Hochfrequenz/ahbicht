@@ -5,6 +5,7 @@ from typing import List
 import pytest  # type:ignore[import]
 from maus.models.anwendungshandbuch import AhbMetaInformation, DeepAnwendungshandbuch
 from maus.models.edifact_components import (
+    DataElementDataType,
     DataElementFreeText,
     DataElementValuePool,
     Segment,
@@ -148,7 +149,7 @@ class TestValidation:
                     ValidationResultInContext(
                         discriminator="UNH",
                         validation_result=SegmentLevelValidationResult(
-                            requirement_validation=RequirementValidationValue.IS_REQUIRED
+                            requirement_validation=RequirementValidationValue.IS_REQUIRED,
                         ),
                     ),
                     ValidationResultInContext(
@@ -156,6 +157,7 @@ class TestValidation:
                         validation_result=DataElementValidationResult(
                             requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
                             format_validation_fulfilled=True,
+                            data_element_data_type=DataElementDataType.TEXT,
                         ),
                     ),
                     ValidationResultInContext(
@@ -182,6 +184,7 @@ class TestValidation:
                             requirement_validation=RequirementValidationValue.IS_REQUIRED,
                             format_validation_fulfilled=True,
                             possible_values={"E02": "Das Eine"},
+                            data_element_data_type=DataElementDataType.VALUE_POOL,
                         ),
                     ),
                 ],
@@ -214,6 +217,7 @@ class TestValidation:
                                     data_element_id="1234",
                                     ahb_expression="M[2]",
                                     entered_input="",
+                                    value_type=DataElementDataType.DATETIME,
                                 )
                             ],
                         )
@@ -232,6 +236,7 @@ class TestValidation:
                                             data_element_id="1235",
                                             ahb_expression="M[2]",
                                             entered_input="",
+                                            value_type=DataElementDataType.DATETIME,
                                         )
                                     ],
                                 )
@@ -264,6 +269,7 @@ class TestValidation:
                         validation_result=DataElementValidationResult(
                             requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
                             format_validation_fulfilled=True,
+                            data_element_data_type=DataElementDataType.DATETIME,
                         ),
                     ),
                     ValidationResultInContext(
@@ -277,6 +283,7 @@ class TestValidation:
                         validation_result=DataElementValidationResult(
                             requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
                             format_validation_fulfilled=True,
+                            data_element_data_type=DataElementDataType.DATETIME,
                         ),
                     ),
                 ],
@@ -291,6 +298,7 @@ class TestValidation:
                             data_element_id="1234",
                             ahb_expression="M[2]",
                             entered_input="",
+                            value_type=DataElementDataType.DATETIME,
                         )
                     ],
                 ),
@@ -306,6 +314,7 @@ class TestValidation:
                         validation_result=DataElementValidationResult(
                             requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
                             format_validation_fulfilled=True,
+                            data_element_data_type=DataElementDataType.DATETIME,
                         ),
                     ),
                 ],
@@ -338,6 +347,7 @@ class TestValidation:
                                     data_element_id="1234",
                                     ahb_expression="M[2]",
                                     entered_input="",
+                                    value_type=DataElementDataType.DATETIME,
                                 )
                             ],
                         )
@@ -363,6 +373,7 @@ class TestValidation:
                         validation_result=DataElementValidationResult(
                             requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
                             format_validation_fulfilled=True,
+                            data_element_data_type=DataElementDataType.DATETIME,
                         ),
                     ),
                 ],
@@ -392,6 +403,7 @@ class TestValidation:
                             data_element_id="1234",
                             ahb_expression="M[2]",
                             entered_input="",
+                            value_type=DataElementDataType.DATETIME,
                         )
                     ],
                 ),
@@ -408,6 +420,7 @@ class TestValidation:
                         validation_result=DataElementValidationResult(
                             requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
                             format_validation_fulfilled=True,
+                            data_element_data_type=DataElementDataType.DATETIME,
                         ),
                     ),
                 ],
@@ -422,12 +435,14 @@ class TestValidation:
                             data_element_id="1234",
                             ahb_expression="M[2]",
                             entered_input="",
+                            value_type=DataElementDataType.DATETIME,
                         ),
                         DataElementFreeText(
                             discriminator="SG10 - Datum - Auszug",
                             data_element_id="1235",
                             ahb_expression="M[2]",
                             entered_input="",
+                            value_type=DataElementDataType.DATETIME,
                         ),
                     ],
                 ),
@@ -444,6 +459,7 @@ class TestValidation:
                         validation_result=DataElementValidationResult(
                             requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
                             format_validation_fulfilled=True,
+                            data_element_data_type=DataElementDataType.DATETIME,
                         ),
                     ),
                     ValidationResultInContext(
@@ -451,6 +467,7 @@ class TestValidation:
                         validation_result=DataElementValidationResult(
                             requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
                             format_validation_fulfilled=True,
+                            data_element_data_type=DataElementDataType.DATETIME,
                         ),
                     ),
                 ],
@@ -476,6 +493,7 @@ class TestValidation:
                     validation_result=DataElementValidationResult(
                         requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_FILLED,
                         format_validation_fulfilled=True,
+                        data_element_data_type=DataElementDataType.TEXT,
                     ),
                 ),
             ),
@@ -487,6 +505,7 @@ class TestValidation:
                     validation_result=DataElementValidationResult(
                         requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
                         format_validation_fulfilled=True,
+                        data_element_data_type=DataElementDataType.TEXT,
                     ),
                 ),
             ),
@@ -502,6 +521,7 @@ class TestValidation:
                         format_validation_fulfilled=False,
                         format_error_message="Format error 903",
                         hints="foo",
+                        data_element_data_type=DataElementDataType.TEXT,
                     ),
                 ),
             ),
@@ -515,6 +535,7 @@ class TestValidation:
                     validation_result=DataElementValidationResult(
                         requirement_validation=RequirementValidationValue.IS_FORBIDDEN_AND_FILLED,
                         format_validation_fulfilled=True,
+                        data_element_data_type=DataElementDataType.TEXT,
                     ),
                 ),
             ),
@@ -561,6 +582,7 @@ class TestValidation:
                         requirement_validation=RequirementValidationValue.IS_REQUIRED,
                         format_validation_fulfilled=True,
                         possible_values={"A1": "Ich bin A1", "A2": "Ich bin A2", "A3": "Ich bin A3"},
+                        data_element_data_type=DataElementDataType.VALUE_POOL,
                     ),
                 ),
             ),
@@ -593,6 +615,7 @@ class TestValidation:
                         requirement_validation=RequirementValidationValue.IS_FORBIDDEN,
                         format_validation_fulfilled=True,
                         possible_values={},
+                        data_element_data_type=DataElementDataType.VALUE_POOL,
                     ),
                 ),
             ),
@@ -625,6 +648,7 @@ class TestValidation:
                         requirement_validation=RequirementValidationValue.IS_REQUIRED,
                         format_validation_fulfilled=True,
                         possible_values={"A1": "Ich bin A1", "A3": "Ich bin A3"},
+                        data_element_data_type=DataElementDataType.VALUE_POOL,
                     ),
                 ),
             ),
@@ -657,6 +681,7 @@ class TestValidation:
                         requirement_validation=RequirementValidationValue.IS_FORBIDDEN,
                         format_validation_fulfilled=True,
                         possible_values={},
+                        data_element_data_type=DataElementDataType.VALUE_POOL,
                     ),
                 ),
             ),
@@ -679,6 +704,7 @@ class TestValidation:
                         requirement_validation=RequirementValidationValue.IS_REQUIRED,
                         format_validation_fulfilled=True,
                         possible_values={"A1": "Ich bin A1"},
+                        data_element_data_type=DataElementDataType.VALUE_POOL,
                     ),
                 ),
             ),
