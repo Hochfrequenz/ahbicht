@@ -40,6 +40,10 @@ class ValidationResultSchema(ValidationResultAttributesSchema):
     A schema to (de-)serialize ValidationResult
     """
 
+    # todo: find out which type (inheriting from ValidationResult) we're dealing with
+    # build something similar to or better than
+    # https://github.com/Hochfrequenz/mig_ahb_utility_stack/blob/35bf3d0b0085a002ac3a30d9eb3886601287af9b/src/maus/models/edifact_components.py#L233
+
     @post_load
     def deserialize(self, data, **kwargs) -> ValidationResult:
         """
