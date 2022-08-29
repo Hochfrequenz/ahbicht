@@ -8,6 +8,7 @@ from typing import List, TypeVar
 import pytest  # type:ignore[import]
 from marshmallow import Schema, ValidationError
 from maus.edifact import EdifactFormat
+from maus.models.edifact_components import DataElementDataType
 
 from ahbicht.content_evaluation.categorized_key_extract import CategorizedKeyExtract, CategorizedKeyExtractSchema
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
@@ -288,6 +289,7 @@ class TestJsonSerialization:
                     format_validation_fulfilled=True,
                 ),
                 {
+                    "data_element_data_type": None,
                     "requirement_validation": "IS_FORBIDDEN",
                     "hints": None,
                     "format_validation_fulfilled": True,
@@ -303,6 +305,7 @@ class TestJsonSerialization:
                     format_error_message="bar",
                 ),
                 {
+                    "data_element_data_type": None,
                     "requirement_validation": "IS_REQUIRED_AND_FILLED",
                     "hints": "foo",
                     "format_validation_fulfilled": False,
@@ -319,11 +322,30 @@ class TestJsonSerialization:
                     possible_values={"A1": "Ich bin A1", "A2": "Ich bin A2", "Z3": "Ich bin Z3"},
                 ),
                 {
+                    "data_element_data_type": None,
                     "requirement_validation": "IS_REQUIRED",
                     "hints": "foo",
                     "format_validation_fulfilled": True,
                     "format_error_message": None,
                     "possible_values": {"A1": "Ich bin A1", "A2": "Ich bin A2", "Z3": "Ich bin Z3"},
+                },
+            ),
+            pytest.param(
+                DataElementValidationResult(
+                    requirement_validation=RequirementValidationValue.IS_REQUIRED,
+                    hints="foo",
+                    format_validation_fulfilled=True,
+                    format_error_message=None,
+                    possible_values={"A1": "Ich bin A1", "A2": "Ich bin A2", "Z3": "Ich bin Z3"},
+                    data_element_data_type=DataElementDataType.VALUE_POOL,
+                ),
+                {
+                    "requirement_validation": "IS_REQUIRED",
+                    "hints": "foo",
+                    "format_validation_fulfilled": True,
+                    "format_error_message": None,
+                    "possible_values": {"A1": "Ich bin A1", "A2": "Ich bin A2", "Z3": "Ich bin Z3"},
+                    "data_element_data_type": "VALUE_POOL",
                 },
             ),
         ],
@@ -364,6 +386,7 @@ class TestJsonSerialization:
                 {
                     "discriminator": "foo_dataelement",
                     "validation_result": {
+                        "data_element_data_type": None,
                         "requirement_validation": "IS_REQUIRED_AND_FILLED",
                         "hints": "foo",
                         "format_validation_fulfilled": False,
