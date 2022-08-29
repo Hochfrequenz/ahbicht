@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements.in
 #
-attrs==21.4.0
+attrs==22.1.0
     # via
     #   -r requirements.in
     #   maus
@@ -29,5 +29,5 @@ packaging==21.3
     # via marshmallow
 pyparsing==3.0.8
     # via packaging
-pytz==2022.1
+pytz==2022.2.1
     # via -r requirements.in
