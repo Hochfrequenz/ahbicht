@@ -4,6 +4,7 @@ from abc import ABC
 from typing import Any, Dict, Optional, Union
 
 import attrs
+import maus.models.edifact_components
 from marshmallow import Schema, fields, post_load
 from marshmallow_enum import EnumField  # type:ignore[import]
 
@@ -107,6 +108,15 @@ class DataElementValidationResult(ValidationResult):
             )
         ),
     )
+    data_element_data_type: Optional[maus.models.edifact_components.DataElementDataType] = attrs.field(
+        default=None,
+        validator=attrs.validators.optional(
+            attrs.validators.instance_of(maus.models.edifact_components.DataElementDataType)
+        ),
+    )
+    """
+    describes the type of the original data element that has been validated
+    """
 
 
 class DataElementValidationResultSchema(ValidationResultAttributesSchema):
@@ -117,6 +127,9 @@ class DataElementValidationResultSchema(ValidationResultAttributesSchema):
     format_validation_fulfilled = fields.Bool()
     format_error_message = fields.String(load_default=None)
     possible_values = fields.Dict(fields.Str, load_default=None)
+    data_element_data_type = EnumField(
+        maus.models.edifact_components.DataElementDataType, required=False, load_default=None
+    )
 
     @post_load
     def deserialize(self, data, **kwargs) -> DataElementValidationResult:
