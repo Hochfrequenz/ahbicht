@@ -182,7 +182,7 @@ class TestValidation:
                     ValidationResultInContext(
                         discriminator="SG4->FOO->0333",
                         validation_result=DataElementValidationResult(
-                            requirement_validation=RequirementValidationValue.IS_REQUIRED,
+                            requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
                             format_validation_fulfilled=True,
                             possible_values={"E02": "Das Eine"},
                             data_element_data_type=DataElementDataType.VALUE_POOL,
@@ -581,12 +581,13 @@ class TestValidation:
                 ValidationResultInContext(
                     discriminator="SG1",
                     validation_result=DataElementValidationResult(
-                        requirement_validation=RequirementValidationValue.IS_REQUIRED,
+                        requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
                         format_validation_fulfilled=True,
                         possible_values={"A1": "Ich bin A1", "A2": "Ich bin A2", "A3": "Ich bin A3"},
                         data_element_data_type=DataElementDataType.VALUE_POOL,
                     ),
                 ),
+                id="required value pool with empty input",
             ),
             pytest.param(
                 DataElementValuePool(
@@ -621,6 +622,7 @@ class TestValidation:
                         data_element_data_type=DataElementDataType.VALUE_POOL,
                     ),
                 ),
+                id="forbidden value pool with empty input",
             ),
             pytest.param(
                 DataElementValuePool(
@@ -649,12 +651,49 @@ class TestValidation:
                 ValidationResultInContext(
                     discriminator="SG1",
                     validation_result=DataElementValidationResult(
-                        requirement_validation=RequirementValidationValue.IS_REQUIRED,
+                        requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
                         format_validation_fulfilled=True,
                         possible_values={"A1": "Ich bin A1", "A3": "Ich bin A3"},
                         data_element_data_type=DataElementDataType.VALUE_POOL,
                     ),
                 ),
+                id="required value pool and empty input",
+            ),
+            pytest.param(
+                DataElementValuePool(
+                    discriminator="SG1",
+                    data_element_id="1234",
+                    entered_input="A2",
+                    value_pool=[
+                        ValuePoolEntry(
+                            qualifier="A1",
+                            meaning="Ich bin A1",
+                            ahb_expression="X[2]",
+                        ),
+                        ValuePoolEntry(
+                            qualifier="A2",
+                            meaning="Ich bin A2",
+                            ahb_expression="X[3]",
+                        ),
+                        ValuePoolEntry(
+                            qualifier="A3",
+                            meaning="Ich bin A3",
+                            ahb_expression="X",
+                        ),
+                    ],
+                ),
+                RequirementValidationValue.IS_REQUIRED,
+                ValidationResultInContext(
+                    discriminator="SG1",
+                    validation_result=DataElementValidationResult(
+                        requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
+                        format_validation_fulfilled=False,
+                        possible_values={"A1": "Ich bin A1", "A3": "Ich bin A3"},
+                        data_element_data_type=DataElementDataType.VALUE_POOL,
+                        hints="Der Wert 'A2' ist nicht in: {A1, A3}",
+                    ),
+                ),
+                id="required value pool and illegal input",
             ),
             pytest.param(
                 DataElementValuePool(
@@ -694,7 +733,7 @@ class TestValidation:
                 DataElementValuePool(
                     discriminator="SG1",
                     data_element_id="1234",
-                    entered_input=None,
+                    entered_input="A1",
                     value_pool=[
                         ValuePoolEntry(
                             qualifier="A1",
@@ -707,12 +746,48 @@ class TestValidation:
                 ValidationResultInContext(
                     discriminator="SG1",
                     validation_result=DataElementValidationResult(
-                        requirement_validation=RequirementValidationValue.IS_REQUIRED,
+                        requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_FILLED,
                         format_validation_fulfilled=True,
                         possible_values={"A1": "Ich bin A1"},
                         data_element_data_type=DataElementDataType.VALUE_POOL,
                     ),
                 ),
+                id="only one expected input (could this be filled automatically?)",
+            ),
+            pytest.param(
+                DataElementValuePool(
+                    discriminator="SG1",
+                    data_element_id="1234",
+                    entered_input="A1",
+                    value_pool=[
+                        ValuePoolEntry(
+                            qualifier="A1",
+                            meaning="Ich bin A1",
+                            ahb_expression="X",
+                        ),
+                        ValuePoolEntry(
+                            qualifier="A2",
+                            meaning="Ich bin A2",
+                            ahb_expression="X",
+                        ),
+                        ValuePoolEntry(
+                            qualifier="A3",
+                            meaning="Ich bin A3",
+                            ahb_expression="X",
+                        ),
+                    ],
+                ),
+                RequirementValidationValue.IS_REQUIRED,
+                ValidationResultInContext(
+                    discriminator="SG1",
+                    validation_result=DataElementValidationResult(
+                        requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_FILLED,
+                        format_validation_fulfilled=True,
+                        possible_values={"A1": "Ich bin A1", "A2": "Ich bin A2", "A3": "Ich bin A3"},
+                        data_element_data_type=DataElementDataType.VALUE_POOL,
+                    ),
+                ),
+                id="required value pool and correct input",
             ),
         ],
     )

@@ -327,12 +327,23 @@ async def validate_data_element_valuepool(
     # if no possible values are found, the requirement is set to forbidden
     # pylint: disable = pointless-statement
     # Case: segment_requirement is required, but no possible values are appended
+    fc_validation_result: bool = True  # by default Format Constraints are not evaluated for ValuePools
     if not possible_values:
         requirement_validation_data_element is RequirementValidationValue.IS_FORBIDDEN
         hints = None
+    else:
+        if data_element.entered_input in possible_values:
+            requirement_validation_data_element = RequirementValidationValue.IS_REQUIRED_AND_FILLED
+        elif data_element.entered_input:
+            fc_validation_result = False  # we re-use the fc validation field to mark that the value is unexpected
+            requirement_validation_data_element = RequirementValidationValue.IS_REQUIRED_AND_EMPTY
+            hints = f"Der Wert '{data_element.entered_input}' ist nicht in: {{{', '.join(possible_values.keys())}}}"
+            data_element.entered_input = None  # overwrite the illegal value
+        else:
+            requirement_validation_data_element = RequirementValidationValue.IS_REQUIRED_AND_EMPTY
     result = DataElementValidationResult(
         requirement_validation=requirement_validation_data_element,
-        format_validation_fulfilled=True,
+        format_validation_fulfilled=fc_validation_result,
         hints=hints,  # todo: hints might be referenced before assignment
         possible_values=possible_values,
         data_element_data_type=DataElementDataType.VALUE_POOL,
