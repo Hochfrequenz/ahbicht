@@ -330,6 +330,14 @@ async def validate_data_element_valuepool(
     if not possible_values:
         requirement_validation_data_element is RequirementValidationValue.IS_FORBIDDEN
         hints = None
+    else:
+        if data_element.entered_input in possible_values:
+            requirement_validation_data_element = RequirementValidationValue.IS_REQUIRED_AND_FILLED
+        elif data_element.entered_input:
+            requirement_validation_data_element = RequirementValidationValue.IS_REQUIRED
+            hints = f"Der Wert '{data_element.entered_input}' ist nicht in: {{{', '.join(possible_values.keys())}}}"
+        else:
+            requirement_validation_data_element = RequirementValidationValue.IS_REQUIRED_AND_EMPTY
     result = DataElementValidationResult(
         requirement_validation=requirement_validation_data_element,
         format_validation_fulfilled=True,
