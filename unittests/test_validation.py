@@ -686,8 +686,8 @@ class TestValidation:
                 ValidationResultInContext(
                     discriminator="SG1",
                     validation_result=DataElementValidationResult(
-                        requirement_validation=RequirementValidationValue.IS_REQUIRED,
-                        format_validation_fulfilled=True,
+                        requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_EMPTY,
+                        format_validation_fulfilled=False,
                         possible_values={"A1": "Ich bin A1", "A3": "Ich bin A3"},
                         data_element_data_type=DataElementDataType.VALUE_POOL,
                         hints="Der Wert 'A2' ist nicht in: {A1, A3}",
