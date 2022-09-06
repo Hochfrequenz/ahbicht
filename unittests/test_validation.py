@@ -112,6 +112,7 @@ class TestValidation:
                                                 ),
                                             ],
                                             data_element_id="0333",
+                                            entered_input=None,
                                         )
                                     ],
                                 )
@@ -557,6 +558,7 @@ class TestValidation:
                 DataElementValuePool(
                     discriminator="SG1",
                     data_element_id="1234",
+                    entered_input=None,
                     value_pool=[
                         ValuePoolEntry(
                             qualifier="A1",
@@ -590,6 +592,7 @@ class TestValidation:
                 DataElementValuePool(
                     discriminator="SG1",
                     data_element_id="1234",
+                    entered_input=None,
                     value_pool=[
                         ValuePoolEntry(
                             qualifier="A1",
@@ -623,6 +626,7 @@ class TestValidation:
                 DataElementValuePool(
                     discriminator="SG1",
                     data_element_id="1234",
+                    entered_input=None,
                     value_pool=[
                         ValuePoolEntry(
                             qualifier="A1",
@@ -656,6 +660,7 @@ class TestValidation:
                 DataElementValuePool(
                     discriminator="SG1",
                     data_element_id="1234",
+                    entered_input=None,
                     value_pool=[
                         ValuePoolEntry(
                             qualifier="A1",
@@ -689,6 +694,7 @@ class TestValidation:
                 DataElementValuePool(
                     discriminator="SG1",
                     data_element_id="1234",
+                    entered_input=None,
                     value_pool=[
                         ValuePoolEntry(
                             qualifier="A1",

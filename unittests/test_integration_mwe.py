@@ -149,6 +149,7 @@ class TestIntegrationMwe:
                                         ),
                                     ],
                                     data_element_id="0333",
+                                    entered_input=None,
                                 )
                             ],
                         )
