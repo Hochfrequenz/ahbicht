@@ -6,7 +6,7 @@ The used terms are defined in the README_conditions.md.
 """
 # pylint:disable=cyclic-import
 from functools import lru_cache
-from typing import Dict, List, Union
+from typing import List, Union
 
 from lark import Lark, Token, Tree
 from lark.exceptions import UnexpectedCharacters, UnexpectedEOF
