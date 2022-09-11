@@ -3,7 +3,11 @@ Functions that are not clearly related to another module
 """
 import asyncio
 import inspect
-from typing import Awaitable, List, TypeVar, Union
+from typing import Awaitable, Callable, List, TypeVar, Union
+
+from lark import Tree
+
+from ahbicht.expressions import parsing_logger
 
 Result = TypeVar("Result")
 
@@ -26,3 +30,26 @@ async def gather_if_necessary(results_and_awaitable_results: List[Union[Result, 
             # we are sure obj is of type T
             result.append(obj)  # type:ignore[arg-type]
     return result
+
+
+def tree_copy(lru_cached_parsing_func: Callable[[str], Tree]):
+    """
+    A decorator that returns copy of the cached result from the lru_cached_parsing_func.
+    Rationale: We want to cache the tree for various expressions because this is definitely faster than re-parsing it.
+    But we don't want the same instance of the tree to be returned over and over again, because the calling code might
+    modify the tree and (if we always returned the same instance) might also modify the cache entry. We don't want this.
+    The tree_copy decorator is used together shall be used with a @lru_cached function. It returns a copy of the cached
+    value instead of the same instance.
+    :param lru_cached_parsing_func: A function that parses a string to a tree which is decorated with @lru_cache.
+    :return: the decorated function that always returns a copy of the cached result instead of the same instance
+    """
+
+    def decorated(*args, **kwargs):
+        cache_size_before_parsing = lru_cached_parsing_func.cache_info().currsize
+        tree_result: Tree = lru_cached_parsing_func(*args, **kwargs)
+        cache_size_after_parsing = lru_cached_parsing_func.cache_info().currsize
+        if cache_size_after_parsing == cache_size_before_parsing:
+            parsing_logger.debug("The parsed tree for '%s' has been loaded from the cache", args[0])
+        return tree_result.copy()
+
+    return decorated
