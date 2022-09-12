@@ -44,7 +44,7 @@ _parser = Lark(GRAMMAR, start="expression")
 
 
 @tree_copy
-@lru_cache(maxsize=65536)
+@lru_cache(maxsize=1024)
 def parse_condition_expression_to_tree(condition_expression: str) -> Tree[Token]:
     """
     Parse a given condition expression with the help of the here defined grammar to a lark tree.
