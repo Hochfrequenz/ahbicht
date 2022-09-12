@@ -56,7 +56,7 @@ class TestCaching:
             tree_instance = parse_condition_expression_to_tree(cond_expression)
             tree_instances.append(tree_instance)
         parse_spy.assert_called_once_with(cond_expression)
-        number_of_distinct_instances = (
+        number_of_distinct_instances: int = (
             len(tree_instances)
             * len(tree_instances)
             / len([1 for x, y in product(tree_instances, tree_instances) if x is y])
