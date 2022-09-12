@@ -1,5 +1,6 @@
 """ Test for the evaluation of the ahb expression conditions tests (Mussfeldprüfung) """
 import uuid
+from typing import List
 from unittest.mock import AsyncMock
 
 import inject
@@ -10,7 +11,11 @@ from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluati
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
 from ahbicht.content_evaluation.evaluator_factory import create_and_inject_hardcoded_evaluators
 from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
-from ahbicht.evaluation_results import FormatConstraintEvaluationResult, RequirementConstraintEvaluationResult
+from ahbicht.evaluation_results import (
+    AhbExpressionEvaluationResult,
+    FormatConstraintEvaluationResult,
+    RequirementConstraintEvaluationResult,
+)
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
@@ -21,6 +26,7 @@ from unittests.defaults import (
     default_test_version,
     empty_default_hints_provider,
     empty_default_rc_evaluator,
+    iterating_rc_evaluator,
     return_empty_dummy_evaluatable_data,
 )
 
@@ -50,6 +56,45 @@ class TestAHBExpressionEvaluation:
         )
         yield
         inject.clear()
+
+    @pytest_asyncio.fixture()
+    def setup_and_teardown_injector_with_iterating_rc_evaluator(self):
+        inject.clear_and_configure(
+            lambda binder: binder.bind(
+                TokenLogicProvider,
+                SingletonTokenLogicProvider([empty_default_hints_provider, iterating_rc_evaluator]),
+            ).bind_to_provider(EvaluatableDataProvider, return_empty_dummy_evaluatable_data)
+        )
+        yield
+        inject.clear()
+
+    async def test_evaluation_under_cache(self, setup_and_teardown_injector_with_iterating_rc_evaluator):
+        """
+        This test is to show that the content evaluation is _not_ affected by the cache, meaning it's still possible
+        to get different outcomes for the same expression even if it has been evaluated once already.
+        This is a very basic assertion but not always given.
+        """
+        expression = "Muss [1] U [2]"
+        evaluation_results: List[AhbExpressionEvaluationResult] = []
+        for _ in range(9):
+            # see iterating_rc_evaluator for the behaviour of 1 and 2. Both iterate
+            # 1: (true, false, true, false, ...)
+            # 2: (true, true, false, false, true, true, false, false, ...)
+            # --------------------------
+            #   1   |   2   | [1] U [2]
+            # true  | true  | true
+            # false | true  | false
+            # true  | false | false
+            # false | false | false
+            # true  | true  | true
+            # ... repeat
+            tree = parse_ahb_expression_to_single_requirement_indicator_expressions(expression)
+            evaluation_result = await evaluate_ahb_expression_tree(tree)
+            evaluation_results.append(evaluation_result)
+        overall_results = [
+            x.requirement_constraint_evaluation_result.requirement_constraints_fulfilled for x in evaluation_results
+        ]
+        assert overall_results == [True, False, False, False, True, False, False, False, True]
 
     @pytest.mark.parametrize(
         """ahb_expression, expected_requirement_indicator, expected_requirement_constraints_fulfilled,

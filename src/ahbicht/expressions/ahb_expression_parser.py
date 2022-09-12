@@ -32,7 +32,7 @@ _parser = Lark(GRAMMAR, start="ahb_expression")
 
 
 @tree_copy
-@lru_cache(maxsize=65536)
+@lru_cache(maxsize=1024)
 def parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_expression: str) -> Tree[Token]:
     """
     Parse a given expression as it appears in the AHB with the help of the here defined grammar to a lark tree.
