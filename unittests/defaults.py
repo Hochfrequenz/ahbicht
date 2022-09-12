@@ -4,12 +4,12 @@ They are supposed to be used in unittests where they need to be injected but don
 Inject them to have a concise test setup.
 """
 from itertools import cycle
-from typing import Iterator, Optional
+from typing import Iterator
 
 from maus.edifact import EdifactFormat, EdifactFormatVersion
 
 #: the default edifact format used in the unit tests
-from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluationContext
+from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue
