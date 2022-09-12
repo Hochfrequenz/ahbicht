@@ -28,7 +28,7 @@ class TestCaching:
         parse_spy.assert_called_once_with(ahb_expression)
         # The following assertion is to make sure that each cached call actually returns a new instance of a lark tree.
         # We do not want the same instance to be returned and eventually be modified over and over again.
-        number_of_distinct_instances = (
+        number_of_distinct_instances: int = (
             len(tree_instances)
             * len(tree_instances)
             / len([1 for x, y in product(tree_instances, tree_instances) if x is y])
