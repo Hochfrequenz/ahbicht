@@ -51,7 +51,7 @@ class TestCaching:
         cond_expression = "[1] U [2]"
         parse_spy = mocker.spy(cond_expr_parser, "parse")
         tree_instances: List[Tree] = []
-        number_of_calls = 100
+        number_of_calls: int = 100
         for _ in range(number_of_calls):
             tree_instance = parse_condition_expression_to_tree(cond_expression)
             tree_instances.append(tree_instance)
