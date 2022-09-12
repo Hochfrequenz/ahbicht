@@ -21,7 +21,7 @@ class TestCaching:
         ahb_expression = "Muss [3] U [4]"
         parse_spy = mocker.spy(ahb_expr_parser, "parse")
         tree_instances: List[Tree] = []
-        number_of_calls = 100
+        number_of_calls: int = 100
         for _ in range(number_of_calls):
             tree_instance = parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_expression)
             tree_instances.append(tree_instance)
