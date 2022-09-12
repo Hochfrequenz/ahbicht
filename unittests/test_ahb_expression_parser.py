@@ -4,10 +4,7 @@
 import pytest  # type:ignore[import]
 from lark import Token, Tree
 
-from ahbicht.expressions.ahb_expression_parser import (
-    _cache,
-    parse_ahb_expression_to_single_requirement_indicator_expressions,
-)
+from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 
 
 class TestAhbExpressionParser:
@@ -355,10 +352,10 @@ class TestAhbExpressionParser:
         assert parsed_tree == expected_tree
         log_entries = caplog.records
         if len(log_entries) > 0:
-            assert caplog.records[0].message == f"Successfully parsed '{ahb_expression}' as AHB expression"
-        else:
-            # if the tree is not actually parsed but loaded from the cache we don't expect a logging message
-            assert ahb_expression in _cache
+            assert caplog.records[0].message in {
+                f"Successfully parsed '{ahb_expression}' as AHB expression",
+                f"The parsed tree for '{ahb_expression}' has been loaded from the cache",
+            }
 
     @pytest.mark.parametrize(
         "ahb_expression",

@@ -75,7 +75,7 @@ async def validate_segment_level(
     if isinstance(segment_level, Segment):
         return await validate_segment(segment=segment_level, soll_is_required=soll_is_required)
 
-    raise NotImplementedError("Unexpected type for segement_level")
+    raise NotImplementedError("Unexpected type for segment_level")
 
 
 async def validate_segment_group(

@@ -20,7 +20,7 @@ from ahbicht.mapping_results import Repeatability, parse_repeatability
 
 
 async def parse_expression_including_unresolved_subexpressions(
-    expression: str, resolve_packages: bool = False, replace_time_conditions: bool = True, disable_cache: bool = True
+    expression: str, resolve_packages: bool = False, replace_time_conditions: bool = True
 ) -> Tree[Token]:
     """
     Parses expressions and resolves its subexpressions,
@@ -30,9 +30,7 @@ async def parse_expression_including_unresolved_subexpressions(
     :param replace_time_conditions: if true the time conditions "UBx" are replaced with format constraints
     """
     try:
-        expression_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(
-            expression, disable_cache=disable_cache
-        )
+        expression_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(expression)
         expression_tree = AhbExpressionResolverTransformer().transform(expression_tree)
     except SyntaxError as ahb_syntax_error:
         try:
