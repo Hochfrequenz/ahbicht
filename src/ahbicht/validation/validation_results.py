@@ -6,7 +6,7 @@ from typing import Any, Dict, Optional, Union
 import attrs
 import maus.models.edifact_components
 from marshmallow import Schema, fields, post_load
-from marshmallow_enum import EnumField  # type:ignore[import]
+from marshmallow.fields import Enum as MarshmallowEnum
 
 from ahbicht.validation.validation_values import RequirementValidationValue
 
@@ -32,7 +32,7 @@ class ValidationResultAttributesSchema(Schema):
     A schema to pass on the attributes of ValidationResult
     """
 
-    requirement_validation = EnumField(RequirementValidationValue)
+    requirement_validation = MarshmallowEnum(RequirementValidationValue)
     hints = fields.String(load_default=None)
 
 
@@ -127,7 +127,7 @@ class DataElementValidationResultSchema(ValidationResultAttributesSchema):
     format_validation_fulfilled = fields.Bool()
     format_error_message = fields.String(load_default=None)
     possible_values = fields.Dict(fields.Str, load_default=None)
-    data_element_data_type = EnumField(
+    data_element_data_type = MarshmallowEnum(
         maus.models.edifact_components.DataElementDataType, required=False, load_default=None
     )
 

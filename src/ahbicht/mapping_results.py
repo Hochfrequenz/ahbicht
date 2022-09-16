@@ -6,7 +6,7 @@ from typing import Match, Optional
 
 import attrs
 from marshmallow import Schema, fields, post_load
-from marshmallow_enum import EnumField  # type:ignore[import]
+from marshmallow.fields import Enum as MarshmallowEnum
 from maus.edifact import EdifactFormat
 
 
@@ -35,7 +35,7 @@ class ConditionKeyConditionTextMappingSchema(Schema):
     A schema to (de-)serialize :class:`.ConditionKeyConditionTextMapping` s
     """
 
-    edifact_format = EnumField(EdifactFormat)
+    edifact_format = MarshmallowEnum(EdifactFormat)
     condition_key = fields.String()
     condition_text = fields.String(load_default=None)
 
@@ -78,7 +78,7 @@ class PackageKeyConditionExpressionMappingSchema(Schema):
     A schema to (de-)serialize :class:`.PackageKeyConditionExpressionMapping` s
     """
 
-    edifact_format = EnumField(EdifactFormat)
+    edifact_format = MarshmallowEnum(EdifactFormat)
     package_key = fields.String()
     package_expression = fields.String(load_default=None)
 

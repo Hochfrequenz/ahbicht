@@ -1,8 +1,7 @@
 attrs
 lark
 inject
-marshmallow
-marshmallow_enum
+marshmallow>=3.18.0
 maus
 pytz
 # whenever adding something here, don't forget to also add it to setup.cfg
