@@ -238,7 +238,7 @@ class TestAHBExpressionEvaluation:
             ),
         ],
     )
-    async def test_invalid_ahb_expressions(
+    async def test_not_wellformed_ahb_expressions(
         self, expression: str, expected_error: type, expected_error_message: str, setup_and_teardown_injector
     ):
         """Tests that an error is raised when trying to pass invalid values."""
