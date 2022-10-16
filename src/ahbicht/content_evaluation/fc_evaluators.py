@@ -56,9 +56,6 @@ class FcEvaluator(Evaluator, ABC):
     of the condition it evaluates.
     """
 
-    def __init__(self):
-        super().__init__()
-
     def evaluate_931(self, entered_input: str) -> EvaluatedFormatConstraint:
         """
         Assert that the entered input is parsable as datetime with explicit UTC offset.
@@ -194,7 +191,8 @@ class ContentEvaluationResultBasedFcEvaluator(FcEvaluator):
         self._schema = ContentEvaluationResultSchema()
 
     async def evaluate_single_format_constraint(self, condition_key: str) -> EvaluatedFormatConstraint:
-        return await self._evaluate_single_format_constraint(condition_key)
+        # the missing value should be injected automatically
+        return await self._evaluate_single_format_constraint(condition_key)  # pylint:disable=no-value-for-parameter
 
     @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
     async def _evaluate_single_format_constraint(
