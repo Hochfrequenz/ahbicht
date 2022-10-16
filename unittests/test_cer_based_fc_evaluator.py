@@ -1,5 +1,4 @@
 """ Tests the FC evaluator, that assumes a ContentEvaluationResult to be present in the evaluatable data"""
-from unittest import mock
 
 import inject
 import pytest  # type:ignore[import]
@@ -7,11 +6,15 @@ from _pytest.fixtures import SubRequest
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
-from ahbicht.content_evaluation.fc_evaluators import ContentEvaluationResultBasedFcEvaluator, FcEvaluator
-from ahbicht.content_evaluation.rc_evaluators import ContentEvaluationResultBasedRcEvaluator, RcEvaluator
+from ahbicht.content_evaluation.fc_evaluators import ContentEvaluationResultBasedFcEvaluator
 from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
-from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
-from unittests.defaults import EmptyDefaultRcEvaluator, store_content_evaluation_result_in_evaluatable_data
+from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
+from unittests.defaults import (
+    EmptyDefaultRcEvaluator,
+    default_test_format,
+    default_test_version,
+    store_content_evaluation_result_in_evaluatable_data,
+)
 
 
 class TestCerBasedRcEvaluator:
@@ -23,6 +26,8 @@ class TestCerBasedRcEvaluator:
         content_evaluation_result: ContentEvaluationResult = request.param
         assert isinstance(content_evaluation_result, ContentEvaluationResult)
         fc_evaluator = ContentEvaluationResultBasedFcEvaluator()
+        fc_evaluator.edifact_format = default_test_format
+        fc_evaluator.edifact_format_version = default_test_version
 
         def get_evaluatable_data():
             return store_content_evaluation_result_in_evaluatable_data(content_evaluation_result)
@@ -66,7 +71,8 @@ class TestCerBasedRcEvaluator:
     async def test_evaluation(
         self, condition_key: str, expected_result: EvaluatedFormatConstraint, inject_cer_evaluators
     ):
-        fc_evalutor: FcEvaluator = inject.instance(FcEvaluator)
+        token_logic_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)
+        fc_evalutor = token_logic_provider.get_fc_evaluator(default_test_format, default_test_version)
         actual = await fc_evalutor.evaluate_single_format_constraint(condition_key)
         assert actual == expected_result
 

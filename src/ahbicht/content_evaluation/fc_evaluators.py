@@ -174,6 +174,14 @@ class DictBasedFcEvaluator(FcEvaluator):
         except KeyError as key_error:
             raise NotImplementedError(f"No result was provided for {condition_key}.") from key_error
 
+    def get_evaluation_method(self, condition_key: str) -> Optional[Callable]:
+        """
+        Returns the method that evaluates the condition with key condition_key
+        :param condition_key: unique key of the condition, e.g. "59"
+        :return: The method that can be used for content_evaluation; None if no such method is implemented.
+        """
+        return self.get_evaluation_method(condition_key)
+
 
 class ContentEvaluationResultBasedFcEvaluator(FcEvaluator):
     """
