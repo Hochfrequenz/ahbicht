@@ -9,8 +9,8 @@ from ahbicht.expressions.condition_nodes import ConditionFulfilledValue
 from unittests.defaults import store_content_evaluation_result_in_evaluatable_data
 
 
-class TestDictBasedRcEvaluator:
-    """Test for the evaluation using the Dict Based RC Evaluator"""
+class TestCerBasedRcEvaluator:
+    """Test for the evaluation using the ContentEvaluationResult Based RC Evaluator"""
 
     async def test_evaluation(self, mocker):
         hardcoded_results = ContentEvaluationResult(
