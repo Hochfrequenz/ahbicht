@@ -1,4 +1,5 @@
 """ Tests the FC evaluator, that assumes a ContentEvaluationResult to be present in the evaluatable data"""
+from typing import Optional
 
 import inject
 import pytest  # type:ignore[import]
@@ -66,17 +67,20 @@ class TestCerBasedRcEvaluator:
                 "2",
                 EvaluatedFormatConstraint(format_constraint_fulfilled=False, error_message="something wrong"),
             ),
+            pytest.param(
+                "789",
+                None,
+            ),
         ],
     )
     async def test_evaluation(
-        self, condition_key: str, expected_result: EvaluatedFormatConstraint, inject_cer_evaluators
+        self, condition_key: str, expected_result: Optional[EvaluatedFormatConstraint], inject_cer_evaluators
     ):
         token_logic_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)
         fc_evalutor = token_logic_provider.get_fc_evaluator(default_test_format, default_test_version)
-        actual = await fc_evalutor.evaluate_single_format_constraint(condition_key)
-        assert actual == expected_result
-
-    async def test_not_implemented(self, dict_fc_evaluator):
-        fc_evaluators.text_to_be_evaluated_by_format_constraint.set("qwe")
-        with pytest.raises(NotImplementedError):
-            await dict_fc_evaluator.evaluate_single_format_constraint("3")
+        if expected_result is not None:
+            actual = await fc_evalutor.evaluate_single_format_constraint(condition_key)
+            assert actual == expected_result
+        else:
+            with pytest.raises(NotImplementedError):
+                await fc_evalutor.evaluate_single_format_constraint(condition_key)
