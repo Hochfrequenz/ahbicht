@@ -3,7 +3,7 @@ from typing import Optional
 
 import inject
 import pytest  # type:ignore[import]
-from _pytest.fixtures import SubRequest
+from _pytest.fixtures import SubRequest  # type:ignore[import]
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
@@ -76,7 +76,7 @@ class TestCerBasedRcEvaluator:
     async def test_evaluation(
         self, condition_key: str, expected_result: Optional[EvaluatedFormatConstraint], inject_cer_evaluators
     ):
-        token_logic_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)
+        token_logic_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)  # type:ignore[assignment]
         fc_evalutor = token_logic_provider.get_fc_evaluator(default_test_format, default_test_version)
         if expected_result is not None:
             actual = await fc_evalutor.evaluate_single_format_constraint(condition_key)
