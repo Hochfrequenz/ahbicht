@@ -117,13 +117,13 @@ class ContentEvaluationResultBasedHintsProvider(HintsProvider):
     data.
     """
 
-    async def get_hint_text(self, condition_key: str) -> Optional[str]:
-        # the missing second argument to the private method call in the next line should be injected automatically
-        return await self._get_hint_text(condition_key)  # pylint:disable=no-value-for-parameter
-
     def __init__(self):
         super().__init__()
         self._schema = ContentEvaluationResultSchema()
+
+    async def get_hint_text(self, condition_key: str) -> Optional[str]:
+        # the missing second argument to the private method call in the next line should be injected automatically
+        return await self._get_hint_text(condition_key)  # pylint:disable=no-value-for-parameter
 
     @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
     async def _get_hint_text(self, condition_key: str, evaluatable_data: EvaluatableData) -> Optional[str]:

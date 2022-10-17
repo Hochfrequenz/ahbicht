@@ -120,13 +120,13 @@ class ContentEvaluationResultBasedPackageResolver(PackageResolver):
     evaluatable data.
     """
 
-    async def get_condition_expression(self, package_key: str) -> PackageKeyConditionExpressionMapping:
-        # the missing second argument to the private method call in the next line should be injected automatically
-        return await self._get_condition_expression(package_key)  # pylint:disable=no-value-for-parameter
-
     def __init__(self):
         super().__init__()
         self._schema = ContentEvaluationResultSchema()
+
+    async def get_condition_expression(self, package_key: str) -> PackageKeyConditionExpressionMapping:
+        # the missing second argument to the private method call in the next line should be injected automatically
+        return await self._get_condition_expression(package_key)  # pylint:disable=no-value-for-parameter
 
     @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
     async def _get_condition_expression(
