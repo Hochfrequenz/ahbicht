@@ -2,6 +2,7 @@ import uuid
 from itertools import product
 from typing import List
 
+import inject
 import pytest  # type:ignore[import]
 from maus.models.anwendungshandbuch import AhbMetaInformation, DeepAnwendungshandbuch
 from maus.models.edifact_components import (

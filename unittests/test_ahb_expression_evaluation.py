@@ -285,12 +285,15 @@ class TestAHBExpressionEvaluation:
         tree_b = await parse_expression_including_unresolved_subexpressions(ahb_expression)
         # it's OK/expected that the trees look different depending on whether sub expressions are resolved or not
         # but in any case the evaluation result should look the same
-        create_and_inject_hardcoded_evaluators(
-            content_evaluation_result,
-            evaluatable_data_provider=return_empty_dummy_evaluatable_data,
-            edifact_format=default_test_format,
-            edifact_format_version=default_test_version,
-        )
-        evaluation_result_a = await evaluate_ahb_expression_tree(tree_a)
-        evaluation_result_b = await evaluate_ahb_expression_tree(tree_b)
-        assert evaluation_result_a == evaluation_result_b
+        try:
+            create_and_inject_hardcoded_evaluators(
+                content_evaluation_result,
+                evaluatable_data_provider=return_empty_dummy_evaluatable_data,
+                edifact_format=default_test_format,
+                edifact_format_version=default_test_version,
+            )
+            evaluation_result_a = await evaluate_ahb_expression_tree(tree_a)
+            evaluation_result_b = await evaluate_ahb_expression_tree(tree_b)
+            assert evaluation_result_a == evaluation_result_b
+        finally:
+            inject.clear()
