@@ -7,9 +7,7 @@ from _pytest.fixtures import SubRequest  # type:ignore[import]
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
-from ahbicht.content_evaluation.fc_evaluators import ContentEvaluationResultBasedFcEvaluator
 from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
-from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
 from ahbicht.expressions.hints_provider import ContentEvaluationResultBasedHintsProvider
 from unittests.defaults import (
     EmptyDefaultFcEvaluator,
