@@ -135,6 +135,8 @@ class ContentEvaluationResultBasedPackageResolver(PackageResolver):
         content_evaluation_result: ContentEvaluationResult = self._schema.load(evaluatable_data.edifact_seed)
         try:
             self.logger.debug("Retrieving package '%s' from Content Evaluation Result", package_key)
+            if content_evaluation_result.packages is None:
+                content_evaluation_result.packages = {}
             package_expression = content_evaluation_result.packages[package_key]
             return PackageKeyConditionExpressionMapping(
                 edifact_format=self.edifact_format, package_expression=package_expression, package_key=package_key
