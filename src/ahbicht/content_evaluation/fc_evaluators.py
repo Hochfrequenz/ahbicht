@@ -11,8 +11,12 @@ import asyncio
 import inspect
 from abc import ABC
 from contextvars import ContextVar
-from typing import Coroutine, Dict, List, Optional
+from typing import Callable, Coroutine, Dict, List, Optional
 
+import inject
+
+from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
+from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
 from ahbicht.content_evaluation.evaluators import Evaluator
 from ahbicht.content_evaluation.german_strom_and_gas_tag import has_no_utc_offset, is_xtag_limit
 from ahbicht.evaluation_results import FormatConstraintEvaluationResult
@@ -148,7 +152,8 @@ class FcEvaluator(Evaluator, ABC):
 
 class DictBasedFcEvaluator(FcEvaluator):
     """
-    A format constraint evaluator that is initialized with a prefilled dictionary.
+    A format constraint evaluator that is initialized with a prefilled dictionary on time of creation.
+    Once initialized the outcome of the evaluation won't change anymore.
     """
 
     def __init__(self, results: Dict[str, EvaluatedFormatConstraint]):
@@ -165,3 +170,43 @@ class DictBasedFcEvaluator(FcEvaluator):
             return self._results[condition_key]
         except KeyError as key_error:
             raise NotImplementedError(f"No result was provided for {condition_key}.") from key_error
+
+    def get_evaluation_method(self, condition_key: str) -> Optional[Callable]:
+        """
+        Returns the method that evaluates the condition with key condition_key
+        :param condition_key: unique key of the condition, e.g. "59"
+        :return: The method that can be used for content_evaluation; None if no such method is implemented.
+        """
+        return self.get_evaluation_method(condition_key)
+
+
+class ContentEvaluationResultBasedFcEvaluator(FcEvaluator):
+    """
+    A format constraint evaluator that expects the evaluatable data to contain a ContentEvalutionResult as edifact seed.
+    Other than the DictBasedFcEvaluator the outcome is not dependent on the initialization but on the evaluatable data.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self._schema = ContentEvaluationResultSchema()
+
+    async def evaluate_single_format_constraint(self, condition_key: str) -> EvaluatedFormatConstraint:
+        # the missing second argument to the private method call in the next line should be injected automatically
+        return await self._evaluate_single_format_constraint(condition_key)  # pylint:disable=no-value-for-parameter
+
+    @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
+    async def _evaluate_single_format_constraint(
+        self, condition_key: str, evaluatable_data: EvaluatableData
+    ) -> EvaluatedFormatConstraint:
+        content_evaluation_result: ContentEvaluationResult = self._schema.load(evaluatable_data.edifact_seed)
+        try:
+            self.logger.debug("Retrieving key %s' from Content Evaluation Result", condition_key)
+            return content_evaluation_result.format_constraints[condition_key]
+        except KeyError as key_error:
+            raise NotImplementedError(f"No result was provided for {condition_key}.") from key_error
+
+    def get_evaluation_method(self, condition_key: str) -> Optional[Callable]:
+        async def evaluation_method():
+            return await self.evaluate_single_format_constraint(condition_key)
+
+        return evaluation_method
