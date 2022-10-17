@@ -8,8 +8,11 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Dict, List, Mapping, Optional
 
+import inject
 from maus.edifact import EdifactFormat, EdifactFormatVersion
 
+from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
+from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
 from ahbicht.mapping_results import PackageKeyConditionExpressionMapping, PackageKeyConditionExpressionMappingSchema
 
 
@@ -108,3 +111,38 @@ class JsonFilePackageResolver(DictBasedPackageResolver):
             json_body, many=True
         )
         return {mapping.package_key: mapping.package_expression for mapping in mapping_list}
+
+
+class ContentEvaluationResultBasedPackageResolver(PackageResolver):
+    """
+    A package resolver that expects the evaluatable data to contain a ContentEvalutionResult as edifact seed.
+    Other than the DictBasedPackageResolver the outcome is not dependent on the initialization but on the
+    evaluatable data.
+    """
+
+    async def get_condition_expression(self, package_key: str) -> PackageKeyConditionExpressionMapping:
+        # the missing second argument to the private method call in the next line should be injected automatically
+        return await self._get_condition_expression(package_key)  # pylint:disable=no-value-for-parameter
+
+    def __init__(self):
+        super().__init__()
+        self._schema = ContentEvaluationResultSchema()
+
+    @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
+    async def _get_condition_expression(
+        self, package_key: str, evaluatable_data: EvaluatableData
+    ) -> PackageKeyConditionExpressionMapping:
+        content_evaluation_result: ContentEvaluationResult = self._schema.load(evaluatable_data.edifact_seed)
+        try:
+            self.logger.debug("Retrieving package '%s' from Content Evaluation Result", package_key)
+            package_expression = content_evaluation_result.packages[package_key]
+            return PackageKeyConditionExpressionMapping(
+                edifact_format=self.edifact_format, package_expression=package_expression, package_key=package_key
+            )
+        except KeyError as key_error:
+            self.logger.debug("Package '%s' was not contained in the CER", str(key_error))
+            return PackageKeyConditionExpressionMapping(
+                edifact_format=self.edifact_format,
+                package_expression=None,
+                package_key=package_key,
+            )

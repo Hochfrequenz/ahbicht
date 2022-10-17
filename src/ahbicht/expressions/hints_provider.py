@@ -112,8 +112,9 @@ class JsonFileHintsProvider(DictBasedHintsProvider):
 
 class ContentEvaluationResultBasedHintsProvider(HintsProvider):
     """
-    A format constraint evaluator that expects the evaluatable data to contain a ContentEvalutionResult as edifact seed.
-    Other than the DictBasedFcEvaluator the outcome is not dependent on the initialization but on the evaluatable data.
+    A hints provider that expects the evaluatable data to contain a ContentEvalutionResult as edifact seed.
+    Other than the DictBasedHintsProvider the outcome is not dependent on the initialization but on the evaluatable
+    data.
     """
 
     async def get_hint_text(self, condition_key: str) -> Optional[str]:
