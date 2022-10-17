@@ -63,6 +63,8 @@ class TestValidation:
             edifact_format_version=default_test_version,
             evaluatable_data_provider=eval_data_provider,
         )
+        yield
+        inject.clear()
 
     @pytest.mark.parametrize(
         "deep_ahb, expected_validation_result",
