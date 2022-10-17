@@ -9,6 +9,7 @@ import inspect
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional
 
+from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluationContext
 from ahbicht.content_evaluation.evaluators import Evaluator
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue
@@ -88,6 +89,7 @@ class RcEvaluator(Evaluator, ABC):
 class DictBasedRcEvaluator(RcEvaluator):
     """
     A requirement constraint evaluator that is initialized with a prefilled dictionary.
+    The outcome of the evaluation does not change anymore after the initialization.
     """
 
     def __init__(self, results: Dict[str, ConditionFulfilledValue]):
@@ -107,5 +109,29 @@ class DictBasedRcEvaluator(RcEvaluator):
     ) -> ConditionFulfilledValue:
         try:
             return self._results[condition_key]
+        except KeyError as key_error:
+            raise NotImplementedError(f"No result was provided for condition '{condition_key}'.") from key_error
+
+
+class ContentEvaluationResultBasedRcEvaluator(RcEvaluator):
+    """
+    A requirement constraint evaluator that expects the evaluatable data to contain a (dumped) ContentEvalutionResult.
+    Other than the DictBasedRcEvaluator the outcome is not dependent on the initialization but on the evaluatable data.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self._schema: ContentEvaluationResultSchema = ContentEvaluationResultSchema()
+
+    def _get_default_context(self) -> EvaluationContext:
+        raise NotImplementedError()
+
+    # pylint:disable=unused-argument
+    async def evaluate_single_condition(
+        self, condition_key: str, evaluatable_data: EvaluatableData, context: Optional[EvaluationContext] = None
+    ) -> ConditionFulfilledValue:
+        content_evaluation_result: ContentEvaluationResult = self._schema.load(evaluatable_data.edifact_seed)
+        try:
+            return content_evaluation_result.requirement_constraints[condition_key]
         except KeyError as key_error:
             raise NotImplementedError(f"No result was provided for condition '{condition_key}'.") from key_error
