@@ -47,6 +47,7 @@ def parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_express
         parsed_tree = _parser.parse(ahb_expression)
         parsing_logger.debug("Successfully parsed '%s' as AHB expression", ahb_expression)
     except (UnexpectedEOF, UnexpectedCharacters, TypeError) as eof:
+        # the expression is not well-formed
         raise SyntaxError(
             """Please make sure that the ahb_expression starts with a requirement indicator \
 (i.e Muss/M, Soll/S, Kann/K, X, O, U) and the condition expressions consist of only \
