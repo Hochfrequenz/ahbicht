@@ -10,7 +10,11 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Dict, List, Mapping, Optional
 
+import inject
 from maus.edifact import EdifactFormat, EdifactFormatVersion
+
+from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
+from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
 
 # pylint: disable = too-few-public-methods
 from ahbicht.expressions.condition_nodes import Hint
@@ -104,3 +108,28 @@ class JsonFileHintsProvider(DictBasedHintsProvider):
         """
         with open(file_path, encoding="utf-8") as json_infile:
             return json.load(json_infile)
+
+
+class ContentEvaluationResultBasedHintsProvider(HintsProvider):
+    """
+    A format constraint evaluator that expects the evaluatable data to contain a ContentEvalutionResult as edifact seed.
+    Other than the DictBasedFcEvaluator the outcome is not dependent on the initialization but on the evaluatable data.
+    """
+
+    async def get_hint_text(self, condition_key: str) -> Optional[str]:
+        # the missing second argument to the private method call in the next line should be injected automatically
+        return await self._get_hint_text(condition_key)  # pylint:disable=no-value-for-parameter
+
+    def __init__(self):
+        super().__init__()
+        self._schema = ContentEvaluationResultSchema()
+
+    @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
+    async def _get_hint_text(self, condition_key: str, evaluatable_data: EvaluatableData) -> Optional[str]:
+        content_evaluation_result: ContentEvaluationResult = self._schema.load(evaluatable_data.edifact_seed)
+        try:
+            self.logger.debug("Retrieving hint '%s' from Content Evaluation Result", condition_key)
+            return content_evaluation_result.hints[condition_key]
+        except KeyError as key_error:
+            self.logger.debug("Hint '%s' was not contained in the CER", str(key_error))
+            return None
