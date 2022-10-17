@@ -18,7 +18,7 @@ from unittests.defaults import (
 )
 
 
-class TestCerBasedRcEvaluator:
+class TestCerBasedHintsProvider:
     """Test for the evaluation using the ContentEvaluationResult Based Hints Provider"""
 
     @pytest.fixture
