@@ -191,7 +191,7 @@ class ContentEvaluationResultBasedFcEvaluator(FcEvaluator):
         self._schema = ContentEvaluationResultSchema()
 
     async def evaluate_single_format_constraint(self, condition_key: str) -> EvaluatedFormatConstraint:
-        # the missing value should be injected automatically
+        # the missing second argument to the private method call in the next line should be injected automatically
         return await self._evaluate_single_format_constraint(condition_key)  # pylint:disable=no-value-for-parameter
 
     @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
