@@ -200,6 +200,7 @@ class ContentEvaluationResultBasedFcEvaluator(FcEvaluator):
     ) -> EvaluatedFormatConstraint:
         content_evaluation_result: ContentEvaluationResult = self._schema.load(evaluatable_data.edifact_seed)
         try:
+            self.logger.debug("Retrieving key %s' from Content Evaluation Result", condition_key)
             return content_evaluation_result.format_constraints[condition_key]
         except KeyError as key_error:
             raise NotImplementedError(f"No result was provided for {condition_key}.") from key_error
