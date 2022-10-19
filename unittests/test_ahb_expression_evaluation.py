@@ -297,3 +297,56 @@ class TestAHBExpressionEvaluation:
             assert evaluation_result_a == evaluation_result_b
         finally:
             inject.clear()
+
+    @pytest.mark.parametrize(
+        "ahb_expression, content_evaluation_result",
+        [
+            pytest.param(
+                "Muss [901][1] X [902][2]",
+                ContentEvaluationResult(
+                    hints={"501": "foo"},
+                    format_constraints={
+                        "901": EvaluatedFormatConstraint(format_constraint_fulfilled=True, error_message=None),
+                        "902": EvaluatedFormatConstraint(format_constraint_fulfilled=True, error_message=None),
+                    },
+                    requirement_constraints={
+                        "1": ConditionFulfilledValue.FULFILLED,
+                        "2": ConditionFulfilledValue.UNFULFILLED,
+                    },
+                    id=uuid.UUID("d106f335-f663-4d14-9636-4f43a883ad26"),
+                    packages={},
+                ),
+            ),
+            pytest.param(
+                "Muss [901][1] X [902][2]",
+                ContentEvaluationResult(
+                    hints={"501": "foo"},
+                    format_constraints={
+                        "902": EvaluatedFormatConstraint(format_constraint_fulfilled=True, error_message=None),
+                        "901": EvaluatedFormatConstraint(format_constraint_fulfilled=True, error_message=None),
+                    },
+                    requirement_constraints={
+                        "2": ConditionFulfilledValue.FULFILLED,
+                        "1": ConditionFulfilledValue.UNFULFILLED,
+                    },
+                    id=uuid.UUID("d106f335-f663-4d14-9636-4f43a883ad26"),
+                    packages={},
+                ),
+            ),
+        ],
+    )
+    async def test_valid_expression_evaluation(
+        self, ahb_expression: str, content_evaluation_result: ContentEvaluationResult
+    ):
+        tree = parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_expression)
+        try:
+            create_and_inject_hardcoded_evaluators(
+                content_evaluation_result,
+                evaluatable_data_provider=return_empty_dummy_evaluatable_data,
+                edifact_format=default_test_format,
+                edifact_format_version=default_test_version,
+            )
+            evaluation_result = await evaluate_ahb_expression_tree(tree)
+            assert evaluation_result is not None
+        finally:
+            inject.clear()

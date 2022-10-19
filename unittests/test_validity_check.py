@@ -77,7 +77,11 @@ class TestValidityCheck:
         [
             pytest.param("Foo", False),
             pytest.param("Muss [1] U [2]", True),
-            pytest.param("Muss [61] O [584]", False),  # connecting a hint with LAND is not valid
+            pytest.param("Muss [61] O [584]", False),  # connecting a hint with LOR is not valid
+            pytest.param("Muss [123] O [584]", False),
+            pytest.param("Muss [501] X [999]", False),  # connecting a hint XOR fc is not valid
+            pytest.param("Muss [501] O [999]", False),  # connecting a hint LOR fc is not valid
+            pytest.param("Muss [983][1] X [984][2]", True),
         ],
     )
     async def test_is_valid_expression(self, ahb_expression: str, expected_result: bool, inject_cer_evaluators):
