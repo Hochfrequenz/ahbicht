@@ -2,7 +2,7 @@
 functions related to content evaluation
 """
 import asyncio
-from typing import Any, Awaitable, Callable, List
+from typing import Any, Awaitable, Callable, List, Optional, Tuple
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData
@@ -17,7 +17,7 @@ from ahbicht.expressions.expression_resolver import parse_expression_including_u
 
 async def is_valid_expression(
     ahb_expression: str, content_evaluation_result_setter: Callable[[ContentEvaluationResult], Any]
-) -> bool:
+) -> Tuple[bool, Optional[str]]:
     """
     Returns true iff the given expression is both well-formed and valid.
     An expression is valid if and only if all possible content evaluations lead to a meaningful results.
@@ -27,13 +27,13 @@ async def is_valid_expression(
     :param content_evaluation_result_setter: a threadsafe method that writes the given Content Evaluation Result into
     the evaluatable data
     :param ahb_expression: "Muss [1] U [2]" (returns True)  "Muss ([61]u [584]) o[583]" (returns False)
-    :return: True iff the expression is valid
+    :return: (True,None) iff the expression is valid; (False, error message) otherwise
     """
     try:
         tree = await parse_expression_including_unresolved_subexpressions(ahb_expression)
         categorized_key_extract = extract_categorized_keys_from_tree(tree, sanitize=True)
-    except SyntaxError:
-        return False
+    except SyntaxError as syntax_error:
+        return False, str(syntax_error)
     evaluation_tasks: List[Awaitable] = []
     for content_evaluation_result in categorized_key_extract.generate_possible_content_evaluation_results():
 
@@ -46,13 +46,14 @@ async def is_valid_expression(
                     pass  # this happens for UNKNOWN; it's okay because the expression might still be valid
                 else:
                     raise not_implemented_error  # this is, in general, an indicator for an invalid expression
-            except InvalidExpressionError as invalid_expression_error:
-                invalid_expression_error.invalid_expression = ahb_expression
+            except InvalidExpressionError as single_invalid_expression_error:
+                single_invalid_expression_error.invalid_expression = ahb_expression
                 raise
 
         evaluation_tasks.append(evaluate_with_cer(content_evaluation_result))
     try:
         await asyncio.gather(*evaluation_tasks)
-    except InvalidExpressionError:
-        return False  # if any evaluation throws a InvalidExpressionError the expression is invalid
-    return True
+    except InvalidExpressionError as invalid_expression_error:
+        # if any evaluation throws a InvalidExpressionError the expression is invalid
+        return False, invalid_expression_error.error_message
+    return True, None

@@ -86,4 +86,4 @@ class TestValidityCheck:
     )
     async def test_is_valid_expression(self, ahb_expression: str, expected_result: bool, inject_cer_evaluators):
         actual = await is_valid_expression(ahb_expression, lambda cer: _content_evaluation_result.set(cer))
-        assert actual == expected_result
+        assert actual[0] == expected_result
