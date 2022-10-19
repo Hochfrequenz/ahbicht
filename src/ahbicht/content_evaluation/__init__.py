@@ -47,5 +47,5 @@ async def is_valid_expression(
     try:
         await asyncio.gather(*evaluation_tasks)
     except NotImplementedError:
-        return False
+        return False #  if any evaluation throws a (previously uncatched) NotImplementedError the expression is invalid
     return True
