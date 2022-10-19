@@ -9,6 +9,7 @@ from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
 from ahbicht.content_evaluation.rc_evaluators import ContentEvaluationResultBasedRcEvaluator, RcEvaluator
 from ahbicht.content_evaluation.token_logic_provider import TokenLogicProvider
+from ahbicht.expressions import InvalidExpressionError
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
 from ahbicht.expressions.condition_expression_parser import extract_categorized_keys_from_tree
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
@@ -45,10 +46,13 @@ async def is_valid_expression(
                     pass  # this happens for UNKNOWN; it's okay because the expression might still be valid
                 else:
                     raise not_implemented_error  # this is, in general, an indicator for an invalid expression
+            except InvalidExpressionError as invalid_expression_error:
+                invalid_expression_error.invalid_expression = ahb_expression
+                raise
 
         evaluation_tasks.append(evaluate_with_cer(content_evaluation_result))
     try:
         await asyncio.gather(*evaluation_tasks)
-    except NotImplementedError:
-        return False  # if any evaluation throws a (previously uncatched) NotImplementedError the expression is invalid
+    except InvalidExpressionError:
+        return False  # if any evaluation throws a InvalidExpressionError the expression is invalid
     return True

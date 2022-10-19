@@ -13,6 +13,7 @@ from lark.exceptions import VisitError
 
 from ahbicht.condition_node_builder import ConditionNodeBuilder, TRCTransformerArgument
 from ahbicht.evaluation_results import RequirementConstraintEvaluationResult
+from ahbicht.expressions import InvalidExpressionError
 from ahbicht.expressions.base_transformer import BaseTransformer
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.condition_nodes import (
@@ -71,8 +72,8 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
         if (isinstance(left, Hint) and isinstance(right, UnevaluatedFormatConstraint)) or (
             isinstance(right, Hint) and isinstance(left, UnevaluatedFormatConstraint)
         ):
-            raise NotImplementedError(
-                f"Combining a {left.__class__} and a {right.__class__} in an"
+            raise InvalidExpressionError(
+                error_message=f"Combining a {left.__class__} and a {right.__class__} in an"
                 f"{composition} is not implemented as it has no useful result."
             )
 
@@ -114,7 +115,7 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
                 # - [984] is the proper format constraint that has the same meaning as the hint [584]
                 # - [983] is the complementary FC to [984] ("not [984]")
                 error_message += " This is probably an error in the AHB itself."
-            raise NotImplementedError(error_message)
+            raise InvalidExpressionError(error_message)
         if composition == "or_composition":
             resulting_conditions_fulfilled = left.conditions_fulfilled | right.conditions_fulfilled
         elif composition == "xor_composition":
