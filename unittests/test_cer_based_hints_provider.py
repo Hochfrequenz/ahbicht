@@ -6,43 +6,12 @@ import pytest  # type:ignore[import]
 from _pytest.fixtures import SubRequest  # type:ignore[import]
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
-from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
-from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
-from ahbicht.expressions.hints_provider import ContentEvaluationResultBasedHintsProvider
-from unittests.defaults import (
-    EmptyDefaultFcEvaluator,
-    EmptyDefaultRcEvaluator,
-    default_test_format,
-    default_test_version,
-    store_content_evaluation_result_in_evaluatable_data,
-)
+from ahbicht.content_evaluation.token_logic_provider import TokenLogicProvider
+from unittests.defaults import default_test_format, default_test_version
 
 
 class TestCerBasedHintsProvider:
     """Test for the evaluation using the ContentEvaluationResult Based Hints Provider"""
-
-    @pytest.fixture
-    def inject_cer_evaluators(self, request: SubRequest):
-        # indirect parametrization: https://stackoverflow.com/a/33879151/10009545
-        content_evaluation_result: ContentEvaluationResult = request.param
-        assert isinstance(content_evaluation_result, ContentEvaluationResult)
-        hints_provider = ContentEvaluationResultBasedHintsProvider()
-        hints_provider.edifact_format = default_test_format
-        hints_provider.edifact_format_version = default_test_version
-
-        def get_evaluatable_data():
-            return store_content_evaluation_result_in_evaluatable_data(content_evaluation_result)
-
-        def configure(binder):
-            binder.bind(
-                TokenLogicProvider,
-                SingletonTokenLogicProvider([EmptyDefaultRcEvaluator(), EmptyDefaultFcEvaluator(), hints_provider]),
-            )
-            binder.bind_to_provider(EvaluatableDataProvider, get_evaluatable_data)
-
-        inject.configure_once(configure)
-        yield
-        inject.clear()
 
     @pytest.mark.parametrize(
         "inject_cer_evaluators",

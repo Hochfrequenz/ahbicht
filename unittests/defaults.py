@@ -27,21 +27,6 @@ empty_default_test_data: EvaluatableData = EvaluatableData(
 )
 
 
-def store_content_evaluation_result_in_evaluatable_data(
-    content_evaluation_result: ContentEvaluationResult,
-) -> EvaluatableData:
-    """
-    a helper method for the tests so store a serialized content evaluation result in an EvaluatableData instance
-    :param content_evaluation_result:
-    :return: a new EvaluatableData instance
-    """
-    schema = ContentEvaluationResultSchema()
-    cer_dict = schema.dump(content_evaluation_result)
-    return EvaluatableData(
-        edifact_seed=cer_dict, edifact_format=default_test_format, edifact_format_version=default_test_version
-    )
-
-
 class EmptyDefaultRcEvaluator(RcEvaluator):
     """
     An RC Evaluator in the default edifact format and edifact format version
