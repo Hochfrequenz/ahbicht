@@ -195,5 +195,5 @@ class TestCategorizedKeyExtraction:
         categorized_keys = CategorizedKeyExtractSchema().load(file_content["categorizedKeyExtract"])
         expected_result = ContentEvaluationResultSchema(many=True).load(file_content["expected_result"])
         actual = categorized_keys.generate_possible_content_evaluation_results()
-        json_string = ContentEvaluationResultSchema(many=True).dumps(actual)
+        # json_string = ContentEvaluationResultSchema(many=True).dumps(actual)
         assert actual == expected_result

@@ -137,7 +137,7 @@ class CategorizedKeyExtract:
                 requirement_constraints={rc_kvp[0]: rc_kvp[1] for rc_kvp in fc_rc_tuple[1] if rc_kvp[0] != "rc_dummy"},
                 packages={},  # is always empty because looping over all packages does not make sense in this context
             )
-            if any([x for x in result.requirement_constraints.values() if x == ConditionFulfilledValue.NEUTRAL]):
+            if any(x for x in result.requirement_constraints.values() if x == ConditionFulfilledValue.NEUTRAL):
                 continue
             results.append(result)
         return results
