@@ -8,644 +8,301 @@
   },
   "expected_result": [
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "FULFILLED",
         "2": "FULFILLED",
         "3": "FULFILLED"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "FULFILLED",
         "2": "FULFILLED",
         "3": "UNFULFILLED"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "FULFILLED",
         "2": "FULFILLED",
         "3": "UNKNOWN"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "FULFILLED",
-        "2": "FULFILLED",
-        "3": "NEUTRAL"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "FULFILLED",
         "2": "UNFULFILLED",
         "3": "FULFILLED"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "FULFILLED",
         "2": "UNFULFILLED",
         "3": "UNFULFILLED"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "FULFILLED",
         "2": "UNFULFILLED",
         "3": "UNKNOWN"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "FULFILLED",
-        "2": "UNFULFILLED",
-        "3": "NEUTRAL"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "FULFILLED",
         "2": "UNKNOWN",
         "3": "FULFILLED"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "FULFILLED",
         "2": "UNKNOWN",
         "3": "UNFULFILLED"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "FULFILLED",
         "2": "UNKNOWN",
         "3": "UNKNOWN"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "FULFILLED",
-        "2": "UNKNOWN",
-        "3": "NEUTRAL"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "FULFILLED",
-        "2": "NEUTRAL",
-        "3": "FULFILLED"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "FULFILLED",
-        "2": "NEUTRAL",
-        "3": "UNFULFILLED"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "FULFILLED",
-        "2": "NEUTRAL",
-        "3": "UNKNOWN"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "FULFILLED",
-        "2": "NEUTRAL",
-        "3": "NEUTRAL"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "UNFULFILLED",
         "2": "FULFILLED",
         "3": "FULFILLED"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "UNFULFILLED",
         "2": "FULFILLED",
         "3": "UNFULFILLED"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "UNFULFILLED",
         "2": "FULFILLED",
         "3": "UNKNOWN"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "UNFULFILLED",
-        "2": "FULFILLED",
-        "3": "NEUTRAL"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "UNFULFILLED",
         "2": "UNFULFILLED",
         "3": "FULFILLED"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "UNFULFILLED",
         "2": "UNFULFILLED",
         "3": "UNFULFILLED"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "UNFULFILLED",
         "2": "UNFULFILLED",
         "3": "UNKNOWN"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "UNFULFILLED",
-        "2": "UNFULFILLED",
-        "3": "NEUTRAL"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "UNFULFILLED",
         "2": "UNKNOWN",
         "3": "FULFILLED"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "UNFULFILLED",
         "2": "UNKNOWN",
         "3": "UNFULFILLED"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "UNFULFILLED",
         "2": "UNKNOWN",
         "3": "UNKNOWN"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "UNFULFILLED",
-        "2": "UNKNOWN",
-        "3": "NEUTRAL"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "UNFULFILLED",
-        "2": "NEUTRAL",
-        "3": "FULFILLED"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "UNFULFILLED",
-        "2": "NEUTRAL",
-        "3": "UNFULFILLED"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "UNFULFILLED",
-        "2": "NEUTRAL",
-        "3": "UNKNOWN"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "UNFULFILLED",
-        "2": "NEUTRAL",
-        "3": "NEUTRAL"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "UNKNOWN",
         "2": "FULFILLED",
         "3": "FULFILLED"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "UNKNOWN",
         "2": "FULFILLED",
         "3": "UNFULFILLED"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "UNKNOWN",
         "2": "FULFILLED",
         "3": "UNKNOWN"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "UNKNOWN",
-        "2": "FULFILLED",
-        "3": "NEUTRAL"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "UNKNOWN",
         "2": "UNFULFILLED",
         "3": "FULFILLED"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "UNKNOWN",
         "2": "UNFULFILLED",
         "3": "UNFULFILLED"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "UNKNOWN",
         "2": "UNFULFILLED",
         "3": "UNKNOWN"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "UNKNOWN",
-        "2": "UNFULFILLED",
-        "3": "NEUTRAL"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "UNKNOWN",
         "2": "UNKNOWN",
         "3": "FULFILLED"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "UNKNOWN",
         "2": "UNKNOWN",
         "3": "UNFULFILLED"
-      }
+      },
+      "hints": {},
+      "packages": {},
+      "format_constraints": {},
+      "id": null
     },
     {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
       "requirement_constraints": {
         "1": "UNKNOWN",
         "2": "UNKNOWN",
         "3": "UNKNOWN"
-      }
-    },
-    {
-      "format_constraints": {},
+      },
       "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "UNKNOWN",
-        "2": "UNKNOWN",
-        "3": "NEUTRAL"
-      }
-    },
-    {
+      "packages": {},
       "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "UNKNOWN",
-        "2": "NEUTRAL",
-        "3": "FULFILLED"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "UNKNOWN",
-        "2": "NEUTRAL",
-        "3": "UNFULFILLED"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "UNKNOWN",
-        "2": "NEUTRAL",
-        "3": "UNKNOWN"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "UNKNOWN",
-        "2": "NEUTRAL",
-        "3": "NEUTRAL"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "NEUTRAL",
-        "2": "FULFILLED",
-        "3": "FULFILLED"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "NEUTRAL",
-        "2": "FULFILLED",
-        "3": "UNFULFILLED"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "NEUTRAL",
-        "2": "FULFILLED",
-        "3": "UNKNOWN"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "NEUTRAL",
-        "2": "FULFILLED",
-        "3": "NEUTRAL"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "NEUTRAL",
-        "2": "UNFULFILLED",
-        "3": "FULFILLED"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "NEUTRAL",
-        "2": "UNFULFILLED",
-        "3": "UNFULFILLED"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "NEUTRAL",
-        "2": "UNFULFILLED",
-        "3": "UNKNOWN"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "NEUTRAL",
-        "2": "UNFULFILLED",
-        "3": "NEUTRAL"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "NEUTRAL",
-        "2": "UNKNOWN",
-        "3": "FULFILLED"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "NEUTRAL",
-        "2": "UNKNOWN",
-        "3": "UNFULFILLED"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "NEUTRAL",
-        "2": "UNKNOWN",
-        "3": "UNKNOWN"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "NEUTRAL",
-        "2": "UNKNOWN",
-        "3": "NEUTRAL"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "NEUTRAL",
-        "2": "NEUTRAL",
-        "3": "FULFILLED"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "NEUTRAL",
-        "2": "NEUTRAL",
-        "3": "UNFULFILLED"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "NEUTRAL",
-        "2": "NEUTRAL",
-        "3": "UNKNOWN"
-      }
-    },
-    {
-      "format_constraints": {},
-      "hints": {},
-      "id": null,
-      "requirement_constraints": {
-        "1": "NEUTRAL",
-        "2": "NEUTRAL",
-        "3": "NEUTRAL"
-      }
+      "id": null
     }
   ]
 }

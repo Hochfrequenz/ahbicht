@@ -138,12 +138,6 @@ class TestCategorizedKeyExtraction:
                         requirement_constraints={"1": ConditionFulfilledValue.UNKNOWN},
                         packages={},
                     ),
-                    ContentEvaluationResult(
-                        hints={},
-                        format_constraints={},
-                        requirement_constraints={"1": ConditionFulfilledValue.NEUTRAL},
-                        packages={},
-                    ),
                 ],
                 id="0 FC, 1 RC",
             ),
@@ -201,5 +195,5 @@ class TestCategorizedKeyExtraction:
         categorized_keys = CategorizedKeyExtractSchema().load(file_content["categorizedKeyExtract"])
         expected_result = ContentEvaluationResultSchema(many=True).load(file_content["expected_result"])
         actual = categorized_keys.generate_possible_content_evaluation_results()
-        # json_string = ContentEvaluationResultSchema(many=True).dumps(actual)
+        json_string = ContentEvaluationResultSchema(many=True).dumps(actual)
         assert actual == expected_result
