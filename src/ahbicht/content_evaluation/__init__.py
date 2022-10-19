@@ -15,13 +15,16 @@ from ahbicht.expressions.expression_resolver import parse_expression_including_u
 
 
 async def is_valid_expression(
-    ahb_expression: str, content_eval_result_setter: Callable[[ContentEvaluationResult], Any]
+    ahb_expression: str, content_evaluation_result_setter: Callable[[ContentEvaluationResult], Any]
 ) -> bool:
     """
-    returns true iff the given expression is both well-formed and valid.
-    Valid means that any evaluation leads to meaningful results.
-    ⚠ This only works if you injected the ContentEvaluationResultBased... FC/RC/Hints/Package logic providers.
-    :param content_eval_result_setter: a method that sets content evaluation result
+    Returns true iff the given expression is both well-formed and valid.
+    An expression is valid if and only if all possible content evaluations lead to a meaningful results.
+    ⚠ This only works if the provided content_evaluation_result_setter writes the EvaluatableData in such a way, that
+    the injected Evaluators (FC/RC/Hints/Package) can work with it.
+    This is easiest for the ContentEvaluationResultBased FC/RC/Hints/Package token logic providers.
+    :param content_evaluation_result_setter: a threadsafe method that writes the given Content Evaluation Result into
+    the evaluatable data
     :param ahb_expression: "Muss [1] U [2]" (returns True)  "Muss ([61]u [584]) o[583]" (returns False)
     :return: True iff the expression is valid
     """
@@ -34,12 +37,12 @@ async def is_valid_expression(
     for content_evaluation_result in categorized_key_extract.generate_possible_content_evaluation_results():
 
         async def evaluate_with_cer(cer: ContentEvaluationResult):
-            content_eval_result_setter(cer)
+            content_evaluation_result_setter(cer)
             try:
                 await evaluate_ahb_expression_tree(tree)
             except NotImplementedError as not_implemented_error:
                 if "due to missing information" in str(not_implemented_error):
-                    pass #  this happens for unknown mostly; it's ok
+                    pass  # this happens for UNKNOWN; it's okay because the expression might still be valid
                 else:
                     raise not_implemented_error  # this is, in general, an indicator for an invalid expression
 
@@ -47,5 +50,5 @@ async def is_valid_expression(
     try:
         await asyncio.gather(*evaluation_tasks)
     except NotImplementedError:
-        return False #  if any evaluation throws a (previously uncatched) NotImplementedError the expression is invalid
+        return False  # if any evaluation throws a (previously uncatched) NotImplementedError the expression is invalid
     return True
