@@ -39,7 +39,7 @@ async def is_valid_expression(
                 await evaluate_ahb_expression_tree(tree)
             except NotImplementedError as not_implemented_error:
                 if "due to missing information" in str(not_implemented_error):
-                    pass
+                    pass #  this happens for unknown mostly; it's ok
                 else:
                     raise not_implemented_error  # this is, in general, an indicator for an invalid expression
 
