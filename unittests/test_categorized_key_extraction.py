@@ -128,12 +128,6 @@ class TestCategorizedKeyExtraction:
                         requirement_constraints={"1": ConditionFulfilledValue.UNKNOWN},
                         packages={},
                     ),
-                    ContentEvaluationResult(
-                        hints={},
-                        format_constraints={},
-                        requirement_constraints={"1": ConditionFulfilledValue.NEUTRAL},
-                        packages={},
-                    ),
                 ],
                 id="0 FC, 1 RC",
             ),
