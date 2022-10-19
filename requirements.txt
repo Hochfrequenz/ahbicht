@@ -21,7 +21,7 @@ marshmallow==3.18.0
     #   maus
 marshmallow-enum==1.5.1
     # via -r requirements.in
-maus==0.1.20
+maus==0.1.21
     # via -r requirements.in
 packaging==21.3
     # via marshmallow
