@@ -9,18 +9,52 @@ seems like a big overhead. The code representation of "all outcomes are already 
 ContentEvaluationResult. Now the methods below are useful. Simply provide a content evaluation result (the data) and
 the evaluators are created based on the already known outcomes. You do not have to actually touch any evaluator code.
 """
-from typing import Callable, Optional, Tuple
+from typing import Callable, Iterable, Optional, Protocol, Tuple
 
 import inject
 from maus.edifact import EdifactFormat, EdifactFormatVersion
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
-from ahbicht.content_evaluation.fc_evaluators import DictBasedFcEvaluator, FcEvaluator
-from ahbicht.content_evaluation.rc_evaluators import DictBasedRcEvaluator, RcEvaluator
+from ahbicht.content_evaluation.fc_evaluators import (
+    ContentEvaluationResultBasedFcEvaluator,
+    DictBasedFcEvaluator,
+    FcEvaluator,
+)
+from ahbicht.content_evaluation.rc_evaluators import (
+    ContentEvaluationResultBasedRcEvaluator,
+    DictBasedRcEvaluator,
+    RcEvaluator,
+)
 from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
-from ahbicht.expressions.hints_provider import DictBasedHintsProvider, HintsProvider
-from ahbicht.expressions.package_expansion import DictBasedPackageResolver, PackageResolver
+from ahbicht.expressions.hints_provider import (
+    ContentEvaluationResultBasedHintsProvider,
+    DictBasedHintsProvider,
+    HintsProvider,
+)
+from ahbicht.expressions.package_expansion import (
+    ContentEvaluationResultBasedPackageResolver,
+    DictBasedPackageResolver,
+    PackageResolver,
+)
+
+
+# pylint:disable=too-few-public-methods
+class _HasEdifactFormatAndFormatVersion(Protocol):
+    edifact_format: EdifactFormat
+    edifact_format_version: EdifactFormatVersion
+
+
+def _set_edifact_format_and_version(
+    logic_providers: Iterable[_HasEdifactFormatAndFormatVersion],
+    edifact_format: Optional[EdifactFormat],
+    edifact_format_version: Optional[EdifactFormatVersion],
+) -> None:
+    for logic_provider in logic_providers:
+        if edifact_format is not None:
+            logic_provider.edifact_format = edifact_format
+        if edifact_format_version is not None:
+            logic_provider.edifact_format_version = edifact_format_version
 
 
 def create_hardcoded_evaluators(
@@ -38,16 +72,26 @@ def create_hardcoded_evaluators(
     fc_evaluator = DictBasedFcEvaluator(content_evaluation_result.format_constraints)
     hints_provider = DictBasedHintsProvider(content_evaluation_result.hints)
     package_resolver = DictBasedPackageResolver(content_evaluation_result.packages or {})
-    if edifact_format is not None:
-        rc_evaluator.edifact_format = edifact_format
-        fc_evaluator.edifact_format = edifact_format
-        hints_provider.edifact_format = edifact_format
-        package_resolver.edifact_format = edifact_format
-    if edifact_format_version is not None:
-        rc_evaluator.edifact_format_version = edifact_format_version
-        fc_evaluator.edifact_format_version = edifact_format_version
-        hints_provider.edifact_format_version = edifact_format_version
-        package_resolver.edifact_format_version = edifact_format_version
+    _set_edifact_format_and_version(
+        [rc_evaluator, fc_evaluator, hints_provider, package_resolver], edifact_format, edifact_format_version
+    )
+    return rc_evaluator, fc_evaluator, hints_provider, package_resolver
+
+
+def create_content_evaluation_result_based_evaluators(
+    edifact_format: Optional[EdifactFormat] = None,
+    edifact_format_version: Optional[EdifactFormatVersion] = None,
+) -> Tuple[RcEvaluator, FcEvaluator, HintsProvider, PackageResolver]:
+    """
+    Creates evaluators that expect the content evaluation result to be present in the evaluatble data
+    """
+    rc_evaluator = ContentEvaluationResultBasedRcEvaluator()
+    fc_evaluator = ContentEvaluationResultBasedFcEvaluator()
+    hints_provider = ContentEvaluationResultBasedHintsProvider()
+    package_resolver = ContentEvaluationResultBasedPackageResolver()
+    _set_edifact_format_and_version(
+        [rc_evaluator, fc_evaluator, hints_provider, package_resolver], edifact_format, edifact_format_version
+    )
     return rc_evaluator, fc_evaluator, hints_provider, package_resolver
 
 

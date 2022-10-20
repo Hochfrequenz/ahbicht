@@ -1,8 +1,6 @@
 import asyncio
 from typing import Dict, Optional
 
-import pytest  # type:ignore[import]
-
 from ahbicht.content_evaluation import fc_evaluators
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
 from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint

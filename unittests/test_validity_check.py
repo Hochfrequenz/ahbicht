@@ -12,11 +12,7 @@ from ahbicht.content_evaluation.rc_evaluators import ContentEvaluationResultBase
 from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
 from ahbicht.expressions.hints_provider import ContentEvaluationResultBasedHintsProvider
 from ahbicht.expressions.package_expansion import ContentEvaluationResultBasedPackageResolver
-from unittests.defaults import (
-    default_test_format,
-    default_test_version,
-    store_content_evaluation_result_in_evaluatable_data,
-)
+from unittests.defaults import default_test_format, default_test_version
 
 _content_evaluation_result: ContextVar[Optional[ContentEvaluationResult]] = ContextVar(
     "_content_evaluation_result", default=None
