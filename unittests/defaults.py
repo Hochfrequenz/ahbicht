@@ -8,8 +8,6 @@ from typing import Iterator
 
 from maus.edifact import EdifactFormat, EdifactFormatVersion
 
-from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
-
 #: the default edifact format used in the unit tests
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
