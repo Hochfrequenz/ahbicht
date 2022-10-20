@@ -56,7 +56,7 @@ def create_and_inject_hardcoded_evaluators(
     evaluatable_data_provider: Optional[Callable[[], EvaluatableData]] = None,
     edifact_format: Optional[EdifactFormat] = None,
     edifact_format_version: Optional[EdifactFormatVersion] = None,
-):
+) -> None:
     """
     Creates evaluators from hardcoded content_evaluation result and injects them
 

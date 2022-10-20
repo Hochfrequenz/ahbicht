@@ -3,6 +3,7 @@ from typing import Dict, Optional
 
 import pytest  # type:ignore[import]
 
+from ahbicht.expressions import InvalidExpressionError
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue as cfv
 from ahbicht.expressions.condition_nodes import (
@@ -314,7 +315,7 @@ class TestRequirementConstraintEvaluation:
 
         parsed_tree = parse_condition_expression_to_tree(expression)
 
-        with pytest.raises(NotImplementedError) as excinfo:
+        with pytest.raises(InvalidExpressionError) as excinfo:
             evaluate_requirement_constraint_tree(parsed_tree, input_values)  # type:ignore[arg-type]
 
         assert """is not implemented as it has no useful result.""" in str(excinfo.value)

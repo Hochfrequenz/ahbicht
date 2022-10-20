@@ -26,6 +26,16 @@ class TestCategorizedKeyExtraction:
                 ),
             ),
             pytest.param(
+                "Muss [1]",
+                CategorizedKeyExtract(
+                    hint_keys=[],
+                    requirement_constraint_keys=["1"],
+                    format_constraint_keys=[],
+                    package_keys=[],
+                    time_condition_keys=[],
+                ),
+            ),
+            pytest.param(
                 "([1] U [2]) O ([1] X [3])",
                 CategorizedKeyExtract(
                     hint_keys=[],
