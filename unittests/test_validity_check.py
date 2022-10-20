@@ -40,7 +40,7 @@ def _get_evaluatable_data():
 
 class TestValidityCheck:
     """
-    a test class for the expresison validation feature
+    a test class for the expression validation feature
     """
 
     @pytest.fixture
