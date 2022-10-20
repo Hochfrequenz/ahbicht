@@ -22,7 +22,7 @@ _content_evaluation_result: ContextVar[Optional[ContentEvaluationResult]] = Cont
 def _get_evaluatable_data():
     """
     returns the _content_evaluation_result context var value wrapped in a EvaluatableData container.
-    This si the kind of data that the ContentEvaluationResultBased RC/FC Evaluators, HintsProvider and Package Resolver
+    This is the kind of data that the ContentEvaluationResultBased RC/FC Evaluators, HintsProvider and Package Resolver
     require.
     :return:
     """
@@ -36,7 +36,7 @@ def _get_evaluatable_data():
 
 class TestValidityCheck:
     """
-    a test class for the expresison validation feature
+    a test class for the expression validation feature
     """
 
     @pytest.fixture
