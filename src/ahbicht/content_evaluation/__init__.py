@@ -36,12 +36,15 @@ async def is_valid_expression(
         return False, str(syntax_error)
     evaluation_tasks: List[Awaitable] = []
     for content_evaluation_result in categorized_key_extract.generate_possible_content_evaluation_results():
-
+        # create (but do not await) the evaluation tasks for all possible content evaluation results
+        # the idea is, that if _any_ evaluation task raises an uncatched exception this can be interpreted as:
+        # "the expression is invalid"
         async def evaluate_with_cer(cer: ContentEvaluationResult):
             content_evaluation_result_setter(cer)
             try:
                 await evaluate_ahb_expression_tree(tree)
             except NotImplementedError as not_implemented_error:
+                # we can ignore some specific errors
                 if "due to missing information" in str(not_implemented_error):
                     pass  # this happens for UNKNOWN; it's okay because the expression might still be valid
                 else:
@@ -52,6 +55,7 @@ async def is_valid_expression(
 
         evaluation_tasks.append(evaluate_with_cer(content_evaluation_result))
     try:
+        # await the previously collected (yet unawaited) tasks
         await asyncio.gather(*evaluation_tasks)
     except InvalidExpressionError as invalid_expression_error:
         # if any evaluation throws a InvalidExpressionError the expression is invalid
