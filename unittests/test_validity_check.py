@@ -7,11 +7,10 @@ import pytest  # type:ignore[import]
 from ahbicht.content_evaluation import is_valid_expression
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
-from ahbicht.content_evaluation.fc_evaluators import ContentEvaluationResultBasedFcEvaluator
-from ahbicht.content_evaluation.rc_evaluators import ContentEvaluationResultBasedRcEvaluator
+from ahbicht.content_evaluation.evaluator_factory import create_content_evaluation_result_based_evaluators
 from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
-from ahbicht.expressions.hints_provider import ContentEvaluationResultBasedHintsProvider
-from ahbicht.expressions.package_expansion import ContentEvaluationResultBasedPackageResolver
+from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
+from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 from unittests.defaults import default_test_format, default_test_version
 
 _content_evaluation_result: ContextVar[Optional[ContentEvaluationResult]] = ContextVar(
@@ -41,26 +40,12 @@ class TestValidityCheck:
 
     @pytest.fixture
     def inject_cer_evaluators(self):
-        fc_evaluator = ContentEvaluationResultBasedFcEvaluator()
-        fc_evaluator.edifact_format = default_test_format
-        fc_evaluator.edifact_format_version = default_test_version
-
-        rc_evaluator = ContentEvaluationResultBasedRcEvaluator()
-        rc_evaluator.edifact_format = default_test_format
-        rc_evaluator.edifact_format_version = default_test_version
-
-        package_resolver = ContentEvaluationResultBasedPackageResolver()
-        package_resolver.edifact_format = default_test_format
-        package_resolver.edifact_format_version = default_test_version
-
-        hints_provider = ContentEvaluationResultBasedHintsProvider()
-        hints_provider.edifact_format = default_test_format
-        hints_provider.edifact_format_version = default_test_version
-
         def configure(binder):
             binder.bind(
                 TokenLogicProvider,
-                SingletonTokenLogicProvider([fc_evaluator, rc_evaluator, package_resolver, hints_provider]),
+                SingletonTokenLogicProvider(
+                    [*create_content_evaluation_result_based_evaluators(default_test_format, default_test_version)]
+                ),
             )
             binder.bind_to_provider(EvaluatableDataProvider, _get_evaluatable_data)
 
@@ -81,5 +66,16 @@ class TestValidityCheck:
         ],
     )
     async def test_is_valid_expression(self, ahb_expression: str, expected_result: bool, inject_cer_evaluators):
-        actual = await is_valid_expression(ahb_expression, lambda cer: _content_evaluation_result.set(cer))
-        assert actual[0] == expected_result
+        actual_str = await is_valid_expression(ahb_expression, lambda cer: _content_evaluation_result.set(cer))
+        assert actual_str[0] == expected_result
+        # check the tree as argument, too
+        try:
+            tree = await parse_expression_including_unresolved_subexpressions(ahb_expression)
+        except SyntaxError:
+            return  # ok, the syntax error is actually raised on parsing already
+        actual_tree = await is_valid_expression(tree, lambda cer: _content_evaluation_result.set(cer))
+        assert actual_tree[0] == expected_result
+
+    async def test_is_valid_expression_value_error(self):
+        with pytest.raises(ValueError):
+            await is_valid_expression(12345, None)
