@@ -17,6 +17,12 @@ from maus.models.edifact_components import (
 )
 
 from ahbicht.content_evaluation import fc_evaluators
+from ahbicht.evaluation_results import (
+    AhbExpressionEvaluationResult,
+    FormatConstraintEvaluationResult,
+    RequirementConstraintEvaluationResult,
+)
+from ahbicht.expressions import InvalidExpressionError
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
 from ahbicht.expressions.enums import ModalMark, PrefixOperator, RequirementIndicator
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
@@ -195,7 +201,13 @@ async def get_segment_level_requirement_validation_value(
     expression_tree = await parse_expression_including_unresolved_subexpressions(
         segment_level.ahb_expression, resolve_packages=True
     )
-    evaluation_result = await evaluate_ahb_expression_tree(expression_tree)
+    try:
+        evaluation_result = await evaluate_ahb_expression_tree(expression_tree)
+    except InvalidExpressionError as invalid_expr_error:
+        validation_logger.warning("The expression '%s' is invalid. Returning IS_OPTIONAL", segment_level.ahb_expression)
+        return SegmentLevelValidationResult(
+            hints=invalid_expr_error.error_message, requirement_validation=RequirementValidationValue.IS_OPTIONAL
+        )
 
     requirement_validation_without_hierarchy = map_requirement_validation_values(
         evaluation_result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled,
@@ -245,12 +257,28 @@ async def validate_data_element_freetext(
     :param soll_is_required: true (default) if SOLL should be handled like MUSS, if it should be handled like KANN
     :return: Validation Result of the DataElement
     """
-
     expression_tree = await parse_expression_including_unresolved_subexpressions(
         data_element.ahb_expression, resolve_packages=True
     )
     fc_evaluators.text_to_be_evaluated_by_format_constraint.set(data_element.entered_input)
-    evaluation_result = await evaluate_ahb_expression_tree(expression_tree)
+    try:
+        evaluation_result = await evaluate_ahb_expression_tree(expression_tree)
+    except InvalidExpressionError as invalid_expr_error:
+        validation_logger.warning(
+            "The expression '%s' @ '%s' is invalid. Returning IS_OPTIONAL",
+            data_element.ahb_expression,
+            data_element.discriminator,
+        )
+        return ValidationResultInContext(
+            validation_result=DataElementValidationResult(
+                requirement_validation=RequirementValidationValue.IS_OPTIONAL,
+                format_validation_fulfilled=True,
+                format_error_message=None,
+                hints=invalid_expr_error.error_message,
+                data_element_data_type=DataElementDataType.TEXT,
+            ),
+            discriminator=data_element.discriminator,
+        )
 
     # requirement constraints
     requirement_validation_without_input_without_hierarchy = map_requirement_validation_values(
@@ -314,7 +342,25 @@ async def validate_data_element_valuepool(
                 expression_tree = await parse_expression_including_unresolved_subexpressions(
                     value_pool_entry.ahb_expression, resolve_packages=True
                 )
-                evaluation_result = await evaluate_ahb_expression_tree(expression_tree)
+                try:
+                    evaluation_result = await evaluate_ahb_expression_tree(expression_tree)
+                except InvalidExpressionError as invalid_expr_error:
+                    validation_logger.warning(
+                        "The expression '%s' @ '%s' is invalid. Treating value pool entry as optional",
+                        value_pool_entry.ahb_expression,
+                        data_element.discriminator,
+                    )
+                    evaluation_result = AhbExpressionEvaluationResult(
+                        format_constraint_evaluation_result=FormatConstraintEvaluationResult(
+                            format_constraints_fulfilled=True, error_message=None
+                        ),
+                        requirement_constraint_evaluation_result=RequirementConstraintEvaluationResult(
+                            requirement_constraints_fulfilled=True,
+                            requirement_is_conditional=True,
+                            hints=invalid_expr_error.error_message,
+                        ),
+                        requirement_indicator=ModalMark.KANN,
+                    )
                 validation_logger.debug(
                     "The validation of value pool entry %s resulted in %s",
                     str(value_pool_entry),

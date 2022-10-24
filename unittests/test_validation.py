@@ -476,6 +476,55 @@ class TestValidation:
                     ),
                 ],
             ),
+            pytest.param(
+                Segment(
+                    ahb_expression="Muss[2]O[501]",
+                    discriminator="SG10 Datum",
+                    data_elements=[
+                        DataElementFreeText(
+                            discriminator="SG10 - Datum - Einzug",
+                            data_element_id="1234",
+                            ahb_expression="M[2]",
+                            entered_input="",
+                            value_type=DataElementDataType.DATETIME,
+                        ),
+                        DataElementFreeText(
+                            discriminator="SG10 - Datum - Auszug",
+                            data_element_id="1235",
+                            ahb_expression="M[2]",
+                            entered_input="",
+                            value_type=DataElementDataType.DATETIME,
+                        ),
+                    ],
+                ),
+                RequirementValidationValue.IS_REQUIRED,
+                [
+                    ValidationResultInContext(
+                        discriminator="SG10 Datum",
+                        validation_result=SegmentLevelValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_OPTIONAL,
+                            hints="Combining a neutral element 'Hint(condition_key='501', conditions_fulfilled=<ConditionFulfilledValue.NEUTRAL: 'NEUTRAL'>, hint='foo')' with a boolean value RequirementConstraint(condition_key='2', conditions_fulfilled=<ConditionFulfilledValue.FULFILLED: 'FULFILLED'>) in an or_composition is not implemented as it has no useful result. This is probably an error in the AHB itself.",
+                        ),
+                    ),
+                    ValidationResultInContext(
+                        discriminator="SG10 - Datum - Einzug",
+                        validation_result=DataElementValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_OPTIONAL_AND_EMPTY,
+                            format_validation_fulfilled=True,
+                            data_element_data_type=DataElementDataType.DATETIME,
+                        ),
+                    ),
+                    ValidationResultInContext(
+                        discriminator="SG10 - Datum - Auszug",
+                        validation_result=DataElementValidationResult(
+                            requirement_validation=RequirementValidationValue.IS_OPTIONAL_AND_EMPTY,
+                            format_validation_fulfilled=True,
+                            data_element_data_type=DataElementDataType.DATETIME,
+                        ),
+                    ),
+                ],
+                id="invalid ahb expression",
+            ),
         ],
     )
     async def test_validate_segment(
@@ -543,6 +592,21 @@ class TestValidation:
                     ),
                 ),
             ),
+            pytest.param(
+                DataElementFreeText(
+                    discriminator="SG1", ahb_expression="M[3]O[501]", entered_input="bar", data_element_id="1234"
+                ),
+                RequirementValidationValue.IS_OPTIONAL,
+                ValidationResultInContext(
+                    discriminator="SG1",
+                    validation_result=DataElementValidationResult(
+                        requirement_validation=RequirementValidationValue.IS_OPTIONAL,
+                        format_validation_fulfilled=True,
+                        data_element_data_type=DataElementDataType.TEXT,
+                        hints="Combining a neutral element 'Hint(condition_key='501', conditions_fulfilled=<ConditionFulfilledValue.NEUTRAL: 'NEUTRAL'>, hint='foo')' with a boolean value RequirementConstraint(condition_key='3', conditions_fulfilled=<ConditionFulfilledValue.UNFULFILLED: 'UNFULFILLED'>) in an or_composition is not implemented as it has no useful result. This is probably an error in the AHB itself.",
+                    ),
+                ),
+            ),
         ],
     )
     async def test_validate_data_element_freetext(
@@ -552,7 +616,10 @@ class TestValidation:
         assert result == expected_validation
         validation_log_entries = [record for record in caplog.records if record.name == "ahbicht.validation"]
         assert len(validation_log_entries) > 0
-        assert validation_log_entries[0].message.startswith("The validation of expression")
+        first_log_message = validation_log_entries[0].message
+        assert first_log_message.startswith("The validation of expression") or first_log_message.startswith(
+            "The expression '"
+        )
 
     @pytest.mark.parametrize(
         "data_element, segment_requirement, expected_validation",
@@ -791,6 +858,42 @@ class TestValidation:
                     ),
                 ),
                 id="required value pool and correct input",
+            ),
+            pytest.param(
+                DataElementValuePool(
+                    discriminator="SG1",
+                    data_element_id="1234",
+                    entered_input="A3",
+                    value_pool=[
+                        ValuePoolEntry(
+                            qualifier="A1",
+                            meaning="Ich bin A1",
+                            ahb_expression="X",
+                        ),
+                        ValuePoolEntry(
+                            qualifier="A2",
+                            meaning="Ich bin A2",
+                            ahb_expression="X",
+                        ),
+                        ValuePoolEntry(
+                            qualifier="A3",
+                            meaning="Ich bin A3",
+                            ahb_expression="X [2] O [501]",  # <-- well formed but invalid
+                        ),
+                    ],
+                ),
+                RequirementValidationValue.IS_REQUIRED,
+                ValidationResultInContext(
+                    discriminator="SG1",
+                    validation_result=DataElementValidationResult(
+                        requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_FILLED,
+                        format_validation_fulfilled=True,
+                        possible_values={"A1": "Ich bin A1", "A2": "Ich bin A2", "A3": "Ich bin A3"},
+                        data_element_data_type=DataElementDataType.VALUE_POOL,
+                        hints=None,
+                    ),
+                ),
+                id="invalid ahb expression",
             ),
         ],
     )
