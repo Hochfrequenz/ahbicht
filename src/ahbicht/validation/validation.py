@@ -204,7 +204,7 @@ async def get_segment_level_requirement_validation_value(
     try:
         evaluation_result = await evaluate_ahb_expression_tree(expression_tree)
     except InvalidExpressionError as invalid_expr_error:
-        validation_logger.warning("The expression '%s' in invalid. Returning IS_OPTIONAL", segment_level.ahb_expression)
+        validation_logger.warning("The expression '%s' is invalid. Returning IS_OPTIONAL", segment_level.ahb_expression)
         return SegmentLevelValidationResult(
             hints=invalid_expr_error.error_message, requirement_validation=RequirementValidationValue.IS_OPTIONAL
         )
