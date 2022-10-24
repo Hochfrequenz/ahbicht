@@ -265,7 +265,7 @@ async def validate_data_element_freetext(
         evaluation_result = await evaluate_ahb_expression_tree(expression_tree)
     except InvalidExpressionError as invalid_expr_error:
         validation_logger.warning(
-            "The expression '%s' @ '%s' in invalid. Returning IS_OPTIONAL",
+            "The expression '%s' @ '%s' is invalid. Returning IS_OPTIONAL",
             data_element.ahb_expression,
             data_element.discriminator,
         )
