@@ -346,7 +346,7 @@ async def validate_data_element_valuepool(
                     evaluation_result = await evaluate_ahb_expression_tree(expression_tree)
                 except InvalidExpressionError as invalid_expr_error:
                     validation_logger.warning(
-                        "The expression '%s' @ '%s' in invalid. Treating value pool entry as optional",
+                        "The expression '%s' @ '%s' is invalid. Treating value pool entry as optional",
                         value_pool_entry.ahb_expression,
                         data_element.discriminator,
                     )
