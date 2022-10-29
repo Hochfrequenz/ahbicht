@@ -78,6 +78,24 @@ class CategorizedKeyExtract:
         self.package_keys.sort()
         self.time_condition_keys.sort()
 
+    def __add__(self, other: "CategorizedKeyExtract") -> "CategorizedKeyExtract":
+        """
+        Joins both this and the other categorized key extract.
+        The result returned contains all those keys (once) that are present in either one or both of the summands.
+        Duplicates will be removed.
+        :param other: another categorized key extract
+        :return: a new categorized key extract with the keys from both summands (which will be left untouched)
+        """
+        result = CategorizedKeyExtract(
+            hint_keys=self.hint_keys + other.hint_keys,
+            requirement_constraint_keys=self.requirement_constraint_keys + other.requirement_constraint_keys,
+            format_constraint_keys=self.format_constraint_keys + other.format_constraint_keys,
+            package_keys=self.package_keys + other.package_keys,
+            time_condition_keys=self.time_condition_keys + other.time_condition_keys,
+        )
+        result.sanitize()  # removes duplicates, sorts the keys
+        return result
+
     def sanitize(self) -> None:
         """
         Sanitize the result (remove duplicates, sort keys)
