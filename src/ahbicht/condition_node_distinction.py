@@ -1,10 +1,16 @@
 """
 A module to allow easy distinction between different types of condition nodes (by mapping their integer key)
 """
-from enum import Enum
+try:
+    from enum import StrEnum
+except ImportError:
+    from enum import Enum
+
+    class StrEnum(str, Enum):
+        pass
 
 
-class ConditionNodeType(str, Enum):
+class ConditionNodeType(StrEnum):
     """
     Possible types of condition nodes.
     The value is usually determined using the key of the respective condition node.

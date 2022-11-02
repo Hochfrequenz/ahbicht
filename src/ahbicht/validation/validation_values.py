@@ -1,9 +1,15 @@
 """This module contains the enums for the possible validation values."""
 
-from enum import Enum
+try:
+    from enum import StrEnum
+except ImportError:
+    from enum import Enum
+
+    class StrEnum(str, Enum):
+        pass
 
 
-class RequirementValidationValue(str, Enum):
+class RequirementValidationValue(StrEnum):
     """
     Possible values to describe the state of the validation
     in the requirement_validation attribute of the ValidationResult.
