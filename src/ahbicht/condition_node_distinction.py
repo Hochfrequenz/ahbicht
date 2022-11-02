@@ -1,13 +1,7 @@
 """
 A module to allow easy distinction between different types of condition nodes (by mapping their integer key)
 """
-try:
-    from enum import StrEnum
-except ImportError:
-    from enum import Enum
-
-    class StrEnum(str, Enum):
-        pass
+from ahbicht import StrEnum
 
 
 class ConditionNodeType(StrEnum):
