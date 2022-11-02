@@ -1,12 +1,5 @@
 """This module contains the enums for the possible validation values."""
-
-try:
-    from enum import StrEnum
-except ImportError:
-    from enum import Enum
-
-    class StrEnum(str, Enum):
-        pass
+from ahbicht import StrEnum
 
 
 class RequirementValidationValue(StrEnum):

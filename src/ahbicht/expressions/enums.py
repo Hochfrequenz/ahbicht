@@ -1,19 +1,13 @@
 """
 Enums used in AHB and condition expressions.
 """
-try:
-    from enum import StrEnum
-except ImportError:
-    from enum import Enum
-
-    class StrEnum(str, Enum):
-        pass
-
 
 from enum import unique
 from typing import Dict, Literal, Union
 
 from marshmallow import Schema, fields, post_dump, post_load, pre_load
+
+from ahbicht import StrEnum
 
 
 @unique
