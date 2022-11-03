@@ -1,9 +1,8 @@
 """This module contains the enums for the possible validation values."""
+from ahbicht import StrEnum
 
-from enum import Enum
 
-
-class RequirementValidationValue(str, Enum):
+class RequirementValidationValue(StrEnum):
     """
     Possible values to describe the state of the validation
     in the requirement_validation attribute of the ValidationResult.
