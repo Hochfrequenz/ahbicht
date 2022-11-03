@@ -1,14 +1,17 @@
 """
 Enums used in AHB and condition expressions.
 """
-from enum import Enum, unique
+
+from enum import unique
 from typing import Dict, Literal, Union
 
 from marshmallow import Schema, fields, post_dump, post_load, pre_load
 
+from ahbicht import StrEnum
+
 
 @unique
-class ModalMark(str, Enum):
+class ModalMark(StrEnum):
     """
     A modal mark describes if information are obligatory or not. The German term is "Merkmal".
     The modal marks are defined by the EDI Energy group (see edi-energy.de → Dokumente → Allgemeine Festlegungen).
@@ -36,7 +39,7 @@ class ModalMark(str, Enum):
 
 
 @unique
-class PrefixOperator(str, Enum):
+class PrefixOperator(StrEnum):
     """
     Operator which does not function to combine conditions, but as requirement indicator.
     It stands alone or in front of a condition expression. Please find detailed descriptions of the operators and their
@@ -110,7 +113,7 @@ class RequirementIndicatorSchema(Schema):
         return data["value"].upper()
 
 
-class LogicalOperator(str, Enum):
+class LogicalOperator(StrEnum):
     """
     Logical operators connect two tokens.
     """
