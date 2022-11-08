@@ -6,7 +6,7 @@ from lark import Token, Tree
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 
 
-class TestAhbExpressionParser:  # type:ignore[misc]
+class TestAhbExpressionParser:
     """Tests for the parsing of the ahb_expressions as they appear in the AHBs."""
 
     @pytest.mark.parametrize(
@@ -14,7 +14,7 @@ class TestAhbExpressionParser:  # type:ignore[misc]
         [
             pytest.param(
                 "Muss",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "ahb_expression",
                     [
                         Tree(
@@ -28,7 +28,7 @@ class TestAhbExpressionParser:  # type:ignore[misc]
             ),
             pytest.param(
                 "X",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "ahb_expression",
                     [
                         Tree(
@@ -42,7 +42,7 @@ class TestAhbExpressionParser:  # type:ignore[misc]
             ),
             pytest.param(
                 "Muss[1]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "ahb_expression",
                     [
                         Tree(
@@ -57,7 +57,7 @@ class TestAhbExpressionParser:  # type:ignore[misc]
             ),
             pytest.param(
                 "Soll[1]U[5]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "ahb_expression",
                     [
                         Tree(
@@ -72,10 +72,10 @@ class TestAhbExpressionParser:  # type:ignore[misc]
             ),
             pytest.param(
                 "soll[1]u[5]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(
+                        Tree(  # type:ignore[misc]
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "soll"),
@@ -87,7 +87,7 @@ class TestAhbExpressionParser:  # type:ignore[misc]
             ),
             pytest.param(
                 "Muss[UB1]U[5]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "ahb_expression",
                     [
                         Tree(
@@ -102,7 +102,7 @@ class TestAhbExpressionParser:  # type:ignore[misc]
             ),
             pytest.param(
                 "Kann([1]O[5])U[904]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "ahb_expression",
                     [
                         Tree(
@@ -117,7 +117,7 @@ class TestAhbExpressionParser:  # type:ignore[misc]
             ),
             pytest.param(
                 "Kann([1]∨[5])∧[904]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "ahb_expression",
                     [
                         Tree(
@@ -132,7 +132,7 @@ class TestAhbExpressionParser:  # type:ignore[misc]
             ),
             pytest.param(
                 "X[1]O[5]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "ahb_expression",
                     [
                         Tree(
@@ -147,7 +147,7 @@ class TestAhbExpressionParser:  # type:ignore[misc]
             ),
             pytest.param(
                 "O[1]O[5]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "ahb_expression",
                     [
                         Tree(
@@ -162,7 +162,7 @@ class TestAhbExpressionParser:  # type:ignore[misc]
             ),
             pytest.param(
                 "O([1]U[5]) U\t[905]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "ahb_expression",
                     [
                         Tree(
@@ -177,7 +177,7 @@ class TestAhbExpressionParser:  # type:ignore[misc]
             ),
             pytest.param(
                 "Kann([1]U[5])U[905]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "ahb_expression",
                     [
                         Tree(
@@ -192,7 +192,7 @@ class TestAhbExpressionParser:  # type:ignore[misc]
             ),
             pytest.param(
                 "Kann([1]∧[5])∧[905]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "ahb_expression",
                     [
                         Tree(
@@ -207,7 +207,7 @@ class TestAhbExpressionParser:  # type:ignore[misc]
             ),
             pytest.param(
                 "kann([1]∧[5])∧[905]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "ahb_expression",
                     [
                         Tree(
@@ -222,7 +222,7 @@ class TestAhbExpressionParser:  # type:ignore[misc]
             ),
             pytest.param(
                 "Muss[3]U[4]Soll[5]    Kann[502]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "ahb_expression",
                     [
                         Tree(
@@ -251,7 +251,7 @@ class TestAhbExpressionParser:  # type:ignore[misc]
             ),
             pytest.param(
                 "M[3]U[4]S[5]    K[502]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "ahb_expression",
                     [
                         Tree(
@@ -280,7 +280,7 @@ class TestAhbExpressionParser:  # type:ignore[misc]
             ),
             pytest.param(
                 "m[3]u[4]s[5]    k[502]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "ahb_expression",
                     [
                         Tree(
@@ -309,10 +309,10 @@ class TestAhbExpressionParser:  # type:ignore[misc]
             ),
             pytest.param(
                 "U[1]O[5]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(
+                        Tree(  # type:ignore[misc]
                             "single_requirement_indicator_expression",
                             [
                                 Token("PREFIX_OPERATOR", "U"),
@@ -324,10 +324,10 @@ class TestAhbExpressionParser:  # type:ignore[misc]
             ),
             pytest.param(
                 "u[1]O[5]",  # lower case "u"
-                Tree(
+                Tree(  # type:ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(
+                        Tree(  # type:ignore[misc]
                             "single_requirement_indicator_expression",
                             [
                                 Token("PREFIX_OPERATOR", "u"),
