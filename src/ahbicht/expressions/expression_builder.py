@@ -162,10 +162,10 @@ class _ClassesWithHintAttribute(Protocol):
     hint: str
 
 
-ClassesWithHintAttribute_co = TypeVar("ClassesWithHintAttribute_co", bound=_ClassesWithHintAttribute, covariant=True)
+ClassesWithHintAttribute = TypeVar("ClassesWithHintAttribute", bound=_ClassesWithHintAttribute)
 
 
-class HintExpressionBuilder(ExpressionBuilder[ClassesWithHintAttribute_co]):
+class HintExpressionBuilder(ExpressionBuilder[ClassesWithHintAttribute]):
     """
     Allows connecting hints with logical operations.
     """
