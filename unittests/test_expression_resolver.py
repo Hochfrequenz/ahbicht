@@ -4,16 +4,16 @@ from lark import Token, Tree
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 
 
-class TestExpressionResolver:  # type:ignore[misc]
+class TestExpressionResolver:
     @pytest.mark.parametrize(
         "expression, expected_tree",
         [
             pytest.param(
                 "Muss[3]U[4] Soll[5]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(
+                        Tree(  # type:ignore[misc]
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "Muss"),
@@ -38,7 +38,7 @@ class TestExpressionResolver:  # type:ignore[misc]
             ),
             pytest.param(
                 "X[504]O[6]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "ahb_expression",
                     [
                         Tree(

@@ -9,7 +9,7 @@ from lark import Token, Tree
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 
 
-class TestConditionParser:  # type:ignore[misc]
+class TestConditionParser:
     """Test for the parsing of the conditions tests (Mussfeldprüfung)"""
 
     @pytest.mark.parametrize(
@@ -28,7 +28,7 @@ class TestConditionParser:  # type:ignore[misc]
             pytest.param(
                 # simple or_composition
                 "[1]O[2]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "or_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -39,7 +39,7 @@ class TestConditionParser:  # type:ignore[misc]
             pytest.param(
                 # simple or_composition with lower case "o"
                 "[1]o[2]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "or_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -50,7 +50,7 @@ class TestConditionParser:  # type:ignore[misc]
             pytest.param(
                 # simple and_composition with lower case "u"
                 "[1]u[2]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "and_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -61,7 +61,7 @@ class TestConditionParser:  # type:ignore[misc]
             pytest.param(
                 # simple or_composition with whitespace
                 " [1] O[ 2]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "or_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -72,7 +72,7 @@ class TestConditionParser:  # type:ignore[misc]
             pytest.param(
                 # simple or_composition with whitespace and tab
                 " [1]\tO[ 2]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "or_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -117,7 +117,7 @@ class TestConditionParser:  # type:ignore[misc]
             pytest.param(
                 # xor_composition
                 "[1]X[2]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "xor_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -128,7 +128,7 @@ class TestConditionParser:  # type:ignore[misc]
             pytest.param(
                 # xor_composition with lower case "x"
                 "[1]x[2]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "xor_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -139,7 +139,7 @@ class TestConditionParser:  # type:ignore[misc]
             pytest.param(
                 # xor_composition
                 "[1]⊻[2]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "xor_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -150,7 +150,7 @@ class TestConditionParser:  # type:ignore[misc]
             pytest.param(
                 # time condition
                 "[UB1]u[2]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "and_composition",
                     [
                         Tree("time_condition", [Token("TIME_CONDITION_KEY", "UB1")]),
@@ -176,7 +176,7 @@ class TestConditionParser:  # type:ignore[misc]
             pytest.param(
                 #  no brackets
                 " [1][987]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "then_also_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -187,7 +187,7 @@ class TestConditionParser:  # type:ignore[misc]
             pytest.param(
                 #  two format constraints with an operator
                 "[901]U[987]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "and_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "901")]),
@@ -198,10 +198,10 @@ class TestConditionParser:  # type:ignore[misc]
             pytest.param(
                 # format constraint is attached as suffix _without_ an operator
                 "([1]U[2])[987]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "then_also_composition",
                     [
-                        Tree(
+                        Tree(  # type:ignore[misc]
                             "and_composition",
                             [
                                 Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -215,11 +215,11 @@ class TestConditionParser:  # type:ignore[misc]
             pytest.param(
                 # format constraint is attached as prefix _without_ an operator
                 "[987]([1]U[2])",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "then_also_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "987")]),
-                        Tree(
+                        Tree(  # type:ignore[misc]
                             "and_composition",
                             [
                                 Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -232,11 +232,11 @@ class TestConditionParser:  # type:ignore[misc]
             pytest.param(
                 # MSCONS AHB, Kapitel 7
                 "([902] U [906] [46])",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "and_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "902")]),
-                        Tree(
+                        Tree(  # type:ignore[misc]
                             "then_also_composition",
                             [
                                 Tree("condition", [Token("CONDITION_KEY", "906")]),
@@ -249,14 +249,14 @@ class TestConditionParser:  # type:ignore[misc]
             pytest.param(
                 # two format constraints
                 "([950]([2]U[4]))O([951]([1]U[3]))",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "or_composition",
                     [
-                        Tree(
+                        Tree(  # type:ignore[misc]
                             "then_also_composition",
                             [
                                 Tree("condition", [Token("CONDITION_KEY", "950")]),
-                                Tree(
+                                Tree(  # type:ignore[misc]
                                     "and_composition",
                                     [
                                         Tree("condition", [Token("CONDITION_KEY", "2")]),
@@ -265,11 +265,11 @@ class TestConditionParser:  # type:ignore[misc]
                                 ),
                             ],
                         ),
-                        Tree(
+                        Tree(  # type:ignore[misc]
                             "then_also_composition",
                             [
                                 Tree("condition", [Token("CONDITION_KEY", "951")]),
-                                Tree(
+                                Tree(  # type:ignore[misc]
                                     "and_composition",
                                     [
                                         Tree("condition", [Token("CONDITION_KEY", "1")]),
