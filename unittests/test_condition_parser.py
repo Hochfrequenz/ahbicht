@@ -1,4 +1,3 @@
-# type:ignore[misc]
 """ Tests for the parsing of the conditions tests (Mussfeldprüfung) """
 import asyncio
 import datetime
@@ -10,6 +9,7 @@ from lark import Token, Tree
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 
 
+# type:ignore[misc]
 class TestConditionParser:
     """Test for the parsing of the conditions tests (Mussfeldprüfung)"""
 

@@ -1,10 +1,10 @@
-# type:ignore[misc]
 import pytest  # type:ignore[import]
 from lark import Token, Tree
 
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 
 
+# type:ignore[misc]
 class TestExpressionResolver:
     @pytest.mark.parametrize(
         "expression, expected_tree",
