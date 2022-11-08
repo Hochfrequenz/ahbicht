@@ -162,7 +162,7 @@ class _ClassesWithHintAttribute(Protocol):
     hint: str
 
 
-ClassesWithHintAttribute_co = TypeVar("ClassesWithHintAttribute_co", bound=_ClassesWithHintAttribute, covariant=True)
+ClassesWithHintAttribute_co = TypeVar("ClassesWithHintAttribute_co", bound=_ClassesWithHintAttribute)
 
 
 class HintExpressionBuilder(ExpressionBuilder[ClassesWithHintAttribute_co]):
