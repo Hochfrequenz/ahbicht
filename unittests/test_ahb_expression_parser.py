@@ -6,8 +6,7 @@ from lark import Token, Tree
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 
 
-# type:ignore[misc]
-class TestAhbExpressionParser:
+class TestAhbExpressionParser:  # type:ignore[misc]
     """Tests for the parsing of the ahb_expressions as they appear in the AHBs."""
 
     @pytest.mark.parametrize(

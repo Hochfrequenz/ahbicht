@@ -9,8 +9,7 @@ from lark import Token, Tree
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 
 
-# type:ignore[misc]
-class TestConditionParser:
+class TestConditionParser:  # type:ignore[misc]
     """Test for the parsing of the conditions tests (Mussfeldprüfung)"""
 
     @pytest.mark.parametrize(
