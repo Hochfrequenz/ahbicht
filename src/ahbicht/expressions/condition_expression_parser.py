@@ -60,7 +60,7 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree[Token]
         parsed_tree = _parser.parse(condition_expression)
         parsing_logger.debug("Successfully parsed '%s' as condition expression", condition_expression)
     except (UnexpectedEOF, UnexpectedCharacters, TypeError) as eof:
-        parsing_logger.warning("Error while parsing condition expression '%s'", condition_expression, exc_info=eof)
+        parsing_logger.warning("The condition expression is syntactically incorrect: '%s'", condition_expression, exc_info=eof)
         raise SyntaxError(
             """Please make sure that:
              * all conditions have the form [INT]
