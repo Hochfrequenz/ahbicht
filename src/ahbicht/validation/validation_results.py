@@ -206,20 +206,14 @@ class ListOfValidationResultInContext:
                 only_data_element_validation_results.append(validation_result_in_context)
 
         self.validation_results = only_data_element_validation_results
-
+    @staticmethod
+    def _is_boneycomb_path_result(validation_result:ValidationResultInContext)->bool:
+         return "stammdaten" in validation_result_in_context.discriminator or "transaktionsdaten" in validation_result_in_context.discriminator
     def filter_for_boneycomb_path_results(self) -> None:
         """
         Returns only the ValidationResults that have a boneycomb_path as discriminator
         """
-        only_boneycomb_path_results = []
-        for validation_result_in_context in self.validation_results:
-            if (
-                "stammdaten" in validation_result_in_context.discriminator
-                or "transaktionsdaten" in validation_result_in_context.discriminator
-            ):
-                only_boneycomb_path_results.append(validation_result_in_context)
-
-        self.validation_results = only_boneycomb_path_results
+        self.validation_results = list(filter(_is_boneycomb_path_result, self.validation_results))
 
 
 class ListOfValidationResultInContextSchema(Schema):
