@@ -46,14 +46,14 @@ class MweRcEvaluator(EmptyDefaultRcEvaluator):
     # do _not_use inject.attr! It breaks in the inspection inside the Evaluator __init__ method
 
     def evaluate_1(self, evaluatable_data, context):
-        seed = evaluatable_data.edifact_seed
+        seed = evaluatable_data.body
         if "foo" in seed and seed["foo"] == "bar":
             return ConditionFulfilledValue.FULFILLED
         return ConditionFulfilledValue.UNFULFILLED
 
     async def evaluate_2(self, evaluatable_data, context):
         # an async method, just for the sake of it
-        seed = evaluatable_data.edifact_seed
+        seed = evaluatable_data.body
         if "asd" in seed and seed["asd"] == "yxc":
             return ConditionFulfilledValue.FULFILLED
         return ConditionFulfilledValue.UNFULFILLED
@@ -181,7 +181,7 @@ class TestIntegrationMwe:
         async def first_evaluation():
             current_evaluatable_data.set(
                 EvaluatableData(
-                    edifact_seed={"foo": "bar", "asd": "yxc"},
+                    body={"foo": "bar", "asd": "yxc"},
                     edifact_format=default_test_format,
                     edifact_format_version=default_test_version,
                 )
@@ -191,7 +191,7 @@ class TestIntegrationMwe:
         async def second_evaluation():
             current_evaluatable_data.set(
                 EvaluatableData(
-                    edifact_seed={"foo": "baz", "asd": "qwe"},
+                    body={"foo": "baz", "asd": "qwe"},
                     edifact_format=default_test_format,
                     edifact_format_version=default_test_version,
                 )

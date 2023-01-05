@@ -2,13 +2,18 @@
 Dataclasses that are relevant in the context of the content_evaluation.
 """
 from dataclasses import dataclass, replace
-from typing import Optional, Union
+from typing import Generic, Optional, TypeVar
 
 from maus.edifact import EdifactFormat, EdifactFormatVersion
 
+BodyT = TypeVar("BodyT")
+"""
+the type of the data on the evaluations are performed
+"""
+
 
 @dataclass
-class EvaluatableData:
+class EvaluatableData(Generic[BodyT]):
     """
     Data that can be processed/evaluated by an evaluator. They must not change during a content_evaluation run.
     The evaluatable data act as a flexible container to pass information that might be necessary for the
@@ -16,7 +21,7 @@ class EvaluatableData:
     provided is the meta seed of the message itself. But in the future the data provided might grow.
     """
 
-    edifact_seed: Union[dict, list]  #: the meta seed of the message that is being validated
+    body: BodyT  #: the body of the message that is being validated in the respective format (e.g. an edifact_seed)
     edifact_format: EdifactFormat  #: the format of the evaluatable message (e.g. UTILMD)
     edifact_format_version: EdifactFormatVersion  #: the format version of the evaluable data (e.g. FV2210)
     # ideas for what else could go here:

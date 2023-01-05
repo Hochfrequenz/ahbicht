@@ -21,7 +21,7 @@ default_test_format: EdifactFormat = EdifactFormat.UTILMD
 default_test_version: EdifactFormatVersion = EdifactFormatVersion.FV2210
 #: an empty EvaluatableData instance
 empty_default_test_data: EvaluatableData = EvaluatableData(
-    edifact_seed={}, edifact_format=default_test_format, edifact_format_version=default_test_version
+    body={}, edifact_format=default_test_format, edifact_format_version=default_test_version
 )
 
 

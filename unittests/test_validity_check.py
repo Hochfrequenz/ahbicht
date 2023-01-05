@@ -27,7 +27,7 @@ def _get_evaluatable_data():
     """
     cer = _content_evaluation_result.get()
     return EvaluatableData(
-        edifact_seed=ContentEvaluationResultSchema().dump(cer),
+        body=ContentEvaluationResultSchema().dump(cer),
         edifact_format=default_test_format,
         edifact_format_version=default_test_version,
     )

@@ -25,7 +25,7 @@ def store_content_evaluation_result_in_evaluatable_data(
     schema = ContentEvaluationResultSchema()
     cer_dict = schema.dump(content_evaluation_result)
     return EvaluatableData(
-        edifact_seed=cer_dict, edifact_format=default_test_format, edifact_format_version=default_test_version
+        body=cer_dict, edifact_format=default_test_format, edifact_format_version=default_test_version
     )
 
 
