@@ -8,7 +8,7 @@ from maus.edifact import EdifactFormat, EdifactFormatVersion
 
 _BodyT = TypeVar("_BodyT")
 """
-the type of the data on the evaluations are performed
+the type of the data on which the evaluations are performed
 """
 
 
