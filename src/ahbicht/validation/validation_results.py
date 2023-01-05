@@ -200,12 +200,9 @@ class ListOfValidationResultInContext:
         """
         Filters the lost of validation results for only DataElementValidationResults
         """
-        only_data_element_validation_results = []
-        for validation_result_in_context in self.validation_results:
-            if isinstance(validation_result_in_context.validation_result, DataElementValidationResult):
-                only_data_element_validation_results.append(validation_result_in_context)
-
-        self.validation_results = only_data_element_validation_results
+        self.validation_results = list(
+            filter(lambda vr: isinstance(vr.validation_result, DataElementValidationResult), self.validation_results)
+        )
 
     @staticmethod
     def _is_boneycomb_path_result(validation_result_in_context: ValidationResultInContext) -> bool:
