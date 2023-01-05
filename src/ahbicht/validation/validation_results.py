@@ -184,16 +184,22 @@ class ListOfValidationResultInContext:
         )
     )
 
-    def replace_edi_seed_paths_with_bo4e_paths(self, edi_seed_to_bo4e_mappings: Dict[str, str]) -> None:
+    def replace_edi_domain_paths_with_application_domain_paths(
+        self, edi_domain_to_application_domain_mappings: Dict[str, str]
+    ) -> None:
         """
-        replaces the discriminators in the list of validation results with the respective values from the edi_seed,
+        replaces the edi domain discriminators in the list of validation results with the respective values from the application domain
         if present
+
+        :param edi_domain_to_application_domain_mappings: dictionary with edi domain paths as keys and application domain paths as values,
+        for example ediseed to bo4e mapping: "$[Dokument][0]['Transaktionsgrund']": "$['transaktionsdaten']['transaktionsgrund']",
+
         """
         for validation_result in self.validation_results:
             if validation_result.discriminator.startswith("$"):
                 edi_seed_path = validation_result.discriminator
-                if edi_seed_path in edi_seed_to_bo4e_mappings:
-                    bo4e_path = edi_seed_to_bo4e_mappings[edi_seed_path]
+                if edi_seed_path in edi_domain_to_application_domain_mappings:
+                    bo4e_path = edi_domain_to_application_domain_mappings[edi_seed_path]
                     validation_result.discriminator = bo4e_path
 
     def filter_for_data_element_validation_results(self) -> None:
@@ -213,7 +219,7 @@ class ListOfValidationResultInContext:
 
     def filter_for_boneycomb_path_results(self) -> None:
         """
-        Filters the list of validation results for those that have a boneycomb_path as discriminator
+        Filters the list of validation results for those that have a boneycomb path as discriminator
         """
         self.validation_results = list(filter(self._is_boneycomb_path_result, self.validation_results))
 

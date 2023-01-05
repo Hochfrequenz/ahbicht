@@ -92,7 +92,7 @@ class TestValidationResults:
         edi_seed_to_bo4e_mappings: dict,
         lovric_expected: ListOfValidationResultInContext,
     ):
-        lovric_actual.replace_edi_seed_paths_with_bo4e_paths(edi_seed_to_bo4e_mappings)
+        lovric_actual.replace_edi_domain_paths_with_application_domain_paths(edi_seed_to_bo4e_mappings)
         assert lovric_actual == lovric_expected
 
     @pytest.mark.parametrize(
