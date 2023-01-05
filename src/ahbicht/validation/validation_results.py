@@ -174,6 +174,7 @@ class ValidationResultInContextSchema(Schema):
 class ListOfValidationResultInContext:
     """
     Class to set validation result in context, for example with its discriminator.
+    This class is basically a wrapper around the list to have one place where the methods operating on the list do live.
     """
 
     validation_results: List[ValidationResultInContext] = attrs.field(
