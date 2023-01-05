@@ -170,11 +170,24 @@ class ValidationResultInContextSchema(Schema):
         return ValidationResultInContext(**data)
 
 
-@attrs.define(auto_attribs=True, kw_only=True)
+@attrs.define(kw_only=True)
 class ListOfValidationResultInContext:
     """
     Class to set validation result in context, for example with its discriminator.
     """
+
+    @classmethod
+    def replace_edi_seed_paths_with_bo4e_paths(self, edi_seed_to_bo4e_mappings: Dict[str, str]) -> None:
+        """
+        replaces the discriminators in the list of validation results with the respective values from the edi_seed,
+        if present
+        """
+        for validation_result in self.validation_results:
+            if validation_result.discriminator.startswith("$"):
+                edi_seed_path = validation_result.discriminator
+                if edi_seed_path in edi_seed_to_bo4e_mappings:
+                    bo4e_path = edi_seed_to_bo4e_mappings[edi_seed_path]
+                    validation_result.discriminator = bo4e_path
 
     validation_results: List[ValidationResultInContext] = attrs.field(
         validator=attrs.validators.deep_iterable(
@@ -182,6 +195,37 @@ class ListOfValidationResultInContext:
             iterable_validator=attrs.validators.instance_of(list),
         )
     )
+
+
+# def _filter_for_data_element_validation_results(
+#     validation_results: List[ValidationResultInContext],
+# ) -> List[ValidationResultInContext]:
+#     """
+#     Returns only the DataElementValidationResults of a list of ValidationResultInContext
+#     """
+#     only_data_element_validation_results = []
+#     for validation_result_in_context in validation_results:
+#         if isinstance(validation_result_in_context.validation_result, DataElementValidationResult):
+#             only_data_element_validation_results.append(validation_result_in_context)
+
+#     return only_data_element_validation_results
+
+
+# def _filter_for_boneycomb_path_results(
+#     validation_results: List[ValidationResultInContext],
+# ) -> List[ValidationResultInContext]:
+#     """
+#     Returns only the ValidationResults that have a boneycomb_path as discriminator
+#     """
+#     only_boneycomb_path_results = []
+#     for validation_result_in_context in validation_results:
+#         if (
+#             "stammdaten" in validation_result_in_context.discriminator
+#             or "transaktionsdaten" in validation_result_in_context.discriminator
+#         ):
+#             only_boneycomb_path_results.append(validation_result_in_context)
+
+#     return only_boneycomb_path_results
 
 
 class ListOfValidationResultInContextSchema(Schema):
