@@ -170,13 +170,19 @@ class ValidationResultInContextSchema(Schema):
         return ValidationResultInContext(**data)
 
 
-@attrs.define(kw_only=True)
+@attrs.define(auto_attribs=True, kw_only=True)
 class ListOfValidationResultInContext:
     """
     Class to set validation result in context, for example with its discriminator.
     """
 
-    @classmethod
+    validation_results: List[ValidationResultInContext] = attrs.field(
+        validator=attrs.validators.deep_iterable(
+            member_validator=attrs.validators.instance_of(ValidationResultInContext),
+            iterable_validator=attrs.validators.instance_of(list),
+        )
+    )
+
     def replace_edi_seed_paths_with_bo4e_paths(self, edi_seed_to_bo4e_mappings: Dict[str, str]) -> None:
         """
         replaces the discriminators in the list of validation results with the respective values from the edi_seed,
@@ -188,13 +194,6 @@ class ListOfValidationResultInContext:
                 if edi_seed_path in edi_seed_to_bo4e_mappings:
                     bo4e_path = edi_seed_to_bo4e_mappings[edi_seed_path]
                     validation_result.discriminator = bo4e_path
-
-    validation_results: List[ValidationResultInContext] = attrs.field(
-        validator=attrs.validators.deep_iterable(
-            member_validator=attrs.validators.instance_of(ValidationResultInContext),
-            iterable_validator=attrs.validators.instance_of(list),
-        )
-    )
 
 
 # def _filter_for_data_element_validation_results(
