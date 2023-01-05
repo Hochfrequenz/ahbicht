@@ -1,7 +1,7 @@
 "This module contains the classes for the validation results."
 
 from abc import ABC
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import attrs
 import maus.models.edifact_components
@@ -168,3 +168,33 @@ class ValidationResultInContextSchema(Schema):
         so that the discriminator is the key and the validation_result the value.
         """
         return ValidationResultInContext(**data)
+
+
+@attrs.define(auto_attribs=True, kw_only=True)
+class ListOfValidationResultInContext:
+    """
+    Class to set validation result in context, for example with its discriminator.
+    """
+
+    validation_results: List[ValidationResultInContext] = attrs.field(
+        validator=attrs.validators.deep_iterable(
+            member_validator=attrs.validators.instance_of(ValidationResultInContext),
+            iterable_validator=attrs.validators.instance_of(list),
+        )
+    )
+
+
+class ListOfValidationResultInContextSchema(Schema):
+    """
+    A schema to deserialize ListOfValidationResultInContext
+    """
+
+    validation_results = fields.List(fields.Nested(ValidationResultInContextSchema))
+
+    # pylint:disable=unused-argument
+    @post_load
+    def deserialize(self, data, **kwargs) -> ListOfValidationResultInContext:
+        """
+        Deserializes a ValidationResultDiscriminator
+        """
+        return ListOfValidationResultInContext(**data)
