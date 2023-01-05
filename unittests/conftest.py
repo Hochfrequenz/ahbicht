@@ -16,7 +16,7 @@ from unittests.defaults import default_test_format, default_test_version
 
 def store_content_evaluation_result_in_evaluatable_data(
     content_evaluation_result: ContentEvaluationResult,
-) -> EvaluatableData:
+) -> EvaluatableData[dict]:
     """
     a helper method for the tests to store a serialized content evaluation result in an EvaluatableData instance
     :param content_evaluation_result:

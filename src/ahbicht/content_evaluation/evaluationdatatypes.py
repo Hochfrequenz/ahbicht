@@ -6,14 +6,14 @@ from typing import Generic, Optional, TypeVar
 
 from maus.edifact import EdifactFormat, EdifactFormatVersion
 
-BodyT = TypeVar("BodyT")
+_BodyT = TypeVar("_BodyT")
 """
 the type of the data on the evaluations are performed
 """
 
 
 @dataclass
-class EvaluatableData(Generic[BodyT]):
+class EvaluatableData(Generic[_BodyT]):
     """
     Data that can be processed/evaluated by an evaluator. They must not change during a content_evaluation run.
     The evaluatable data act as a flexible container to pass information that might be necessary for the
@@ -21,7 +21,7 @@ class EvaluatableData(Generic[BodyT]):
     provided is the meta seed of the message itself. But in the future the data provided might grow.
     """
 
-    body: BodyT  #: the body of the message that is being validated in the respective format (e.g. an edifact_seed)
+    body: _BodyT  #: the body of the message that is being validated in the respective format (e.g. an edifact_seed)
     edifact_format: EdifactFormat  #: the format of the evaluatable message (e.g. UTILMD)
     edifact_format_version: EdifactFormatVersion  #: the format version of the evaluable data (e.g. FV2210)
     # ideas for what else could go here:
@@ -29,7 +29,7 @@ class EvaluatableData(Generic[BodyT]):
 
 
 # pylint:disable=too-few-public-methods
-class EvaluatableDataProvider:
+class EvaluatableDataProvider(Generic[_BodyT]):
     """
     This is just a dummy class that is used for dependency injection.
     Use it to call binder.bind_to_provider(EvaluatableDataProvider, func_that_returns_evaluatable_data_goes_here)
