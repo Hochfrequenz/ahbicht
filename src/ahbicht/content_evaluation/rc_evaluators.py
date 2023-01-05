@@ -130,7 +130,7 @@ class ContentEvaluationResultBasedRcEvaluator(RcEvaluator):
     async def evaluate_single_condition(
         self, condition_key: str, evaluatable_data: EvaluatableData, context: Optional[EvaluationContext] = None
     ) -> ConditionFulfilledValue:
-        content_evaluation_result: ContentEvaluationResult = self._schema.load(evaluatable_data.edifact_seed)
+        content_evaluation_result: ContentEvaluationResult = self._schema.load(evaluatable_data.body)
         try:
             return content_evaluation_result.requirement_constraints[condition_key]
         except KeyError as key_error:

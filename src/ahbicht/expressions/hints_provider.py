@@ -127,7 +127,7 @@ class ContentEvaluationResultBasedHintsProvider(HintsProvider):
 
     @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
     async def _get_hint_text(self, condition_key: str, evaluatable_data: EvaluatableData) -> Optional[str]:
-        content_evaluation_result: ContentEvaluationResult = self._schema.load(evaluatable_data.edifact_seed)
+        content_evaluation_result: ContentEvaluationResult = self._schema.load(evaluatable_data.body)
         try:
             self.logger.debug("Retrieving hint '%s' from Content Evaluation Result", condition_key)
             return content_evaluation_result.hints[condition_key]

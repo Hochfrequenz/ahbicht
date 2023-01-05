@@ -198,7 +198,7 @@ class ContentEvaluationResultBasedFcEvaluator(FcEvaluator):
     async def _evaluate_single_format_constraint(
         self, condition_key: str, evaluatable_data: EvaluatableData
     ) -> EvaluatedFormatConstraint:
-        content_evaluation_result: ContentEvaluationResult = self._schema.load(evaluatable_data.edifact_seed)
+        content_evaluation_result: ContentEvaluationResult = self._schema.load(evaluatable_data.body)
         try:
             self.logger.debug("Retrieving key %s' from Content Evaluation Result", condition_key)
             return content_evaluation_result.format_constraints[condition_key]
