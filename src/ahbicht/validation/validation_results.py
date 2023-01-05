@@ -198,7 +198,7 @@ class ListOfValidationResultInContext:
 
     def filter_for_data_element_validation_results(self) -> None:
         """
-        Returns only the DataElementValidationResults of a list of ValidationResultInContext
+        Filters the lost of validation results for only DataElementValidationResults
         """
         only_data_element_validation_results = []
         for validation_result_in_context in self.validation_results:
@@ -216,7 +216,7 @@ class ListOfValidationResultInContext:
 
     def filter_for_boneycomb_path_results(self) -> None:
         """
-        Returns only the ValidationResults that have a boneycomb_path as discriminator
+        Filters the list of validation results for those that have a boneycomb_path as discriminator
         """
         self.validation_results = list(filter(self._is_boneycomb_path_result, self.validation_results))
 
