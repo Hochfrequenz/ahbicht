@@ -188,12 +188,13 @@ class ListOfValidationResultInContext:
         self, edi_domain_to_application_domain_mappings: Dict[str, str]
     ) -> None:
         """
-        replaces the edi domain discriminators in the list of validation results with the respective values from the application domain
-        if present
+        replaces the edi domain discriminators in the list of validation results with the respective
+        values from the application domain if present
 
-        :param edi_domain_to_application_domain_mappings: dictionary with edi domain paths as keys and application domain paths as values,
-        for example ediseed to bo4e mapping: "$[Dokument][0]['Transaktionsgrund']": "$['transaktionsdaten']['transaktionsgrund']",
-
+        :param edi_domain_to_application_domain_mappings: dictionary with edi domain paths as keys
+            and application domain paths as values, for example ediseed to bo4e mapping:
+            "$[Dokument][0]['Transaktionsgrund']": "$['transaktionsdaten']['transaktionsgrund']"
+        :return:
         """
         for validation_result in self.validation_results:
             if validation_result.discriminator.startswith("$"):
