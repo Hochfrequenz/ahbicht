@@ -197,3 +197,90 @@ class TestCategorizedKeyExtraction:
         actual = categorized_keys.generate_possible_content_evaluation_results()
         # json_string = ContentEvaluationResultSchema(many=True).dumps(actual)
         assert actual == expected_result
+
+    @pytest.mark.parametrize(
+        "cer_a,cer_b,expected",
+        [
+            pytest.param(
+                CategorizedKeyExtract(
+                    hint_keys=[],
+                    requirement_constraint_keys=[],
+                    format_constraint_keys=[],
+                    package_keys=[],
+                    time_condition_keys=[],
+                ),
+                CategorizedKeyExtract(
+                    hint_keys=[],
+                    requirement_constraint_keys=[],
+                    format_constraint_keys=[],
+                    package_keys=[],
+                    time_condition_keys=[],
+                ),
+                CategorizedKeyExtract(
+                    hint_keys=[],
+                    requirement_constraint_keys=[],
+                    format_constraint_keys=[],
+                    package_keys=[],
+                    time_condition_keys=[],
+                ),
+                id="empty+empty=empty",
+            ),
+            pytest.param(
+                CategorizedKeyExtract(
+                    hint_keys=["501"],
+                    requirement_constraint_keys=["1"],
+                    format_constraint_keys=["901"],
+                    package_keys=["1P"],
+                    time_condition_keys=["UB1"],
+                ),
+                CategorizedKeyExtract(
+                    hint_keys=["502"],
+                    requirement_constraint_keys=["2"],
+                    format_constraint_keys=["902"],
+                    package_keys=["2P"],
+                    time_condition_keys=["UB2"],
+                ),
+                CategorizedKeyExtract(
+                    hint_keys=["501", "502"],
+                    requirement_constraint_keys=["1", "2"],
+                    format_constraint_keys=["901", "902"],
+                    package_keys=["1P", "2P"],
+                    time_condition_keys=["UB1", "UB2"],
+                ),
+                id="simply add",
+            ),
+            pytest.param(
+                CategorizedKeyExtract(
+                    hint_keys=["502"],
+                    requirement_constraint_keys=["2"],
+                    format_constraint_keys=["902"],
+                    package_keys=["2P"],
+                    time_condition_keys=["UB2"],
+                ),
+                CategorizedKeyExtract(
+                    hint_keys=["501", "502"],
+                    requirement_constraint_keys=["1", "2"],
+                    format_constraint_keys=["901", "902"],
+                    package_keys=["1P", "3P", "2P"],
+                    time_condition_keys=["UB3", "UB1"],
+                ),
+                CategorizedKeyExtract(
+                    hint_keys=["501", "502"],
+                    requirement_constraint_keys=["1", "2"],
+                    format_constraint_keys=["901", "902"],
+                    package_keys=[
+                        "1P",
+                        "2P",
+                        "3P",
+                    ],
+                    time_condition_keys=["UB1", "UB2", "UB3"],
+                ),
+                id="remove duplicates, sort, sanitize",
+            ),
+        ],
+    )
+    def test_adding_categorized_key_extracts(
+        self, cer_a: CategorizedKeyExtract, cer_b: CategorizedKeyExtract, expected: CategorizedKeyExtract
+    ):
+        actual = cer_a + cer_b
+        assert actual == expected
