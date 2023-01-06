@@ -69,7 +69,7 @@ For a minimal working example on how what the library is used, check out `this J
 Free to Use REST API
 ~~~~~~~~~~~~~~~~~~~~
 You can also use our public REST API to parse condition expressions (other features will follow). Simply send a GET request with the condition expression as query parameter to:
-`ahbicht.azurewebsites.net/api/ParseConditionExpression?condition_expression=[2] U ([3] O [4])[901] U [555] <https://ahbicht.azurewebsites.net/api/ParseConditionExpression?condition_expression=%5B2%5D%20U%20(%5B3%5D%20O%20%5B4%5D)%5B901%5D%20U%20%5B555%5D>`__
+`ahbicht.azurewebsites.net/api/ParseExpression?expression=[2] U ([3] O [4])[901] U [555] <https://ahbicht.azurewebsites.net/api/ParseExpression?expression=%5B2%5D%20U%20%28%5B3%5D%20O%20%5B4%5D%29%5B901%5D%20U%20%5B555%5D>`__
 
 Easily Integrate AHBicht with Your Solution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

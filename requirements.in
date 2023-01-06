@@ -3,6 +3,6 @@ lark>=1.1.4
 inject
 marshmallow
 marshmallow_enum
-maus
+maus>=0.1.24
 pytz
 # whenever adding something here, don't forget to also add it to setup.cfg

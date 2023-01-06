@@ -132,7 +132,7 @@ class ContentEvaluationResultBasedPackageResolver(PackageResolver):
     async def _get_condition_expression(
         self, package_key: str, evaluatable_data: EvaluatableData
     ) -> PackageKeyConditionExpressionMapping:
-        content_evaluation_result: ContentEvaluationResult = self._schema.load(evaluatable_data.edifact_seed)
+        content_evaluation_result: ContentEvaluationResult = self._schema.load(evaluatable_data.body)
         try:
             self.logger.debug("Retrieving package '%s' from Content Evaluation Result", package_key)
             if content_evaluation_result.packages is None:

@@ -20,8 +20,8 @@ default_test_format: EdifactFormat = EdifactFormat.UTILMD
 #: the default edifact format version used in the unit tests
 default_test_version: EdifactFormatVersion = EdifactFormatVersion.FV2210
 #: an empty EvaluatableData instance
-empty_default_test_data: EvaluatableData = EvaluatableData(
-    edifact_seed={}, edifact_format=default_test_format, edifact_format_version=default_test_version
+empty_default_test_data: EvaluatableData[dict] = EvaluatableData(
+    body={}, edifact_format=default_test_format, edifact_format_version=default_test_version
 )
 
 
@@ -116,7 +116,7 @@ class DefaultPackageResolver(DictBasedPackageResolver):
 empty_default_package_resolver = DefaultPackageResolver({})
 
 
-def return_empty_dummy_evaluatable_data() -> EvaluatableData:
+def return_empty_dummy_evaluatable_data() -> EvaluatableData[dict]:
     """
     :return: empty evaluatable data in the default format and format version
     """

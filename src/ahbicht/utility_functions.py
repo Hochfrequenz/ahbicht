@@ -32,6 +32,13 @@ async def gather_if_necessary(results_and_awaitable_results: List[Union[Result, 
     return result
 
 
+_CACHE_LOG_LEVEL = 5
+"""
+This is a custom log level, which is smaller than debug: https://docs.python.org/3/library/logging.html#logging-levels
+We use it to log cache accesses but not spam at log level DEBUG.
+"""
+
+
 def tree_copy(lru_cached_parsing_func: Callable[[str], Tree]):
     """
     A decorator that returns copy of the cached result from the lru_cached_parsing_func.
@@ -49,7 +56,7 @@ def tree_copy(lru_cached_parsing_func: Callable[[str], Tree]):
         tree_result: Tree = lru_cached_parsing_func(*args, **kwargs)
         cache_size_after_parsing = lru_cached_parsing_func.cache_info().currsize
         if cache_size_after_parsing == cache_size_before_parsing:
-            parsing_logger.debug("The parsed tree for '%s' has been loaded from the cache", args[0])
+            parsing_logger.log(_CACHE_LOG_LEVEL, "The parsed tree for '%s' has been loaded from the cache", args[0])
         return tree_result.copy()
 
     return decorated

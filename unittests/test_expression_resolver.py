@@ -1,4 +1,3 @@
-# type:ignore[misc]
 import pytest  # type:ignore[import]
 from lark import Token, Tree
 
@@ -11,10 +10,10 @@ class TestExpressionResolver:
         [
             pytest.param(
                 "Muss[3]U[4] Soll[5]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(
+                        Tree(  # type:ignore[misc]
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "Muss"),
@@ -39,7 +38,7 @@ class TestExpressionResolver:
             ),
             pytest.param(
                 "X[504]O[6]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "ahb_expression",
                     [
                         Tree(
