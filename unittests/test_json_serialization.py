@@ -33,6 +33,8 @@ from ahbicht.mapping_results import (
 from ahbicht.validation.validation_results import (
     DataElementValidationResult,
     DataElementValidationResultSchema,
+    ListOfValidationResultInContext,
+    ListOfValidationResultInContextSchema,
     SegmentLevelValidationResult,
     SegmentLevelValidationResultSchema,
     ValidationResultInContext,
@@ -448,6 +450,16 @@ class TestJsonSerialization:
         expected_json_dict: dict,
     ):
         json_string = ValidationResultInContextSchema().dumps(list_of_validation_result_in_context, many=True)
+        assert json_string is not None
+        actual_json_dict = json.loads(json_string)
+        assert actual_json_dict == expected_json_dict
+
+        list_of_validation_result_in_context_as_class = ListOfValidationResultInContext(
+            validation_results=list_of_validation_result_in_context
+        )
+        json_string = ValidationResultInContextSchema().dumps(
+            list_of_validation_result_in_context_as_class.validation_results, many=True
+        )
         assert json_string is not None
         actual_json_dict = json.loads(json_string)
         assert actual_json_dict == expected_json_dict
