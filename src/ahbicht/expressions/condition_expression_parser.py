@@ -64,7 +64,9 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree[Token]
             "The condition expression is syntactically incorrect: '%s'", condition_expression, exc_info=eof
         )
         raise SyntaxError(
-            """Please make sure that:
+            f"""
+            condition expression: {condition_expression}
+            Please make sure that:
              * all conditions have the form [INT]
              * all packages have the form [INTPn..m]
              * no conditions are empty
