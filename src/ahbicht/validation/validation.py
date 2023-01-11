@@ -197,7 +197,7 @@ async def get_segment_level_requirement_validation_value(
     :param soll_is_required: true (default) if SOLL should be handled like MUSS, false if it should be handled like KANN
     :return: Validation Result of the data element
     """
-
+    assert segment_level.ahb_expression is not None
     expression_tree = await parse_expression_including_unresolved_subexpressions(
         segment_level.ahb_expression, resolve_packages=True
     )
@@ -257,6 +257,7 @@ async def validate_data_element_freetext(
     :param soll_is_required: true (default) if SOLL should be handled like MUSS, if it should be handled like KANN
     :return: Validation Result of the DataElement
     """
+    assert data_element.ahb_expression is not None
     expression_tree = await parse_expression_including_unresolved_subexpressions(
         data_element.ahb_expression, resolve_packages=True
     )
