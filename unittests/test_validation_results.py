@@ -192,3 +192,60 @@ class TestValidationResults:
     ):
         lovric_actual.filter_for_boneycomb_path_results()
         assert lovric_actual == lovric_expected
+
+    @pytest.mark.parametrize(
+        "lovric_actual, lovric_expected",
+        [
+            pytest.param(
+                ListOfValidationResultInContext(
+                    validation_results=[
+                        ValidationResultInContext(
+                            discriminator='$["stammdaten"]["MARKTTEILNEHMER"]["ANSPRECHPARTNER"]["absender"]["ansprechpartner"]["nachname"]',
+                            validation_result=SegmentLevelValidationResult(
+                                requirement_validation=RequirementValidationValue.IS_FORBIDDEN_AND_EMPTY, hints="foo"
+                            ),
+                        ),
+                        ValidationResultInContext(
+                            discriminator="$['transaktionsdaten']['transaktionsgrund']",
+                            validation_result=SegmentLevelValidationResult(
+                                requirement_validation=RequirementValidationValue.IS_FORBIDDEN_AND_EMPTY, hints="foo"
+                            ),
+                        ),
+                        ValidationResultInContext(
+                            discriminator="$['stammdaten'][0]['applicationFoo']",
+                            validation_result=SegmentLevelValidationResult(
+                                requirement_validation=RequirementValidationValue.IS_REQUIRED, hints="bar"
+                            ),
+                        ),
+                        ValidationResultInContext(
+                            discriminator='$["stammdaten"]["MARKTTEILNEHMER"]["empfaenger"]["rollencodenummer"]',
+                            validation_result=SegmentLevelValidationResult(
+                                requirement_validation=RequirementValidationValue.IS_REQUIRED, hints="bar"
+                            ),
+                        ),
+                    ],
+                ),
+                ListOfValidationResultInContext(
+                    validation_results=[
+                        ValidationResultInContext(
+                            discriminator="$['transaktionsdaten']['transaktionsgrund']",
+                            validation_result=SegmentLevelValidationResult(
+                                requirement_validation=RequirementValidationValue.IS_FORBIDDEN_AND_EMPTY, hints="foo"
+                            ),
+                        ),
+                        ValidationResultInContext(
+                            discriminator="$['stammdaten'][0]['applicationFoo']",
+                            validation_result=SegmentLevelValidationResult(
+                                requirement_validation=RequirementValidationValue.IS_REQUIRED, hints="bar"
+                            ),
+                        ),
+                    ],
+                ),
+            ),
+        ],
+    )
+    async def test_lovric_remove_absender_and_empfaenger_path_results(
+        self, lovric_actual: ListOfValidationResultInContext, lovric_expected: ListOfValidationResultInContext
+    ):
+        lovric_actual.remove_absender_and_empfaenger_path_results()
+        assert lovric_actual == lovric_expected
