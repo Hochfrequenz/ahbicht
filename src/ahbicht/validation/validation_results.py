@@ -227,7 +227,8 @@ class ListOfValidationResultInContext:
     @staticmethod
     def _is_not_absender_or_empfaenger_path_result(validation_result_in_context: ValidationResultInContext) -> bool:
         return (
-            "absender" not in validation_result_in_context.discriminator
+            validation_result_in_context.discriminator is not None
+            and "absender" not in validation_result_in_context.discriminator
             and "empfaenger" not in validation_result_in_context.discriminator
         )
 
