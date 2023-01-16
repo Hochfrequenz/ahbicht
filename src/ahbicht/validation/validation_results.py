@@ -148,7 +148,7 @@ class ValidationResultInContext:
     Class to set validation result in context, for example with its discriminator.
     """
 
-    discriminator: str = attrs.field(validator=attrs.validators.instance_of(str))
+    discriminator: Optional[str] = attrs.field(validator=attrs.validators.optional(attrs.validators.instance_of(str)))
     validation_result: ValidationResult = attrs.field(validator=attrs.validators.instance_of(ValidationResult))
 
 
@@ -197,7 +197,7 @@ class ListOfValidationResultInContext:
         :return:
         """
         for validation_result in self.validation_results:
-            if validation_result.discriminator.startswith("$"):
+            if validation_result.discriminator is not None and validation_result.discriminator.startswith("$"):
                 edi_seed_path = validation_result.discriminator
                 if edi_seed_path in edi_domain_to_application_domain_mappings:
                     bo4e_path = edi_domain_to_application_domain_mappings[edi_seed_path]
@@ -214,7 +214,8 @@ class ListOfValidationResultInContext:
     @staticmethod
     def _is_boneycomb_path_result(validation_result_in_context: ValidationResultInContext) -> bool:
         return (
-            "stammdaten" in validation_result_in_context.discriminator
+            validation_result_in_context.discriminator is None
+            or "stammdaten" in validation_result_in_context.discriminator
             or "transaktionsdaten" in validation_result_in_context.discriminator
         )
 
