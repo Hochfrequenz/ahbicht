@@ -225,6 +225,20 @@ class ListOfValidationResultInContext:
         """
         self.validation_results = list(filter(self._is_boneycomb_path_result, self.validation_results))
 
+    @staticmethod
+    def _is_not_absender_or_empfaenger_path_result(validation_result_in_context: ValidationResultInContext) -> bool:
+        return (
+            validation_result_in_context.discriminator is not None
+            and "absender" not in validation_result_in_context.discriminator
+            and "empfaenger" not in validation_result_in_context.discriminator
+        )
+
+    def remove_absender_and_empfaenger_path_results(self) -> None:
+        """
+        Removes all paths containing Absender oder Empfaenger
+        """
+        self.validation_results = list(filter(self._is_not_absender_or_empfaenger_path_result, self.validation_results))
+
 
 class ListOfValidationResultInContextSchema(Schema):
     """
