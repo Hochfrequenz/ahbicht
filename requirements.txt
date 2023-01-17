@@ -27,5 +27,5 @@ packaging==21.3
     # via marshmallow
 pyparsing==3.0.8
     # via packaging
-pytz==2022.7
+pytz==2022.7.1
     # via -r requirements.in
