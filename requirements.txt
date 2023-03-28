@@ -23,7 +23,7 @@ maus==0.2.9
     # via -r requirements.in
 more-itertools==9.0.0
     # via maus
-packaging==21.3
+packaging==23.0
     # via marshmallow
 pyparsing==3.0.8
     # via packaging
