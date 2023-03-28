@@ -1,0 +1,2 @@
+# specific requirements for the tox json_schemas env
+marshmallow_jsonschema

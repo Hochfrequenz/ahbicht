@@ -1,0 +1,6 @@
+# specific requirements for the tox test_packaging env
+build
+twine
+# tools below for the actual packaging
+setuptools
+setuptools-scm

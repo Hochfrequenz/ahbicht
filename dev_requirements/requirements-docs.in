@@ -1,0 +1,3 @@
+# specific requirements for the tox docs env
+Sphinx
+sphinx_rtd_theme

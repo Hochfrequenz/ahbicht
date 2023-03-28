@@ -1,0 +1,3 @@
+# specific requirements for the tox type_check environment
+types-pytz
+mypy
