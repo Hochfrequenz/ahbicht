@@ -61,18 +61,18 @@ class ExpressionBuilder(Generic[SupportedNodes], ABC):
         raise NotImplementedError("Has to be implemented by inheriting class.")
 
 
-TEffectiveFCExpressionBuilderArguments = Union[
+TEffectiveFCExpressionBuilderArguments = Union[  # pylint:disable=invalid-name
     EvaluatedComposition, UnevaluatedFormatConstraint, Optional[str]
 ]  # node types that have an effect on the built format constraint expression
 
-TUneffectiveFCExpressionBuilderArguments = Union[
+TUneffectiveFCExpressionBuilderArguments = Union[  # pylint:disable=invalid-name
     RequirementConstraint, EvaluatedComposition, Hint, Type[ConditionNode]
 ]  # node types that are formally accepted as argument but don't
 # have any effect. Instead of checking which nodes contain format constraints all are put into the
 # FormatConstraintExpressionBuilder, but it only has an effect on those with format constraints.
 # Note that EvaluatedComposition is in both classes since they can have format constraints but don't have to.
 
-TSupportedFCExpressionBuilderArguments = Union[
+TSupportedFCExpressionBuilderArguments = Union[  # pylint:disable=invalid-name
     TEffectiveFCExpressionBuilderArguments, TUneffectiveFCExpressionBuilderArguments
 ]
 
