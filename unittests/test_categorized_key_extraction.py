@@ -1,6 +1,7 @@
 """ Tests for the parsing of the conditions tests (Mussfeldprüfung) """
 
 import json
+from pathlib import Path
 from typing import List
 
 import pytest  # type:ignore[import]
@@ -190,8 +191,9 @@ class TestCategorizedKeyExtraction:
         ],
     )
     @ALL_LARGE_TEST_CASES
-    def test_possible_cer_generation_large_results(self, test_file_path, datafiles):
-        file_content = json.load(datafiles / test_file_path)
+    def test_possible_cer_generation_large_results(self, test_file_path: str, datafiles):
+        with open(datafiles / Path(test_file_path), "r", encoding="utf-8") as infile:
+            file_content = json.load(infile)
         categorized_keys = CategorizedKeyExtractSchema().load(file_content["categorizedKeyExtract"])
         expected_result = ContentEvaluationResultSchema(many=True).load(file_content["expected_result"])
         actual = categorized_keys.generate_possible_content_evaluation_results()
