@@ -36,7 +36,6 @@ class TestCaching:
         assert number_of_distinct_instances == number_of_calls
 
     async def test_ahb_expression_cache_async(self, mocker):
-
         ahb_expression = "Muss [5] U [6]"
         parse_spy = mocker.spy(ahb_expr_parser, "parse")
 
