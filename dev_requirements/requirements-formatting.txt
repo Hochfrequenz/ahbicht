@@ -22,6 +22,8 @@ executing==1.2.0
     # via stack-data
 ipython==8.11.0
     # via black
+isort==5.12.0
+    # via -r dev_requirements/requirements-formatting.in
 jedi==0.18.2
     # via ipython
 matplotlib-inline==0.1.6
