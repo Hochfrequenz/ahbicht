@@ -278,7 +278,7 @@ async def validate_data_element_freetext(
                 hints=invalid_expr_error.error_message,
                 data_element_data_type=DataElementDataType.TEXT,
             ),
-            discriminator=data_element.discriminator,
+            discriminator=data_element.discriminator,  # type:ignore[arg-type]
         )
 
     # requirement constraints
@@ -311,7 +311,7 @@ async def validate_data_element_freetext(
         str(result),
     )
     return ValidationResultInContext(
-        discriminator=data_element.discriminator,
+        discriminator=data_element.discriminator,  # type:ignore[arg-type]
         validation_result=result,
     )
 
@@ -401,7 +401,7 @@ async def validate_data_element_valuepool(
         str(result),
     )
     return ValidationResultInContext(
-        discriminator=data_element.discriminator,
+        discriminator=data_element.discriminator,  # type:ignore[arg-type]
         validation_result=result,
     )
 
