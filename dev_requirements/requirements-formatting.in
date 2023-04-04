@@ -1,0 +1,4 @@
+# specific requirements for the formatting envs
+black
+black[jupyter]
+isort

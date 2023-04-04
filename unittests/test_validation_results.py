@@ -247,5 +247,5 @@ class TestValidationResults:
     async def test_lovric_remove_absender_and_empfaenger_path_results(
         self, lovric_actual: ListOfValidationResultInContext, lovric_expected: ListOfValidationResultInContext
     ):
-        lovric_actual.remove_absender_and_empfaenger_path_results()
+        lovric_actual.remove_absender_and_empfaenger_path_results()  # type:ignore[attr-defined]
         assert lovric_actual == lovric_expected
