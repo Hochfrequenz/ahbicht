@@ -37,7 +37,7 @@ sphinx==6.2.1
     #   -r dev_requirements/requirements-docs.in
     #   sphinx-rtd-theme
     #   sphinxcontrib-jquery
-sphinx-rtd-theme==1.2.1
+sphinx-rtd-theme==1.2.2
     # via -r dev_requirements/requirements-docs.in
 sphinxcontrib-applehelp==1.0.4
     # via sphinx
