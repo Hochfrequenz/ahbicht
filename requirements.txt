@@ -10,7 +10,7 @@ attrs==23.1.0
     #   maus
 inject==5.0.0
     # via -r requirements.in
-lark==1.1.5
+lark==1.1.6
     # via -r requirements.in
 marshmallow==3.19.0
     # via
