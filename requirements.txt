@@ -12,7 +12,7 @@ inject==5.0.0
     # via -r requirements.in
 lark==1.1.7
     # via -r requirements.in
-marshmallow==3.19.0
+marshmallow==3.20.1
     # via
     #   -r requirements.in
     #   marshmallow-enum
