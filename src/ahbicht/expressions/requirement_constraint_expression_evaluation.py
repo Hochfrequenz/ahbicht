@@ -241,6 +241,21 @@ of the type RequirementConstraint, Hint or FormatConstraint."""
     return result
 
 
+class RequirementEvaluationFailedBecauseOfUnknownNodesError(NotImplementedError):
+    """
+    An exception that is raised when the evaluation of a requirement constraint fails because of
+    ConditionFulfilledValue.UNKNOWN nodes.
+    This is a problem for AhB Expressions with Model Mark "Muss" but not for "Soll".
+    """
+
+    def __init__(self, keys_of_unknown_nodes: list[str]):
+        super().__init__(
+            # pylint: disable=line-too-long
+            f"It is unknown if the conditions ({','.join(keys_of_unknown_nodes)}) are fulfilled due to missing information."
+        )
+        self.keys_of_unknown_nodes = keys_of_unknown_nodes
+
+
 async def requirement_constraint_evaluation(
     condition_expression: Union[str, Tree]
 ) -> RequirementConstraintEvaluationResult:
@@ -277,9 +292,7 @@ async def requirement_constraint_evaluation(
             if isinstance(node_value, RequirementConstraint)
             and node_value.conditions_fulfilled == ConditionFulfilledValue.UNKNOWN
         ]
-        raise NotImplementedError(
-            f"It is unknown if the conditions ({','.join(unknown_keys)}) are fulfilled due to missing information."
-        )
+        raise RequirementEvaluationFailedBecauseOfUnknownNodesError(unknown_keys)
 
     format_constraints_expression = getattr(resulting_condition_node, "format_constraints_expression", None)
     if isinstance(resulting_condition_node, UnevaluatedFormatConstraint):
