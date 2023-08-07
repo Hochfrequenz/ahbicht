@@ -407,7 +407,7 @@ async def validate_data_element_valuepool(
 
 
 def map_requirement_validation_values(
-    requirement_constraints_are_fulfilled: bool,
+    requirement_constraints_are_fulfilled: Optional[bool],
     requirement_indicator: RequirementIndicator,
     soll_is_required: bool = True,
 ) -> RequirementValidationValue:
@@ -427,9 +427,21 @@ def map_requirement_validation_values(
         else:
             requirement_indicator = ModalMark.KANN
 
-    if not requirement_constraints_are_fulfilled:
+    if requirement_constraints_are_fulfilled is False:
         requirement_validation = RequirementValidationValue.IS_FORBIDDEN
-    else:
+    elif requirement_constraints_are_fulfilled is None:
+        if requirement_indicator is ModalMark.MUSS or isinstance(requirement_indicator, PrefixOperator):
+            # This error is basically the postponed former RequirementEvaluationFailedBecauseOfUnknownNodesError.
+            # Raising this error here allows the users to use ConditionFulfilledValue.UNKNOWN in the evaluation module
+            # and only care about it again, if they're also using the validation module.
+            # https://github.com/Hochfrequenz/ahbicht/issues/275
+            raise NotImplementedError(
+                # pylint:disable=line-too-long
+                "It's unknown if the requirement constraints are met (most likely because at least one node evaluated to UNKNONW. A validation is meaningless in this case."
+            )
+        if requirement_indicator is ModalMark.KANN or requirement_indicator is ModalMark.SOLL:
+            requirement_validation = RequirementValidationValue.IS_OPTIONAL
+    else:  # True
         if requirement_indicator is ModalMark.MUSS or isinstance(requirement_indicator, PrefixOperator):
             requirement_validation = RequirementValidationValue.IS_REQUIRED
         elif requirement_indicator is ModalMark.KANN:
