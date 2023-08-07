@@ -14,7 +14,10 @@ from ahbicht.expressions.condition_nodes import (
     RequirementConstraint,
     UnevaluatedFormatConstraint,
 )
-from ahbicht.expressions.requirement_constraint_expression_evaluation import requirement_constraint_evaluation
+from ahbicht.expressions.requirement_constraint_expression_evaluation import (
+    RequirementEvaluationFailedBecauseOfUnknownNodesError,
+    requirement_constraint_evaluation,
+)
 from unittests.defaults import (
     empty_default_hints_provider,
     empty_default_rc_evaluator,
@@ -145,7 +148,7 @@ class TestRequirementConstraintEvaluation:
             pytest.param(
                 "[101]",
                 _input_values,
-                NotImplementedError,
+                RequirementEvaluationFailedBecauseOfUnknownNodesError,
                 "It is unknown if the conditions (101) are fulfilled due to missing information.",
             ),
         ],
