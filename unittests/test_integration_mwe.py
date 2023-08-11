@@ -6,15 +6,14 @@ from typing import List
 import inject
 import pytest  # type:ignore[import]
 import pytest_asyncio  # type:ignore[import]
-from maus import (
+from maus.models.anwendungshandbuch import AhbMetaInformation, DeepAnwendungshandbuch
+from maus.models.edifact_components import (
     DataElementFreeText,
     DataElementValuePool,
-    DeepAnwendungshandbuch,
     Segment,
     SegmentGroup,
     ValuePoolEntry,
 )
-from maus.models.anwendungshandbuch import AhbMetaInformation
 
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
 from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
