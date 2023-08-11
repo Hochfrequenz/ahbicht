@@ -6,7 +6,7 @@ of the condition expression tree are handled.
 The used terms are defined in the README_conditions.md.
 """
 
-from typing import List, Literal, Mapping, Type, Union
+from typing import List, Literal, Mapping, Optional, Type, Union
 
 from lark import Token, Tree, v_args
 from lark.exceptions import VisitError
@@ -263,23 +263,24 @@ async def requirement_constraint_evaluation(
 
     resulting_condition_node: EvaluatedComposition = evaluate_requirement_constraint_tree(parsed_tree_rc, input_nodes)
 
-    requirement_constraints_fulfilled: bool = (
+    requirement_constraints_fulfilled: Optional[bool] = (
         resulting_condition_node.conditions_fulfilled == ConditionFulfilledValue.FULFILLED
     )
-    requirement_is_conditional = True
+    requirement_is_conditional: Optional[bool] = True
     if resulting_condition_node.conditions_fulfilled == ConditionFulfilledValue.NEUTRAL:  # pylint:disable=no-member
         requirement_constraints_fulfilled = True
         requirement_is_conditional = False
     if resulting_condition_node.conditions_fulfilled == ConditionFulfilledValue.UNKNOWN:  # pylint:disable=no-member
-        unknown_keys = [
-            node_key
-            for node_key, node_value in input_nodes.items()
-            if isinstance(node_value, RequirementConstraint)
-            and node_value.conditions_fulfilled == ConditionFulfilledValue.UNKNOWN
-        ]
-        raise NotImplementedError(
-            f"It is unknown if the conditions ({','.join(unknown_keys)}) are fulfilled due to missing information."
-        )
+        # unknown_keys = [
+        #    node_key
+        #    for node_key, node_value in input_nodes.items()
+        #    if isinstance(node_value, RequirementConstraint)
+        #    and node_value.conditions_fulfilled == ConditionFulfilledValue.UNKNOWN
+        # ]
+        # a NotImplementedError was raised here in ahbicht<=v0.5.11
+        # https://github.com/Hochfrequenz/ahbicht/issues/275
+        requirement_constraints_fulfilled = None
+        requirement_is_conditional = None
 
     format_constraints_expression = getattr(resulting_condition_node, "format_constraints_expression", None)
     if isinstance(resulting_condition_node, UnevaluatedFormatConstraint):

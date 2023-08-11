@@ -350,3 +350,76 @@ class TestAHBExpressionEvaluation:
             assert evaluation_result is not None
         finally:
             inject.clear()
+
+    @pytest.mark.parametrize(
+        "ahb_expression, content_evaluation_result, expected",
+        [
+            pytest.param(
+                "Soll [1]",
+                ContentEvaluationResult(
+                    hints={},
+                    format_constraints={},
+                    requirement_constraints={
+                        "1": ConditionFulfilledValue.UNKNOWN,
+                    },
+                    id=uuid.UUID("9bdc494b-8e61-440b-a15d-eb5630916969"),
+                    packages={},
+                ),
+                AhbExpressionEvaluationResult(
+                    requirement_indicator=ModalMark.SOLL,
+                    requirement_constraint_evaluation_result=RequirementConstraintEvaluationResult(
+                        requirement_constraints_fulfilled=None,
+                        requirement_is_conditional=None,
+                        format_constraints_expression=None,
+                        hints=None,
+                    ),
+                    format_constraint_evaluation_result=FormatConstraintEvaluationResult(
+                        format_constraints_fulfilled=True
+                    ),
+                ),
+            ),
+            pytest.param(
+                "Muss [1]",
+                ContentEvaluationResult(
+                    hints={},
+                    format_constraints={},
+                    requirement_constraints={
+                        "1": ConditionFulfilledValue.UNKNOWN,
+                    },
+                    id=uuid.UUID("ba79e51c-6b74-44ed-ad53-66fba828b1b8"),
+                    packages={},
+                ),
+                AhbExpressionEvaluationResult(
+                    requirement_indicator=ModalMark.MUSS,
+                    requirement_constraint_evaluation_result=RequirementConstraintEvaluationResult(
+                        requirement_constraints_fulfilled=None,
+                        requirement_is_conditional=None,
+                        format_constraints_expression=None,
+                        hints=None,
+                    ),
+                    format_constraint_evaluation_result=FormatConstraintEvaluationResult(
+                        format_constraints_fulfilled=True
+                    ),
+                ),
+            ),
+        ],
+    )
+    async def test_no_not_implemented_error_is_raised_for_unknown_nodes(
+        self,
+        ahb_expression: str,
+        content_evaluation_result: ContentEvaluationResult,
+        expected: AhbExpressionEvaluationResult,
+    ):
+        tree = parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_expression)
+        try:
+            create_and_inject_hardcoded_evaluators(
+                content_evaluation_result,
+                evaluatable_data_provider=return_empty_dummy_evaluatable_data,
+                edifact_format=default_test_format,
+                edifact_format_version=default_test_version,
+            )
+            evaluation_result = await evaluate_ahb_expression_tree(tree)
+            assert evaluation_result is not None
+            assert evaluation_result == expected
+        finally:
+            inject.clear()

@@ -14,7 +14,7 @@ from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicP
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.expression_resolver import expand_packages
 from ahbicht.expressions.package_expansion import JsonFilePackageResolver, PackageResolver
-from ahbicht.mapping_results import PackageKeyConditionExpressionMapping
+from ahbicht.mapping_results import PackageKeyConditionExpressionMapping, Repeatability, parse_repeatability
 from unittests.defaults import DefaultPackageResolver, return_empty_dummy_evaluatable_data
 
 
@@ -103,3 +103,13 @@ class TestPackageResolver:
         log_entries: List[LogRecord] = caplog.records
         assert log_entries[0].message == "Instantiated JsonFilePackageResolver"
         assert log_entries[1].message.startswith("Resolved expression")
+
+    def test_how_to_access_repeatability_token(self):
+        """
+        This test demonstrates how to access the repeatability token from the parsed tree
+        We extract those tokens also in the PackageExpansionTransformer, but we don't do anything with them there yet.
+        """
+        unexpanded_tree = parse_condition_expression_to_tree("[1P2..3]")
+        assert unexpanded_tree is not None
+        repeatability_tokens = [token for token in unexpanded_tree.children if token.type == "REPEATABILITY"]
+        assert parse_repeatability(repeatability_tokens[0]) == Repeatability(min_occurrences=2, max_occurrences=3)

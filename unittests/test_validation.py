@@ -976,6 +976,16 @@ class TestValidation:
                 ModalMark.MUSS,
                 RequirementValidationValue.IS_FORBIDDEN,
             ),
+            pytest.param(
+                None,
+                ModalMark.SOLL,
+                RequirementValidationValue.IS_OPTIONAL,
+            ),
+            pytest.param(
+                None,
+                ModalMark.KANN,
+                RequirementValidationValue.IS_OPTIONAL,
+            ),
         ],
     )
     def test_map_requirement_validation_values_soll_not_required(
@@ -986,15 +996,24 @@ class TestValidation:
         )
         assert requirement_validation_value == expected_requirement_validation_value
 
+    def test_map_requirement_validation_values_muss_with_unknown_rcs(self):
+        with pytest.raises(NotImplementedError):
+            _ = map_requirement_validation_values(None, ModalMark.MUSS, soll_is_required=False)
+
     def test_map_requirement_validation_values_all_cases_are_covered(self):
         """
         A fuzzing test to make sure all possible input values are mapped
         """
         requirement_indicators: List[RequirementIndicator] = [x for x in ModalMark] + [x for x in PrefixOperator]
         for rcs_fulfilled, requirement_indicator, soll_is_required in product(
-            [True, False], requirement_indicators, [True, False]
+            [True, None, False], requirement_indicators, [True, False]
         ):
-            result = map_requirement_validation_values(rcs_fulfilled, requirement_indicator, soll_is_required)
+            try:
+                result = map_requirement_validation_values(rcs_fulfilled, requirement_indicator, soll_is_required)
+            except NotImplementedError:
+                if rcs_fulfilled is None:
+                    continue  # this case is ok
+                raise
             assert result is not None
             assert isinstance(result, RequirementValidationValue)
 

@@ -141,13 +141,6 @@ class TestRequirementConstraintEvaluation:
                 ValueError,
                 "Please make sure that the input values contain all necessary condition_keys.",
             ),
-            # unknown value as result
-            pytest.param(
-                "[101]",
-                _input_values,
-                NotImplementedError,
-                "It is unknown if the conditions (101) are fulfilled due to missing information.",
-            ),
         ],
     )
     async def test_evaluate_condition_expression_with_invalid_values(

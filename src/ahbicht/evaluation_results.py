@@ -19,9 +19,13 @@ class RequirementConstraintEvaluationResult:
     """
 
     #: true if condition expression in regard to requirement constraints evaluates to true
-    requirement_constraints_fulfilled: bool = attrs.field(validator=attrs.validators.instance_of(bool))
-    #: true if it is dependent on requirement constraints
-    requirement_is_conditional: bool = attrs.field(validator=attrs.validators.instance_of(bool))
+    requirement_constraints_fulfilled: Optional[bool] = attrs.field(
+        validator=attrs.validators.optional(attrs.validators.instance_of(bool))
+    )
+    #: true if it is dependent on requirement constraints; None if there are unknown condition nodes left
+    requirement_is_conditional: Optional[bool] = attrs.field(
+        validator=attrs.validators.optional(attrs.validators.instance_of(bool))
+    )
 
     format_constraints_expression: Optional[str] = attrs.field(
         default=None, validator=attrs.validators.optional(attrs.validators.instance_of(str))
