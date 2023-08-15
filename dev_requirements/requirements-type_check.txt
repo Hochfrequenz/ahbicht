@@ -8,7 +8,7 @@ mypy==1.5.0
     # via -r dev_requirements/requirements-type_check.in
 mypy-extensions==1.0.0
     # via mypy
-types-pytz==2023.3.0.0
+types-pytz==2023.3.0.1
     # via -r dev_requirements/requirements-type_check.in
 typing-extensions==4.5.0
     # via mypy
