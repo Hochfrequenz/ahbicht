@@ -66,14 +66,12 @@ rich==13.3.3
     # via twine
 secretstorage==3.3.3
     # via keyring
-setuptools-scm==7.1.0
+setuptools-scm==8.0.3
     # via -r dev_requirements/requirements-test_packaging.in
 six==1.16.0
     # via bleach
 twine==4.0.2
     # via -r dev_requirements/requirements-test_packaging.in
-typing-extensions==4.5.0
-    # via setuptools-scm
 urllib3==1.26.15
     # via
     #   requests
