@@ -6,7 +6,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: ["3.11"]
+        python-version: ["3.11"] # https://github.com/Hochfrequenz/ahbicht/issues/357
         os: [ubuntu-latest]
     steps:
       - uses: actions/checkout@v4
