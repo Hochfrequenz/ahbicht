@@ -8,7 +8,7 @@ attrs==23.1.0
     # via
     #   -r requirements.in
     #   maus
-inject==5.0.0
+inject==5.1.0
     # via -r requirements.in
 lark==1.1.7
     # via -r requirements.in
