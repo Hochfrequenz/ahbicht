@@ -20,6 +20,13 @@ __location__ = os.path.join(os.getcwd(), os.path.dirname(inspect.getfile(inspect
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.join(__location__, "../src"))
 
+# import package ahbicht and subpackage to clarify namespaces and prevent circular import errors
+from ahbicht import *
+from ahbicht.content_evaluation import *
+from ahbicht.expressions import *
+from ahbicht.json_serialization import *
+from ahbicht.validation import *
+
 # -- Run sphinx-apidoc ------------------------------------------------------
 # This hack is necessary since RTD does not issue `sphinx-apidoc` before running
 # `sphinx-build -b html . _build/html`. See Issue:
