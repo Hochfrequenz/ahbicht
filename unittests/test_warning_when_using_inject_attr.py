@@ -13,7 +13,7 @@ class SomethingInjectable:
 
 class RcEvaluatorThatUsesInjectAttr(EmptyDefaultRcEvaluator):
     # this won't work and the test proves it
-    something_injectable : SomethingInjectable = inject.attr(SomethingInjectable)
+    something_injectable: SomethingInjectable = inject.attr(SomethingInjectable)
 
 
 class TestErrorWhenUsingInjectAttr:
