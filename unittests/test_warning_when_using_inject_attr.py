@@ -12,7 +12,8 @@ class SomethingInjectable:
 
 
 class RcEvaluatorThatUsesInjectAttr(EmptyDefaultRcEvaluator):
-    something_injectable = inject.attr(SomethingInjectable)  # this won't work and the test proves it
+    # this won't work and the test proves it
+    something_injectable: SomethingInjectable = inject.attr(SomethingInjectable)
 
 
 class TestErrorWhenUsingInjectAttr:
