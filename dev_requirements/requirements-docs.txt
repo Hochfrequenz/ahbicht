@@ -20,7 +20,7 @@ idna==3.4
     # via requests
 imagesize==1.4.1
     # via sphinx
-jinja2==3.1.2
+jinja2==3.1.3
     # via sphinx
 markupsafe==2.1.2
     # via jinja2
@@ -34,12 +34,12 @@ snowballstemmer==2.2.0
     # via sphinx
 sphinx==7.2.6
     # via
-    #   -r dev_requirements/requirements-docs.in
+    #   -r requirements-docs.in
     #   sphinx-rtd-theme
     #   sphinxcontrib-jquery
     #   sphinxcontrib-serializinghtml
 sphinx-rtd-theme==2.0.0
-    # via -r dev_requirements/requirements-docs.in
+    # via -r requirements-docs.in
 sphinxcontrib-applehelp==1.0.4
     # via sphinx
 sphinxcontrib-devhelp==1.0.2
