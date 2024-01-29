@@ -25,5 +25,5 @@ more-itertools==9.0.0
     # via maus
 packaging==23.0
     # via marshmallow
-pytz==2023.3.post1
+pytz==2023.4
     # via -r requirements.in
