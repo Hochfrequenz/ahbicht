@@ -6,8 +6,8 @@
 #
 bleach==6.0.0
     # via readme-renderer
-build==1.0.3
-    # via -r requirements-test_packaging.in
+build==1.1.1
+    # via -r dev_requirements/requirements-test_packaging.in
 certifi==2023.7.22
     # via requests
 cffi==1.15.1
@@ -67,11 +67,11 @@ rich==13.3.3
 secretstorage==3.3.3
     # via keyring
 setuptools-scm==8.0.4
-    # via -r requirements-test_packaging.in
+    # via -r dev_requirements/requirements-test_packaging.in
 six==1.16.0
     # via bleach
 twine==5.0.0
-    # via -r requirements-test_packaging.in
+    # via -r dev_requirements/requirements-test_packaging.in
 typing-extensions==4.5.0
     # via setuptools-scm
 urllib3==1.26.18
