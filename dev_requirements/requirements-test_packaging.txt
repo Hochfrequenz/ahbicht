@@ -76,7 +76,7 @@ setuptools-scm==8.1.0
     # via -r requirements-test_packaging.in
 twine==5.1.0
     # via -r requirements-test_packaging.in
-urllib3==2.2.1
+urllib3==1.26.19
     # via
     #   requests
     #   twine
