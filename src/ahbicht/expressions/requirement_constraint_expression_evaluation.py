@@ -121,6 +121,7 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
         elif composition == "xor_composition":
             resulting_conditions_fulfilled = left.conditions_fulfilled ^ right.conditions_fulfilled
         # resulting_conditions_fulfilled is never referenced before assignment when you obey the type hint
+        # pylint:disable=possibly-used-before-assignment
         evaluated_composition = EvaluatedComposition(conditions_fulfilled=resulting_conditions_fulfilled)
         return evaluated_composition
 
