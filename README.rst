@@ -75,6 +75,8 @@ Easily Integrate AHBicht with Your Solution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 If you want to use AHBicht together with your own software, you can use the `JSON Schema files <json_schemas>`__ provided to kick start the integration.
 
+There is a fully typed .NET client available: `AhbichtClient.NET <https://github.com/Hochfrequenz/AhbichtClient.net>`_
+
 Code Quality / Production Readiness
 -----------------------------------
 
