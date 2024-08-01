@@ -21,5 +21,5 @@ class RequirementValidationValue(StrEnum):
     IS_OPTIONAL_AND_EMPTY = "IS_OPTIONAL_AND_EMPTY"  #: field is optional and empty
     IS_OPTIONAL_AND_FILLED = "IS_OPTIONAL_AND_FILLED"  #: field is optional and filled
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.value

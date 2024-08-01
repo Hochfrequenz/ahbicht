@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Optional, Union
 import attrs
 import maus.models.edifact_components
 from marshmallow import Schema, fields, post_load
-from marshmallow_enum import EnumField  # type:ignore[import]
+from marshmallow_enum import EnumField  # type:ignore[import-untyped]
 
 from ahbicht.validation.validation_values import RequirementValidationValue
 
@@ -42,7 +42,7 @@ class ValidationResultSchema(ValidationResultAttributesSchema):
     """
 
     @post_load
-    def deserialize(self, data, **kwargs) -> ValidationResult:
+    def deserialize(self, data, **kwargs) -> ValidationResult:  # type:ignore[no-untyped-def]
         """
         Converts the barely typed data dictionary into an actual ValidationResult
         :param data:
@@ -51,7 +51,7 @@ class ValidationResultSchema(ValidationResultAttributesSchema):
         """
         return ValidationResult(**data)
 
-    def dump(self, obj, **kwargs) -> Union[Any, list]:
+    def dump(self, obj, **kwargs) -> Union[Any, Dict[str,Any] ]: # type:ignore[no-untyped-def]
         """
         A way to dump the subclasses DataElementValidationResult and SegmentLevelValidationResult
         of ValidationResult
@@ -77,7 +77,7 @@ class SegmentLevelValidationResultSchema(ValidationResultAttributesSchema):
     """
 
     @post_load
-    def deserialize(self, data, **kwargs) -> SegmentLevelValidationResult:
+    def deserialize(self, data, **kwargs) -> SegmentLevelValidationResult:  # type:ignore[no-untyped-def]
         """
         Converts the barely typed data dictionary into an actual ValidationResult
         :param data:
@@ -132,7 +132,7 @@ class DataElementValidationResultSchema(ValidationResultAttributesSchema):
     )
 
     @post_load
-    def deserialize(self, data, **kwargs) -> DataElementValidationResult:
+    def deserialize(self, data, **kwargs) -> DataElementValidationResult:  # type:ignore[no-untyped-def]
         """
         Converts the barely typed data dictionary into an actual DataElementValidationResult
         :param data:
@@ -162,7 +162,7 @@ class ValidationResultInContextSchema(Schema):
 
     # pylint:disable=unused-argument
     @post_load
-    def deserialize(self, data, **kwargs) -> ValidationResultInContext:
+    def deserialize(self, data, **kwargs) -> ValidationResultInContext:  # type:ignore[no-untyped-def]
         """
         Serializes a ValidationResultDiscriminator
         so that the discriminator is the key and the validation_result the value.
@@ -249,7 +249,7 @@ class ListOfValidationResultInContextSchema(Schema):
 
     # pylint:disable=unused-argument
     @post_load
-    def deserialize(self, data, **kwargs) -> ListOfValidationResultInContext:
+    def deserialize(self, data, **kwargs) -> ListOfValidationResultInContext: # type:ignore[no-untyped-def]
         """
         Deserializes a ValidationResultDiscriminator
         """

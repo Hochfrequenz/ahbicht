@@ -24,7 +24,7 @@ class InvalidExpressionError(BaseException):
         self.invalid_expression = invalid_expression
         self.error_message = error_message
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.invalid_expression is None:
             return f"{self.__class__}: Invalid expression because: {self.error_message}"
         return f"{self.__class__}: The expression '{self.invalid_expression}' in invalid because: {self.error_message}"

@@ -93,12 +93,12 @@ class RequirementIndicatorSchema(Schema):
     value = fields.String()
 
     @pre_load
-    def pre_load(self, data, **kwargs) -> Dict[Literal["value"], str]:
+    def pre_load(self, data, **kwargs) -> Dict[Literal["value"], str]:  # type:ignore[no-untyped-def]
         """puts the value in an artificial dictionary"""
         return {"value": data}
 
     @post_load
-    def post_load(self, data, **kwargs) -> RequirementIndicator:
+    def post_load(self, data, **kwargs) -> RequirementIndicator: # type:ignore[no-untyped-def]
         """tries to parse the data as either PrefixOperator or ModalMark"""
         try:
             return ModalMark(data["value"])
@@ -106,7 +106,7 @@ class RequirementIndicatorSchema(Schema):
             return PrefixOperator(data["value"])
 
     @post_dump
-    def post_dump(self, data, **kwargs):
+    def post_dump(self, data, **kwargs):  # type:ignore[no-untyped-def]
         """
         returns the enum value as upper case
         """

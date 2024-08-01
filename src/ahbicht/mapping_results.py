@@ -6,7 +6,7 @@ from typing import Match, Optional
 
 import attrs
 from marshmallow import Schema, fields, post_load
-from marshmallow_enum import EnumField  # type:ignore[import]
+from marshmallow_enum import EnumField  # type:ignore[import-untyped]
 from maus.edifact import EdifactFormat
 
 
@@ -40,8 +40,9 @@ class ConditionKeyConditionTextMappingSchema(Schema):
     condition_text = fields.String(load_default=None)
 
     # pylint:disable=unused-argument
+
     @post_load
-    def deserialize(self, data, **kwargs) -> ConditionKeyConditionTextMapping:
+    def deserialize(self, data, **kwargs) -> ConditionKeyConditionTextMapping:  # type:ignore[no-untyped-def]
         """
         Converts the barely typed data dictionary into an actual :class:`.ConditionKeyConditionTextMapping`
         """
@@ -84,7 +85,7 @@ class PackageKeyConditionExpressionMappingSchema(Schema):
 
     # pylint:disable=unused-argument
     @post_load
-    def deserialize(self, data, **kwargs) -> PackageKeyConditionExpressionMapping:
+    def deserialize(self, data, **kwargs) -> PackageKeyConditionExpressionMapping:  # type:ignore[no-untyped-def]
         """
         Converts the barely typed data dictionary into an actual :class:`.PackageKeyConditionExpressionMapping`
         """
@@ -92,7 +93,7 @@ class PackageKeyConditionExpressionMappingSchema(Schema):
 
 
 # pylint:disable=unused-argument
-def check_max_greater_or_equal_than_min(instance: "Repeatability", attribute, value):
+def check_max_greater_or_equal_than_min(instance: "Repeatability", attribute, value):  # type:ignore[no-untyped-def]
     """
     assert that 0<=min<max and not both min and max are 0
     """

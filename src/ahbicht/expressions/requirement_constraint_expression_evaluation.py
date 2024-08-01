@@ -64,7 +64,7 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
 
     def _or_xor_composition(
         self, left: ConditionNode, right: ConditionNode, composition: Literal["or_composition", "xor_composition"]
-    ):
+    ) -> EvaluatedComposition:
         """
         Determine the condition_fulfilled attribute for or_/xor_compostions.
         """
@@ -215,7 +215,7 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
 
 
 def evaluate_requirement_constraint_tree(
-    parsed_tree: Tree, input_values: Mapping[str, TRCTransformerArgument]
+    parsed_tree: Tree[Token], input_values: Mapping[str, TRCTransformerArgument]
 ) -> EvaluatedComposition:
     """
     Evaluates the tree built from the expressions with the help of the ConditionsTransformer.
@@ -243,7 +243,7 @@ of the type RequirementConstraint, Hint or FormatConstraint."""
 
 
 async def requirement_constraint_evaluation(
-    condition_expression: Union[str, Tree]
+    condition_expression: Union[str, Tree[Token]]
 ) -> RequirementConstraintEvaluationResult:
     """
     Evaluation of the condition expression in regard to the requirement conditions (rc).
@@ -251,14 +251,12 @@ async def requirement_constraint_evaluation(
     that has already been parsed.
     """
     if isinstance(condition_expression, str):
-        parsed_tree_rc: Tree = parse_condition_expression_to_tree(condition_expression)
+        parsed_tree_rc: Tree[Token] = parse_condition_expression_to_tree(condition_expression)
     else:
         parsed_tree_rc = condition_expression
 
     # get all condition keys from tree
-    all_condition_keys: List[str] = [
-        t.value for t in parsed_tree_rc.scan_values(lambda v: isinstance(v, Token))  # type: ignore[attr-defined]
-    ]
+    all_condition_keys: List[str] = [t.value for t in parsed_tree_rc.scan_values(lambda v: isinstance(v, Token))]
     condition_node_builder = ConditionNodeBuilder(all_condition_keys)
     input_nodes = await condition_node_builder.requirement_content_evaluation_for_all_condition_keys()
 
