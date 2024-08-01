@@ -447,7 +447,7 @@ def map_requirement_validation_values(
         elif requirement_indicator is ModalMark.KANN:
             requirement_validation = RequirementValidationValue.IS_OPTIONAL
 
-    return requirement_validation # pylint:disable=possibly-used-before-assignment
+    return requirement_validation  # pylint:disable=possibly-used-before-assignment
 
 
 def combine_requirements_of_different_levels(
