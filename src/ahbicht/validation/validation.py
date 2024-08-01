@@ -391,7 +391,7 @@ async def validate_data_element_valuepool(
     result = DataElementValidationResult(
         requirement_validation=requirement_validation_data_element,
         format_validation_fulfilled=fc_validation_result,
-        hints=hints,  # todo: hints might be referenced before assignment
+        hints=hints,  # pylint:disable=possibly-used-before-assignment
         possible_values=possible_values,
         data_element_data_type=DataElementDataType.VALUE_POOL,
     )
@@ -447,7 +447,7 @@ def map_requirement_validation_values(
         elif requirement_indicator is ModalMark.KANN:
             requirement_validation = RequirementValidationValue.IS_OPTIONAL
 
-    return requirement_validation
+    return requirement_validation  # pylint:disable=possibly-used-before-assignment
 
 
 def combine_requirements_of_different_levels(
