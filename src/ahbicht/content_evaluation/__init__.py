@@ -48,7 +48,7 @@ async def is_valid_expression(
         # create (but do not await) the evaluation tasks for all possible content evaluation results
         # the idea is, that if _any_ evaluation task raises an uncatched exception this can be interpreted as:
         # "the expression is invalid"
-        async def evaluate_with_cer(cer: ContentEvaluationResult):
+        async def evaluate_with_cer(cer: ContentEvaluationResult) -> None:
             content_evaluation_result_setter(cer)
             try:
                 await evaluate_ahb_expression_tree(tree)

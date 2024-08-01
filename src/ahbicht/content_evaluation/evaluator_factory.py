@@ -111,7 +111,7 @@ def create_and_inject_hardcoded_evaluators(
         content_evaluation_result, edifact_format=edifact_format, edifact_format_version=edifact_format_version
     )
 
-    def configure(binder):
+    def configure(binder):  # type:ignore[no-untyped-def]
         binder.bind(TokenLogicProvider, SingletonTokenLogicProvider([*evaluators]))
         if evaluatable_data_provider is not None:
             binder.bind_to_provider(EvaluatableDataProvider, evaluatable_data_provider)

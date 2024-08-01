@@ -5,7 +5,7 @@ import asyncio
 import inspect
 from typing import Awaitable, Callable, List, TypeVar, Union
 
-from lark import Tree
+from lark import Tree, Token
 
 from ahbicht.expressions import parsing_logger
 
@@ -39,7 +39,7 @@ We use it to log cache accesses but not spam at log level DEBUG.
 """
 
 
-def tree_copy(lru_cached_parsing_func: Callable[[str], Tree]):
+def tree_copy(lru_cached_parsing_func: Callable[[str], Tree[Token]]):
     """
     A decorator that returns copy of the cached result from the lru_cached_parsing_func.
     Rationale: We want to cache the tree for various expressions because this is definitely faster than re-parsing it.
@@ -51,7 +51,7 @@ def tree_copy(lru_cached_parsing_func: Callable[[str], Tree]):
     :return: the decorated function that always returns a copy of the cached result instead of the same instance
     """
 
-    def decorated(*args, **kwargs):
+    def decorated(*args, **kwargs):  # type:ignore[no-untyped-def]
         cache_size_before_parsing = lru_cached_parsing_func.cache_info().currsize
         tree_result: Tree = lru_cached_parsing_func(*args, **kwargs)
         cache_size_after_parsing = lru_cached_parsing_func.cache_info().currsize

@@ -48,7 +48,7 @@ class RequirementConstraintEvaluationResultSchema(Schema):
     hints = fields.String(load_default=None)
 
     @post_load
-    def deserialize(self, data, **kwargs) -> RequirementConstraintEvaluationResult:
+    def deserialize(self, data, **kwargs) -> RequirementConstraintEvaluationResult:  # type:ignore[no-untyped-def]
         """
         Converts the barely typed data dictionary into an actual RequirementConstraintEvaluationResult
         :param data:
@@ -82,7 +82,7 @@ class FormatConstraintEvaluationResultSchema(Schema):
     error_message = fields.String(allow_none=True, load_default=None)
 
     @post_load
-    def deserialize(self, data, **kwargs) -> FormatConstraintEvaluationResult:
+    def deserialize(self, data, **kwargs) -> FormatConstraintEvaluationResult:  # type:ignore[no-untyped-def]
         """
         Converts the barely typed data dictionary into an actual FormatConstraintEvaluationResult
         :param data:
@@ -113,7 +113,7 @@ class AhbExpressionEvaluationResultSchema(Schema):
     format_constraint_evaluation_result = fields.Nested(FormatConstraintEvaluationResultSchema())
 
     @post_load
-    def deserialize(self, data, **kwargs) -> AhbExpressionEvaluationResult:
+    def deserialize(self, data, **kwargs) -> AhbExpressionEvaluationResult:  # type:ignore[no-untyped-def]
         """
         Converts the barely typed data dictionary into an actual AhbExpressionEvaluationResult
         """

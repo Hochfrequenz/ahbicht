@@ -3,7 +3,7 @@ Module to create expressions from scratch.
 """
 import re
 from abc import ABC, abstractmethod
-from typing import Generic, Optional, Protocol, Type, TypeVar, Union
+from typing import Generic, Optional, Protocol, Type, TypeVar, Union, Self
 
 from ahbicht.expressions.condition_nodes import (
     ConditionNode,
@@ -192,7 +192,7 @@ class HintExpressionBuilder(ExpressionBuilder[ClassesWithHintAttribute]):
     def get_expression(self) -> Optional[str]:
         return self._expression
 
-    def land(self, other: Optional[_ClassesWithHintAttribute]) -> ExpressionBuilder:
+    def land(self, other: Optional[_ClassesWithHintAttribute]) ->Self:
         if other is not None:
             if self._expression:
                 self._expression += f" und {HintExpressionBuilder.get_hint_text(other)}"
@@ -200,7 +200,7 @@ class HintExpressionBuilder(ExpressionBuilder[ClassesWithHintAttribute]):
                 self._expression = HintExpressionBuilder.get_hint_text(other)
         return self
 
-    def lor(self, other: Optional[_ClassesWithHintAttribute]) -> ExpressionBuilder:
+    def lor(self, other: Optional[_ClassesWithHintAttribute]) ->Self:
         if other is not None:
             if self._expression:
                 self._expression += f" oder {HintExpressionBuilder.get_hint_text(other)}"
@@ -208,7 +208,7 @@ class HintExpressionBuilder(ExpressionBuilder[ClassesWithHintAttribute]):
                 self._expression = HintExpressionBuilder.get_hint_text(other)
         return self
 
-    def xor(self, other: Optional[_ClassesWithHintAttribute]) -> ExpressionBuilder:
+    def xor(self, other: Optional[_ClassesWithHintAttribute]) -> Self:
         if other is not None:
             if self._expression:
                 self._expression = f"Entweder ({self._expression}) oder ({HintExpressionBuilder.get_hint_text(other)})"
@@ -231,7 +231,7 @@ class FormatErrorMessageExpressionBuilder(ExpressionBuilder[EvaluatedFormatConst
     def get_expression(self) -> Optional[str]:
         return self._expression
 
-    def land(self, other: EvaluatedFormatConstraint) -> ExpressionBuilder:
+    def land(self, other: EvaluatedFormatConstraint) -> Self:
         if other.format_constraint_fulfilled is True:
             # If a format constraint is connected with "logical and" to another format constraint which is fulfilled,
             # then the remaining expression/error message stays the same.
@@ -243,14 +243,14 @@ class FormatErrorMessageExpressionBuilder(ExpressionBuilder[EvaluatedFormatConst
                 self._expression = f"'{self._expression}' und '{other.error_message}'"
         return self
 
-    def lor(self, other: EvaluatedFormatConstraint) -> ExpressionBuilder:
+    def lor(self, other: EvaluatedFormatConstraint) -> Self:
         if self.format_constraint_fulfilled is False and other.format_constraint_fulfilled is False:
             self._expression = f"'{self._expression}' oder '{other.error_message}'"
         else:
             self._expression = None
         return self
 
-    def xor(self, other: EvaluatedFormatConstraint) -> ExpressionBuilder:
+    def xor(self, other: EvaluatedFormatConstraint) -> Self:
         if self.format_constraint_fulfilled is False and other.format_constraint_fulfilled is False:
             self._expression = f"Entweder '{self._expression}' oder '{other.error_message}'"
         elif self.format_constraint_fulfilled is True and other.format_constraint_fulfilled is True:

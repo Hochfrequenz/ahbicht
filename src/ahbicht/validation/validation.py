@@ -229,7 +229,7 @@ async def get_segment_level_requirement_validation_value(
 async def validate_data_element(
     data_element: DataElement,
     segment_requirement: RequirementValidationValue,
-    soll_is_required=True,
+    soll_is_required: bool = True,
 ) -> ValidationResultInContext:
     """
     Validates data elements by handing them over to specialized functions for freetext or value pool data elements.
@@ -248,7 +248,7 @@ async def validate_data_element(
 async def validate_data_element_freetext(
     data_element: DataElementFreeText,
     segment_requirement: Optional[RequirementValidationValue] = None,
-    soll_is_required=True,
+    soll_is_required: bool = True,
 ) -> ValidationResultInContext:
     """
     Validates a freetext data element, e.g. 'Dokumentennummer'.
@@ -278,7 +278,7 @@ async def validate_data_element_freetext(
                 hints=invalid_expr_error.error_message,
                 data_element_data_type=DataElementDataType.TEXT,
             ),
-            discriminator=data_element.discriminator,  # type:ignore[arg-type]
+            discriminator=data_element.discriminator,
         )
 
     # requirement constraints
@@ -311,7 +311,7 @@ async def validate_data_element_freetext(
         str(result),
     )
     return ValidationResultInContext(
-        discriminator=data_element.discriminator,  # type:ignore[arg-type]
+        discriminator=data_element.discriminator,
         validation_result=result,
     )
 
@@ -401,7 +401,7 @@ async def validate_data_element_valuepool(
         str(result),
     )
     return ValidationResultInContext(
-        discriminator=data_element.discriminator,  # type:ignore[arg-type]
+        discriminator=data_element.discriminator,
         validation_result=result,
     )
 

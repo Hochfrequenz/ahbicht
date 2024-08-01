@@ -119,7 +119,7 @@ class ContentEvaluationResultBasedRcEvaluator(RcEvaluator):
     Other than the DictBasedRcEvaluator the outcome is not dependent on the initialization but on the evaluatable data.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._schema: ContentEvaluationResultSchema = ContentEvaluationResultSchema()
 

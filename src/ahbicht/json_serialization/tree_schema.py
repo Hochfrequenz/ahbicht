@@ -2,7 +2,7 @@
 Schemata for the JSON serialization of expressions.
 """
 
-from typing import Optional, Union
+from typing import Optional, Union, Literal, Dict,Any
 
 from lark import Token, Tree
 from marshmallow import Schema, fields, post_load, pre_dump
@@ -17,12 +17,12 @@ class _TokenOrTree:
     A class that is easily serializable as dictionary and allows us to _not_ use the marshmallow-union package.
     """
 
-    def __init__(self, token: Optional[Token] = None, tree: Optional[Tree] = None):
+    def __init__(self, token: Optional[Token] = None, tree: Optional[Tree[Token]] = None):
         self.token = token
         self.tree = tree
 
     token: Optional[Token]
-    tree: Optional[Tree]
+    tree: Optional[Tree[Token]]
 
 
 class _TokenOrTreeSchema(Schema):
@@ -41,7 +41,7 @@ class _TokenOrTreeSchema(Schema):
     )
 
     @post_load
-    def deserialize(self, data, **kwargs) -> Union[str, Tree, Token]:
+    def deserialize(self, data:Dict[Literal["tree", "token"], Any], **kwargs) -> Union[str, Tree[Token], Token]:  # type:ignore[no-untyped-def]
         """
         convert a dictionary back to a string, Tree or Token
         :param data:
@@ -57,7 +57,7 @@ class _TokenOrTreeSchema(Schema):
         return data
 
     @pre_dump
-    def prepare_tree_for_serialization(self, data, **kwargs) -> _TokenOrTree:
+    def prepare_tree_for_serialization(self, data, **kwargs) -> _TokenOrTree:  # type:ignore[no-untyped-def]
         """
         Create a string of tree object
         :param data:
@@ -80,7 +80,7 @@ class TokenSchema(Schema):
     type = fields.String(dump_default=False, data_key="type")
 
     @post_load
-    def deserialize(self, data, **kwargs) -> Token:
+    def deserialize(self, data, **kwargs) -> Token:  # type:ignore[no-untyped-def]
         """
         converts the barely typed data dictionary into an actual Tree
         :param data:
@@ -100,7 +100,7 @@ class TreeSchema(Schema):
     children = fields.List(fields.Nested(lambda: _TokenOrTreeSchema()))  # pylint: disable=unnecessary-lambda
 
     @post_load
-    def deserialize(self, data, **kwargs) -> Tree:
+    def deserialize(self, data, **kwargs) -> Tree[Token]:
         """
         converts the barely typed data dictionary into an actual Tree
         :param data:

@@ -30,7 +30,7 @@ class PackageResolver(ABC):
         "The inheriting package resolver needs to define a format version."
     )  #: the format version for which the resolver may be used
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.logger = logging.getLogger(self.__module__)
         self.logger.setLevel(logging.DEBUG)
         self.logger.info("Instantiated %s", self.__class__.__name__)
@@ -120,7 +120,7 @@ class ContentEvaluationResultBasedPackageResolver(PackageResolver):
     evaluatable data.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._schema = ContentEvaluationResultSchema()
 

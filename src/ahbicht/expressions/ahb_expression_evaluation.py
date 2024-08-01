@@ -31,7 +31,7 @@ _str_to_modal_mark_mapping: Dict[str, ModalMark] = {
 
 # pylint: disable=invalid-name
 # invalid-name: That's also the reason why they seemingly violate the naming conventions.
-class AhbExpressionTransformer(Transformer):
+class AhbExpressionTransformer(Transformer[Token, Union[str, PrefixOperator, ModalMark]]):
     """
     Transformer, that evaluates the trees built from the ahb expressions.
     The input are the conditions as defined in the AHBs in the form of ConditionNodes.
@@ -39,7 +39,7 @@ class AhbExpressionTransformer(Transformer):
     their respective condition expressions already evaluated to booleans.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         The input are the evaluated format constraint conditions in the form of ConditionNodes.
         """
@@ -47,7 +47,7 @@ class AhbExpressionTransformer(Transformer):
 
     def CONDITION_EXPRESSION(self, condition_expression: Token) -> str:
         """Returns the condition expression."""
-        return condition_expression.value
+        return condition_expression.value  # type:ignore[no-any-return]
 
     def PREFIX_OPERATOR(self, prefix_operator: Token) -> PrefixOperator:
         """Returns the prefix operator."""
@@ -59,7 +59,7 @@ class AhbExpressionTransformer(Transformer):
 
     @v_args(inline=True)  # Children are provided as *args instead of a list argument
     def single_requirement_indicator_expression(
-        self, requirement_indicator: RequirementIndicator, condition_expression
+        self, requirement_indicator: RequirementIndicator, condition_expression: Union[str, Tree[Token]]
     ) -> Awaitable[AhbExpressionEvaluationResult]:
         """
         Evaluates the condition expression of the respective requirement indicator expression and returns a list of the
@@ -68,7 +68,7 @@ class AhbExpressionTransformer(Transformer):
         return self._single_requirement_indicator_expression_async(requirement_indicator, condition_expression)
 
     async def _single_requirement_indicator_expression_async(
-        self, requirement_indicator: RequirementIndicator, condition_expression
+        self, requirement_indicator: RequirementIndicator, condition_expression: Union[str, Tree[Token]]
     ) -> AhbExpressionEvaluationResult:
         """
         See :meth:`single_requirement_indicator_expression_async`
@@ -146,7 +146,7 @@ class AhbExpressionTransformer(Transformer):
 
 
 async def evaluate_ahb_expression_tree(
-    parsed_tree: Tree,
+    parsed_tree: Tree[Token],
 ) -> AhbExpressionEvaluationResult:
     """
     Evaluates the tree built from the ahb expressions with the help of the AhbExpressionTransformer.
