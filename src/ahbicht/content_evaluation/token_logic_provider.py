@@ -4,7 +4,7 @@ Contains a class that is able to provide any RC/FC Evaluator, HintsProvider or P
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional, Union
 
-from maus.edifact import EdifactFormat, EdifactFormatVersion
+from efoli import EdifactFormat, EdifactFormatVersion
 
 from ahbicht.content_evaluation.evaluators import Evaluator
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator

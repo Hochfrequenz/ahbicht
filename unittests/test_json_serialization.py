@@ -6,8 +6,8 @@ import uuid
 from typing import List, TypeVar
 
 import pytest  # type:ignore[import]
+from efoli import EdifactFormat
 from marshmallow import Schema, ValidationError
-from maus.edifact import EdifactFormat
 from maus.models.edifact_components import DataElementDataType
 
 from ahbicht.content_evaluation.categorized_key_extract import CategorizedKeyExtract, CategorizedKeyExtractSchema

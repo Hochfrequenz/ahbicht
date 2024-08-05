@@ -10,7 +10,7 @@ from abc import ABC
 from typing import Callable, Dict, Optional
 
 import inject
-from maus.edifact import EdifactFormat, EdifactFormatVersion
+from efoli import EdifactFormat, EdifactFormatVersion
 
 # pylint: disable=too-few-public-methods
 

@@ -6,7 +6,7 @@ Inject them to have a concise test setup.
 from itertools import cycle
 from typing import Iterator
 
-from maus.edifact import EdifactFormat, EdifactFormatVersion
+from efoli import EdifactFormat, EdifactFormatVersion
 
 #: the default edifact format used in the unit tests
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData

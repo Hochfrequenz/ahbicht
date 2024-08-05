@@ -5,9 +5,9 @@ import re
 from typing import Match, Optional
 
 import attrs
+from efoli import EdifactFormat
 from marshmallow import Schema, fields, post_load
 from marshmallow_enum import EnumField  # type:ignore[import]
-from maus.edifact import EdifactFormat
 
 
 # pylint:disable=too-few-public-methods

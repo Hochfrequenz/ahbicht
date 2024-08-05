@@ -12,7 +12,7 @@ the evaluators are created based on the already known outcomes. You do not have 
 from typing import Callable, Iterable, Optional, Protocol, Tuple
 
 import inject
-from maus.edifact import EdifactFormat, EdifactFormatVersion
+from efoli import EdifactFormat, EdifactFormatVersion
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider

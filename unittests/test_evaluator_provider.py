@@ -2,7 +2,7 @@ from typing import List
 
 import pytest  # type:ignore[import]
 from _pytest.fixtures import SubRequest  # type:ignore[import]
-from maus.edifact import EdifactFormat, EdifactFormatVersion
+from efoli import EdifactFormat, EdifactFormatVersion
 
 from ahbicht.content_evaluation.evaluators import Evaluator
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
