@@ -93,19 +93,19 @@ def extract_categorized_keys_from_tree(
         condition_keys = tree_or_list
     elif isinstance(tree_or_list, Tree):
         condition_keys = [
-            x.value  # type:ignore[attr-defined]
+            x.value
             for x in tree_or_list.scan_values(
                 lambda token: token.type == "CONDITION_KEY"  # type:ignore[union-attr]
             )
         ]
         result.package_keys = [
-            x.value  # type:ignore[attr-defined]
+            x.value
             for x in tree_or_list.scan_values(
                 lambda token: token.type == "PACKAGE_KEY"  # type:ignore[union-attr]
             )
         ]
         result.time_condition_keys = [
-            x.value  # type:ignore[attr-defined]
+            x.value
             for x in tree_or_list.scan_values(
                 lambda token: token.type == "TIME_CONDITION_KEY"  # type:ignore[union-attr]
             )

@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Optional, Union
 import attrs
 import maus.models.edifact_components
 from marshmallow import Schema, fields, post_load
-from marshmallow_enum import EnumField  # type:ignore[import]
+from marshmallow_enum import EnumField  # type:ignore[import-untyped]
 
 from ahbicht.validation.validation_values import RequirementValidationValue
 

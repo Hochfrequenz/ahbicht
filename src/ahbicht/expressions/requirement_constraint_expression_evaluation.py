@@ -256,9 +256,7 @@ async def requirement_constraint_evaluation(
         parsed_tree_rc = condition_expression
 
     # get all condition keys from tree
-    all_condition_keys: List[str] = [
-        t.value for t in parsed_tree_rc.scan_values(lambda v: isinstance(v, Token))  # type: ignore[attr-defined]
-    ]
+    all_condition_keys: List[str] = [t.value for t in parsed_tree_rc.scan_values(lambda v: isinstance(v, Token))]
     condition_node_builder = ConditionNodeBuilder(all_condition_keys)
     input_nodes = await condition_node_builder.requirement_content_evaluation_for_all_condition_keys()
 

@@ -76,9 +76,9 @@ async def _replace_sub_coroutines_with_awaited_results(tree: Union[Tree, Awaitab
         result = await tree
     else:
         # if the tree type hint is correct this is always a tree if it's not awaitable
-        result = tree  # type:ignore[assignment]
+        result = tree
     # todo: check why lark type hints state the return value of scan_values is always Iterator[str]
-    sub_results = await asyncio.gather(*result.scan_values(asyncio.iscoroutine))  # type:ignore[call-overload]
+    sub_results = await asyncio.gather(*result.scan_values(asyncio.iscoroutine))
     for coro, sub_result in zip(result.scan_values(asyncio.iscoroutine), sub_results):
         for sub_tree in result.iter_subtrees():
             for child_index, child in enumerate(sub_tree.children):
@@ -140,7 +140,7 @@ class PackageExpansionTransformer(Transformer):
         if not resolved_package.has_been_resolved_successfully():
             raise NotImplementedError(f"The package '{package_key_token.value}' could not be resolved by {resolver}")
         # the package_expression is not None because that's the definition of "has been resolved successfully"
-        tree_result = parse_condition_expression_to_tree(resolved_package.package_expression)  # type:ignore[arg-type]
+        tree_result = parse_condition_expression_to_tree(resolved_package.package_expression)
         return tree_result
 
 
