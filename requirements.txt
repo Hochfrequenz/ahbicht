@@ -8,6 +8,8 @@ attrs==23.2.0
     # via
     #   -r requirements.in
     #   maus
+efoli==1.1.0
+    # via maus
 inject==5.2.1
     # via -r requirements.in
 lark==1.1.9
@@ -19,11 +21,13 @@ marshmallow==3.21.3
     #   maus
 marshmallow-enum==1.5.1
     # via -r requirements.in
-maus==0.5.3
+maus==0.6.0
     # via -r requirements.in
 more-itertools==9.0.0
     # via maus
 packaging==23.0
     # via marshmallow
 pytz==2024.1
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   efoli
