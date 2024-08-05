@@ -4,7 +4,7 @@ Dataclasses that are relevant in the context of the content_evaluation.
 from dataclasses import dataclass, replace
 from typing import Generic, Optional, TypeVar
 
-from maus.edifact import EdifactFormat, EdifactFormatVersion
+from efoli import EdifactFormat, EdifactFormatVersion
 
 _BodyT = TypeVar("_BodyT")
 """

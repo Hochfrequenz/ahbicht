@@ -7,7 +7,7 @@ from logging import LogRecord
 from typing import List
 
 import pytest  # type:ignore[import]
-from maus.edifact import EdifactFormat, EdifactFormatVersion
+from efoli import EdifactFormat, EdifactFormatVersion
 
 from ahbicht.expressions.hints_provider import HintsProvider, JsonFileHintsProvider
 
