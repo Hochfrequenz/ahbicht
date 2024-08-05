@@ -3,7 +3,7 @@ Tests the utility functions.
 """
 from typing import Awaitable, List, TypeVar, Union
 
-import pytest  # type:ignore[import]
+import pytest
 
 from ahbicht.mapping_results import Repeatability, parse_repeatability
 from ahbicht.utility_functions import gather_if_necessary

@@ -4,8 +4,8 @@ from logging import LogRecord
 from typing import List
 
 import inject
-import pytest  # type:ignore[import]
-import pytest_asyncio  # type:ignore[import]
+import pytest
+import pytest_asyncio
 from maus.models.anwendungshandbuch import AhbMetaInformation, DeepAnwendungshandbuch
 from maus.models.edifact_components import (
     DataElementFreeText,

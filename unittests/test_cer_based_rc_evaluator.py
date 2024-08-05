@@ -1,7 +1,7 @@
 """ Tests the RC evaluator, that assumes a ContentEvaluationResult to be present in the evaluatable data"""
 from unittest import mock
 
-import pytest  # type:ignore[import]
+import pytest
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.rc_evaluators import ContentEvaluationResultBasedRcEvaluator, RcEvaluator

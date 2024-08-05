@@ -3,7 +3,7 @@ Tests that the code can handle RC/FC evaluators that have both async and sync me
 """
 
 import inject
-import pytest  # type:ignore[import]
+import pytest
 
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider, EvaluationContext
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator

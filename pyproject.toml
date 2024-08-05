@@ -23,3 +23,6 @@ asyncio_mode = "auto"
 markers = [
     "datafiles"
 ]
+
+[tool.mypy]
+# warn_unused_ignores = true # doesn't work,because either 'error: Cannot infer type argument 1 of "Tree"  [misc]' but this is also flagged as unused ignore
