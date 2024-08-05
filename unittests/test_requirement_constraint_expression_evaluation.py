@@ -1,7 +1,7 @@
 """ Test for the evaluation of the conditions tests (Mussfeldprüfung) """
 from typing import Dict, Optional
 
-import pytest  # type:ignore[import]
+import pytest
 
 from ahbicht.expressions import InvalidExpressionError
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree

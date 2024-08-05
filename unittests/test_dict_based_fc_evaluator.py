@@ -2,7 +2,7 @@
 from typing import Optional
 from unittest import mock
 
-import pytest  # type:ignore[import]
+import pytest
 
 from ahbicht.content_evaluation import fc_evaluators
 from ahbicht.content_evaluation.fc_evaluators import DictBasedFcEvaluator, FcEvaluator

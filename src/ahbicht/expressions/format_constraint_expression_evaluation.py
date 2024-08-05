@@ -102,7 +102,7 @@ async def format_constraint_evaluation(
     else:
         parsed_tree_fc: Tree = parse_condition_expression_to_tree(format_constraints_expression)
         all_evaluatable_format_constraint_keys: List[str] = [
-            t.value for t in parsed_tree_fc.scan_values(lambda v: isinstance(v, Token))  # type:ignore[attr-defined]
+            t.value for t in parsed_tree_fc.scan_values(lambda v: isinstance(v, Token))
         ]
         input_values: Dict[
             str, EvaluatedFormatConstraint

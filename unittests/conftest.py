@@ -3,8 +3,8 @@ why conftest.py?
 https://docs.pytest.org/en/7.1.x/how-to/fixtures.html#scope-sharing-fixtures-across-classes-modules-packages-or-session
 """
 import inject
-import pytest  # type:ignore[import]
-from _pytest.fixtures import SubRequest  # type:ignore[import]
+import pytest
+from _pytest.fixtures import SubRequest
 
 from ahbicht.content_evaluation import ContentEvaluationResult, EvaluatableData, TokenLogicProvider
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResultSchema

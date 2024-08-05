@@ -3,7 +3,7 @@ from itertools import product
 from typing import List
 
 import inject
-import pytest  # type:ignore[import]
+import pytest
 from maus.models.anwendungshandbuch import AhbMetaInformation, DeepAnwendungshandbuch
 from maus.models.edifact_components import (
     DataElementDataType,

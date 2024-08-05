@@ -3,8 +3,8 @@ from logging import LogRecord
 from typing import List, Optional
 
 import inject
-import pytest  # type:ignore[import]
-import pytest_asyncio  # type:ignore[import]
+import pytest
+import pytest_asyncio
 
 from ahbicht.content_evaluation import fc_evaluators
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider

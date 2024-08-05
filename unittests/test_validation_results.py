@@ -1,4 +1,4 @@
-import pytest  # type:ignore[import]
+import pytest
 from maus.models.edifact_components import DataElementDataType
 
 from ahbicht.validation.validation_results import (
@@ -247,5 +247,5 @@ class TestValidationResults:
     async def test_lovric_remove_absender_and_empfaenger_path_results(
         self, lovric_actual: ListOfValidationResultInContext, lovric_expected: ListOfValidationResultInContext
     ):
-        lovric_actual.remove_absender_and_empfaenger_path_results()  # type:ignore[attr-defined]
+        lovric_actual.remove_absender_and_empfaenger_path_results()
         assert lovric_actual == lovric_expected

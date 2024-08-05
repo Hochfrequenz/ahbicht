@@ -2,7 +2,7 @@ from contextvars import ContextVar
 from typing import Optional
 
 import inject
-import pytest  # type:ignore[import]
+import pytest
 
 from ahbicht.content_evaluation import is_valid_expression
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema

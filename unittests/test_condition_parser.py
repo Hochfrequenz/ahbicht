@@ -3,7 +3,7 @@ import asyncio
 import datetime
 import random
 
-import pytest  # type:ignore[import]
+import pytest
 from lark import Token, Tree
 
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
@@ -83,10 +83,10 @@ class TestConditionParser:
             pytest.param(
                 # and/or combination, and before or
                 "[1]U[2]    O[53]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "or_composition",
                     [
-                        Tree(
+                        Tree(  # type:ignore[misc]
                             "and_composition",
                             [
                                 Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -100,11 +100,11 @@ class TestConditionParser:
             pytest.param(
                 # and/or combination, and before or, different order
                 "[53]O[1]U[2]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "or_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "53")]),
-                        Tree(
+                        Tree(  # type:ignore[misc]
                             "and_composition",
                             [
                                 Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -380,7 +380,7 @@ class TestConditionParser:
                         Tree(  # type:ignore[misc]
                             "or_composition",
                             [
-                                Tree(
+                                Tree(  # type:ignore[misc]
                                     "and_composition",
                                     [
                                         Tree("condition", [Token("CONDITION_KEY", "53")]),

@@ -6,7 +6,7 @@ import datetime
 from logging import LogRecord
 from typing import List
 
-import pytest  # type:ignore[import]
+import pytest
 from efoli import EdifactFormat, EdifactFormatVersion
 
 from ahbicht.expressions.hints_provider import HintsProvider, JsonFileHintsProvider

@@ -5,8 +5,8 @@ from logging import LogRecord
 from typing import List, Mapping, Optional
 
 import inject
-import pytest  # type:ignore[import]
-from _pytest.fixtures import SubRequest  # type:ignore[import]
+import pytest
+from _pytest.fixtures import SubRequest
 from efoli import EdifactFormat, EdifactFormatVersion
 
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider

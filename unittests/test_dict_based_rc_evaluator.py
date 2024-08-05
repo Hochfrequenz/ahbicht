@@ -1,7 +1,7 @@
 """ Tests the dictionary based RC evaluator"""
 from unittest import mock
 
-import pytest  # type:ignore[import]
+import pytest
 
 from ahbicht.content_evaluation.rc_evaluators import DictBasedRcEvaluator
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue

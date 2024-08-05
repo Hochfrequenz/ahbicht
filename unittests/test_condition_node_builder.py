@@ -2,8 +2,8 @@
 from pathlib import Path
 
 import inject
-import pytest  # type:ignore[import]
-import pytest_asyncio  # type:ignore[import]
+import pytest
+import pytest_asyncio
 
 from ahbicht.condition_node_builder import ConditionNodeBuilder
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider, EvaluationContext

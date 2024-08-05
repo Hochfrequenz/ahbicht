@@ -5,7 +5,7 @@ import json
 import uuid
 from typing import List, TypeVar
 
-import pytest  # type:ignore[import]
+import pytest
 from efoli import EdifactFormat
 from marshmallow import Schema, ValidationError
 from maus.models.edifact_components import DataElementDataType

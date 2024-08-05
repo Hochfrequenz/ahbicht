@@ -2,8 +2,8 @@ import asyncio
 from itertools import product
 from typing import List
 
-import pytest  # type:ignore[import]
-import pytest_asyncio  # type:ignore[import]
+import pytest
+import pytest_asyncio
 from lark import Tree
 
 from ahbicht.expressions.ahb_expression_parser import _parser as ahb_expr_parser
