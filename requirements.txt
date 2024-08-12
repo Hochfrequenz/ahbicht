@@ -4,12 +4,14 @@
 #
 #    pip-compile requirements.in
 #
-attrs==24.1.0
+attrs==24.2.0
     # via
     #   -r requirements.in
     #   maus
 efoli==1.1.0
-    # via maus
+    # via
+    #   -r requirements.in
+    #   maus
 inject==5.2.1
     # via -r requirements.in
 lark==1.1.9
