@@ -4,8 +4,8 @@ from typing import List
 from unittest.mock import AsyncMock
 
 import inject
-import pytest  # type:ignore[import]
-import pytest_asyncio  # type:ignore[import]
+import pytest
+import pytest_asyncio
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
@@ -254,7 +254,7 @@ class TestAHBExpressionEvaluation:
         """Tests that a meaningful error raised when the user forgot to setup bind_to_provider"""
 
         parsed_tree = parse_ahb_expression_to_single_requirement_indicator_expressions("Muss [1] U [2]")
-        with pytest.raises(AttributeError) as excinfo:  # type: ignore[var-annotated]
+        with pytest.raises(AttributeError) as excinfo:
             await evaluate_ahb_expression_tree(parsed_tree)
         assert "Are you sure you called .bind_to_provider" in str(excinfo.value)
 

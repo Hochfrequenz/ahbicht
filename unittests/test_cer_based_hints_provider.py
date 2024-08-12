@@ -2,8 +2,8 @@
 from typing import Optional
 
 import inject
-import pytest  # type:ignore[import]
-from _pytest.fixtures import SubRequest  # type:ignore[import]
+import pytest
+from _pytest.fixtures import SubRequest
 
 from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.token_logic_provider import TokenLogicProvider

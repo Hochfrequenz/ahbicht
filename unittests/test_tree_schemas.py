@@ -4,7 +4,7 @@
 Tests that the parsed trees are JSON serializable
 """
 
-import pytest  # type:ignore[import]
+import pytest
 from lark import Token, Tree
 
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
@@ -26,11 +26,11 @@ class TestTreeSchemas:
         "tree, expected_json_dict",
         [
             pytest.param(
-                Tree(
+                Tree(  # type:ignore[misc]
                     "or_composition",
                     [
                         Tree("condition_key", [Token("INT", "53")]),
-                        Tree(
+                        Tree(  # type:ignore[misc]
                             "and_composition",
                             [Tree("condition_key", [Token("INT", "1")]), Tree("condition_key", [Token("INT", "2")])],
                         ),

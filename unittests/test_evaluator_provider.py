@@ -1,7 +1,6 @@
 from typing import List
 
-import pytest  # type:ignore[import]
-from _pytest.fixtures import SubRequest  # type:ignore[import]
+import pytest
 from efoli import EdifactFormat, EdifactFormatVersion
 
 from ahbicht.content_evaluation.evaluators import Evaluator

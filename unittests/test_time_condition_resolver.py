@@ -2,7 +2,7 @@
 Test for the expansion of packages.
 """
 
-import pytest  # type:ignore[import]
+import pytest
 from lark import Token, Tree
 
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
@@ -77,17 +77,17 @@ class TestTimeConditionReplacement:
                 Tree(  # type:ignore[misc]
                     "and_composition",
                     [
-                        Tree(
+                        Tree(  # type:ignore[misc]
                             "xor_composition",
                             [
-                                Tree(
+                                Tree(  # type:ignore[misc]
                                     "then_also_composition",
                                     [
                                         Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", "932")]),
                                         Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", "492")]),
                                     ],
                                 ),
-                                Tree(
+                                Tree(  # type:ignore[misc]
                                     "then_also_composition",
                                     [
                                         Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", "934")]),

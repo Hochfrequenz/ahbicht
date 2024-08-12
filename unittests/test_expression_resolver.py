@@ -1,4 +1,4 @@
-import pytest  # type:ignore[import]
+import pytest
 from lark import Token, Tree
 
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
@@ -17,7 +17,7 @@ class TestExpressionResolver:
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "Muss"),
-                                Tree(
+                                Tree(  # type:ignore[misc]
                                     "and_composition",
                                     [
                                         Tree("condition", [Token("CONDITION_KEY", "3")]),
@@ -26,7 +26,7 @@ class TestExpressionResolver:
                                 ),
                             ],
                         ),
-                        Tree(
+                        Tree(  # type:ignore[misc]
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "Soll"),
@@ -41,11 +41,11 @@ class TestExpressionResolver:
                 Tree(  # type:ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(
+                        Tree(  # type:ignore[misc]
                             "single_requirement_indicator_expression",
                             [
                                 Token("PREFIX_OPERATOR", "X"),
-                                Tree(
+                                Tree(  # type:ignore[misc]
                                     "or_composition",
                                     [
                                         Tree("condition", [Token("CONDITION_KEY", "504")]),
@@ -59,11 +59,11 @@ class TestExpressionResolver:
             ),
             pytest.param(
                 "[905]([504]U[6])",
-                Tree(
+                Tree(  # type:ignore[misc]
                     "then_also_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "905")]),
-                        Tree(
+                        Tree(  # type:ignore[misc]
                             "and_composition",
                             [
                                 Tree("condition", [Token("CONDITION_KEY", "504")]),
