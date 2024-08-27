@@ -4,7 +4,7 @@
 #
 #    pip-compile dev_requirements/requirements-json_schemas.in
 #
-marshmallow==3.21.3
+marshmallow==3.22.0
     # via marshmallow-jsonschema
 marshmallow-jsonschema==0.13.0
     # via -r dev_requirements/requirements-json_schemas.in
