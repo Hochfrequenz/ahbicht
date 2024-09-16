@@ -29,7 +29,7 @@ more-itertools==9.0.0
     # via maus
 packaging==23.0
     # via marshmallow
-pytz==2024.1
+pytz==2024.2
     # via
     #   -r requirements.in
     #   efoli
