@@ -1,10 +1,10 @@
 [project]
 name = "ahbicht"
-description = "Python Library to parse AHB expressions"
+description = "Python Library to parse AHB expressions."
 license = { text = "MIT" }
-requires-python = ">=3.9"
+requires-python = ">=3.8"
 authors = [{ name = "Annika Schlögl", email = "annika.schloegl@hochfrequenz.de" }]
-keywords = ["your", "important", "keywords"]
+keywords = ["AHB", "Parsing", "Expressions"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: Console",
@@ -13,20 +13,22 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
 ]
+
 dependencies = [
-    "attrs",
+    "attrs>=21.4.0",
     "lark>=1.1.4",
     "inject",
     "marshmallow",
     "marshmallow_enum",
     "maus>=0.6.0",
-    "efoli>=1.1.0",
-    "pytz"
+    "pytz",
+    "efoli>=1.1.0"
 ]     # add all the dependencies here
 dynamic = ["readme", "version"]
 
@@ -71,16 +73,10 @@ dev = [
     "pip-tools"
 ]
 
-
 [project.urls]
 Changelog = "https://github.com/Hochfrequenz/ahbicht/releases"
 Homepage = "https://github.com/Hochfrequenz/ahbicht"
-Documetnation = "https://ahbicht.readthedocs.io/en/latest/"
-
-
-[build-system]
-requires = ["hatchling>=1.8.0", "hatch-vcs", "hatch-fancy-pypi-readme"]
-build-backend = "hatchling.build"
+Documentation = "https://ahbicht.readthedocs.io/en/latest/"
 
 [tool.black]
 line-length = 120
