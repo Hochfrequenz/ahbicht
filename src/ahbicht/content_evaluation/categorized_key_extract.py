@@ -1,6 +1,7 @@
 """
 Contains the CategorizedKeyExtract and a schema for (de)serialization.
 """
+
 from itertools import combinations, product
 from typing import List
 
@@ -45,7 +46,7 @@ class CategorizedKeyExtract:
     package_keys: List[str] = attrs.field(
         validator=attrs.validators.deep_iterable(
             member_validator=attrs.validators.matches_re(r"^\d+P$"),
-            iterable_validator=attrs.validators.instance_of(list)
+            iterable_validator=attrs.validators.instance_of(list),
             # todo: implement wiederholbarkeiten
         )
     )

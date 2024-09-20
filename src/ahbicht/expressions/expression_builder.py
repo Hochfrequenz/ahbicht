@@ -1,6 +1,7 @@
 """
 Module to create expressions from scratch.
 """
+
 import re
 from abc import ABC, abstractmethod
 from typing import Generic, Optional, Protocol, Type, TypeVar, Union

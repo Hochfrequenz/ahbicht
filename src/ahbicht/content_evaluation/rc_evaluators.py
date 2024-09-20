@@ -4,6 +4,7 @@ Typical use-cases are for example
 * you must only provide a Gerätenummer if the Transaktionsgrund is e.g. 'E08'
 * you must only provide an Ausbaudatum if the meter is being removed e.g. 'Z02'
 """
+
 import asyncio
 import inspect
 from abc import ABC, abstractmethod

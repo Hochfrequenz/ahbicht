@@ -4,6 +4,7 @@ The AhbExpressionTransformer defines the rules how the different parts of the pa
 
 The used terms are defined in the README.md.
 """
+
 from typing import Awaitable, Dict, List, Union
 
 from lark import Token, Transformer, Tree, v_args

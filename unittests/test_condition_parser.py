@@ -1,4 +1,5 @@
 """ Tests for the parsing of the conditions tests (Mussfeldprüfung) """
+
 import asyncio
 import datetime
 import random

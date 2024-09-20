@@ -7,6 +7,7 @@ the EvaluatedComposition node which results from a combination of two nodes (of 
 
 The used terms are defined in the README_conditions.md.
 """
+
 from abc import ABC
 from enum import Enum
 from typing import Optional, TypeVar

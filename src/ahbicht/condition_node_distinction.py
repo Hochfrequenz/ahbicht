@@ -1,6 +1,7 @@
 """
 A module to allow easy distinction between different types of condition nodes (by mapping their integer key)
 """
+
 from ahbicht import StrEnum
 
 

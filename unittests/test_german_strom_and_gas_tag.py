@@ -1,6 +1,7 @@
 """
 Tests the evaluation of the start/end of a German Strom- or Gastag.
 """
+
 from datetime import datetime, timedelta, timezone
 
 import pytest

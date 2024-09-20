@@ -1,6 +1,7 @@
 """
 Tests that the parsed trees are JSON serializable
 """
+
 import json
 import uuid
 from typing import List, TypeVar

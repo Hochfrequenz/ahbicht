@@ -1,6 +1,7 @@
 """
 A module to evaluate datetimes and whether they are "on the edge" of a German "Stromtag" or "Gastag" respectively
 """
+
 from datetime import datetime, time
 from typing import Callable, Literal, Optional, Tuple, Union
 

@@ -1,4 +1,5 @@
 """ Test for the evaluation of the format constraint expression. """
+
 from logging import LogRecord
 from typing import List, Optional
 

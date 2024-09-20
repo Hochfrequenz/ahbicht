@@ -104,10 +104,10 @@ async def format_constraint_evaluation(
         all_evaluatable_format_constraint_keys: List[str] = [
             t.value for t in parsed_tree_fc.scan_values(lambda v: isinstance(v, Token))
         ]
-        input_values: Dict[
-            str, EvaluatedFormatConstraint
-        ] = await _build_evaluated_format_constraint_nodes(  # pylint:disable=no-value-for-parameter
-            all_evaluatable_format_constraint_keys
+        input_values: Dict[str, EvaluatedFormatConstraint] = (
+            await _build_evaluated_format_constraint_nodes(  # pylint:disable=no-value-for-parameter
+                all_evaluatable_format_constraint_keys
+            )
         )
         resulting_evaluated_format_constraint_node: EvaluatedFormatConstraint = evaluate_format_constraint_tree(
             parsed_tree_fc, input_values

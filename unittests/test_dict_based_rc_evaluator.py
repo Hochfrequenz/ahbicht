@@ -1,4 +1,5 @@
 """ Tests the dictionary based RC evaluator"""
+
 from unittest import mock
 
 import pytest

@@ -2,6 +2,7 @@
 Package Expansion is the process of finding the condition expression which was abbreviated by using a package.
 e.g. if inside a tree "[123P]" is replaced by "[1] U ([2] O [3])".
 """
+
 import json
 import logging
 from abc import ABC, abstractmethod

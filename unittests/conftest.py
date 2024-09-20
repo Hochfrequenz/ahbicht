@@ -2,6 +2,7 @@
 why conftest.py?
 https://docs.pytest.org/en/7.1.x/how-to/fixtures.html#scope-sharing-fixtures-across-classes-modules-packages-or-session
 """
+
 import inject
 import pytest
 from _pytest.fixtures import SubRequest

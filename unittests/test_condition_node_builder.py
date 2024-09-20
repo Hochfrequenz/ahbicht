@@ -1,4 +1,5 @@
 """ Tests for Class Condition Node Builder"""
+
 from pathlib import Path
 
 import inject

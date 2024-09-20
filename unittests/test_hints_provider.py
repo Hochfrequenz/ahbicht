@@ -1,6 +1,7 @@
 """
 Tests the hints provider module.
 """
+
 import asyncio
 import datetime
 from logging import LogRecord
