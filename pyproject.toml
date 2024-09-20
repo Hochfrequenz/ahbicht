@@ -20,11 +20,6 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 
-[project.urls]
-Changelog = "https://github.com/Hochfrequenz/ahbicht/releases"
-Homepage = "https://github.com/Hochfrequenz/ahbicht"
-Documentation = "https://ahbicht.readthedocs.io/en/latest/"
-
 dependencies = [
     "attrs>=21.4.0",
     "lark>=1.1.4",
@@ -39,6 +34,10 @@ dynamic = ["readme", "version"]
 
 [project.optional-dependencies]
 
+[project.urls]
+Changelog = "https://github.com/Hochfrequenz/ahbicht/releases"
+Homepage = "https://github.com/Hochfrequenz/ahbicht"
+Documentation = "https://ahbicht.readthedocs.io/en/latest/"
 
 [tool.black]
 line-length = 120
@@ -70,7 +69,7 @@ build-backend = "hatchling.build"
 
 [tool.hatch.metadata.hooks.fancy-pypi-readme]
 content-type = "text/markdown"
-fragments = [{ path = "README.md" }]
+fragments = [{ path = "README.rst" }]
 
 [tool.hatch.version]
 source = "vcs"
