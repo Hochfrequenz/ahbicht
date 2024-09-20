@@ -3,7 +3,7 @@ name = "ahbicht"
 description = "Description of your package"
 license = { text = "MIT" }
 requires-python = ">=3.9"
-authors = [{ name = "Hochfrequenz Unternehmensberatungs GmbH", email = "info@hochfrequenz.de" }]
+authors = [{ name = "Hochfrequenz Unternehmensberatungs GmbH", email = "ahbicht@hochfrequenz.de" }]
 keywords = ["your", "important", "keywords"]
 classifiers = [
     "Development Status :: 4 - Beta",
