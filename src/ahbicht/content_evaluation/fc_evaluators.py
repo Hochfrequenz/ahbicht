@@ -62,7 +62,7 @@ class FcEvaluator(Evaluator, ABC):
         Then assert that the UTC offset is exactly +00:00.
         Be aware of the fact that asserting on a fixed offset when both datetime + offset are given will not lead to any
         truly meaningful results.
-        We implement it for compatability but don't encourage you to actively write any conditions that use it.
+        We implement it for compatibility but don't encourage you to actively write any conditions that use it.
         """
         return has_no_utc_offset(entered_input)
 

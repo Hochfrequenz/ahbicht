@@ -68,7 +68,7 @@ class SingletonTokenLogicProvider(TokenLogicProvider):
     @staticmethod
     def _to_key(edifact_format: Optional[EdifactFormat], format_version: Optional[EdifactFormatVersion]) -> str:
         """
-        because a tuple for format and format version is not hashable / usuable as key in a dict this methods
+        because a tuple for format and format version is not hashable / usable as key in a dict this methods
         converts them to a unique and hashable string
         """
         if edifact_format is None or format_version is None:

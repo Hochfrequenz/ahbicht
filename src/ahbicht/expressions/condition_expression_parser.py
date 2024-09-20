@@ -1,5 +1,5 @@
 """
-This module parses a condition expression like "[59] U ([123] O [456])" into a tree structur using
+This module parses a condition expression like "[59] U ([123] O [456])" into a tree structure using
 the parsing library lark: https://lark-parser.readthedocs.io/en/latest/
 
 The used terms are defined in the README_conditions.md.

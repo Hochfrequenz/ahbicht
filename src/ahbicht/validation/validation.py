@@ -382,7 +382,7 @@ async def validate_data_element_valuepool(
         if data_element.entered_input in possible_values:
             requirement_validation_data_element = RequirementValidationValue.IS_REQUIRED_AND_FILLED
         elif data_element.entered_input:
-            fc_validation_result = False  # we re-use the fc validation field to mark that the value is unexpected
+            fc_validation_result = False  # we reuse the fc validation field to mark that the value is unexpected
             requirement_validation_data_element = RequirementValidationValue.IS_REQUIRED_AND_EMPTY
             hints = f"Der Wert '{data_element.entered_input}' ist nicht in: {{{', '.join(possible_values.keys())}}}"
             data_element.entered_input = None  # overwrite the illegal value
@@ -437,7 +437,7 @@ def map_requirement_validation_values(
             # https://github.com/Hochfrequenz/ahbicht/issues/275
             raise NotImplementedError(
                 # pylint:disable=line-too-long
-                "It's unknown if the requirement constraints are met (most likely because at least one node evaluated to UNKNONW. A validation is meaningless in this case."
+                "It's unknown if the requirement constraints are met (most likely because at least one node evaluated to UNKNOWN. A validation is meaningless in this case."
             )
         if requirement_indicator is ModalMark.KANN or requirement_indicator is ModalMark.SOLL:
             requirement_validation = RequirementValidationValue.IS_OPTIONAL

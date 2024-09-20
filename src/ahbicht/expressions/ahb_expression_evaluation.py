@@ -35,7 +35,7 @@ class AhbExpressionTransformer(Transformer):
     """
     Transformer, that evaluates the trees built from the ahb expressions.
     The input are the conditions as defined in the AHBs in the form of ConditionNodes.
-    It returns a list of the seperated requirement indicators with
+    It returns a list of the separated requirement indicators with
     their respective condition expressions already evaluated to booleans.
     """
 
@@ -63,7 +63,7 @@ class AhbExpressionTransformer(Transformer):
     ) -> Awaitable[AhbExpressionEvaluationResult]:
         """
         Evaluates the condition expression of the respective requirement indicator expression and returns a list of the
-        seperated requirement indicators with their results of the condition check.
+        separated requirement indicators with their results of the condition check.
         """
         return self._single_requirement_indicator_expression_async(requirement_indicator, condition_expression)
 
