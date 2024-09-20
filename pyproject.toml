@@ -73,6 +73,9 @@ dev = [
     "pip-tools"
 ]
 
+[tool.setuptools.dynamic]
+readme = {file = "README.rst"}
+
 [project.urls]
 Changelog = "https://github.com/Hochfrequenz/ahbicht/releases"
 Homepage = "https://github.com/Hochfrequenz/ahbicht"
@@ -100,3 +103,24 @@ markers = [
 
 [tool.mypy]
 # warn_unused_ignores = true # doesn't work,because either 'error: Cannot infer type argument 1 of "Tree"  [misc]' but this is also flagged as unused ignore
+
+[build-system]
+requires = ["hatchling>=1.8.0", "hatch-vcs", "hatch-fancy-pypi-readme"]
+build-backend = "hatchling.build"
+
+
+[tool.hatch.metadata.hooks.fancy-pypi-readme]
+content-type = "text/markdown"
+fragments = [{ path = "README.rst" }]
+
+[tool.hatch.version]
+source = "vcs"
+
+
+
+[tool.hatch.build.targets.sdist]
+exclude = ["/unittests"]
+
+[tool.hatch.build.targets.wheel]
+only-include = ["src"]
+sources = ["src"]
