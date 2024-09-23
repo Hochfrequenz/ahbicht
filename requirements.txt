@@ -23,7 +23,7 @@ marshmallow==3.22.0
     #   maus
 marshmallow-enum==1.5.1
     # via -r requirements.in
-maus==0.6.0
+maus==0.6.1
     # via -r requirements.in
 more-itertools==9.0.0
     # via maus
