@@ -67,7 +67,7 @@ build-backend = "hatchling.build"
 
 
 [tool.hatch.metadata.hooks.fancy-pypi-readme]
-content-type = "text/markdown"
+content-type = "text/x-rst"
 fragments = [{ path = "README.rst" }]
 
 [tool.hatch.version]
