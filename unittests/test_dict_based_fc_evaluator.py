@@ -1,4 +1,5 @@
 """ Tests the dictionary based FC evaluator"""
+
 from typing import Optional
 from unittest import mock
 

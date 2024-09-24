@@ -3,6 +3,7 @@ Evaluators are classes that evaluate AHB conditions, meaning: Based on a conditi
 FULFILLED (true), UNFULFILLED (false) or NEUTRAL (None). Their results are used as input for the condition validation of
 the entire message.
 """
+
 import inspect
 import logging
 import re

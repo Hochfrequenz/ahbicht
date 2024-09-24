@@ -1,4 +1,5 @@
 """ Tests the HintsProvider, that assumes a ContentEvaluationResult to be present in the evaluatable data"""
+
 from typing import Optional
 
 import inject

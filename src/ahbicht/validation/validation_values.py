@@ -1,4 +1,5 @@
 """This module contains the enums for the possible validation values."""
+
 from ahbicht import StrEnum
 
 

@@ -27,7 +27,7 @@ class BaseTransformer(Transformer, ABC, Generic[SupportedArgumentNode, Supported
 
     After two nodes are evaluated in a composition, the resulting node has the node type EvalutatedComposition.
     The return value is a ConditionNode whose attribute `format_constraint_fulfilled` describes whether
-    the format constraint expression is fulfiled or not.
+    the format constraint expression is fulfilled or not.
     """
 
     def __init__(self, input_values: Mapping[str, SupportedArgumentNode]):

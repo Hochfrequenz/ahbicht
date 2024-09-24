@@ -3,7 +3,9 @@ name = "ahbicht"
 description = "Python Library to parse AHB expressions."
 license = { text = "MIT" }
 requires-python = ">=3.9"
-authors = [{ name = "Annika Schlögl", email = "annika.schloegl@hochfrequenz.de" }]
+authors = [
+    { name = "Annika Schlögl", email = "annika.schloegl@hochfrequenz.de" },
+]
 keywords = ["AHB", "Parsing", "Expressions"]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -27,11 +29,34 @@ dependencies = [
     "marshmallow_enum",
     "maus>=0.6.0",
     "pytz",
-    "efoli>=1.1.0"
-]     # add all the dependencies here
+    "efoli>=1.1.0",
+] # add all the dependencies here
 dynamic = ["readme", "version"]
 
 [project.optional-dependencies]
+coverage = ["coverage==7.6.1"]
+docs = ["sphinx==7.4.7", "sphinx-rtd-theme==2.0.0"]
+formatting = ["black==24.8.0", "isort==5.13.2"]
+json_schemas = ["marshmallow-jsonschema==0.13.0"]
+linting = ["pylint==3.2.7"]
+spellcheck = ["codespell==2.3.0"]
+test_packaging = [
+    "build==1.2.2",
+    "setuptools==75.1.0",
+    "setuptools-scm==8.1.0",
+    "twine==5.1.1",
+]
+tests = [
+    "pytest==8.3.3",
+    "pytest-asyncio==0.24.0",
+    "pytest-datafiles==3.0.0",
+    "pytest-mock==3.14.0",
+]
+type_check = ["mypy==1.11.2", "types-pytz==2024.2.0.20240913"]
+dev = ["pip-tools"]
+
+[tool.setuptools.dynamic]
+readme = { file = "README.rst" }
 
 [project.urls]
 Changelog = "https://github.com/Hochfrequenz/ahbicht/releases"
@@ -54,9 +79,7 @@ disable = "fixme"
 # even if they have no @pytest.mark.asyncio marker.
 # https://github.com/pytest-dev/pytest-asyncio#auto-mode
 asyncio_mode = "auto"
-markers = [
-    "datafiles"
-]
+markers = ["datafiles"]
 
 [tool.mypy]
 # warn_unused_ignores = true # doesn't work,because either 'error: Cannot infer type argument 1 of "Tree"  [misc]' but this is also flagged as unused ignore
@@ -72,7 +95,6 @@ fragments = [{ path = "README.rst" }]
 
 [tool.hatch.version]
 source = "vcs"
-
 
 
 [tool.hatch.build.targets.sdist]

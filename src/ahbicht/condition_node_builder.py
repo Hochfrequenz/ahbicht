@@ -2,6 +2,7 @@
 Module for taking all the condition keys of a condition expression and building their respective ConditionNodes.
 If necessary it evaluates the needed attributes.
 """
+
 import sys
 from typing import Dict, List, Tuple, Union
 

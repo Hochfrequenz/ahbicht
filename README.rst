@@ -129,8 +129,8 @@ Functionality
    ``unknown``.
 -  Brackets e.g. ``([43]O[4])U[5]``
 -  Requirement indicators (i.e ``Muss``, ``Soll``, ``Kann``, ``X``,
-   ``O``, ``U``) are seperated from the condition expressions and also
-   seperated into single requirement indicator expressions if there are
+   ``O``, ``U``) are separated from the condition expressions and also
+   separated into single requirement indicator expressions if there are
    more than one (for modal marks).
 -  ``Format Constraint Expressions`` that are returned after the
    requirement condition evaluation can now be parsed and evaluated.
@@ -309,13 +309,13 @@ Unknown Neutral Unknown
 |         |         |                     | of hint and format    |
 |         |         |                     | constraint            |
 +---------+---------+---------------------+-----------------------+
-| Unkown  | True    | Unknown             |                       |
+| Unknown | True    | Unknown             |                       |
 +---------+---------+---------------------+-----------------------+
-| Unkown  | False   | Unknown             |                       |
+| Unknown | False   | Unknown             |                       |
 +---------+---------+---------------------+-----------------------+
-| Unkown  | Unknown | Unknown             |                       |
+| Unknown | Unknown | Unknown             |                       |
 +---------+---------+---------------------+-----------------------+
-| Unkown  | Neutral | does not make sense |                       |
+| Unknown | Neutral | does not make sense |                       |
 +---------+---------+---------------------+-----------------------+
 
 Link to automatically generate HintsProvider Json content:
@@ -361,7 +361,7 @@ UTILMD could be a scope. If a condition is described as
    There has to be exactly one xyz per Vorgang (SG4+IDE) Then for ``n``
    Vorgänge there are ``n`` scopes:
 
--  one scope for each Vorgang (pathes refer to an edifact seed):
+-  one scope for each Vorgang (path's refer to an edifact seed):
 
    -  ``$["Dokument"][0]["Nachricht"][0]["Vorgang"][0]``
    -  ``$["Dokument"][0]["Nachricht"][0]["Vorgang"][1]``

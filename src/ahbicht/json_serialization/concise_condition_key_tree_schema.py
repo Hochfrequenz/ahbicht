@@ -1,6 +1,7 @@
 """
 Schemata for the JSON serialization of expressions.
 """
+
 from lark import Tree
 from marshmallow import post_dump, pre_load
 

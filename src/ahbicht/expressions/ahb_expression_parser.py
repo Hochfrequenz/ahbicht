@@ -4,6 +4,7 @@ using the parsing library lark: https://lark-parser.readthedocs.io/en/latest/
 The goal is to separate the requirement indicator (i.e. Muss, Soll, Kann, X, O, U) from the condition expression
 and also several modal marks expressions if there are more than one.
 """
+
 from functools import lru_cache
 
 from lark import Lark, Token, Tree

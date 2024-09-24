@@ -1,6 +1,7 @@
 """
 Tests the utility functions.
 """
+
 from typing import Awaitable, List, TypeVar, Union
 
 import pytest

@@ -11,7 +11,7 @@ from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicP
 
 class TestEvaluatorProvider:
     """
-    Test that the list based evalutor provider works as expected
+    Test that the list based evaluator provider works as expected
     """
 
     def test_initialization(self):

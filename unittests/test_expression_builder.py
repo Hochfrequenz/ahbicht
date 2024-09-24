@@ -1,6 +1,7 @@
 """
 Tests the expression builder module.
 """
+
 import pytest
 
 from ahbicht.expressions.condition_nodes import Hint, UnevaluatedFormatConstraint

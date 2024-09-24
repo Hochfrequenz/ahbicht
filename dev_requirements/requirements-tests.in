@@ -1,5 +1,0 @@
-# specific requirements for the tox tests env
-pytest
-pytest_mock
-pytest-asyncio
-pytest-datafiles

@@ -1,4 +1,5 @@
 """ Tests for the parsing of the conditions tests (Mussfeldprüfung) """
+
 import asyncio
 import datetime
 import random
@@ -286,7 +287,7 @@ class TestConditionParser:
     def test_parse_valid_expression_to_tree_with_format_constraints(self, expression: str, expected_tree: Tree):
         """
         Tests that valid expressions containing operators "O" and "U", different whitespaces
-        and no brackets are parsed as expected. It is similiar to the test `test_parse_valid_expression_to_tree`
+        and no brackets are parsed as expected. It is similar to the test `test_parse_valid_expression_to_tree`
         but it adds format constraints.
         """
         parsed_tree = parse_condition_expression_to_tree(expression)

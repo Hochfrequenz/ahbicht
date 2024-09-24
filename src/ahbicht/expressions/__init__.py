@@ -1,6 +1,7 @@
 """
 instantiates a "global" logger for all parsing related stuff
 """
+
 import logging
 from typing import Optional
 

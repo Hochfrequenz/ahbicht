@@ -9,6 +9,7 @@ seems like a big overhead. The code representation of "all outcomes are already 
 ContentEvaluationResult. Now the methods below are useful. Simply provide a content evaluation result (the data) and
 the evaluators are created based on the already known outcomes. You do not have to actually touch any evaluator code.
 """
+
 from typing import Callable, Iterable, Optional, Protocol, Tuple
 
 import inject

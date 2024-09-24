@@ -1,4 +1,0 @@
-# specific requirements for the tox test_packaging env
-build
-twine
-

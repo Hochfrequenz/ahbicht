@@ -1,6 +1,7 @@
 """
 Test for the expansion of packages.
 """
+
 from logging import LogRecord
 from typing import List, Mapping, Optional
 

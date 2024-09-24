@@ -1,6 +1,7 @@
 """
 This module contains classes that are returned by mappers, meaning they contain a mapping.
 """
+
 import re
 from typing import Match, Optional
 

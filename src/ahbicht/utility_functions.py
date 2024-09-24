@@ -1,6 +1,7 @@
 """
 Functions that are not clearly related to another module
 """
+
 import asyncio
 import inspect
 from typing import Awaitable, Callable, List, TypeVar, Union
@@ -15,7 +16,7 @@ Result = TypeVar("Result")
 async def gather_if_necessary(results_and_awaitable_results: List[Union[Result, Awaitable[Result]]]) -> List[Result]:
     """
     Await the awaitables, pass the un-awaitable results
-    :param results_and_awaitable_results: heterogenous list of both Ts and Awaitable[T]s.
+    :param results_and_awaitable_results: heterogeneous list of both Ts and Awaitable[T]s.
     :return: list of T in the same order as in the input param.
     """
     awaitable_indexes = [n for n, x in enumerate(results_and_awaitable_results) if inspect.isawaitable(x)]
