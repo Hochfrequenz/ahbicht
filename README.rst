@@ -386,8 +386,7 @@ an otherwise stable message.
 Releasing
 ---------
 
-The version number has to be changed in `setup.cfg <./setup.cfg>`__
-file.
+To create a new release, just create a new release with a new version tag (e.g. v1.2.3) on `the releases page of this repository <https://github.com/Hochfrequenz/ahbicht/releases>`__.
 
 Contributing
 ------------
