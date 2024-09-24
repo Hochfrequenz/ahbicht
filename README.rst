@@ -309,13 +309,13 @@ Unknown Neutral Unknown
 |         |         |                     | of hint and format    |
 |         |         |                     | constraint            |
 +---------+---------+---------------------+-----------------------+
-| Unknown  | True    | Unknown             |                       |
+| Unknown | True    | Unknown             |                       |
 +---------+---------+---------------------+-----------------------+
-| Unknown  | False   | Unknown             |                       |
+| Unknown | False   | Unknown             |                       |
 +---------+---------+---------------------+-----------------------+
-| Unknown  | Unknown | Unknown             |                       |
+| Unknown | Unknown | Unknown             |                       |
 +---------+---------+---------------------+-----------------------+
-| Unknown  | Neutral | does not make sense |                       |
+| Unknown | Neutral | does not make sense |                       |
 +---------+---------+---------------------+-----------------------+
 
 Link to automatically generate HintsProvider Json content:
