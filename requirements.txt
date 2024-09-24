@@ -27,7 +27,7 @@ maus==0.6.1
     # via -r requirements.in
 more-itertools==9.0.0
     # via maus
-packaging==23.0
+packaging==24.1
     # via marshmallow
 pytz==2024.2
     # via
