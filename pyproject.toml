@@ -1,8 +1,42 @@
-[build-system]
-requires = ["setuptools>=42", "wheel", "setuptools_scm[toml]>=3.4"]
-build-backend = "setuptools.build_meta"
+[project]
+name = "ahbicht"
+description = "Python Library to parse AHB expressions."
+license = { text = "MIT" }
+requires-python = ">=3.9"
+authors = [{ name = "Annika Schlögl", email = "annika.schloegl@hochfrequenz.de" }]
+keywords = ["AHB", "Parsing", "Expressions"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
 
-[tool.setuptools_scm]
+dependencies = [
+    "attrs>=21.4.0",
+    "lark>=1.1.4",
+    "inject",
+    "marshmallow",
+    "marshmallow_enum",
+    "maus>=0.6.0",
+    "pytz",
+    "efoli>=1.1.0"
+]     # add all the dependencies here
+dynamic = ["readme", "version"]
+
+[project.optional-dependencies]
+
+[project.urls]
+Changelog = "https://github.com/Hochfrequenz/ahbicht/releases"
+Homepage = "https://github.com/Hochfrequenz/ahbicht"
+Documentation = "https://ahbicht.readthedocs.io/en/latest/"
 
 [tool.black]
 line-length = 120
@@ -26,3 +60,24 @@ markers = [
 
 [tool.mypy]
 # warn_unused_ignores = true # doesn't work,because either 'error: Cannot infer type argument 1 of "Tree"  [misc]' but this is also flagged as unused ignore
+
+[build-system]
+requires = ["hatchling>=1.8.0", "hatch-vcs", "hatch-fancy-pypi-readme"]
+build-backend = "hatchling.build"
+
+
+[tool.hatch.metadata.hooks.fancy-pypi-readme]
+content-type = "text/x-rst"
+fragments = [{ path = "README.rst" }]
+
+[tool.hatch.version]
+source = "vcs"
+
+
+
+[tool.hatch.build.targets.sdist]
+exclude = ["/unittests"]
+
+[tool.hatch.build.targets.wheel]
+only-include = ["src"]
+sources = ["src"]
