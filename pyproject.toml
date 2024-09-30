@@ -38,7 +38,7 @@ coverage = ["coverage==7.6.1"]
 docs = ["sphinx==7.4.7", "sphinx-rtd-theme==2.0.0"]
 formatting = ["black==24.8.0", "isort==5.13.2"]
 json_schemas = ["marshmallow-jsonschema==0.13.0", "setuptools==75.1.0"]
-linting = ["pylint==3.2.7"]
+linting = ["pylint==3.3.1"]
 spellcheck = ["codespell==2.3.0"]
 test_packaging = [
     "build==1.2.2",
