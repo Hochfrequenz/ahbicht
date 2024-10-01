@@ -15,9 +15,9 @@ from maus.models.edifact_components import (
 )
 
 from ahbicht.content_evaluation.evaluator_factory import create_and_inject_hardcoded_evaluators
-from ahbicht.expressions.enums import ModalMark, PrefixOperator, RequirementIndicator
 from ahbicht.models.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult
+from ahbicht.models.enums import ModalMark, PrefixOperator, RequirementIndicator
 from ahbicht.validation.validation import (
     combine_requirements_of_different_levels,
     map_requirement_validation_values,

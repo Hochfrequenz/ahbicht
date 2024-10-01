@@ -17,7 +17,6 @@ from ahbicht.evaluation_results import (
     FormatConstraintEvaluationResult,
     RequirementConstraintEvaluationResult,
 )
-from ahbicht.expressions.enums import ModalMark
 from ahbicht.mapping_results import (
     ConditionKeyConditionTextMapping,
     ConditionKeyConditionTextMappingSchema,
@@ -31,6 +30,7 @@ from ahbicht.models.condition_nodes import (
     EvaluatedFormatConstraintSchema,
 )
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
+from ahbicht.models.enums import ModalMark
 from ahbicht.validation.validation_results import (
     DataElementValidationResult,
     DataElementValidationResultSchema,

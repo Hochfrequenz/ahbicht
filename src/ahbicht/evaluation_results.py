@@ -9,7 +9,7 @@ from typing import Optional
 import attrs
 from marshmallow import Schema, fields, post_load
 
-from ahbicht.expressions.enums import RequirementIndicator, RequirementIndicatorSchema
+from ahbicht.models.enums import RequirementIndicator, RequirementIndicatorSchema
 
 
 @attrs.define(auto_attribs=True, kw_only=True)

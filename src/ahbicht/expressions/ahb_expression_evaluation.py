@@ -15,9 +15,9 @@ from ahbicht.evaluation_results import (
     FormatConstraintEvaluationResult,
     RequirementConstraintEvaluationResult,
 )
-from ahbicht.expressions.enums import ModalMark, PrefixOperator, RequirementIndicator
 from ahbicht.expressions.format_constraint_expression_evaluation import format_constraint_evaluation
 from ahbicht.expressions.requirement_constraint_expression_evaluation import requirement_constraint_evaluation
+from ahbicht.models.enums import ModalMark, PrefixOperator, RequirementIndicator
 from ahbicht.utility_functions import gather_if_necessary
 
 _str_to_modal_mark_mapping: Dict[str, ModalMark] = {

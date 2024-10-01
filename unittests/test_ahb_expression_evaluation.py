@@ -18,10 +18,10 @@ from ahbicht.evaluation_results import (
 )
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
-from ahbicht.expressions.enums import ModalMark, PrefixOperator, RequirementIndicator
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 from ahbicht.models.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult
+from ahbicht.models.enums import ModalMark, PrefixOperator, RequirementIndicator
 from unittests.defaults import (
     default_test_format,
     default_test_version,
