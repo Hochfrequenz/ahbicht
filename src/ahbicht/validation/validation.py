@@ -24,8 +24,8 @@ from ahbicht.evaluation_results import (
 )
 from ahbicht.expressions import InvalidExpressionError
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
-from ahbicht.expressions.enums import ModalMark, PrefixOperator, RequirementIndicator
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
+from ahbicht.models.enums import ModalMark, PrefixOperator, RequirementIndicator
 from ahbicht.validation import validation_logger
 from ahbicht.validation.validation_results import (
     DataElementValidationResult,
