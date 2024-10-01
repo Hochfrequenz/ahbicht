@@ -1,7 +1,7 @@
 import pytest
 from maus.models.edifact_components import DataElementDataType
 
-from ahbicht.validation.validation_results import (
+from ahbicht.models.validation_results import (
     DataElementValidationResult,
     ListOfValidationResultInContext,
     SegmentLevelValidationResult,

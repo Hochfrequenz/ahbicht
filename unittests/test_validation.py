@@ -18,6 +18,11 @@ from ahbicht.content_evaluation.evaluator_factory import create_and_inject_hardc
 from ahbicht.models.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 from ahbicht.models.enums import ModalMark, PrefixOperator, RequirementIndicator
+from ahbicht.models.validation_results import (
+    DataElementValidationResult,
+    SegmentLevelValidationResult,
+    ValidationResultInContext,
+)
 from ahbicht.validation.validation import (
     combine_requirements_of_different_levels,
     map_requirement_validation_values,
@@ -27,11 +32,6 @@ from ahbicht.validation.validation import (
     validate_segment,
     validate_segment_group,
     validate_segment_level,
-)
-from ahbicht.validation.validation_results import (
-    DataElementValidationResult,
-    SegmentLevelValidationResult,
-    ValidationResultInContext,
 )
 from ahbicht.validation.validation_values import RequirementValidationValue
 

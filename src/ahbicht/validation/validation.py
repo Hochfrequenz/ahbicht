@@ -26,12 +26,12 @@ from ahbicht.expressions import InvalidExpressionError
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 from ahbicht.models.enums import ModalMark, PrefixOperator, RequirementIndicator
-from ahbicht.validation import validation_logger
-from ahbicht.validation.validation_results import (
+from ahbicht.models.validation_results import (
     DataElementValidationResult,
     SegmentLevelValidationResult,
     ValidationResultInContext,
 )
+from ahbicht.validation import validation_logger
 from ahbicht.validation.validation_values import RequirementValidationValue
 
 
