@@ -7,7 +7,6 @@ from typing import Any, Awaitable, Callable, List, Optional, Tuple, Union
 
 from lark import Token, Tree
 
-from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
 from ahbicht.content_evaluation.rc_evaluators import ContentEvaluationResultBasedRcEvaluator, RcEvaluator
@@ -16,6 +15,7 @@ from ahbicht.expressions import InvalidExpressionError
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
 from ahbicht.expressions.condition_expression_parser import extract_categorized_keys_from_tree
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
+from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 
 
 async def is_valid_expression(

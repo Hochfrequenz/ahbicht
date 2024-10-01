@@ -4,9 +4,9 @@ from unittest import mock
 
 import pytest
 
-from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.rc_evaluators import ContentEvaluationResultBasedRcEvaluator, RcEvaluator
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue
+from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 from unittests.conftest import store_content_evaluation_result_in_evaluatable_data
 
 

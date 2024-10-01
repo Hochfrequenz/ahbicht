@@ -4,10 +4,9 @@ from typing import Optional
 
 import inject
 import pytest
-from _pytest.fixtures import SubRequest
 
-from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.token_logic_provider import TokenLogicProvider
+from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 from unittests.defaults import default_test_format, default_test_version
 
 

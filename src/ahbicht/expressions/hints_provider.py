@@ -14,11 +14,11 @@ from typing import Dict, List, Mapping, Optional
 import inject
 from efoli import EdifactFormat, EdifactFormatVersion
 
-from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
 
 # pylint: disable = too-few-public-methods
 from ahbicht.expressions.condition_nodes import Hint
+from ahbicht.models.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
 
 
 class HintsProvider(ABC):
