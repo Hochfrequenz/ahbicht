@@ -12,7 +12,6 @@ from lark import Token, Tree, v_args
 from lark.exceptions import VisitError
 
 from ahbicht.condition_node_builder import ConditionNodeBuilder, TRCTransformerArgument
-from ahbicht.evaluation_results import RequirementConstraintEvaluationResult
 from ahbicht.expressions import InvalidExpressionError
 from ahbicht.expressions.base_transformer import BaseTransformer
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
@@ -26,6 +25,7 @@ from ahbicht.models.condition_nodes import (
     RequirementConstraint,
     UnevaluatedFormatConstraint,
 )
+from ahbicht.models.evaluation_results import RequirementConstraintEvaluationResult
 
 
 @v_args(inline=True)  # Children are provided as *args instead of a list argument

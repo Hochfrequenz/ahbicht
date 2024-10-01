@@ -15,11 +15,11 @@ from lark.exceptions import VisitError
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
 from ahbicht.content_evaluation.token_logic_provider import TokenLogicProvider
-from ahbicht.evaluation_results import FormatConstraintEvaluationResult
 from ahbicht.expressions.base_transformer import BaseTransformer
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.expression_builder import FormatErrorMessageExpressionBuilder
 from ahbicht.models.condition_nodes import EvaluatedFormatConstraint
+from ahbicht.models.evaluation_results import FormatConstraintEvaluationResult
 
 
 @v_args(inline=True)  # Children are provided as *args instead of a list argument
