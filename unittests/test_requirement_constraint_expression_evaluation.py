@@ -6,15 +6,15 @@ import pytest
 
 from ahbicht.expressions import InvalidExpressionError
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
-from ahbicht.expressions.condition_nodes import ConditionFulfilledValue as cfv
-from ahbicht.expressions.condition_nodes import (
+from ahbicht.expressions.requirement_constraint_expression_evaluation import evaluate_requirement_constraint_tree
+from ahbicht.models.condition_nodes import ConditionFulfilledValue as cfv
+from ahbicht.models.condition_nodes import (
     ConditionNode,
     EvaluatedComposition,
     Hint,
     RequirementConstraint,
     UnevaluatedFormatConstraint,
 )
-from ahbicht.expressions.requirement_constraint_expression_evaluation import evaluate_requirement_constraint_tree
 
 
 class TestRequirementConstraintEvaluation:

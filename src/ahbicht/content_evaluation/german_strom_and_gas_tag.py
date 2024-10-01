@@ -10,7 +10,7 @@ from typing import Callable, Literal, Optional, Tuple, Union
 # and it's PITA to manually define timezones. So we're using pytz as a datasource for timezone information.
 from pytz import timezone, utc
 
-from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
+from ahbicht.models.condition_nodes import EvaluatedFormatConstraint
 
 berlin = timezone("Europe/Berlin")
 

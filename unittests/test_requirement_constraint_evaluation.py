@@ -7,14 +7,14 @@ import pytest_asyncio
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
 from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
 from ahbicht.evaluation_results import RequirementConstraintEvaluationResult
-from ahbicht.expressions.condition_nodes import (
+from ahbicht.expressions.requirement_constraint_expression_evaluation import requirement_constraint_evaluation
+from ahbicht.models.condition_nodes import (
     ConditionFulfilledValue,
     EvaluatedComposition,
     Hint,
     RequirementConstraint,
     UnevaluatedFormatConstraint,
 )
-from ahbicht.expressions.requirement_constraint_expression_evaluation import requirement_constraint_evaluation
 from unittests.defaults import (
     empty_default_hints_provider,
     empty_default_rc_evaluator,

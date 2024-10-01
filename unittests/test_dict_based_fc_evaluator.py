@@ -7,7 +7,7 @@ import pytest
 
 from ahbicht.content_evaluation import fc_evaluators
 from ahbicht.content_evaluation.fc_evaluators import DictBasedFcEvaluator, FcEvaluator
-from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
+from ahbicht.models.condition_nodes import EvaluatedFormatConstraint
 
 
 class TestDictBasedFcEvaluator:

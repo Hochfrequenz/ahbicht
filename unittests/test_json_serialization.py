@@ -17,11 +17,6 @@ from ahbicht.evaluation_results import (
     FormatConstraintEvaluationResult,
     RequirementConstraintEvaluationResult,
 )
-from ahbicht.expressions.condition_nodes import (
-    ConditionFulfilledValue,
-    EvaluatedFormatConstraint,
-    EvaluatedFormatConstraintSchema,
-)
 from ahbicht.expressions.enums import ModalMark
 from ahbicht.mapping_results import (
     ConditionKeyConditionTextMapping,
@@ -30,6 +25,11 @@ from ahbicht.mapping_results import (
     PackageKeyConditionExpressionMappingSchema,
 )
 from ahbicht.models.categorized_key_extract import CategorizedKeyExtract, CategorizedKeyExtractSchema
+from ahbicht.models.condition_nodes import (
+    ConditionFulfilledValue,
+    EvaluatedFormatConstraint,
+    EvaluatedFormatConstraintSchema,
+)
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
 from ahbicht.validation.validation_results import (
     DataElementValidationResult,

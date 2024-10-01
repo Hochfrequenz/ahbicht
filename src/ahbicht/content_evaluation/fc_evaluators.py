@@ -20,7 +20,7 @@ from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, Eval
 from ahbicht.content_evaluation.evaluators import Evaluator
 from ahbicht.content_evaluation.german_strom_and_gas_tag import has_no_utc_offset, is_xtag_limit
 from ahbicht.evaluation_results import FormatConstraintEvaluationResult
-from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
+from ahbicht.models.condition_nodes import EvaluatedFormatConstraint
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
 
 text_to_be_evaluated_by_format_constraint: ContextVar[Optional[str]] = ContextVar(

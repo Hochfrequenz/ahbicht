@@ -11,7 +11,7 @@ import inject
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
 from ahbicht.content_evaluation.token_logic_provider import TokenLogicProvider
 from ahbicht.expressions.condition_expression_parser import extract_categorized_keys_from_tree
-from ahbicht.expressions.condition_nodes import Hint, RequirementConstraint, UnevaluatedFormatConstraint
+from ahbicht.models.condition_nodes import Hint, RequirementConstraint, UnevaluatedFormatConstraint
 
 # TRCTransformerArgument is a union of nodes that are already evaluated from a Requirement Constraint (RC) perspective.
 # The Format Constraints (FC) might still be unevaluated. That's why the return type used in the

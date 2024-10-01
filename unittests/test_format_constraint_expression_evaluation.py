@@ -12,11 +12,11 @@ from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvid
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
 from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
 from ahbicht.evaluation_results import FormatConstraintEvaluationResult
-from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraint
 from ahbicht.expressions.format_constraint_expression_evaluation import (
     _build_evaluated_format_constraint_nodes,
     format_constraint_evaluation,
 )
+from ahbicht.models.condition_nodes import EvaluatedFormatConstraint
 from unittests.defaults import default_test_format, default_test_version, return_empty_dummy_evaluatable_data
 
 

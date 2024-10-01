@@ -9,9 +9,9 @@ from _pytest.fixtures import SubRequest
 
 from ahbicht.content_evaluation.evaluator_factory import create_and_inject_hardcoded_evaluators
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
-from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.expressions.enums import ModalMark, RequirementIndicator
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
+from ahbicht.models.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 from unittests.defaults import default_test_format, default_test_version, return_empty_dummy_evaluatable_data
 

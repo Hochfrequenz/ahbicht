@@ -10,8 +10,8 @@ from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
-from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
+from ahbicht.models.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from unittests.defaults import (
     default_test_format,
     default_test_version,

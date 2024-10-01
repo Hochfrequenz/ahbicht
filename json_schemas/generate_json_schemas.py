@@ -15,10 +15,10 @@ from ahbicht.evaluation_results import (
     FormatConstraintEvaluationResultSchema,
     RequirementConstraintEvaluationResultSchema,
 )
-from ahbicht.expressions.condition_nodes import EvaluatedFormatConstraintSchema
 from ahbicht.json_serialization.tree_schema import TokenSchema  # , TreeSchema
 from ahbicht.mapping_results import ConditionKeyConditionTextMappingSchema, PackageKeyConditionExpressionMappingSchema
 from ahbicht.models.categorized_key_extract import CategorizedKeyExtractSchema
+from ahbicht.models.condition_nodes import EvaluatedFormatConstraintSchema
 from ahbicht.models.content_evaluation_result import ContentEvaluationResultSchema
 
 schema_types: List[Type[Schema]] = [

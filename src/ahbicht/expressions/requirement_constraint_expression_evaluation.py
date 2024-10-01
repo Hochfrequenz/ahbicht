@@ -16,7 +16,8 @@ from ahbicht.evaluation_results import RequirementConstraintEvaluationResult
 from ahbicht.expressions import InvalidExpressionError
 from ahbicht.expressions.base_transformer import BaseTransformer
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
-from ahbicht.expressions.condition_nodes import (
+from ahbicht.expressions.expression_builder import FormatConstraintExpressionBuilder, HintExpressionBuilder
+from ahbicht.models.condition_nodes import (
     ConditionFulfilledValue,
     ConditionNode,
     EvaluatedComposition,
@@ -25,7 +26,6 @@ from ahbicht.expressions.condition_nodes import (
     RequirementConstraint,
     UnevaluatedFormatConstraint,
 )
-from ahbicht.expressions.expression_builder import FormatConstraintExpressionBuilder, HintExpressionBuilder
 
 
 @v_args(inline=True)  # Children are provided as *args instead of a list argument
