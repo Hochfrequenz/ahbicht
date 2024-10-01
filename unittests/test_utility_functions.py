@@ -6,8 +6,8 @@ from typing import Awaitable, List, TypeVar, Union
 
 import pytest
 
-from ahbicht.mapping_results import Repeatability, parse_repeatability
-from ahbicht.utility_functions import gather_if_necessary
+from ahbicht.models.mapping_results import Repeatability
+from ahbicht.utility_functions import gather_if_necessary, parse_repeatability
 
 T = TypeVar("T")
 

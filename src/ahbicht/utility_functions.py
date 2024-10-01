@@ -4,13 +4,19 @@ Functions that are not clearly related to another module
 
 import asyncio
 import inspect
-from typing import Awaitable, Callable, List, TypeVar, Union
+import re
+from re import Match
+from typing import Awaitable, Callable, List, Optional, TypeVar, Union
 
 from lark import Tree
 
 from ahbicht.expressions import parsing_logger
+from ahbicht.models.mapping_results import Repeatability
 
 Result = TypeVar("Result")
+
+
+_repeatability_pattern = re.compile(r"^(?P<min>\d+)\.{2}(?P<max>\d+)$")  #: a pattern to match "n..m" repeatabilities
 
 
 async def gather_if_necessary(results_and_awaitable_results: List[Union[Result, Awaitable[Result]]]) -> List[Result]:
@@ -61,3 +67,15 @@ def tree_copy(lru_cached_parsing_func: Callable[[str], Tree]):
         return tree_result.copy()
 
     return decorated
+
+
+def parse_repeatability(repeatability_string: str) -> Repeatability:
+    """
+    parses the given string as repeatability; e.g. `17..23` is parsed as min=17, max=23
+    """
+    match: Optional[Match[str]] = _repeatability_pattern.match(repeatability_string)
+    if match is None:
+        raise ValueError(f"The given string '{repeatability_string}' could not be parsed as repeatability")
+    min_repeatability = int(match["min"])
+    max_repeatability = int(match["max"])
+    return Repeatability(min_occurrences=min_repeatability, max_occurrences=max_repeatability)
