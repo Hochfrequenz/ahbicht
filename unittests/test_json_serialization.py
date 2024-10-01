@@ -31,7 +31,7 @@ from ahbicht.models.condition_nodes import (
 )
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
 from ahbicht.models.enums import ModalMark
-from ahbicht.validation.validation_results import (
+from ahbicht.models.validation_results import (
     DataElementValidationResult,
     DataElementValidationResultSchema,
     ListOfValidationResultInContext,
