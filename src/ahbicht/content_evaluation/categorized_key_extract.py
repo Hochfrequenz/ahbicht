@@ -8,8 +8,8 @@ from typing import List
 import attrs
 from marshmallow import Schema, fields, post_load
 
-from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
+from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 
 
 # pylint: disable=too-few-public-methods,  unused-argument

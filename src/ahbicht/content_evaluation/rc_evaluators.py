@@ -10,10 +10,10 @@ import inspect
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional
 
-from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluationContext
 from ahbicht.content_evaluation.evaluators import Evaluator
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue
+from ahbicht.models.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
 
 
 class RcEvaluator(Evaluator, ABC):

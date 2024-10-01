@@ -15,7 +15,6 @@ from typing import Callable, Iterable, Optional, Protocol, Tuple
 import inject
 from efoli import EdifactFormat, EdifactFormatVersion
 
-from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
 from ahbicht.content_evaluation.fc_evaluators import (
     ContentEvaluationResultBasedFcEvaluator,
@@ -38,6 +37,7 @@ from ahbicht.expressions.package_expansion import (
     DictBasedPackageResolver,
     PackageResolver,
 )
+from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 
 
 # pylint:disable=too-few-public-methods

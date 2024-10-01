@@ -8,7 +8,6 @@ import inject
 import pytest
 import pytest_asyncio
 
-from ahbicht.content_evaluation.content_evaluation_result import ContentEvaluationResult
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
 from ahbicht.content_evaluation.evaluator_factory import create_and_inject_hardcoded_evaluators
 from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
@@ -22,6 +21,7 @@ from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_si
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.expressions.enums import ModalMark, PrefixOperator, RequirementIndicator
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
+from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 from unittests.defaults import (
     default_test_format,
     default_test_version,
