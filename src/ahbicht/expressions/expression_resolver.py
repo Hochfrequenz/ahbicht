@@ -17,7 +17,8 @@ from ahbicht.content_evaluation.token_logic_provider import TokenLogicProvider
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.package_expansion import PackageResolver
-from ahbicht.mapping_results import Repeatability, parse_repeatability
+from ahbicht.models.mapping_results import Repeatability
+from ahbicht.utility_functions import parse_repeatability
 
 
 async def parse_expression_including_unresolved_subexpressions(

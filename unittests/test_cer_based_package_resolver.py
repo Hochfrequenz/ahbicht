@@ -4,8 +4,8 @@ import inject
 import pytest
 
 from ahbicht.content_evaluation.token_logic_provider import TokenLogicProvider
-from ahbicht.mapping_results import PackageKeyConditionExpressionMapping
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult
+from ahbicht.models.mapping_results import PackageKeyConditionExpressionMapping
 from unittests.defaults import default_test_format, default_test_version
 
 

@@ -11,7 +11,6 @@ from marshmallow import Schema, fields
 from marshmallow_jsonschema import JSONSchema  # type:ignore[import]
 
 from ahbicht.json_serialization.tree_schema import TokenSchema  # , TreeSchema
-from ahbicht.mapping_results import ConditionKeyConditionTextMappingSchema, PackageKeyConditionExpressionMappingSchema
 from ahbicht.models.categorized_key_extract import CategorizedKeyExtractSchema
 from ahbicht.models.condition_nodes import EvaluatedFormatConstraintSchema
 from ahbicht.models.content_evaluation_result import ContentEvaluationResultSchema
@@ -19,6 +18,10 @@ from ahbicht.models.evaluation_results import (
     AhbExpressionEvaluationResultSchema,
     FormatConstraintEvaluationResultSchema,
     RequirementConstraintEvaluationResultSchema,
+)
+from ahbicht.models.mapping_results import (
+    ConditionKeyConditionTextMappingSchema,
+    PackageKeyConditionExpressionMappingSchema,
 )
 
 schema_types: List[Type[Schema]] = [

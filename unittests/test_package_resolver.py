@@ -15,7 +15,8 @@ from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicP
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.expression_resolver import expand_packages
 from ahbicht.expressions.package_expansion import JsonFilePackageResolver, PackageResolver
-from ahbicht.mapping_results import PackageKeyConditionExpressionMapping, Repeatability, parse_repeatability
+from ahbicht.models.mapping_results import PackageKeyConditionExpressionMapping, Repeatability
+from ahbicht.utility_functions import parse_repeatability
 from unittests.defaults import DefaultPackageResolver, return_empty_dummy_evaluatable_data
 
 

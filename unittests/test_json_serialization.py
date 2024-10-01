@@ -11,12 +11,6 @@ from efoli import EdifactFormat
 from marshmallow import Schema, ValidationError
 from maus.models.edifact_components import DataElementDataType
 
-from ahbicht.mapping_results import (
-    ConditionKeyConditionTextMapping,
-    ConditionKeyConditionTextMappingSchema,
-    PackageKeyConditionExpressionMapping,
-    PackageKeyConditionExpressionMappingSchema,
-)
 from ahbicht.models.categorized_key_extract import CategorizedKeyExtract, CategorizedKeyExtractSchema
 from ahbicht.models.condition_nodes import (
     ConditionFulfilledValue,
@@ -30,6 +24,12 @@ from ahbicht.models.evaluation_results import (
     AhbExpressionEvaluationResultSchema,
     FormatConstraintEvaluationResult,
     RequirementConstraintEvaluationResult,
+)
+from ahbicht.models.mapping_results import (
+    ConditionKeyConditionTextMapping,
+    ConditionKeyConditionTextMappingSchema,
+    PackageKeyConditionExpressionMapping,
+    PackageKeyConditionExpressionMappingSchema,
 )
 from ahbicht.models.validation_results import (
     DataElementValidationResult,

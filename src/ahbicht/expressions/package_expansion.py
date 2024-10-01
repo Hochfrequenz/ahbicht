@@ -13,8 +13,11 @@ import inject
 from efoli import EdifactFormat, EdifactFormatVersion
 
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
-from ahbicht.mapping_results import PackageKeyConditionExpressionMapping, PackageKeyConditionExpressionMappingSchema
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
+from ahbicht.models.mapping_results import (
+    PackageKeyConditionExpressionMapping,
+    PackageKeyConditionExpressionMappingSchema,
+)
 
 
 # pylint:disable=too-few-public-methods

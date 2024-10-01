@@ -2,8 +2,7 @@
 This module contains classes that are returned by mappers, meaning they contain a mapping.
 """
 
-import re
-from typing import Match, Optional
+from typing import Optional
 
 import attrs
 from efoli import EdifactFormat
@@ -130,18 +129,3 @@ class Repeatability:
         returns true if the package used together with this repeatability is optional
         """
         return self.min_occurrences == 0
-
-
-_repeatability_pattern = re.compile(r"^(?P<min>\d+)\.{2}(?P<max>\d+)$")  #: a pattern to match "n..m" repeatabilities
-
-
-def parse_repeatability(repeatability_string: str) -> Repeatability:
-    """
-    parses the given string as repeatability; e.g. `17..23` is parsed as min=17, max=23
-    """
-    match: Optional[Match[str]] = _repeatability_pattern.match(repeatability_string)
-    if match is None:
-        raise ValueError(f"The given string '{repeatability_string}' could not be parsed as repeatability")
-    min_repeatability = int(match["min"])
-    max_repeatability = int(match["max"])
-    return Repeatability(min_occurrences=min_repeatability, max_occurrences=max_repeatability)
