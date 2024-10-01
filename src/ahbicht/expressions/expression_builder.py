@@ -6,7 +6,8 @@ import re
 from abc import ABC, abstractmethod
 from typing import Generic, Optional, Protocol, Type, TypeVar, Union
 
-from ahbicht.expressions.condition_nodes import (
+from ahbicht.expressions.enums import LogicalOperator
+from ahbicht.models.condition_nodes import (
     ConditionNode,
     EvaluatedComposition,
     EvaluatedFormatConstraint,
@@ -14,7 +15,6 @@ from ahbicht.expressions.condition_nodes import (
     RequirementConstraint,
     UnevaluatedFormatConstraint,
 )
-from ahbicht.expressions.enums import LogicalOperator
 
 SupportedNodes = TypeVar("SupportedNodes")
 

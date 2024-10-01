@@ -10,13 +10,13 @@ from ahbicht.condition_node_builder import ConditionNodeBuilder
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider, EvaluationContext
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
-from ahbicht.expressions.condition_nodes import (
+from ahbicht.expressions.hints_provider import JsonFileHintsProvider
+from ahbicht.models.condition_nodes import (
     ConditionFulfilledValue,
     Hint,
     RequirementConstraint,
     UnevaluatedFormatConstraint,
 )
-from ahbicht.expressions.hints_provider import JsonFileHintsProvider
 from unittests.defaults import default_test_format, default_test_version, return_empty_dummy_evaluatable_data
 
 

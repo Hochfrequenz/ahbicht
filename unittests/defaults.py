@@ -13,9 +13,9 @@ from efoli import EdifactFormat, EdifactFormatVersion
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
-from ahbicht.expressions.condition_nodes import ConditionFulfilledValue
 from ahbicht.expressions.hints_provider import DictBasedHintsProvider
 from ahbicht.expressions.package_expansion import DictBasedPackageResolver
+from ahbicht.models.condition_nodes import ConditionFulfilledValue
 
 default_test_format: EdifactFormat = EdifactFormat.UTILMD
 #: the default edifact format version used in the unit tests

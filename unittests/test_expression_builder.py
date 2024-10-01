@@ -4,8 +4,8 @@ Tests the expression builder module.
 
 import pytest
 
-from ahbicht.expressions.condition_nodes import Hint, UnevaluatedFormatConstraint
 from ahbicht.expressions.expression_builder import FormatConstraintExpressionBuilder, HintExpressionBuilder
+from ahbicht.models.condition_nodes import Hint, UnevaluatedFormatConstraint
 
 
 class TestFormatConstraintExpressionBuilder:

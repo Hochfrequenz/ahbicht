@@ -17,7 +17,7 @@ from efoli import EdifactFormat, EdifactFormatVersion
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
 
 # pylint: disable = too-few-public-methods
-from ahbicht.expressions.condition_nodes import Hint
+from ahbicht.models.condition_nodes import Hint
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
 
 

@@ -8,7 +8,7 @@ from uuid import UUID
 import attrs
 from marshmallow import Schema, fields, post_load
 
-from ahbicht.expressions.condition_nodes import (
+from ahbicht.models.condition_nodes import (
     ConditionFulfilledValue,
     EvaluatedFormatConstraint,
     EvaluatedFormatConstraintSchema,

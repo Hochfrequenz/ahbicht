@@ -5,7 +5,7 @@ from unittest import mock
 import pytest
 
 from ahbicht.content_evaluation.rc_evaluators import DictBasedRcEvaluator
-from ahbicht.expressions.condition_nodes import ConditionFulfilledValue
+from ahbicht.models.condition_nodes import ConditionFulfilledValue
 from unittests.defaults import empty_default_test_data
 
 

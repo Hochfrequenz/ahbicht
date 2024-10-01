@@ -8,7 +8,7 @@ from typing import List
 import attrs
 from marshmallow import Schema, fields, post_load
 
-from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
+from ahbicht.models.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 
 
