@@ -8,7 +8,7 @@ import maus.models.edifact_components
 from marshmallow import Schema, fields, post_load
 from marshmallow_enum import EnumField  # type:ignore[import-untyped]
 
-from ahbicht.validation.validation_values import RequirementValidationValue
+from ahbicht.models.validation_values import RequirementValidationValue
 
 # pylint: disable=too-few-public-methods, no-member, unused-argument
 

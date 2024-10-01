@@ -7,7 +7,7 @@ from ahbicht.models.validation_results import (
     SegmentLevelValidationResult,
     ValidationResultInContext,
 )
-from ahbicht.validation.validation_values import RequirementValidationValue
+from ahbicht.models.validation_values import RequirementValidationValue
 
 # lovric = list_of_validation_result_in_context
 
