@@ -6,9 +6,9 @@ from typing import List
 
 import pytest
 
-from ahbicht.content_evaluation.categorized_key_extract import CategorizedKeyExtract, CategorizedKeyExtractSchema
 from ahbicht.expressions.condition_expression_parser import extract_categorized_keys
 from ahbicht.expressions.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
+from ahbicht.models.categorized_key_extract import CategorizedKeyExtract, CategorizedKeyExtractSchema
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
 
 
