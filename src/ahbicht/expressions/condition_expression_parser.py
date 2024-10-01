@@ -12,9 +12,10 @@ from typing import List, Union
 from lark import Lark, Token, Tree
 from lark.exceptions import UnexpectedCharacters, UnexpectedEOF
 
-from ahbicht.condition_node_distinction import ConditionNodeType, derive_condition_node_type
+from ahbicht.condition_node_distinction import derive_condition_node_type
 from ahbicht.expressions import parsing_logger
 from ahbicht.models.categorized_key_extract import CategorizedKeyExtract
+from ahbicht.models.condition_node_type import ConditionNodeType
 from ahbicht.utility_functions import tree_copy
 
 GRAMMAR = r"""
