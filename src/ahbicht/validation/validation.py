@@ -17,15 +17,15 @@ from maus.models.edifact_components import (
 )
 
 from ahbicht.content_evaluation import fc_evaluators
-from ahbicht.evaluation_results import (
-    AhbExpressionEvaluationResult,
-    FormatConstraintEvaluationResult,
-    RequirementConstraintEvaluationResult,
-)
 from ahbicht.expressions import InvalidExpressionError
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 from ahbicht.models.enums import ModalMark, PrefixOperator, RequirementIndicator
+from ahbicht.models.evaluation_results import (
+    AhbExpressionEvaluationResult,
+    FormatConstraintEvaluationResult,
+    RequirementConstraintEvaluationResult,
+)
 from ahbicht.models.validation_results import (
     DataElementValidationResult,
     SegmentLevelValidationResult,

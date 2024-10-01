@@ -11,12 +11,6 @@ from efoli import EdifactFormat
 from marshmallow import Schema, ValidationError
 from maus.models.edifact_components import DataElementDataType
 
-from ahbicht.evaluation_results import (
-    AhbExpressionEvaluationResult,
-    AhbExpressionEvaluationResultSchema,
-    FormatConstraintEvaluationResult,
-    RequirementConstraintEvaluationResult,
-)
 from ahbicht.mapping_results import (
     ConditionKeyConditionTextMapping,
     ConditionKeyConditionTextMappingSchema,
@@ -31,6 +25,12 @@ from ahbicht.models.condition_nodes import (
 )
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
 from ahbicht.models.enums import ModalMark
+from ahbicht.models.evaluation_results import (
+    AhbExpressionEvaluationResult,
+    AhbExpressionEvaluationResultSchema,
+    FormatConstraintEvaluationResult,
+    RequirementConstraintEvaluationResult,
+)
 from ahbicht.models.validation_results import (
     DataElementValidationResult,
     DataElementValidationResultSchema,

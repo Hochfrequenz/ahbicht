@@ -10,14 +10,14 @@ from typing import Awaitable, Dict, List, Union
 from lark import Token, Transformer, Tree, v_args
 from lark.exceptions import VisitError
 
-from ahbicht.evaluation_results import (
+from ahbicht.expressions.format_constraint_expression_evaluation import format_constraint_evaluation
+from ahbicht.expressions.requirement_constraint_expression_evaluation import requirement_constraint_evaluation
+from ahbicht.models.enums import ModalMark, PrefixOperator, RequirementIndicator
+from ahbicht.models.evaluation_results import (
     AhbExpressionEvaluationResult,
     FormatConstraintEvaluationResult,
     RequirementConstraintEvaluationResult,
 )
-from ahbicht.expressions.format_constraint_expression_evaluation import format_constraint_evaluation
-from ahbicht.expressions.requirement_constraint_expression_evaluation import requirement_constraint_evaluation
-from ahbicht.models.enums import ModalMark, PrefixOperator, RequirementIndicator
 from ahbicht.utility_functions import gather_if_necessary
 
 _str_to_modal_mark_mapping: Dict[str, ModalMark] = {

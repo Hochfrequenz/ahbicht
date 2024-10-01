@@ -11,17 +11,17 @@ import pytest_asyncio
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
 from ahbicht.content_evaluation.evaluator_factory import create_and_inject_hardcoded_evaluators
 from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
-from ahbicht.evaluation_results import (
-    AhbExpressionEvaluationResult,
-    FormatConstraintEvaluationResult,
-    RequirementConstraintEvaluationResult,
-)
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 from ahbicht.models.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 from ahbicht.models.enums import ModalMark, PrefixOperator, RequirementIndicator
+from ahbicht.models.evaluation_results import (
+    AhbExpressionEvaluationResult,
+    FormatConstraintEvaluationResult,
+    RequirementConstraintEvaluationResult,
+)
 from unittests.defaults import (
     default_test_format,
     default_test_version,
