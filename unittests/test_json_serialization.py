@@ -40,7 +40,7 @@ from ahbicht.models.validation_results import (
     ValidationResultInContext,
     ValidationResultInContextSchema,
 )
-from ahbicht.validation.validation_values import RequirementValidationValue
+from ahbicht.models.validation_values import RequirementValidationValue
 
 T = TypeVar("T")
 

@@ -23,6 +23,7 @@ from ahbicht.models.validation_results import (
     SegmentLevelValidationResult,
     ValidationResultInContext,
 )
+from ahbicht.models.validation_values import RequirementValidationValue
 from ahbicht.validation.validation import (
     combine_requirements_of_different_levels,
     map_requirement_validation_values,
@@ -33,7 +34,6 @@ from ahbicht.validation.validation import (
     validate_segment_group,
     validate_segment_level,
 )
-from ahbicht.validation.validation_values import RequirementValidationValue
 
 # TODO: Add testcases for segment_requirement is None & soll_is_required = False
 from unittests.defaults import default_test_format, default_test_version, empty_default_test_data

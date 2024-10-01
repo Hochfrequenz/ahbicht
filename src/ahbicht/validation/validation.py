@@ -31,8 +31,8 @@ from ahbicht.models.validation_results import (
     SegmentLevelValidationResult,
     ValidationResultInContext,
 )
+from ahbicht.models.validation_values import RequirementValidationValue
 from ahbicht.validation import validation_logger
-from ahbicht.validation.validation_values import RequirementValidationValue
 
 
 async def validate_deep_anwendungshandbuch(
