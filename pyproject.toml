@@ -41,7 +41,7 @@ json_schemas = ["marshmallow-jsonschema==0.13.0", "setuptools==75.1.0"]
 linting = ["pylint==3.3.1"]
 spellcheck = ["codespell==2.3.0"]
 test_packaging = [
-    "build==1.2.2",
+    "build==1.2.2.post1",
     "setuptools==75.1.0",
     "setuptools-scm==8.1.0",
     "twine==5.1.1",
