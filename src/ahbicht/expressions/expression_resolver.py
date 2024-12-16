@@ -22,13 +22,17 @@ from ahbicht.utility_functions import parse_repeatability
 
 
 async def parse_expression_including_unresolved_subexpressions(
-    expression: str, resolve_packages: bool = False, replace_time_conditions: bool = True
+    expression: str,
+    resolve_packages: bool = False,
+    resolve_time_conditions: bool = True,
+    replace_time_conditions: bool = True,
 ) -> Tree[Token]:
     """
     Parses expressions and resolves its subexpressions,
     for example condition_expressions in ahb_expressions or packages in condition_expressions.
     :param expression: a syntactically valid ahb_expression or condition_expression
     :param resolve_packages: if true resolves also the packages in the condition_expressions
+    :param resolve_time_conditions: if true resolves also the time conditions in the condition_expressions
     :param replace_time_conditions: if true the time conditions "UBx" are replaced with format constraints
     """
     try:
@@ -43,8 +47,8 @@ async def parse_expression_including_unresolved_subexpressions(
     if resolve_packages:
         # the condition expression inside the ahb expression has to be resolved before trying to resolve packages
         expression_tree = await expand_packages(expression_tree)
-    if replace_time_conditions:
-        expression_tree = expand_time_conditions(expression_tree)
+    if resolve_time_conditions:
+        expression_tree = expand_time_conditions(expression_tree, replace_time_conditions)
     return expression_tree
 
 
@@ -60,11 +64,12 @@ async def expand_packages(parsed_tree: Tree) -> Tree[Token]:
     return result
 
 
-def expand_time_conditions(parsed_tree: Tree) -> Tree[Token]:
+def expand_time_conditions(parsed_tree: Tree, replace_time_conditions: bool = True) -> Tree[Token]:
     """
-    Replaces all the time conditions "UBx" with format constraints (and requirements constraints for UB3)
+    Replaces either all the "short" time conditions in parser_tree with the respective "long" condition expressions
+    or replaces all the time conditions "UBx" with format constraints (and requirements constraints for UB3)
     """
-    result = TimeConditionTransformer().transform(parsed_tree)
+    result = TimeConditionTransformer(replace_time_conditions).transform(parsed_tree)
     return result
 
 
@@ -149,6 +154,10 @@ class PackageExpansionTransformer(Transformer):
 # pylint: disable=invalid-name
 class TimeConditionTransformer(Transformer):
     """
+    There are two options which are chosen by the boolean `replace_time_conditions`:
+    i:
+    The time conditions are resolved as provided in the "Allgemeine Festlegungen".
+    ii:
     The TimeConditionEvaluator replaces "time conditions" (aka "UB1", "UB2", "UB3") with evaluatable format constraints.
     This is not what BDEW suggests us to do in the "Allgemeine Festlegungen". BDEW says that "UBx" conditions have to be
     expanded just like packages: For example "UB1" shall be expanded to "([931] ∧ [932] [490]) ⊻ ([931] ∧ [933] [491])".
@@ -190,9 +199,21 @@ class TimeConditionTransformer(Transformer):
     constraint for the respective division.
     """
 
+    def __init__(self, replace_time_conditions: bool = True):
+        super().__init__()
+        self.replace_time_conditions = replace_time_conditions
+
     def time_condition(self, tokens: List[Token]) -> Tree:
         """
-        try to resolve the package using the injected PackageResolver
+        Replace or resolve time conditions.
+        """
+        if self.replace_time_conditions:
+            return self._replace_time_condition(tokens)
+        return self._expand_time_condition(tokens)
+
+    def _replace_time_condition(self, tokens: List[Token]) -> Tree:
+        """
+        Replace and resolve time conditions.
         """
         time_condition_key = tokens[0].value
         if time_condition_key == "UB1":
@@ -205,4 +226,26 @@ class TimeConditionTransformer(Transformer):
             # RC 492 = receiver is from division electricity/strom
             # RC 493 = receiver is from division gas
             return parse_condition_expression_to_tree("[932][492]X[934][493]")
+        raise NotImplementedError(f"The time_condition '{time_condition_key}' is not implemented")
+
+    def _expand_time_condition(self, tokens: List[Token]) -> Tree:
+        """
+        try to resolve the time conditions using the injected PackageResolver
+        """
+        time_condition_key = tokens[0].value
+        if time_condition_key == "UB1":
+            # a format constraint for "Stromtag"
+            return parse_condition_expression_to_tree("([931]∧[932][490])⊻([931]∧[933][491])")
+        if time_condition_key == "UB2":
+            # a format constraint for "Gastage"
+            return parse_condition_expression_to_tree("([931]∧[934][490])⊻([931]∧[935][491])")
+        if time_condition_key == "UB3":
+            # RC 492 = receiver is from division electricity/strom
+            # RC 493 = receiver is from division gas
+            return parse_condition_expression_to_tree(
+                "([931]∧[932][492]∧[490])⊻"
+                "([931]∧[933][492]∧[491])⊻"
+                "([931]∧[934][493]∧[490])⊻"
+                "([931]∧[935][493]∧[491])"
+            )
         raise NotImplementedError(f"The time_condition '{time_condition_key}' is not implemented")

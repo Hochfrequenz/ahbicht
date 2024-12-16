@@ -106,6 +106,6 @@ class TestTimeConditionReplacement:
         self, expression: str, replace_time_conditions: bool, expected_tree: Tree[Token]
     ):
         parsed_tree = await parse_expression_including_unresolved_subexpressions(
-            expression, replace_time_conditions=replace_time_conditions
+            expression, replace_time_conditions=replace_time_conditions, resolve_time_conditions=replace_time_conditions
         )
         assert parsed_tree == expected_tree
