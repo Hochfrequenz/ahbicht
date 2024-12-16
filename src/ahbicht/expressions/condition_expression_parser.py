@@ -135,7 +135,10 @@ def extract_categorized_keys_from_tree(
 
 
 async def extract_categorized_keys(
-    condition_expression: str, resolve_packages: bool = False, replace_time_conditions: bool = False
+    condition_expression: str,
+    resolve_packages: bool = False,
+    resolve_time_conditions: bool = False,
+    replace_time_conditions: bool = False,
 ) -> CategorizedKeyExtract:
     """
     Parses the given condition expression and returns CategorizedKeyExtract as a template for content
@@ -148,6 +151,9 @@ async def extract_categorized_keys(
     from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 
     tree = await parse_expression_including_unresolved_subexpressions(
-        condition_expression, resolve_packages=resolve_packages, replace_time_conditions=replace_time_conditions
+        condition_expression,
+        resolve_packages=resolve_packages,
+        resolve_time_conditions=resolve_time_conditions,
+        replace_time_conditions=replace_time_conditions,
     )
     return extract_categorized_keys_from_tree(tree, sanitize=True)
