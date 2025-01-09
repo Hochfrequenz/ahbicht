@@ -30,7 +30,7 @@ imagesize==1.4.1
     # via sphinx
 inject==5.2.1
     # via ahbicht (pyproject.toml)
-jinja2==3.1.4
+jinja2==3.1.5
     # via sphinx
 lark==1.2.2
     # via ahbicht (pyproject.toml)
