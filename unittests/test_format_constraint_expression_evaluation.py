@@ -202,6 +202,7 @@ class TestFormatConstraintExpressionEvaluation:
         "format_constraint_expression, entered_input, is_successful, error_message",
         [
             pytest.param("[931]", "2022-01-01T00:00:00+00:00", True, "+00:00"),
+            pytest.param("[931]", "202201010000+00", True, "EDIFACT datetime"),
             pytest.param("[931]", "2022-01-01T00:00:00Z", True, "Z is +00:00"),
             pytest.param("[931]", None, False, "None"),
             pytest.param("[931]", "2022-12-31T16:00:00-08:00", False, None),  # yes, it's truly a format constraint

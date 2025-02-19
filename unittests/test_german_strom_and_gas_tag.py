@@ -24,6 +24,7 @@ class TestGermanStromAndGasTag:
             pytest.param("2022-01-01T00:00:00+00:00", datetime(2022, 1, 1, 0, 0, 0, tzinfo=timezone.utc)),
             pytest.param("2022-01-01T00:00:00Z", datetime(2022, 1, 1, 0, 0, 0, tzinfo=timezone.utc)),
             pytest.param("2021-12-31T23:00:00-01:00", datetime(2022, 1, 1, 0, 0, 0, tzinfo=timezone.utc)),
+            pytest.param("202201010000+00", datetime(2022, 1, 1, 0, 0, 0, tzinfo=timezone.utc)),
         ],
     )
     def test_successful_parsing(self, dt_string: str, expected_datetime: datetime):

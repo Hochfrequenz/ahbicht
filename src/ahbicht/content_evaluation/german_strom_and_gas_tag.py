@@ -2,8 +2,11 @@
 A module to evaluate datetimes and whether they are "on the edge" of a German "Stromtag" or "Gastag" respectively
 """
 
+import re
 from datetime import datetime, time
 from typing import Callable, Literal, Optional, Tuple, Union
+
+from _pydatetime import _find_isoformat_datetime_separator
 
 # The problem with the stdlib zoneinfo is, that the availability of timezones via ZoneInfo(zone_key) depends on the OS
 # and system on which you're running it. In some cases "Europe/Berlin" might be available, but generally it's not,
@@ -39,6 +42,12 @@ def parse_as_datetime(entered_input: str) -> Tuple[Optional[datetime], Optional[
     try:
         if entered_input.endswith("Z"):
             entered_input = entered_input.replace("Z", "+00:00")
+        if len(entered_input) > 8 and entered_input[_find_isoformat_datetime_separator(entered_input)].isdigit():
+            # datetimes especially inside the DTM segment at the top of a message are often (or always) provided
+            # without a divider between the date and the time part. We will insert a "T" to make it parseable
+            # by the datetime module.
+            # See "Allgemeine Festlegungen" page 32 for reference.
+            entered_input = entered_input[:8] + "T" + entered_input[8:]
         result = datetime.fromisoformat(entered_input)
         if result.tzinfo is None:
             # If tzinfo is none the datetime is "naive" = not aware of its timezone.
