@@ -3,10 +3,9 @@ A module to evaluate datetimes and whether they are "on the edge" of a German "S
 """
 
 import re
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
+from datetime import timezone as tz
 from typing import Callable, Literal, Optional, Tuple, Union
-
-from _pydatetime import _find_isoformat_datetime_separator
 
 # The problem with the stdlib zoneinfo is, that the availability of timezones via ZoneInfo(zone_key) depends on the OS
 # and system on which you're running it. In some cases "Europe/Berlin" might be available, but generally it's not,
@@ -26,6 +25,11 @@ def _get_german_local_time(date_time: datetime) -> time:
     return german_local_datetime.time()
 
 
+EDIFACT_DATETIME_REGEX = re.compile(
+    r"^(?P<year>\d{4})(?P<month>\d{2})(?P<day>\d{2})(?P<hour>\d{2})(?P<minute>\d{2})(?P<timezone>[+-]\d{2})$"
+)
+
+
 # the functions below are excessively unit tested; Please add a test case if you suspect their behaviour to be wrong
 def parse_as_datetime(entered_input: str) -> Tuple[Optional[datetime], Optional[EvaluatedFormatConstraint]]:
     """
@@ -42,13 +46,20 @@ def parse_as_datetime(entered_input: str) -> Tuple[Optional[datetime], Optional[
     try:
         if entered_input.endswith("Z"):
             entered_input = entered_input.replace("Z", "+00:00")
-        if len(entered_input) > 8 and entered_input[_find_isoformat_datetime_separator(entered_input)].isdigit():
+        edifact_datetime_match = EDIFACT_DATETIME_REGEX.match(entered_input)
+        if edifact_datetime_match is not None:
             # datetimes especially inside the DTM segment at the top of a message are often (or always) provided
             # without a divider between the date and the time part. We will insert a "T" to make it parseable
             # by the datetime module.
             # See "Allgemeine Festlegungen" page 32 for reference.
-            entered_input = entered_input[:8] + "T" + entered_input[8:]
-        result = datetime.fromisoformat(entered_input)
+            groups = {key: int(value) for key, value in edifact_datetime_match.groupdict().items()}
+            offset = groups.pop("timezone")
+            result = datetime(
+                **groups,
+                tzinfo=tz(timedelta(hours=offset)),
+            )
+        else:
+            result = datetime.fromisoformat(entered_input)
         if result.tzinfo is None:
             # If tzinfo is none the datetime is "naive" = not aware of its timezone.
             # We don't want naive datetimes because they are the root of all evil.
