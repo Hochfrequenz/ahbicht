@@ -28,6 +28,7 @@ def _get_german_local_time(date_time: datetime) -> time:
 EDIFACT_DATETIME_REGEX = re.compile(
     r"^(?P<year>\d{4})(?P<month>\d{2})(?P<day>\d{2})(?P<hour>\d{2})(?P<minute>\d{2})(?P<timezone>[+-]\d{2})$"
 )
+EDIFACT_TIME_QUANTITY_REGEX = re.compile(r"^(?P<quantity>\d{2})(?P<unit>[TWM])(?P<reference>[MQHJTR])$")
 
 
 # the functions below are excessively unit tested; Please add a test case if you suspect their behaviour to be wrong
@@ -46,18 +47,59 @@ def parse_as_datetime(entered_input: str) -> Tuple[Optional[datetime], Optional[
     try:
         if entered_input.endswith("Z"):
             entered_input = entered_input.replace("Z", "+00:00")
-        edifact_datetime_match = EDIFACT_DATETIME_REGEX.match(entered_input)
-        if edifact_datetime_match is not None:
-            # datetimes especially inside the DTM segment at the top of a message are often (or always) provided
-            # without a divider between the date and the time part. We will insert a "T" to make it parseable
-            # by the datetime module.
-            # See "Allgemeine Festlegungen" page 32 for reference.
-            groups = {key: int(value) for key, value in edifact_datetime_match.groupdict().items()}
-            offset = groups.pop("timezone")
-            result = datetime(
-                **groups,
-                tzinfo=tz(timedelta(hours=offset)),
-            )
+        format_str: str = ""
+        match len(entered_input):
+            case 2:  # 802 Monat erlaubt: 1, 3, 6, 12 | 2
+                return None, EvaluatedFormatConstraint(
+                    format_constraint_fulfilled=False,
+                    error_message="Presumably a month is to be given here. No datetime object can be created from this.",
+                )
+            case 4:
+                # Z01 ZZRB
+                if EDIFACT_TIME_QUANTITY_REGEX.match(entered_input):
+                    return None, EvaluatedFormatConstraint(
+                        format_constraint_fulfilled=False,
+                        error_message="Presumably a time quantity is to be given here. No datetime object can be created from this.",
+                    )
+                # 106 MMDD -> UTILMDS
+                if int(entered_input[:2]) < 12:
+                    format_str = "%Y%m%d"
+                    entered_input = f"{datetime.now().year}{entered_input}"  # todo: does this make sense?
+                # 602 CCYY
+                else:
+                    format_str = "%Y"
+                    entered_input = entered_input
+            case 6:
+                # 610 CCYYMM
+                format_str = "%Y%m"
+            case 8:
+                # 104 MMWWMMWW | 8
+                if int(entered_input[:2]) < 12:
+                    return None, EvaluatedFormatConstraint(
+                        format_constraint_fulfilled=False,
+                        error_message="Presumably a time interval is to be given here."
+                        "No datetime object can be created from this.",
+                    )
+                # 102 CCYYMMDD ->MSCONS
+                format_str = "%Y%m%d"
+            case 12:
+                # 203 CCYYMMDDHHMM
+                format_str = "%Y%m%d%H%M"
+            case 14:
+                # 204 CCYYMMDDHHMMSS
+                format_str = "%Y%m%d%H%M%S"
+            case 15:
+                # 303 CCYYMMDDHHMMZZZ
+                format_str = "%Y%m%d%H%M%z"
+                entered_input = entered_input + "00"  # add minutes in timezone offset
+            case 17:
+                # 304 CCYYMMDDHHMMSSZZZ
+                format_str = "%Y%m%d%H%M%S%z"
+                entered_input = entered_input + "00"  # add minutes in timezone offset
+            case _:
+                pass  # do nothing for now in order to not break the code
+        if len(format_str) > 0:
+            result = datetime.strptime(entered_input, format_str)
         else:
             result = datetime.fromisoformat(entered_input)
         if result.tzinfo is None:
