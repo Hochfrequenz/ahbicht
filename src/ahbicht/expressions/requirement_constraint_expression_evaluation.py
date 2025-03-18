@@ -243,7 +243,7 @@ of the type RequirementConstraint, Hint or FormatConstraint."""
 
 
 async def requirement_constraint_evaluation(
-    condition_expression: Union[str, Tree]
+    condition_expression: Union[str, Tree],
 ) -> RequirementConstraintEvaluationResult:
     """
     Evaluation of the condition expression in regard to the requirement conditions (rc).

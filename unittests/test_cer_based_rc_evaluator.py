@@ -1,4 +1,4 @@
-""" Tests the RC evaluator, that assumes a ContentEvaluationResult to be present in the evaluatable data"""
+"""Tests the RC evaluator, that assumes a ContentEvaluationResult to be present in the evaluatable data"""
 
 from unittest import mock
 

@@ -1,4 +1,4 @@
-""" Tests for the parsing of the conditions tests (Mussfeldprüfung) """
+"""Tests for the parsing of the conditions tests (Mussfeldprüfung)"""
 
 import asyncio
 import datetime
