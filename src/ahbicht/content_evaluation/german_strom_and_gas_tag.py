@@ -48,56 +48,53 @@ def parse_as_datetime(entered_input: str) -> Tuple[Optional[datetime], Optional[
         if entered_input.endswith("Z"):
             entered_input = entered_input.replace("Z", "+00:00")
         format_str: str = ""
-        match len(entered_input):
-            case 2:  # 802 Monat erlaubt: 1, 3, 6, 12 | 2
+        if len(entered_input) == 2:  # 802 Monat erlaubt: 1, 3, 6, 12 | 2
+            return None, EvaluatedFormatConstraint(
+                format_constraint_fulfilled=False,
+                error_message="Presumably a month is to be given here. No datetime object can be created from this.",
+            )
+        elif len(entered_input) == 4:
+            # Z01 ZZRB
+            if EDIFACT_TIME_QUANTITY_REGEX.match(entered_input):
                 return None, EvaluatedFormatConstraint(
                     format_constraint_fulfilled=False,
-                    error_message="Presumably a month is to be given here. No datetime object can be created from this.",
+                    error_message="Presumably a time quantity is to be given here. No datetime object can be created from this.",
                 )
-            case 4:
-                # Z01 ZZRB
-                if EDIFACT_TIME_QUANTITY_REGEX.match(entered_input):
-                    return None, EvaluatedFormatConstraint(
-                        format_constraint_fulfilled=False,
-                        error_message="Presumably a time quantity is to be given here. No datetime object can be created from this.",
-                    )
-                # 106 MMDD -> UTILMDS
-                if int(entered_input[:2]) < 12:
-                    format_str = "%Y%m%d"
-                    entered_input = f"{datetime.now().year}{entered_input}"  # todo: does this make sense?
-                # 602 CCYY
-                else:
-                    format_str = "%Y"
-                    entered_input = entered_input
-            case 6:
-                # 610 CCYYMM
-                format_str = "%Y%m"
-            case 8:
-                # 104 MMWWMMWW | 8
-                if int(entered_input[:2]) < 12:
-                    return None, EvaluatedFormatConstraint(
-                        format_constraint_fulfilled=False,
-                        error_message="Presumably a time interval is to be given here."
-                        "No datetime object can be created from this.",
-                    )
-                # 102 CCYYMMDD ->MSCONS
+            # 106 MMDD -> UTILMDS
+            if int(entered_input[:2]) < 12:
                 format_str = "%Y%m%d"
-            case 12:
-                # 203 CCYYMMDDHHMM
-                format_str = "%Y%m%d%H%M"
-            case 14:
-                # 204 CCYYMMDDHHMMSS
-                format_str = "%Y%m%d%H%M%S"
-            case 15:
-                # 303 CCYYMMDDHHMMZZZ
-                format_str = "%Y%m%d%H%M%z"
-                entered_input = entered_input + "00"  # add minutes in timezone offset
-            case 17:
-                # 304 CCYYMMDDHHMMSSZZZ
-                format_str = "%Y%m%d%H%M%S%z"
-                entered_input = entered_input + "00"  # add minutes in timezone offset
-            case _:
-                pass  # do nothing for now in order to not break the code
+                entered_input = f"{datetime.now().year}{entered_input}"  # todo: does this make sense?
+            # 602 CCYY
+            else:
+                format_str = "%Y"
+                entered_input = entered_input
+        elif len(entered_input) == 6:
+            # 610 CCYYMM
+            format_str = "%Y%m"
+        elif len(entered_input) == 8:
+            # 104 MMWWMMWW | 8
+            if int(entered_input[:2]) < 12:
+                return None, EvaluatedFormatConstraint(
+                    format_constraint_fulfilled=False,
+                    error_message="Presumably a time interval is to be given here."
+                    "No datetime object can be created from this.",
+                )
+            # 102 CCYYMMDD ->MSCONS
+            format_str = "%Y%m%d"
+        elif len(entered_input) == 12:
+            # 203 CCYYMMDDHHMM
+            format_str = "%Y%m%d%H%M"
+        elif len(entered_input) == 14:
+            # 204 CCYYMMDDHHMMSS
+            format_str = "%Y%m%d%H%M%S"
+        elif len(entered_input) == 15:
+            # 303 CCYYMMDDHHMMZZZ
+            format_str = "%Y%m%d%H%M%z"
+            entered_input = entered_input + "00"  # add minutes in timezone offset
+        elif len(entered_input) == 17:
+            # 304 CCYYMMDDHHMMSSZZZ
+            format_str = "%Y%m%d%H%M%S%z"
+            entered_input = entered_input + "00"  # add minutes in timezone offset
         if len(format_str) > 0:
             result = datetime.strptime(entered_input, format_str)
         else:
