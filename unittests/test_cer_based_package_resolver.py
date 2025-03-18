@@ -1,4 +1,4 @@
-""" Tests the PackageResolver, that assumes a ContentEvaluationResult to be present in the evaluatable data"""
+"""Tests the PackageResolver, that assumes a ContentEvaluationResult to be present in the evaluatable data"""
 
 import inject
 import pytest

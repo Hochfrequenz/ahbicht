@@ -1,4 +1,4 @@
-""" Tests for creating different condition nodes that are used in the parsed tree. """
+"""Tests for creating different condition nodes that are used in the parsed tree."""
 
 import pytest
 

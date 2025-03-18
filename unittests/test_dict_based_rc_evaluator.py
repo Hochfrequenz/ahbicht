@@ -1,4 +1,4 @@
-""" Tests the dictionary based RC evaluator"""
+"""Tests the dictionary based RC evaluator"""
 
 from unittest import mock
 

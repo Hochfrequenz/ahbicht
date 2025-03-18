@@ -1,4 +1,4 @@
-""" Tests for the parsing of the ahb_expressions as they appear in the AHBs. """
+"""Tests for the parsing of the ahb_expressions as they appear in the AHBs."""
 
 import pytest
 from lark import Token, Tree

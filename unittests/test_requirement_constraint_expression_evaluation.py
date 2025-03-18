@@ -1,4 +1,4 @@
-""" Test for the evaluation of the conditions tests (Mussfeldprüfung) """
+"""Test for the evaluation of the conditions tests (Mussfeldprüfung)"""
 
 from typing import Dict, Optional
 
