@@ -24,7 +24,8 @@ class TestGermanStromAndGasTag:
             pytest.param("2022-01-01T00:00:00+00:00", datetime(2022, 1, 1, 0, 0, 0, tzinfo=timezone.utc)),
             pytest.param("2022-01-01T00:00:00Z", datetime(2022, 1, 1, 0, 0, 0, tzinfo=timezone.utc)),
             pytest.param("2021-12-31T23:00:00-01:00", datetime(2022, 1, 1, 0, 0, 0, tzinfo=timezone.utc)),
-            pytest.param("202201010000+00", datetime(2022, 1, 1, 0, 0, 0, tzinfo=timezone.utc)),
+            pytest.param("202201110011+00", datetime(2022, 1, 11, 0, 11, 0, tzinfo=timezone.utc)),
+            pytest.param("20220101000010+00", datetime(2022, 1, 1, 0, 0, 10, tzinfo=timezone.utc)),
         ],
     )
     def test_successful_parsing(self, dt_string: str, expected_datetime: datetime):
@@ -39,6 +40,13 @@ class TestGermanStromAndGasTag:
             pytest.param("2019-12-31T25:00:00+00:00", "hour must be in 0..23"),
             pytest.param("foo", "Invalid isoformat string"),
             pytest.param("", "empty or None"),
+            pytest.param("2025", "Neither offset nor timezone was given"),
+            pytest.param("202501", "Neither offset nor timezone was given"),
+            pytest.param("202501010010", "Neither offset nor timezone was given"),
+            pytest.param("20250101001010", "Neither offset nor timezone was given"),
+            pytest.param("03", "Presumably a month is to be given here "),
+            pytest.param("10TQ", "Presumably a time quantity or interval is to be given here"),
+            pytest.param("10011203", "Presumably a time quantity or interval is to be given here"),
         ],
     )
     def test_errornous_parsing(self, dt_string: str, expected_error_msg: str):

@@ -46,28 +46,28 @@ def parse_as_datetime(entered_input: str) -> Tuple[Optional[datetime], Optional[
     try:
         if entered_input.endswith("Z"):
             entered_input = entered_input.replace("Z", "+00:00")
-
         if len(entered_input) == 2:  # 802 Monat erlaubt: 1, 3, 6, 12 | 2
             return None, EvaluatedFormatConstraint(
                 format_constraint_fulfilled=False,
                 error_message=f"Presumably a month is to be given here {entered_input}."
                 f"No datetime object can be created from this.",
             )
+        # look if the input could be a strict EDIFACT datetime (i.e. something like 202201010000+00)
+        is_edifact_datetime = entered_input[:-3].isdigit()
         if (len(entered_input) == 4 and EDIFACT_TIME_QUANTITY_REGEX.match(entered_input)) or (
             len(entered_input) == 8 and int(entered_input[:2]) < 12
         ):
             # Z01 ZZRB or 104 MMWWMMWW
-            if EDIFACT_TIME_QUANTITY_REGEX.match(entered_input):
-                return None, EvaluatedFormatConstraint(
-                    format_constraint_fulfilled=False,
-                    error_message=f"Presumably a time quantity or interval is to be given here {entered_input}."
-                    f"No datetime object can be created from this.",
-                )
-        if len(entered_input) == 4 and int(entered_input[:2]) < 12:
+            return None, EvaluatedFormatConstraint(
+                format_constraint_fulfilled=False,
+                error_message=f"Presumably a time quantity or interval is to be given here {entered_input}."
+                f"No datetime object can be created from this.",
+            )
+        if len(entered_input) == 4 and int(entered_input[:2]) < 12 and is_edifact_datetime:
             # 106 MMDD -> UTILMDS
             entered_input = f"{datetime.now().year}{entered_input}"  # todo: does this make sense?
 
-        if len(entered_input) == 15 or len(entered_input) == 17:
+        if (len(entered_input) == 15 or len(entered_input) == 17) and entered_input[-3] and is_edifact_datetime:
             # 303 CCYYMMDDHHMMZZZ
             # 304 CCYYMMDDHHMMSSZZZ
             entered_input = entered_input + "00"  # add minutes in timezone offset
@@ -78,11 +78,11 @@ def parse_as_datetime(entered_input: str) -> Tuple[Optional[datetime], Optional[
             8: "%Y%m%d",
             12: "%Y%m%d%H%M",
             14: "%Y%m%d%H%M%S",
-            15: "%Y%m%d%H%M%z",
-            17: "%Y%m%d%H%M%S%z",
+            17: "%Y%m%d%H%M%z",
+            19: "%Y%m%d%H%M%S%z",
         }.get(len(entered_input), "")
 
-        if len(format_str) > 0:
+        if len(format_str) > 0 and is_edifact_datetime:
             result = datetime.strptime(entered_input, format_str)
         else:
             result = datetime.fromisoformat(entered_input)
