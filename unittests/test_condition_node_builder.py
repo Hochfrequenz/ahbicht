@@ -1,4 +1,4 @@
-""" Tests for Class Condition Node Builder"""
+"""Tests for Class Condition Node Builder"""
 
 from pathlib import Path
 

@@ -1,4 +1,4 @@
-""" Tests the Evaluator Factory"""
+"""Tests the Evaluator Factory"""
 
 import uuid
 from typing import Optional

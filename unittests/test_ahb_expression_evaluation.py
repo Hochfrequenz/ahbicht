@@ -1,4 +1,4 @@
-""" Test for the evaluation of the ahb expression conditions tests (Mussfeldprüfung) """
+"""Test for the evaluation of the ahb expression conditions tests (Mussfeldprüfung)"""
 
 import uuid
 from typing import List

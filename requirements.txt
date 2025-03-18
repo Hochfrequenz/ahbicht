@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements.in
 #
-attrs==25.1.0
+attrs==25.3.0
     # via
     #   -r requirements.in
     #   maus
@@ -16,7 +16,7 @@ inject==5.2.1
     # via -r requirements.in
 lark==1.2.2
     # via -r requirements.in
-marshmallow==3.26.0
+marshmallow==3.26.1
     # via
     #   -r requirements.in
     #   marshmallow-enum
@@ -29,7 +29,7 @@ more-itertools==10.5.0
     # via maus
 packaging==24.1
     # via marshmallow
-pytz==2024.2
+pytz==2025.1
     # via
     #   -r requirements.in
     #   efoli

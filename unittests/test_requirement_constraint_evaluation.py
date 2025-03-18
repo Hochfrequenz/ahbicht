@@ -1,4 +1,4 @@
-""" Test for the requirement constraint evaluation of the condition expressions. """
+"""Test for the requirement constraint evaluation of the condition expressions."""
 
 import inject
 import pytest
