@@ -44,7 +44,7 @@ def _is_edifact_time_str(time_str):
 
 def _is_edifact_time_str_convertible_to_datetime(time_str: str) -> tuple[bool, Optional[EdiFactDateTimeFormat]]:
     """
-    Checks wheter EDIFACT time string can be converted to datetime.
+    Checks if a EDIFACT time string can be converted to datetime. If not the EdiFactDateTimeFormat is returned.
     """
     edifact_time_format: Optional[EdiFactDateTimeFormat] = None
     if len(time_str) == 2:  # 802 Monat erlaubt: 1, 3, 6, 12
