@@ -94,7 +94,7 @@ def parse_as_datetime(entered_input: str) -> Tuple[Optional[datetime], Optional[
         if entered_input.endswith("Z"):
             entered_input = entered_input.replace("Z", "+00:00")
 
-        # look if the input could be a strict EDIFACT datetime (i.e. something like 202201010000+00)
+        # check if the input could be a strict EDIFACT datetime (i.e. something like 202201010000+00)
         if _is_edifact_time_str(entered_input):
             is_convertible, edi_time_format = _is_edifact_time_str_convertible_to_datetime(entered_input)
             if not is_convertible:
