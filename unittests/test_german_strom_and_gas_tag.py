@@ -40,13 +40,15 @@ class TestGermanStromAndGasTag:
             pytest.param("2019-12-31T25:00:00+00:00", "hour must be in 0..23"),
             pytest.param("foo", "Invalid isoformat string"),
             pytest.param("", "empty or None"),
-            pytest.param("2025", "Neither offset nor timezone was given"),
-            pytest.param("202501", "Neither offset nor timezone was given"),
+            pytest.param("2025", "EDIFACT time string cannot be parsed as datetime 2025 as it is of format CCYY."),
+            pytest.param("202501", "EDIFACT time string cannot be parsed as datetime 202501"),
             pytest.param("202501010010", "Neither offset nor timezone was given"),
             pytest.param("20250101001010", "Neither offset nor timezone was given"),
-            pytest.param("03", "Presumably a month is to be given here "),
-            pytest.param("10TQ", "Presumably a time quantity or interval is to be given here"),
-            pytest.param("10011203", "Presumably a time quantity or interval is to be given here"),
+            pytest.param("03", "EDIFACT time string cannot be parsed as datetime 03 as it is of format MM."),
+            pytest.param("10TQ", "EDIFACT time string cannot be parsed as datetime 10TQ as it is of format ZZRB."),
+            pytest.param(
+                "10011203", "EDIFACT time string cannot be parsed as datetime 10011203 as it is of format MMWWMMWW."
+            ),
         ],
     )
     def test_errornous_parsing(self, dt_string: str, expected_error_msg: str):

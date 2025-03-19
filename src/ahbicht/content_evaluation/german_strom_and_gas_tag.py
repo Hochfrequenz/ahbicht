@@ -3,7 +3,9 @@ A module to evaluate datetimes and whether they are "on the edge" of a German "S
 """
 
 import re
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
+from datetime import timezone as tz
+from enum import StrEnum
 from typing import Callable, Literal, Optional, Tuple, Union
 
 # The problem with the stdlib zoneinfo is, that the availability of timezones via ZoneInfo(zone_key) depends on the OS
@@ -16,6 +18,49 @@ from ahbicht.models.condition_nodes import EvaluatedFormatConstraint
 berlin = timezone("Europe/Berlin")
 
 
+class EdiFactDateTimeFormat(StrEnum):
+    """
+    EDIFACT time strings.
+    """
+
+    CCYY = "CCYY"
+    CCYYMM = "CCYYMM"
+    CCYYMMDD = "CCYYMMDD"
+    CCYYMMDDHHMM = "CCYYMMDDHHMM"
+    CCYYMMDDHHMMSS = "CCYYMMDDHHMMSS"
+    CCYYMMDDHHMMZZZ = "CCYYMMDDHHMMZZZ"
+    CCYYMMDDHHMMSSZZZ = "CCYYMMDDHHMMSSZZZ"
+    MM = "MM"
+    ZZRB = "ZZRB"
+    MMWWMMWW = "MMWWMMWW"
+    MMDD = "MMDD"
+
+
+def _is_edifact_time_str(time_str):
+    if len(time_str) == 2:
+        return time_str.isdigit()
+    return time_str[:-3].isdigit()
+
+
+def _is_edifact_time_str_convertible_to_datetime(time_str: str) -> tuple[bool, Optional[EdiFactDateTimeFormat]]:
+    """
+    Checks wheter EDIFACT time string can be converted to datetime.
+    """
+    if len(time_str) == 2:  # 802 Monat erlaubt: 1, 3, 6, 12
+        return False, EdiFactDateTimeFormat.MM
+    if len(time_str) == 4 and EDIFACT_TIME_QUANTITY_REGEX.match(time_str):  # Z01 ZZRB
+        return False, EdiFactDateTimeFormat.ZZRB
+    if len(time_str) == 4 and int(time_str[:2]) < 12:  # 106 MMDD -> UTILMDS
+        return False, EdiFactDateTimeFormat.MMDD
+    if len(time_str) == 4:  # 602 CCYY
+        return False, EdiFactDateTimeFormat.CCYY
+    if len(time_str) == 6:  # 610 CCYY
+        return False, EdiFactDateTimeFormat.CCYYMM
+    if len(time_str) == 8 and int(time_str[:2]) < 12:  # 104 MMWWMMWW
+        return False, EdiFactDateTimeFormat.MMWWMMWW
+    return True, None
+
+
 def _get_german_local_time(date_time: datetime) -> time:
     """
     returns the current german local time for the given datetime object
@@ -25,7 +70,7 @@ def _get_german_local_time(date_time: datetime) -> time:
 
 
 EDIFACT_DATETIME_REGEX = re.compile(
-    r"^(?P<year>\d{4})(?P<month>\d{2})(?P<day>\d{2})(?P<hour>\d{2})(?P<minute>\d{2})(?P<timezone>[+-]\d{2})$"
+    r"^(?P<year>\d{4})?(?P<month>\d{2})?(?P<day>\d{2})?(?P<hour>\d{2})?(?P<minute>\d{2})?(?P<second>\d{2})?(?P<timezone>[+-]\d{2})?$"
 )
 EDIFACT_TIME_QUANTITY_REGEX = re.compile(r"^(?P<quantity>\d{2})(?P<unit>[TWM])(?P<reference>[MQHJTR])$")
 
@@ -46,44 +91,27 @@ def parse_as_datetime(entered_input: str) -> Tuple[Optional[datetime], Optional[
     try:
         if entered_input.endswith("Z"):
             entered_input = entered_input.replace("Z", "+00:00")
-        if len(entered_input) == 2:  # 802 Monat erlaubt: 1, 3, 6, 12 | 2
-            return None, EvaluatedFormatConstraint(
-                format_constraint_fulfilled=False,
-                error_message=f"Presumably a month is to be given here {entered_input}."
-                f"No datetime object can be created from this.",
-            )
+
         # look if the input could be a strict EDIFACT datetime (i.e. something like 202201010000+00)
-        is_edifact_datetime = entered_input[:-3].isdigit()
-        if (len(entered_input) == 4 and EDIFACT_TIME_QUANTITY_REGEX.match(entered_input)) or (
-            len(entered_input) == 8 and int(entered_input[:2]) < 12
-        ):
-            # Z01 ZZRB or 104 MMWWMMWW
-            return None, EvaluatedFormatConstraint(
-                format_constraint_fulfilled=False,
-                error_message=f"Presumably a time quantity or interval is to be given here {entered_input}."
-                f"No datetime object can be created from this.",
-            )
-        if len(entered_input) == 4 and int(entered_input[:2]) < 12 and is_edifact_datetime:
-            # 106 MMDD -> UTILMDS
-            entered_input = f"{datetime.now().year}{entered_input}"  # todo: does this make sense?
-
-        if (len(entered_input) == 15 or len(entered_input) == 17) and entered_input[-3] and is_edifact_datetime:
-            # 303 CCYYMMDDHHMMZZZ
-            # 304 CCYYMMDDHHMMSSZZZ
-            entered_input = entered_input + "00"  # add minutes in timezone offset
-
-        format_str = {
-            4: "%Y",
-            6: "%Y%m",
-            8: "%Y%m%d",
-            12: "%Y%m%d%H%M",
-            14: "%Y%m%d%H%M%S",
-            17: "%Y%m%d%H%M%z",
-            19: "%Y%m%d%H%M%S%z",
-        }.get(len(entered_input), "")
-
-        if len(format_str) > 0 and is_edifact_datetime:
-            result = datetime.strptime(entered_input, format_str)
+        if _is_edifact_time_str(entered_input):
+            is_convertible, edi_time_format = _is_edifact_time_str_convertible_to_datetime(entered_input)
+            if not is_convertible:
+                return None, EvaluatedFormatConstraint(
+                    format_constraint_fulfilled=False,
+                    error_message=f"EDIFACT time string cannot be parsed as datetime {entered_input}"
+                    f" as it is of format {edi_time_format}.",
+                )
+            edifact_datetime_match = EDIFACT_DATETIME_REGEX.match(entered_input)
+            if edifact_datetime_match is not None:
+                groups = {
+                    key: int(value)
+                    for key, value in edifact_datetime_match.groupdict().items()
+                    if value is not None and key != "timezone"
+                }
+                offset = edifact_datetime_match.groupdict().get("timezone")
+                result = datetime(**groups)
+                if offset:
+                    result = datetime(**groups, tzinfo=tz(timedelta(hours=int(offset))))
         else:
             result = datetime.fromisoformat(entered_input)
         if result.tzinfo is None:
