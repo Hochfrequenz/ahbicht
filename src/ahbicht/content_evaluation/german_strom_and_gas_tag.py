@@ -36,7 +36,7 @@ class EdifactDateTimeFormat(StrEnum):
     MMDD = "MMDD"  # 106
 
 
-def _is_edifact_time_str(time_str):
+def _is_edifact_time_str(time_str: str) -> bool:
     if len(time_str) == 2:
         return time_str.isdigit()
     return time_str[:-3].isdigit()
