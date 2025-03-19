@@ -18,7 +18,7 @@ from ahbicht.models.condition_nodes import EvaluatedFormatConstraint
 berlin = timezone("Europe/Berlin")
 
 
-class EdiFactDateTimeFormat(StrEnum):
+class EdifactDateTimeFormat(StrEnum):
     """
     EDIFACT time strings.
     """
@@ -42,23 +42,23 @@ def _is_edifact_time_str(time_str):
     return time_str[:-3].isdigit()
 
 
-def _is_edifact_time_str_convertible_to_datetime(time_str: str) -> tuple[bool, Optional[EdiFactDateTimeFormat]]:
+def _is_edifact_time_str_convertible_to_datetime(time_str: str) -> tuple[bool, Optional[EdifactDateTimeFormat]]:
     """
     Checks if a EDIFACT time string can be converted to datetime. If not the EdiFactDateTimeFormat is returned.
     """
-    edifact_time_format: Optional[EdiFactDateTimeFormat] = None
+    edifact_time_format: Optional[EdifactDateTimeFormat] = None
     if len(time_str) == 2:  # 802 Monat erlaubt: 1, 3, 6, 12
-        edifact_time_format = EdiFactDateTimeFormat.MM
+        edifact_time_format = EdifactDateTimeFormat.MM
     elif len(time_str) == 4 and EDIFACT_TIME_QUANTITY_REGEX.match(time_str):  # Z01 ZZRB
-        edifact_time_format = EdiFactDateTimeFormat.ZZRB
+        edifact_time_format = EdifactDateTimeFormat.ZZRB
     elif len(time_str) == 4 and int(time_str[:2]) < 12:  # 106 MMDD -> UTILMDS
-        edifact_time_format = EdiFactDateTimeFormat.MMDD
+        edifact_time_format = EdifactDateTimeFormat.MMDD
     elif len(time_str) == 4:  # 602 CCYY
-        edifact_time_format = EdiFactDateTimeFormat.CCYY
+        edifact_time_format = EdifactDateTimeFormat.CCYY
     elif len(time_str) == 6:  # 610 CCYYMM
-        edifact_time_format = EdiFactDateTimeFormat.CCYYMM
+        edifact_time_format = EdifactDateTimeFormat.CCYYMM
     elif len(time_str) == 8 and int(time_str[:2]) < 12:  # 104 MMWWMMWW
-        edifact_time_format = EdiFactDateTimeFormat.MMWWMMWW
+        edifact_time_format = EdifactDateTimeFormat.MMWWMMWW
     return edifact_time_format is None, edifact_time_format
 
 
