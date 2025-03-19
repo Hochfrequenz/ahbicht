@@ -46,19 +46,20 @@ def _is_edifact_time_str_convertible_to_datetime(time_str: str) -> tuple[bool, O
     """
     Checks wheter EDIFACT time string can be converted to datetime.
     """
+    edifact_time_format: Optional[EdiFactDateTimeFormat] = None
     if len(time_str) == 2:  # 802 Monat erlaubt: 1, 3, 6, 12
-        return False, EdiFactDateTimeFormat.MM
-    if len(time_str) == 4 and EDIFACT_TIME_QUANTITY_REGEX.match(time_str):  # Z01 ZZRB
-        return False, EdiFactDateTimeFormat.ZZRB
-    if len(time_str) == 4 and int(time_str[:2]) < 12:  # 106 MMDD -> UTILMDS
-        return False, EdiFactDateTimeFormat.MMDD
-    if len(time_str) == 4:  # 602 CCYY
-        return False, EdiFactDateTimeFormat.CCYY
-    if len(time_str) == 6:  # 610 CCYY
-        return False, EdiFactDateTimeFormat.CCYYMM
-    if len(time_str) == 8 and int(time_str[:2]) < 12:  # 104 MMWWMMWW
-        return False, EdiFactDateTimeFormat.MMWWMMWW
-    return True, None
+        edifact_time_format = EdiFactDateTimeFormat.MM
+    elif len(time_str) == 4 and EDIFACT_TIME_QUANTITY_REGEX.match(time_str):  # Z01 ZZRB
+        edifact_time_format = EdiFactDateTimeFormat.ZZRB
+    elif len(time_str) == 4 and int(time_str[:2]) < 12:  # 106 MMDD -> UTILMDS
+        edifact_time_format = EdiFactDateTimeFormat.MMDD
+    elif len(time_str) == 4:  # 602 CCYY
+        edifact_time_format = EdiFactDateTimeFormat.CCYY
+    elif len(time_str) == 6:  # 610 CCYYMM
+        edifact_time_format = EdiFactDateTimeFormat.CCYYMM
+    elif len(time_str) == 8 and int(time_str[:2]) < 12:  # 104 MMWWMMWW
+        edifact_time_format = EdiFactDateTimeFormat.MMWWMMWW
+    return edifact_time_format is None, edifact_time_format
 
 
 def _get_german_local_time(date_time: datetime) -> time:
@@ -70,7 +71,8 @@ def _get_german_local_time(date_time: datetime) -> time:
 
 
 EDIFACT_DATETIME_REGEX = re.compile(
-    r"^(?P<year>\d{4})?(?P<month>\d{2})?(?P<day>\d{2})?(?P<hour>\d{2})?(?P<minute>\d{2})?(?P<second>\d{2})?(?P<timezone>[+-]\d{2})?$"
+    r"^(?P<year>\d{4})?(?P<month>\d{2})?(?P<day>\d{2})?(?P<hour>\d{2})?"
+    r"(?P<minute>\d{2})?(?P<second>\d{2})?(?P<timezone>[+-]\d{2})?$"
 )
 EDIFACT_TIME_QUANTITY_REGEX = re.compile(r"^(?P<quantity>\d{2})(?P<unit>[TWM])(?P<reference>[MQHJTR])$")
 
@@ -108,10 +110,12 @@ def parse_as_datetime(entered_input: str) -> Tuple[Optional[datetime], Optional[
                     for key, value in edifact_datetime_match.groupdict().items()
                     if value is not None and key != "timezone"
                 }
-                offset = edifact_datetime_match.groupdict().get("timezone")
-                result = datetime(**groups)
-                if offset:
-                    result = datetime(**groups, tzinfo=tz(timedelta(hours=int(offset))))
+                offset = edifact_datetime_match.groupdict().get("timezone", None)
+                result = datetime(**groups, tzinfo=None if offset is None else tz(timedelta(hours=int(offset))))
+            else:
+                return None, EvaluatedFormatConstraint(
+                    format_constraint_fulfilled=False, error_message="Could not parse EDIFACT datetime"
+                )  # should not happen
         else:
             result = datetime.fromisoformat(entered_input)
         if result.tzinfo is None:
