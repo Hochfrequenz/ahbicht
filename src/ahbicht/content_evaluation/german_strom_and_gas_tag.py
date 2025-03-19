@@ -5,7 +5,6 @@ A module to evaluate datetimes and whether they are "on the edge" of a German "S
 import re
 from datetime import datetime, time, timedelta
 from datetime import timezone as tz
-from enum import StrEnum
 from typing import Callable, Literal, Optional, Tuple, Union
 
 # The problem with the stdlib zoneinfo is, that the availability of timezones via ZoneInfo(zone_key) depends on the OS
@@ -13,6 +12,7 @@ from typing import Callable, Literal, Optional, Tuple, Union
 # and it's PITA to manually define timezones. So we're using pytz as a datasource for timezone information.
 from pytz import timezone, utc
 
+from ahbicht import StrEnum
 from ahbicht.models.condition_nodes import EvaluatedFormatConstraint
 
 berlin = timezone("Europe/Berlin")
