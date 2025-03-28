@@ -88,7 +88,12 @@ def extract_categorized_keys_from_tree(
     See 'Allgemeine Festlegungen' from EDI@Energy.
     """
     result = CategorizedKeyExtract(
-        format_constraint_keys=[], requirement_constraint_keys=[], hint_keys=[], package_keys=[], time_condition_keys=[]
+        format_constraint_keys=[],
+        requirement_constraint_keys=[],
+        hint_keys=[],
+        package_keys=[],
+        time_condition_keys=[],
+        package_repeatabilities=[],
     )
     condition_keys: List[str]
     if isinstance(tree_or_list, list):
@@ -125,6 +130,8 @@ def extract_categorized_keys_from_tree(
             result.hint_keys.append(condition_key)
         elif condition_node_type is ConditionNodeType.FORMAT_CONSTRAINT:
             result.format_constraint_keys.append(condition_key)
+        elif condition_node_type is ConditionNodeType.PACKAGE_REPEATABILITY:
+            result.package_repeatabilities.append(condition_key)
         else:
             # if you run into the ConditionNodeType.PACKAGE case, you probably forgot to enable the package resolving
             # in the parsing step (although the error occurs during evaluation)

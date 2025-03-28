@@ -57,6 +57,14 @@ class TokenLogicProvider(ABC):
         """
         raise NotImplementedError("The inheriting sub class has to implement this method")
 
+    @abstractmethod
+    def get_pr_evaluator(self, edifact_format: EdifactFormat, format_version: EdifactFormatVersion) -> PrEvaluator:
+        """
+        returns an appropriate PR Evaluator for the given edifact_format and edifact_format_version.
+        The implementing class shall raise a NotImplementedError and not return None.
+        """
+        raise NotImplementedError("The inheriting sub class has to implement this method")
+
 
 class SingletonTokenLogicProvider(TokenLogicProvider):
     """

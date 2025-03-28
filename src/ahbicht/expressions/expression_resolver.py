@@ -26,6 +26,7 @@ async def parse_expression_including_unresolved_subexpressions(
     resolve_packages: bool = False,
     resolve_time_conditions: bool = True,
     replace_time_conditions: bool = True,
+    include_package_repeatabilities: bool = False,
 ) -> Tree[Token]:
     """
     Parses expressions and resolves its subexpressions,
@@ -34,6 +35,7 @@ async def parse_expression_including_unresolved_subexpressions(
     :param resolve_packages: if true resolves also the packages in the condition_expressions
     :param resolve_time_conditions: if true resolves also the time conditions in the condition_expressions
     :param replace_time_conditions: if true the time conditions "UBx" are replaced with format constraints
+    :param include_package_repeatabilities: if true we include the repeatabilities of the packages
     """
     try:
         expression_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(expression)
@@ -46,18 +48,18 @@ async def parse_expression_including_unresolved_subexpressions(
             raise SyntaxError(f"{ahb_syntax_error.msg} {condition_syntax_error.msg}")
     if resolve_packages:
         # the condition expression inside the ahb expression has to be resolved before trying to resolve packages
-        expression_tree = await expand_packages(expression_tree)
+        expression_tree = await expand_packages(expression_tree, include_package_repeatabilities)
     if resolve_time_conditions:
         expression_tree = expand_time_conditions(expression_tree, replace_time_conditions)
     return expression_tree
 
 
-async def expand_packages(parsed_tree: Tree) -> Tree[Token]:
+async def expand_packages(parsed_tree: Tree, include_package_repeatabilities: bool = False) -> Tree[Token]:
     """
     Replaces all the "short" packages in parser_tree with the respective "long" condition expressions
     """
     try:
-        result = PackageExpansionTransformer().transform(parsed_tree)
+        result = PackageExpansionTransformer(include_package_repeatabilities).transform(parsed_tree)
     except VisitError as visit_err:
         raise visit_err.orig_exc
     result = await _replace_sub_coroutines_with_awaited_results(result)
@@ -115,9 +117,10 @@ class PackageExpansionTransformer(Transformer):
     The PackageExpansionTransformer expands packages inside a tree to condition expressions by using a PackageResolver.
     """
 
-    def __init__(self):
+    def __init__(self, include_package_repeatabilities: bool = False):
         super().__init__()
         self.token_logic_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)
+        self.include_package_repeatabilities = include_package_repeatabilities
 
     def package(self, tokens: List[Token]) -> Awaitable[Tree]:
         """
@@ -135,11 +138,13 @@ class PackageExpansionTransformer(Transformer):
             repeatability = parse_repeatability(repeatability_tokens[0].value)
         else:
             repeatability = None
-        return self._package_async(package_key_token)  # pylint:disable=no-value-for-parameter
+        return self._package_async(package_key_token, repeatability_tokens[0])  # pylint:disable=no-value-for-parameter
 
     @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
     # search for binder.bind_to_provider(EvaluatableDataProvider, your_function_that_returns_evaluatable_data_goes_here)
-    async def _package_async(self, package_key_token: Token, evaluatable_data: EvaluatableData) -> Tree[Token]:
+    async def _package_async(
+        self, package_key_token: Token, repeatability_token: Token, evaluatable_data: EvaluatableData
+    ) -> Tree[Token]:
         resolver: PackageResolver = self.token_logic_provider.get_package_resolver(
             evaluatable_data.edifact_format, evaluatable_data.edifact_format_version
         )
@@ -148,6 +153,8 @@ class PackageExpansionTransformer(Transformer):
             raise NotImplementedError(f"The package '{package_key_token.value}' could not be resolved by {resolver}")
         # the package_expression is not None because that's the definition of "has been resolved successfully"
         tree_result = parse_condition_expression_to_tree(resolved_package.package_expression)
+        if self.include_package_repeatabilities:
+            return Tree("package_repetitions", [tree_result, repeatability_token])
         return tree_result
 
 

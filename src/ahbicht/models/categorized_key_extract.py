@@ -58,6 +58,13 @@ class CategorizedKeyExtract:
             iterable_validator=attrs.validators.instance_of(list),
         )
     )
+    #: a list of package repeatabilities, if present
+    package_repeatabilities: List[str] = attrs.field(
+        validator=attrs.validators.deep_iterable(
+            member_validator=attrs.validators.matches_re(r"^\d\.\.\d$"),
+            iterable_validator=attrs.validators.instance_of(list),
+        )
+    )
 
     def _remove_duplicates(self) -> None:
         """
