@@ -9,7 +9,6 @@ from efoli import EdifactFormat, EdifactFormatVersion
 
 from ahbicht.content_evaluation.evaluators import Evaluator
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
-from ahbicht.content_evaluation.pr_evaluators import PrEvaluator
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.expressions.hints_provider import HintsProvider
 from ahbicht.expressions.package_expansion import PackageResolver

@@ -154,7 +154,7 @@ class PackageExpansionTransformer(Transformer):
         # the package_expression is not None because that's the definition of "has been resolved successfully"
         tree_result = parse_condition_expression_to_tree(resolved_package.package_expression)
         if self.include_package_repeatabilities:
-            return Tree("package_repetitions", [tree_result, repeatability_token])
+            return Tree("and_composition", [tree_result, Tree(Token("RULE", "condition"), [repeatability_token])])
         return tree_result
 
 
