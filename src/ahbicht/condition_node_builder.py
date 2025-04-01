@@ -36,7 +36,6 @@ class ConditionNodeBuilder:
             self.requirement_constraints_condition_keys,
             self.hints_condition_keys,
             self.format_constraints_condition_keys,
-            self.package_repeatabilities,
         ) = self._seperate_condition_keys_into_each_type()
 
     def _seperate_condition_keys_into_each_type(self) -> Tuple[List[str], List[str], List[str]]:
@@ -49,7 +48,6 @@ class ConditionNodeBuilder:
             categorized_keys.requirement_constraint_keys,
             categorized_keys.hint_keys,
             categorized_keys.format_constraint_keys,
-            categorized_keys.package_repeatabilities,
         )
 
     @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
@@ -88,15 +86,6 @@ class ConditionNodeBuilder:
             evaluated_requirement_constraints[condition_key] = RequirementConstraint(
                 condition_key=condition_key,
                 conditions_fulfilled=evaluated_conditions_fulfilled_attribute[condition_key],
-            )
-        # todo add function to evaluate package repeatabilities
-        evaluated_conditions_fullfilled_attribute = await pr_evaluator.evaluate_repetitions(
-            condition_keys=self.package_repeatabilities, evaluatable_data=evaluatable_data
-        )
-        for repeatability_key in self.package_repeatabilities:
-            evaluated_requirement_constraints[repeatability_key] = RequirementConstraint(
-                condition_key=repeatability_key,
-                conditions_fulfilled=evaluated_conditions_fullfilled_attribute[repeatability_key],
             )
         return evaluated_requirement_constraints
 

@@ -93,7 +93,6 @@ def extract_categorized_keys_from_tree(
         hint_keys=[],
         package_keys=[],
         time_condition_keys=[],
-        package_repeatabilities=[],
     )
     condition_keys: List[str]
     if isinstance(tree_or_list, list):
@@ -124,14 +123,13 @@ def extract_categorized_keys_from_tree(
         if (
             condition_node_type is ConditionNodeType.REQUIREMENT_CONSTRAINT
             or condition_node_type is ConditionNodeType.REPEATABILITY_CONSTRAINT
+            or condition_node_type is ConditionNodeType.PACKAGE_REPEATABILITY
         ):
             result.requirement_constraint_keys.append(condition_key)
         elif condition_node_type is ConditionNodeType.HINT:
             result.hint_keys.append(condition_key)
         elif condition_node_type is ConditionNodeType.FORMAT_CONSTRAINT:
             result.format_constraint_keys.append(condition_key)
-        elif condition_node_type is ConditionNodeType.PACKAGE_REPEATABILITY:
-            result.package_repeatabilities.append(condition_key)
         else:
             # if you run into the ConditionNodeType.PACKAGE case, you probably forgot to enable the package resolving
             # in the parsing step (although the error occurs during evaluation)

@@ -9,6 +9,7 @@ from efoli import EdifactFormat, EdifactFormatVersion
 
 from ahbicht.content_evaluation.evaluators import Evaluator
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
+from ahbicht.content_evaluation.pr_evaluators import PrEvaluator
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.expressions.hints_provider import HintsProvider
 from ahbicht.expressions.package_expansion import PackageResolver
@@ -53,14 +54,6 @@ class TokenLogicProvider(ABC):
         """
         Returns an appropriate PackageResolver for the given edifact_format and edifact_format_version.
         You can provide None as format(version) if there is only 1 package resolver available
-        The implementing class shall raise a NotImplementedError and not return None.
-        """
-        raise NotImplementedError("The inheriting sub class has to implement this method")
-
-    @abstractmethod
-    def get_pr_evaluator(self, edifact_format: EdifactFormat, format_version: EdifactFormatVersion) -> PrEvaluator:
-        """
-        returns an appropriate PR Evaluator for the given edifact_format and edifact_format_version.
         The implementing class shall raise a NotImplementedError and not return None.
         """
         raise NotImplementedError("The inheriting sub class has to implement this method")
