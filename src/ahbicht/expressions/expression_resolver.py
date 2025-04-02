@@ -6,7 +6,7 @@ Parsing expressions that are nested into other expressions is referred to as "re
 
 import asyncio
 import inspect
-from typing import Awaitable, List, Optional, Union
+from typing import Awaitable, List, Optional, Union, cast
 
 import inject
 from lark import Token, Transformer, Tree
@@ -119,7 +119,7 @@ class PackageExpansionTransformer(Transformer):
 
     def __init__(self, include_package_repeatabilities: bool = False):
         super().__init__()
-        self.token_logic_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)
+        self.token_logic_provider = cast(TokenLogicProvider, inject.instance(TokenLogicProvider))
         self.include_package_repeatabilities = include_package_repeatabilities
 
     def package(self, tokens: List[Token]) -> Awaitable[Tree]:
