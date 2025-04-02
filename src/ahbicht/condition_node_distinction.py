@@ -6,7 +6,7 @@ import re
 
 from ahbicht.models.condition_node_type import ConditionNodeType
 
-_REGEX_PACKAGE_REPEATABILITY = re.compile(r"^(?P<n>\d)\.\.(?P<m>\d)$")
+REGEX_PACKAGE_REPEATABILITY = re.compile(r"^(?P<n>\d)\.\.(?P<m>\d)$")
 
 
 def derive_condition_node_type(condition_key: str) -> ConditionNodeType:
@@ -15,7 +15,7 @@ def derive_condition_node_type(condition_key: str) -> ConditionNodeType:
     """
     if condition_key.endswith("P"):
         return ConditionNodeType.PACKAGE
-    match = _REGEX_PACKAGE_REPEATABILITY.match(condition_key)
+    match = REGEX_PACKAGE_REPEATABILITY.match(condition_key)
     if match and int(match.group("n")) <= int(match.group("m")):
         return ConditionNodeType.PACKAGE_REPEATABILITY
     if 1 <= int(condition_key) <= 499:
