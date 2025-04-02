@@ -153,7 +153,7 @@ class PackageExpansionTransformer(Transformer):
     @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
     # search for binder.bind_to_provider(EvaluatableDataProvider, your_function_that_returns_evaluatable_data_goes_here)
     async def _package_async(
-        self, package_key_token: Token, repeatability_token: Token, evaluatable_data: EvaluatableData
+        self, package_key_token: Token, repeatability_token: Token | None, evaluatable_data: EvaluatableData
     ) -> Tree[Token]:
         resolver: PackageResolver = self.token_logic_provider.get_package_resolver(
             evaluatable_data.edifact_format, evaluatable_data.edifact_format_version
@@ -163,7 +163,7 @@ class PackageExpansionTransformer(Transformer):
             raise NotImplementedError(f"The package '{package_key_token.value}' could not be resolved by {resolver}")
         # the package_expression is not None because that's the definition of "has been resolved successfully"
         tree_result = parse_condition_expression_to_tree(resolved_package.package_expression)
-        if self.include_package_repeatabilities:
+        if self.include_package_repeatabilities and repeatability_token is not None:
             # We add the repeatability as a condition expression to the resolved package condition expression,
             # cf. docstring of this class.
             return Tree("and_composition", [tree_result, Tree(Token("RULE", "condition"), [repeatability_token])])
