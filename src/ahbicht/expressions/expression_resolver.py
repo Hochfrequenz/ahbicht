@@ -36,7 +36,7 @@ async def parse_expression_including_unresolved_subexpressions(
     :param resolve_time_conditions: if true resolves also the time conditions in the condition_expressions
     :param replace_time_conditions: if true the time conditions "UBx" are replaced with format constraints
     :param include_package_repeatabilities: if true we include the repeatabilities of the packages take a look at
-            PackageExpansionTransformer for a better understanding why we included this flag.
+    PackageExpansionTransformer for a better understanding why we included this flag.
     """
     try:
         expression_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(expression)
