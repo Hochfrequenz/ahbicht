@@ -130,7 +130,7 @@ class TestPackageResolver:
         [
             pytest.param(
                 "Muss[3]U[4P0..1]",
-                Tree(
+                Tree(  # type:ignore[misc]
                     Token("RULE", "ahb_expression"),
                     [
                         Tree(
