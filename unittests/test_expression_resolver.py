@@ -73,10 +73,36 @@ class TestExpressionResolver:
                     ],
                 ),
             ),
+            pytest.param(
+                "Muss[3]U[4P0..1]",
+                Tree(
+                    Token("RULE", "ahb_expression"),
+                    [
+                        Tree(
+                            "single_requirement_indicator_expression",
+                            [
+                                Token("MODAL_MARK", "Muss"),
+                                Tree(
+                                    "and_composition",
+                                    [
+                                        Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", "3")]),
+                                        Tree(
+                                            Token("RULE", "package"),
+                                            [Token("PACKAGE_KEY", "4P"), Token("REPEATABILITY", "0..1")],
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        )
+                    ],
+                ),
+            ),
         ],
     )
     async def test_expression_resolver_valid(self, expression: str, expected_tree: Tree[Token]):
-        actual_tree = await parse_expression_including_unresolved_subexpressions(expression)
+        actual_tree = await parse_expression_including_unresolved_subexpressions(
+            expression, resolve_packages=False, include_package_repeatabilities=False
+        )
         assert actual_tree == expected_tree
 
     @pytest.mark.parametrize(

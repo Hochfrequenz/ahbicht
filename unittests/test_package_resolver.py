@@ -9,11 +9,15 @@ import inject
 import pytest
 from _pytest.fixtures import SubRequest
 from efoli import EdifactFormat, EdifactFormatVersion
+from lark import Token, Tree
 
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
 from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
-from ahbicht.expressions.expression_resolver import expand_packages
+from ahbicht.expressions.expression_resolver import (
+    expand_packages,
+    parse_expression_including_unresolved_subexpressions,
+)
 from ahbicht.expressions.package_expansion import JsonFilePackageResolver, PackageResolver
 from ahbicht.models.mapping_results import PackageKeyConditionExpressionMapping, Repeatability
 from ahbicht.utility_functions import parse_repeatability
@@ -115,3 +119,54 @@ class TestPackageResolver:
         assert unexpanded_tree is not None
         repeatability_tokens = [token for token in unexpanded_tree.children if token.type == "REPEATABILITY"]
         assert parse_repeatability(repeatability_tokens[0]) == Repeatability(min_occurrences=2, max_occurrences=3)
+
+    @pytest.mark.parametrize(
+        "inject_package_resolver",
+        [{"4P": "([2] O [3])"}],
+        indirect=True,
+    )
+    @pytest.mark.parametrize(
+        "expression, expected_tree",
+        [
+            pytest.param(
+                "Muss[3]U[4P0..1]",
+                Tree(
+                    Token("RULE", "ahb_expression"),
+                    [
+                        Tree(
+                            "single_requirement_indicator_expression",
+                            [
+                                Token("MODAL_MARK", "Muss"),
+                                Tree(
+                                    "and_composition",
+                                    [
+                                        Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", "3")]),
+                                        Tree(
+                                            "and_composition",
+                                            [
+                                                Tree(
+                                                    "or_composition",
+                                                    [
+                                                        Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", "2")]),
+                                                        Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", "3")]),
+                                                    ],
+                                                ),
+                                                Tree(Token("RULE", "condition"), [Token("REPEATABILITY", "0..1")]),
+                                            ],
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        )
+                    ],
+                ),
+            ),
+        ],
+    )
+    async def test_expression_resolver_valid_include_repeatabilities(
+        self, inject_package_resolver, expression: str, expected_tree: Tree[Token]
+    ):
+        actual_tree = await parse_expression_including_unresolved_subexpressions(
+            expression, resolve_packages=True, include_package_repeatabilities=True
+        )
+        assert actual_tree == expected_tree

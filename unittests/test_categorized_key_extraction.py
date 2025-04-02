@@ -286,3 +286,34 @@ class TestCategorizedKeyExtraction:
     ):
         actual = cer_a + cer_b
         assert actual == expected
+
+    @pytest.mark.parametrize(
+        "actual, expected_key_extract",
+        [
+            pytest.param(
+                CategorizedKeyExtract(
+                    hint_keys=[],
+                    requirement_constraint_keys=["10", "1..3", "3", "1..2"],
+                    format_constraint_keys=[],
+                    package_keys=[],
+                    time_condition_keys=[],
+                ),
+                CategorizedKeyExtract(
+                    hint_keys=[],
+                    requirement_constraint_keys=["1..2", "1..3", "3", "10"],
+                    format_constraint_keys=[],
+                    package_keys=[],
+                    time_condition_keys=[],
+                ),
+                id="repeatability constraint key",
+            ),
+        ],
+    )
+    async def test_categorized_keys_sort_keys_including_repeatabilities(
+        self, actual: CategorizedKeyExtract, expected_key_extract: CategorizedKeyExtract
+    ):
+        """
+        Tests that the CategorizedKeyExtract is generated correctly.
+        """
+        _ = actual._sort_keys()
+        assert actual == expected_key_extract
