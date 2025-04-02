@@ -35,7 +35,8 @@ async def parse_expression_including_unresolved_subexpressions(
     :param resolve_packages: if true resolves also the packages in the condition_expressions
     :param resolve_time_conditions: if true resolves also the time conditions in the condition_expressions
     :param replace_time_conditions: if true the time conditions "UBx" are replaced with format constraints
-    :param include_package_repeatabilities: if true we include the repeatabilities of the packages
+    :param include_package_repeatabilities: if true we include the repeatabilities of the packages take a look at
+            PackageExpansionTransformer for a better understanding why we included this flag.
     """
     try:
         expression_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(expression)
@@ -115,6 +116,14 @@ class AhbExpressionResolverTransformer(Transformer):
 class PackageExpansionTransformer(Transformer):
     """
     The PackageExpansionTransformer expands packages inside a tree to condition expressions by using a PackageResolver.
+    :param include_package_repeatabilities: Flag to include the repeatabilities of the packages.
+
+    At this point, we implemented this flag to include a workaround for the repeatability of packages. We will convert
+    the package repeatability to a condition expression and add it to the condition expression of the package (e.g.
+    [2P1..2] -> [2P]U[1..2]). Thus, we can evaluate the repeatability of the package as a condition expression by
+    injecting a suitable condition expression evaluator. Caution: we losen the constraints on condition keys to be able
+    to that. This is a workaround and should be replaced by a more sophisticated solution which truly deals with
+    package repetitions in the future (cf.  https://github.com/Hochfrequenz/ahbicht/pull/565).
     """
 
     def __init__(self, include_package_repeatabilities: bool = False):
@@ -133,7 +142,7 @@ class PackageExpansionTransformer(Transformer):
         repeatability_tokens = [t for t in tokens if t.type == "REPEATABILITY"]
         single_repeat_token = repeatability_tokens[0] if len(repeatability_tokens) == 1 else None
         # pylint: disable=unused-variable
-        # we parse the repeatability, but we don't to anything with it, yet.
+        # we parse the repeatability, but we don't to anything with it, yet. Cf. docstring of this class.
         repeatability: Optional[Repeatability]
         if single_repeat_token:
             repeatability = parse_repeatability(single_repeat_token.value)
@@ -155,6 +164,8 @@ class PackageExpansionTransformer(Transformer):
         # the package_expression is not None because that's the definition of "has been resolved successfully"
         tree_result = parse_condition_expression_to_tree(resolved_package.package_expression)
         if self.include_package_repeatabilities:
+            # We add the repeatability as a condition expression to the resolved package condition expression,
+            # cf. docstring of this class.
             return Tree("and_composition", [tree_result, Tree(Token("RULE", "condition"), [repeatability_token])])
         return tree_result
 
