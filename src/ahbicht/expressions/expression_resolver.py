@@ -131,14 +131,15 @@ class PackageExpansionTransformer(Transformer):
         # They all come in the same `tokens` list which we split in the following two lines.
         package_key_token = [t for t in tokens if t.type == "PACKAGE_KEY"][0]
         repeatability_tokens = [t for t in tokens if t.type == "REPEATABILITY"]
+        single_repeat_token = repeatability_tokens[0] if len(repeatability_tokens) == 1 else None
         # pylint: disable=unused-variable
         # we parse the repeatability, but we don't to anything with it, yet.
         repeatability: Optional[Repeatability]
-        if len(repeatability_tokens) == 1:
-            repeatability = parse_repeatability(repeatability_tokens[0].value)
+        if single_repeat_token:
+            repeatability = parse_repeatability(single_repeat_token.value)
         else:
             repeatability = None
-        return self._package_async(package_key_token, repeatability_tokens[0])  # pylint:disable=no-value-for-parameter
+        return self._package_async(package_key_token, single_repeat_token)  # pylint:disable=no-value-for-parameter
 
     @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
     # search for binder.bind_to_provider(EvaluatableDataProvider, your_function_that_returns_evaluatable_data_goes_here)
