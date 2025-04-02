@@ -75,9 +75,18 @@ class CategorizedKeyExtract:
         """
         self.hint_keys.sort(key=int)
         self.format_constraint_keys.sort(key=int)
-        self.requirement_constraint_keys.sort(key=int)
+        self.requirement_constraint_keys.sort(key=self._sort_repeat_key)
         self.package_keys.sort()
         self.time_condition_keys.sort()
+
+    def _sort_repeat_key(self, item: str) -> tuple:
+        """
+        Custom sort key for requirement_constraint_keys to handle 'n..m' format.
+        """
+        if ".." in item:
+            n, m = map(int, item.split(".."))
+            return (n, m)
+        return (int(item),)
 
     def __add__(self, other: "CategorizedKeyExtract") -> "CategorizedKeyExtract":
         """

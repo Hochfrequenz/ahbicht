@@ -34,3 +34,7 @@ class ConditionNodeType(StrEnum):
     Repeatability Constraints are what edi@energy refers to as "Wiederholbarkeiten".
     They describe how often you may insert segment (groups) into a message (e.g. min. 1 but max 10 times).
     """
+    PACKAGE_REPEATABILITY = "PACKAGE_REPEATABILITY"
+    """
+    Package Repeatablity for resolved package nodes in tree
+    """

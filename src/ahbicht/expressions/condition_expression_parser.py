@@ -88,7 +88,11 @@ def extract_categorized_keys_from_tree(
     See 'Allgemeine Festlegungen' from EDI@Energy.
     """
     result = CategorizedKeyExtract(
-        format_constraint_keys=[], requirement_constraint_keys=[], hint_keys=[], package_keys=[], time_condition_keys=[]
+        format_constraint_keys=[],
+        requirement_constraint_keys=[],
+        hint_keys=[],
+        package_keys=[],
+        time_condition_keys=[],
     )
     condition_keys: List[str]
     if isinstance(tree_or_list, list):
@@ -119,6 +123,7 @@ def extract_categorized_keys_from_tree(
         if (
             condition_node_type is ConditionNodeType.REQUIREMENT_CONSTRAINT
             or condition_node_type is ConditionNodeType.REPEATABILITY_CONSTRAINT
+            or condition_node_type is ConditionNodeType.PACKAGE_REPEATABILITY
         ):
             result.requirement_constraint_keys.append(condition_key)
         elif condition_node_type is ConditionNodeType.HINT:

@@ -151,3 +151,42 @@ class TestConditionNodeBuilder:
             "907": self._ufc_907,
         }
         assert evaluated_requirement_constraints == expected_input_nodes
+
+    @pytest.mark.parametrize(
+        "expected_conditions_fulfilled_10, expected_conditions_fulfilled_77, expected_conditions_fulfilled_1_2",
+        [
+            pytest.param(
+                ConditionFulfilledValue.FULFILLED, ConditionFulfilledValue.FULFILLED, ConditionFulfilledValue.FULFILLED
+            ),
+        ],
+    )
+    async def test_build_requirement_constraint_nodes_with_repeatabilities(
+        self,
+        mocker,
+        expected_conditions_fulfilled_10,
+        expected_conditions_fulfilled_77,
+        expected_conditions_fulfilled_1_2,
+        setup_and_teardown_injector,
+    ):
+        """Tests that requirement constraint nodes are build correctly."""
+
+        mocker.patch(
+            "ahbicht.content_evaluation.rc_evaluators.RcEvaluator.evaluate_single_condition",
+            side_effect=[
+                expected_conditions_fulfilled_10,
+                expected_conditions_fulfilled_77,
+                expected_conditions_fulfilled_1_2,
+            ],
+        )
+
+        condition_keys = ["10", "77", "1..2"]
+        condition_node_builder = ConditionNodeBuilder(condition_keys)
+
+        evaluated_requirement_constraints = await condition_node_builder._build_requirement_constraint_nodes()
+
+        expected_requirement_constraints = {
+            "10": RequirementConstraint(condition_key="10", conditions_fulfilled=expected_conditions_fulfilled_10),
+            "77": RequirementConstraint(condition_key="77", conditions_fulfilled=expected_conditions_fulfilled_77),
+            "1..2": RequirementConstraint(condition_key="1..2", conditions_fulfilled=expected_conditions_fulfilled_1_2),
+        }
+        assert evaluated_requirement_constraints == expected_requirement_constraints
