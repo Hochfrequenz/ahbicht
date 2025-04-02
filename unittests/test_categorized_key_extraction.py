@@ -315,5 +315,5 @@ class TestCategorizedKeyExtraction:
         """
         Tests that the CategorizedKeyExtract is generated correctly.
         """
-        _ = actual._sort_keys()
+        actual._sort_keys()
         assert actual == expected_key_extract
