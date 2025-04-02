@@ -153,7 +153,7 @@ class PackageExpansionTransformer(Transformer):
     @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
     # search for binder.bind_to_provider(EvaluatableDataProvider, your_function_that_returns_evaluatable_data_goes_here)
     async def _package_async(
-        self, package_key_token: Token, repeatability_token: Token | None, evaluatable_data: EvaluatableData
+        self, package_key_token: Token, repeatability_token: Optional[Token], evaluatable_data: EvaluatableData
     ) -> Tree[Token]:
         resolver: PackageResolver = self.token_logic_provider.get_package_resolver(
             evaluatable_data.edifact_format, evaluatable_data.edifact_format_version
