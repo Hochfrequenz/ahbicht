@@ -30,7 +30,13 @@ GRAMMAR = r"""
             | package
             | condition
             | time_condition
+            | hardcoded_rc
+            | hardcoded_fc
 ?brackets: "(" expression ")"
+// placeholders for hardcoded format constraints that always evaluate to the same EvaluatedFormatConstraint
+hardcoded_fc: "[" ("FC_UNFULFILLED" | "FC_FULFILLED") "]"
+// placeholders for hardcoded requirement constraints that always evaluate to the same ConditionFulfilledValue
+hardcoded_rc: "[" ("RC_UNFULFILLED" | "RC_FULFILLED" | "RC_NEUTRAL" | "RC_UNKNOWN") "]"
 time_condition: "[" TIME_CONDITION_KEY "]" // a rule for point in time-conditions
 package: "[" PACKAGE_KEY REPEATABILITY? "]" // a rule for packages
 condition: "[" CONDITION_KEY "]" // a rule for condition keys
