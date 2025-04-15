@@ -83,3 +83,5 @@ class TestValidityCheck:
     async def test_is_valid_expression_value_error(self):
         with pytest.raises(ValueError):
             await is_valid_expression(12345, None)
+        with pytest.raises(ValueError):
+            await is_valid_expression(None, None)
