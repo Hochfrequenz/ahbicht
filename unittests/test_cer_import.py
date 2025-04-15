@@ -1,8 +1,3 @@
-"""
-Tests the expression builder module.
-"""
-
-
 def test_extract_categorized_keys_is_callable():
     # pylint:disable=import-outside-toplevel
     from ahbicht.expressions.condition_expression_parser import extract_categorized_keys
