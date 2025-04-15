@@ -62,6 +62,9 @@ class TestValidityCheck:
             pytest.param("Muss [501] X [999]", False),  # connecting a hint XOR fc is not valid
             pytest.param("Muss [501] O [999]", False),  # connecting a hint LOR fc is not valid
             pytest.param("Muss [983][1] X [984][2]", True),
+            pytest.param(
+                " ([446] ∧ ([465] ∨ [466]) ∧ [467] ∧ ([468] ⊻ ([469] ∧ [470])) ⊻ [448]", False
+            ),  # unbalanced brackets
         ],
     )
     async def test_is_valid_expression(self, ahb_expression: str, expected_result: bool, inject_cer_evaluators):
