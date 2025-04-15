@@ -31,6 +31,12 @@ CONDITION_EXPRESSION: /(?!\BU\B)[\[\]\(\)U∧O∨X⊻\d\sP\.UB]+/i
 # and CTRL+F for "Mus[2]" in the unittest that fails if you remove the lookahead.
 _parser = Lark(GRAMMAR, start="ahb_expression")
 
+_replacements: dict[str, str] = {
+    "\u00a0": " ",  # no-break space,
+    "V": "∨",  # Vogel-V != logical OR
+    "v": "∨",
+}
+
 
 @tree_copy
 @lru_cache(maxsize=1024)
@@ -46,7 +52,8 @@ def parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_express
     """
     try:
         if ahb_expression is not None:
-            ahb_expression = ahb_expression.replace("\u00a0", " ")  # for sanity: remove no-break space
+            for key, value in _replacements.items():
+                ahb_expression = ahb_expression.replace(key, value)
         parsed_tree = _parser.parse(ahb_expression)
         parsing_logger.debug("Successfully parsed '%s' as AHB expression", ahb_expression)
     except (UnexpectedEOF, UnexpectedCharacters, TypeError) as eof:
