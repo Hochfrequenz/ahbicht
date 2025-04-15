@@ -7,11 +7,10 @@ import inject
 import pytest
 from _pytest.fixtures import SubRequest
 
-from ahbicht.content_evaluation import ContentEvaluationResult, EvaluatableData, TokenLogicProvider
-from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
+from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
 from ahbicht.content_evaluation.evaluator_factory import create_content_evaluation_result_based_evaluators
-from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider
-from ahbicht.models.content_evaluation_result import ContentEvaluationResultSchema
+from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
+from ahbicht.models.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
 from unittests.defaults import default_test_format, default_test_version
 
 
