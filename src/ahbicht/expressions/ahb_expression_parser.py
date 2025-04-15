@@ -45,6 +45,7 @@ def parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_express
     :return parsed_tree:
     """
     try:
+        ahb_expression = ahb_expression.replace("\u00a0", " ")  # for sanity: remove no-break space
         parsed_tree = _parser.parse(ahb_expression)
         parsing_logger.debug("Successfully parsed '%s' as AHB expression", ahb_expression)
     except (UnexpectedEOF, UnexpectedCharacters, TypeError) as eof:
