@@ -1,6 +1,5 @@
 """
-contains a high level function that checks if a given expression is valid or not.
-by 'valid' we mean not only valid syntax but also meaningful.
+contains a high-level function that checks if a given expression is valid or not.
 """
 
 import asyncio
