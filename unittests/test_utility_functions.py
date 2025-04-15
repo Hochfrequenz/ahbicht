@@ -44,6 +44,7 @@ class TestUtilityFunctions:
             pytest.param("1..1", Repeatability(min_occurrences=1, max_occurrences=1)),
             pytest.param("1..2", Repeatability(min_occurrences=1, max_occurrences=2)),
             pytest.param("71..89", Repeatability(min_occurrences=71, max_occurrences=89)),
+            pytest.param("71..n", Repeatability(min_occurrences=71, max_occurrences="n")),
         ],
     )
     def test_parse_repeatability(self, candidate: str, expected_result: Repeatability):

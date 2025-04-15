@@ -2,7 +2,7 @@
 This module contains classes that are returned by mappers, meaning they contain a mapping.
 """
 
-from typing import Optional
+from typing import Optional, Literal
 
 import attrs
 from efoli import EdifactFormat
@@ -96,10 +96,11 @@ def check_max_greater_or_equal_than_min(instance: "Repeatability", attribute, va
     """
     assert that 0<=min<max and not both min and max are 0
     """
-    if not 0 <= instance.min_occurrences <= instance.max_occurrences:
-        raise ValueError(f"0≤n≤m is not fulfilled for n={instance.min_occurrences}, m={instance.max_occurrences}")
-    if instance.min_occurrences == instance.max_occurrences == 0:
-        raise ValueError("not both min and max occurrences must be 0")
+    if instance.max_occurrences!="n":
+        if not 0 <= instance.min_occurrences <= instance.max_occurrences:
+            raise ValueError(f"0≤n≤m is not fulfilled for n={instance.min_occurrences}, m={instance.max_occurrences}")
+        if instance.min_occurrences == instance.max_occurrences == 0:
+            raise ValueError("not both min and max occurrences must be 0")
 
 
 # pylint:disable=too-few-public-methods
@@ -116,8 +117,8 @@ class Repeatability:
     how often the segment/code has to be repeated (lower, inclusive bound); may be 0 for optional packages
     """
 
-    max_occurrences: int = attrs.field(
-        validator=attrs.validators.and_(attrs.validators.instance_of(int), check_max_greater_or_equal_than_min)
+    max_occurrences: int |Literal["n"]= attrs.field(
+        validator=attrs.validators.or_(attrs.validators.and_(attrs.validators.instance_of(int), check_max_greater_or_equal_than_min),attrs.validators.in_("n") )
     )
     """
     how often the segment/coode may be repeated at most (upper, inclusive bound).
