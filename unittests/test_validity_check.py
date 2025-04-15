@@ -4,7 +4,7 @@ from typing import Optional
 import inject
 import pytest
 
-from ahbicht.content_evaluation import is_valid_expression
+from ahbicht.content_evaluation.expression_check import is_valid_expression
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
 from ahbicht.content_evaluation.evaluator_factory import create_content_evaluation_result_based_evaluators
 from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
