@@ -1,3 +1,8 @@
+"""
+contains a high level function that checks if a given expression is valid or not.
+by 'valid' we mean not only valid syntax but also meaningful.
+"""
+
 import asyncio
 from typing import Any, Awaitable, Callable, List, Optional, Tuple, Union
 
