@@ -6,7 +6,7 @@ import asyncio
 from typing import Any, Awaitable, Callable, List, Optional, Tuple, Union
 
 from lark import Token, Tree
-from lark.exceptions import VisitError, UnexpectedCharacters
+from lark.exceptions import UnexpectedCharacters, VisitError
 
 from ahbicht.expressions import InvalidExpressionError
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
