@@ -70,6 +70,7 @@ class TestValidityCheck:
             pytest.param(
                 "X ([950] [509] ∧ ([64] V [70])) V ([960] [522] ∧ [71] ∧ [53])", True
             ),  # nur echt mit 'V' statt LOR
+            pytest.param("X [1P0..n]", True),
         ],
     )
     async def test_is_valid_expression(self, ahb_expression: str, expected_result: bool, inject_cer_evaluators):
