@@ -2,6 +2,7 @@
 This module contains classes that are returned by mappers, meaning they contain a mapping.
 """
 
+import math
 from typing import Literal, Optional, Union
 
 import attrs
