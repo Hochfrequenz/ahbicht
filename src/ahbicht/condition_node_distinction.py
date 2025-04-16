@@ -17,9 +17,6 @@ def derive_condition_node_type(condition_key: str) -> ConditionNodeType:
         return ConditionNodeType.PACKAGE
     match = REGEX_PACKAGE_REPEATABILITY.match(condition_key)
     if match:
-        if match.group("m") != "n":
-            if match and int(match.group("n")) <= int(match.group("m")):
-                return ConditionNodeType.PACKAGE_REPEATABILITY
         return ConditionNodeType.PACKAGE_REPEATABILITY
     if 1 <= int(condition_key) <= 499:
         return ConditionNodeType.REQUIREMENT_CONSTRAINT
