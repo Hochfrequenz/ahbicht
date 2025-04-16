@@ -2,7 +2,7 @@
 This module contains classes that are returned by mappers, meaning they contain a mapping.
 """
 
-from typing import Literal, Optional
+from typing import Literal, Optional, Union
 
 import attrs
 from efoli import EdifactFormat
@@ -117,7 +117,7 @@ class Repeatability:
     how often the segment/code has to be repeated (lower, inclusive bound); may be 0 for optional packages
     """
 
-    max_occurrences: int | Literal["n"] = attrs.field(
+    max_occurrences: Union[int, Literal["n"]] = attrs.field(
         validator=attrs.validators.or_(
             attrs.validators.and_(attrs.validators.instance_of(int), check_max_greater_or_equal_than_min),
             attrs.validators.in_("n"),
