@@ -14,13 +14,15 @@ from lark.exceptions import UnexpectedCharacters, UnexpectedEOF
 
 from ahbicht.condition_node_distinction import derive_condition_node_type
 from ahbicht.expressions import parsing_logger
+from ahbicht.expressions.sanitizer import sanitize_expression
 from ahbicht.models.categorized_key_extract import CategorizedKeyExtract
 from ahbicht.models.condition_node_type import ConditionNodeType
 from ahbicht.utility_functions import tree_copy
 
 GRAMMAR = r"""
 ?expression: expression "O"i expression -> or_composition
-            | expression "∨" expression -> or_composition
+            | expression "∨" expression -> or_composition // the logical or
+            | expression "V"i expression -> or_composition // a 'v' for those who first chose to introduce logical symbols but now can't find them on their keyboard  
             | expression "X"i expression -> xor_composition
             | expression "⊻" expression -> xor_composition
             | expression "U"i expression -> and_composition
@@ -59,6 +61,7 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree[Token]
     :return parsed_tree: Tree
     """
     try:
+        condition_expression = sanitize_expression(condition_expression)
         parsed_tree = _parser.parse(condition_expression)
         parsing_logger.debug("Successfully parsed '%s' as condition expression", condition_expression)
     except (UnexpectedEOF, UnexpectedCharacters, TypeError) as eof:
