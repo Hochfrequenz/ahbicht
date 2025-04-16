@@ -46,7 +46,7 @@ def parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_express
     :return parsed_tree:
     """
     try:
-        sanitize_expression(ahb_expression)
+        ahb_expression = sanitize_expression(ahb_expression)
         parsed_tree = _parser.parse(ahb_expression)
         parsing_logger.debug("Successfully parsed '%s' as AHB expression", ahb_expression)
     except (UnexpectedEOF, UnexpectedCharacters, TypeError) as eof:

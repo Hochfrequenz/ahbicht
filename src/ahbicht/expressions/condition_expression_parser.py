@@ -61,7 +61,7 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree[Token]
     :return parsed_tree: Tree
     """
     try:
-        sanitize_expression(condition_expression)
+        condition_expression = sanitize_expression(condition_expression)
         parsed_tree = _parser.parse(condition_expression)
         parsing_logger.debug("Successfully parsed '%s' as condition expression", condition_expression)
     except (UnexpectedEOF, UnexpectedCharacters, TypeError) as eof:
