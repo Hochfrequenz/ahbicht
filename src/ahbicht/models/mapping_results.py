@@ -118,7 +118,7 @@ class Repeatability:
     """
 
     max_occurrences: Union[int, Literal["n"]] = attrs.field(
-        validator=attrs.validators.or_( # type:ignore[misc]
+        validator=attrs.validators.or_(  # type:ignore[misc]
             attrs.validators.and_(attrs.validators.instance_of(int), check_max_greater_or_equal_than_min),
             attrs.validators.in_("n"),
         )

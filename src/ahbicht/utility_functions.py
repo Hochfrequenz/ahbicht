@@ -79,7 +79,7 @@ def parse_repeatability(repeatability_string: str) -> Repeatability:
     if match is None:
         raise ValueError(f"The given string '{repeatability_string}' could not be parsed as repeatability")
     min_repeatability = int(match["min"])
-    max_repeatability:Union[int, Literal["n"]]
+    max_repeatability: Union[int, Literal["n"]]
     try:
         max_repeatability = int(match["max"])
     except TypeError:
