@@ -16,7 +16,9 @@ from ahbicht.models.mapping_results import Repeatability
 Result = TypeVar("Result")
 
 
-_repeatability_pattern = re.compile(r"^(?P<min>\d+)\.{2}(?:(?P<max>\d+)|n)$")  #: a pattern to match "n..m" repeatabilities
+_repeatability_pattern = re.compile(
+    r"^(?P<min>\d+)\.{2}(?:(?P<max>\d+)|n)$"
+)  #: a pattern to match "n..m" repeatabilities
 
 
 async def gather_if_necessary(results_and_awaitable_results: List[Union[Result, Awaitable[Result]]]) -> List[Result]:
