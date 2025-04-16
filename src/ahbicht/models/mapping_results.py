@@ -2,7 +2,7 @@
 This module contains classes that are returned by mappers, meaning they contain a mapping.
 """
 
-from typing import Optional, Literal
+from typing import Literal, Optional
 
 import attrs
 from efoli import EdifactFormat
