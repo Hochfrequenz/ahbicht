@@ -12,6 +12,7 @@ from lark.exceptions import UnexpectedCharacters, UnexpectedEOF
 
 # pylint: disable=anomalous-backslash-in-string
 from ahbicht.expressions import parsing_logger
+from ahbicht.expressions.sanitizer import sanitize_expression
 from ahbicht.utility_functions import tree_copy
 
 GRAMMAR = """
@@ -25,7 +26,7 @@ requirement_indicator: PREFIX_OPERATOR | MODAL_MARK
 PREFIX_OPERATOR: "X"i | "O"i | "U"i
 MODAL_MARK: /M(uss)?|S(oll)?|K(ann)?/i
 // Matches if it looks like a condition expression, but does not yet check if it is a syntactically valid one:
-CONDITION_EXPRESSION: /(?!\BU\B)[\[\]\(\)U∧O∨X⊻\d\sP\.UB]+/i
+CONDITION_EXPRESSION: /(?!\BU\B)[\[\]\(\)U∧O∨X⊻\d\sP\.UBn]+/i
 """
 # Regarding the negative lookahead in the condition expression regex see examples https://regex101.com/r/6fFHD4/1
 # and CTRL+F for "Mus[2]" in the unittest that fails if you remove the lookahead.
@@ -45,6 +46,7 @@ def parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_express
     :return parsed_tree:
     """
     try:
+        ahb_expression = sanitize_expression(ahb_expression)
         parsed_tree = _parser.parse(ahb_expression)
         parsing_logger.debug("Successfully parsed '%s' as AHB expression", ahb_expression)
     except (UnexpectedEOF, UnexpectedCharacters, TypeError) as eof:

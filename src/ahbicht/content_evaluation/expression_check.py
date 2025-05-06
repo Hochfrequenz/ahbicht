@@ -6,7 +6,7 @@ import asyncio
 from typing import Any, Awaitable, Callable, List, Optional, Tuple, Union
 
 from lark import Token, Tree
-from lark.exceptions import VisitError
+from lark.exceptions import UnexpectedCharacters, VisitError
 
 from ahbicht.expressions import InvalidExpressionError
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
@@ -38,6 +38,8 @@ async def is_valid_expression(
             return False, str(syntax_error)
         except VisitError as visit_error:
             return False, str(visit_error)
+        except UnexpectedCharacters as unexpected_characters_error:
+            return False, str(unexpected_characters_error)
     elif isinstance(expression_or_tree, Tree):
         tree = expression_or_tree
     else:

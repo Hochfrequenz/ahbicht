@@ -14,13 +14,15 @@ from lark.exceptions import UnexpectedCharacters, UnexpectedEOF
 
 from ahbicht.condition_node_distinction import derive_condition_node_type
 from ahbicht.expressions import parsing_logger
+from ahbicht.expressions.sanitizer import sanitize_expression
 from ahbicht.models.categorized_key_extract import CategorizedKeyExtract
 from ahbicht.models.condition_node_type import ConditionNodeType
 from ahbicht.utility_functions import tree_copy
 
 GRAMMAR = r"""
 ?expression: expression "O"i expression -> or_composition
-            | expression "∨" expression -> or_composition
+            | expression "∨" expression -> or_composition // the logical or
+            | expression "V"i expression -> or_composition // a 'v' for those who first chose to introduce logical symbols like ∨ but now can't find them on their keyboard  
             | expression "X"i expression -> xor_composition
             | expression "⊻" expression -> xor_composition
             | expression "U"i expression -> and_composition
@@ -36,7 +38,7 @@ package: "[" PACKAGE_KEY REPEATABILITY? "]" // a rule for packages
 condition: "[" CONDITION_KEY "]" // a rule for condition keys
 TIME_CONDITION_KEY: /UB(1|2|3)/ // a terminal for "übergreifende Bedingungen für Zeitpunktangaben"
 CONDITION_KEY: INT // a TERMINAL for all the remaining ints (lower priority)
-REPEATABILITY: /\d+\.{2}[1-9]\d*/ // a terminal for repetitions n..m with n>=0 and m>n
+REPEATABILITY: /\d+\.{2}(?:([1-9]\d*)|n)/ // a terminal for repetitions n..m with n>=0 and m>n or m=="n"
 PACKAGE_KEY: INT "P" // a TERMINAL for all INTs followed by "P" (high priority)
 %import common.INT
 %import common.WS
@@ -59,6 +61,7 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree[Token]
     :return parsed_tree: Tree
     """
     try:
+        condition_expression = sanitize_expression(condition_expression)
         parsed_tree = _parser.parse(condition_expression)
         parsing_logger.debug("Successfully parsed '%s' as condition expression", condition_expression)
     except (UnexpectedEOF, UnexpectedCharacters, TypeError) as eof:

@@ -6,7 +6,7 @@ import asyncio
 import inspect
 import re
 from re import Match
-from typing import Awaitable, Callable, List, Optional, TypeVar, Union
+from typing import Awaitable, Callable, List, Literal, Optional, TypeVar, Union
 
 from lark import Tree
 
@@ -16,7 +16,9 @@ from ahbicht.models.mapping_results import Repeatability
 Result = TypeVar("Result")
 
 
-_repeatability_pattern = re.compile(r"^(?P<min>\d+)\.{2}(?P<max>\d+)$")  #: a pattern to match "n..m" repeatabilities
+_repeatability_pattern = re.compile(
+    r"^(?P<min>\d+)\.{2}(?:(?P<max>\d+)|n)$"
+)  #: a pattern to match "n..m" repeatabilities
 
 
 async def gather_if_necessary(results_and_awaitable_results: List[Union[Result, Awaitable[Result]]]) -> List[Result]:
@@ -77,5 +79,9 @@ def parse_repeatability(repeatability_string: str) -> Repeatability:
     if match is None:
         raise ValueError(f"The given string '{repeatability_string}' could not be parsed as repeatability")
     min_repeatability = int(match["min"])
-    max_repeatability = int(match["max"])
+    max_repeatability: Union[int, Literal["n"]]
+    try:
+        max_repeatability = int(match["max"])
+    except TypeError:
+        max_repeatability = "n"
     return Repeatability(min_occurrences=min_repeatability, max_occurrences=max_repeatability)
