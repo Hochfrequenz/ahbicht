@@ -26,7 +26,7 @@ dependencies = [
     "attrs>=21.4.0",
     "lark>=1.1.4",
     "inject",
-    "marshmallow<5",
+    "marshmallow<4",
     "marshmallow_enum",
     "maus>=0.6.0",
     "pytz",
