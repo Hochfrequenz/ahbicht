@@ -4,12 +4,11 @@ Tests that the parsed trees are JSON serializable
 
 import json
 import uuid
-from typing import List, TypeVar
+from typing import TypeVar
 
 import pytest
 from efoli import EdifactFormat
 from marshmallow import Schema, ValidationError
-from maus.models.edifact_components import DataElementDataType
 
 from ahbicht.models.categorized_key_extract import CategorizedKeyExtract, CategorizedKeyExtractSchema
 from ahbicht.models.condition_nodes import (
@@ -31,16 +30,6 @@ from ahbicht.models.mapping_results import (
     PackageKeyConditionExpressionMapping,
     PackageKeyConditionExpressionMappingSchema,
 )
-from ahbicht.models.validation_results import (
-    DataElementValidationResult,
-    DataElementValidationResultSchema,
-    ListOfValidationResultInContext,
-    SegmentLevelValidationResult,
-    SegmentLevelValidationResultSchema,
-    ValidationResultInContext,
-    ValidationResultInContextSchema,
-)
-from ahbicht.models.validation_values import RequirementValidationValue
 
 T = TypeVar("T")
 
@@ -255,214 +244,6 @@ class TestJsonSerialization:
         _test_serialization_roundtrip(
             ahb_expression_evaluation_result, AhbExpressionEvaluationResultSchema(), expected_json_dict
         )
-
-    @pytest.mark.parametrize(
-        "validation_result, expected_json_dict",
-        [
-            pytest.param(
-                SegmentLevelValidationResult(
-                    requirement_validation=RequirementValidationValue.IS_FORBIDDEN_AND_EMPTY, hints="foo"
-                ),
-                {
-                    "requirement_validation": "IS_FORBIDDEN_AND_EMPTY",
-                    "hints": "foo",
-                },
-            ),
-            pytest.param(
-                SegmentLevelValidationResult(requirement_validation=RequirementValidationValue.IS_FORBIDDEN),
-                {
-                    "requirement_validation": "IS_FORBIDDEN",
-                    "hints": None,
-                },
-            ),
-        ],
-    )
-    def test_segment_level_validation_result_serialization(
-        self, validation_result: SegmentLevelValidationResult, expected_json_dict: dict
-    ):
-        _test_serialization_roundtrip(validation_result, SegmentLevelValidationResultSchema(), expected_json_dict)
-
-    @pytest.mark.parametrize(
-        "validation_result, expected_json_dict",
-        [
-            pytest.param(
-                DataElementValidationResult(
-                    requirement_validation=RequirementValidationValue.IS_FORBIDDEN,
-                    format_validation_fulfilled=True,
-                ),
-                {
-                    "data_element_data_type": None,
-                    "requirement_validation": "IS_FORBIDDEN",
-                    "hints": None,
-                    "format_validation_fulfilled": True,
-                    "format_error_message": None,
-                    "possible_values": None,
-                },
-            ),
-            pytest.param(
-                DataElementValidationResult(
-                    requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_FILLED,
-                    hints="foo",
-                    format_validation_fulfilled=False,
-                    format_error_message="bar",
-                ),
-                {
-                    "data_element_data_type": None,
-                    "requirement_validation": "IS_REQUIRED_AND_FILLED",
-                    "hints": "foo",
-                    "format_validation_fulfilled": False,
-                    "format_error_message": "bar",
-                    "possible_values": None,
-                },
-            ),
-            pytest.param(
-                DataElementValidationResult(
-                    requirement_validation=RequirementValidationValue.IS_REQUIRED,
-                    hints="foo",
-                    format_validation_fulfilled=True,
-                    format_error_message=None,
-                    possible_values={"A1": "Ich bin A1", "A2": "Ich bin A2", "Z3": "Ich bin Z3"},
-                ),
-                {
-                    "data_element_data_type": None,
-                    "requirement_validation": "IS_REQUIRED",
-                    "hints": "foo",
-                    "format_validation_fulfilled": True,
-                    "format_error_message": None,
-                    "possible_values": {"A1": "Ich bin A1", "A2": "Ich bin A2", "Z3": "Ich bin Z3"},
-                },
-            ),
-            pytest.param(
-                DataElementValidationResult(
-                    requirement_validation=RequirementValidationValue.IS_REQUIRED,
-                    hints="foo",
-                    format_validation_fulfilled=True,
-                    format_error_message=None,
-                    possible_values={"A1": "Ich bin A1", "A2": "Ich bin A2", "Z3": "Ich bin Z3"},
-                    data_element_data_type=DataElementDataType.VALUE_POOL,
-                ),
-                {
-                    "requirement_validation": "IS_REQUIRED",
-                    "hints": "foo",
-                    "format_validation_fulfilled": True,
-                    "format_error_message": None,
-                    "possible_values": {"A1": "Ich bin A1", "A2": "Ich bin A2", "Z3": "Ich bin Z3"},
-                    "data_element_data_type": "VALUE_POOL",
-                },
-            ),
-        ],
-    )
-    def test_data_element_validation_result_serialization(
-        self, validation_result: DataElementValidationResult, expected_json_dict: dict
-    ):
-        _test_serialization_roundtrip(validation_result, DataElementValidationResultSchema(), expected_json_dict)
-
-    @pytest.mark.parametrize(
-        "validation_result_in_context, expected_json_dict",
-        [
-            pytest.param(
-                ValidationResultInContext(
-                    discriminator="foo",
-                    validation_result=SegmentLevelValidationResult(
-                        requirement_validation=RequirementValidationValue.IS_FORBIDDEN_AND_EMPTY, hints="foo"
-                    ),
-                ),
-                {
-                    "discriminator": "foo",
-                    "validation_result": {
-                        "requirement_validation": "IS_FORBIDDEN_AND_EMPTY",
-                        "hints": "foo",
-                    },
-                },
-            ),
-            pytest.param(
-                ValidationResultInContext(
-                    discriminator="foo_dataelement",
-                    validation_result=DataElementValidationResult(
-                        requirement_validation=RequirementValidationValue.IS_REQUIRED_AND_FILLED,
-                        hints="foo",
-                        format_validation_fulfilled=False,
-                        format_error_message="bar",
-                    ),
-                ),
-                {
-                    "discriminator": "foo_dataelement",
-                    "validation_result": {
-                        "data_element_data_type": None,
-                        "requirement_validation": "IS_REQUIRED_AND_FILLED",
-                        "hints": "foo",
-                        "format_validation_fulfilled": False,
-                        "format_error_message": "bar",
-                        "possible_values": None,
-                    },
-                },
-            ),
-        ],
-    )
-    def test_validation_result_in_context_serialization(
-        self, validation_result_in_context: ValidationResultInContext, expected_json_dict: dict
-    ):
-        json_string = ValidationResultInContextSchema().dumps(validation_result_in_context)
-        assert json_string is not None
-        actual_json_dict = json.loads(json_string)
-        assert actual_json_dict == expected_json_dict
-
-    @pytest.mark.parametrize(
-        "list_of_validation_result_in_context, expected_json_dict",
-        [
-            pytest.param(
-                [
-                    ValidationResultInContext(
-                        discriminator="foo",
-                        validation_result=SegmentLevelValidationResult(
-                            requirement_validation=RequirementValidationValue.IS_FORBIDDEN_AND_EMPTY, hints="foo"
-                        ),
-                    ),
-                    ValidationResultInContext(
-                        discriminator="bar",
-                        validation_result=SegmentLevelValidationResult(
-                            requirement_validation=RequirementValidationValue.IS_REQUIRED, hints="bar"
-                        ),
-                    ),
-                ],
-                [
-                    {
-                        "discriminator": "foo",
-                        "validation_result": {
-                            "requirement_validation": "IS_FORBIDDEN_AND_EMPTY",
-                            "hints": "foo",
-                        },
-                    },
-                    {
-                        "discriminator": "bar",
-                        "validation_result": {
-                            "requirement_validation": "IS_REQUIRED",
-                            "hints": "bar",
-                        },
-                    },
-                ],
-            ),
-        ],
-    )
-    def test_list_of_validation_result_in_context_serialization(
-        self,
-        list_of_validation_result_in_context: List[ValidationResultInContext],
-        expected_json_dict: dict,
-    ):
-        json_string = ValidationResultInContextSchema().dumps(list_of_validation_result_in_context, many=True)
-        assert json_string is not None
-        actual_json_dict = json.loads(json_string)
-        assert actual_json_dict == expected_json_dict
-
-        list_of_validation_result_in_context_as_class = ListOfValidationResultInContext(
-            validation_results=list_of_validation_result_in_context
-        )
-        json_string = ValidationResultInContextSchema().dumps(
-            list_of_validation_result_in_context_as_class.validation_results, many=True
-        )
-        assert json_string is not None
-        actual_json_dict = json.loads(json_string)
-        assert actual_json_dict == expected_json_dict
 
     @pytest.mark.parametrize(
         "condition_key_condition_text_mapping, expected_json_dict",
