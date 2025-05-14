@@ -1,9 +1,0 @@
-attrs
-lark>=1.1.4
-inject
-marshmallow
-marshmallow_enum
-maus>=0.6.0
-efoli>=1.1.0
-pytz
-# whenever adding something here, don't forget to also add it to setup.cfg

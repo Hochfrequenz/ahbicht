@@ -25,7 +25,6 @@ from ahbicht import *
 from ahbicht.content_evaluation import *
 from ahbicht.expressions import *
 from ahbicht.json_serialization import *
-from ahbicht.validation import *
 
 # -- Run sphinx-apidoc ------------------------------------------------------
 # This hack is necessary since RTD does not issue `sphinx-apidoc` before running
