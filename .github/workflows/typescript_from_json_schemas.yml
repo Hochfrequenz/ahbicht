@@ -26,9 +26,10 @@ jobs:
       - name: Push ts_models content to type script models repo
         uses: cpina/github-action-push-to-another-repository@v1.7.2
         env:
-          API_TOKEN_GITHUB: ${{ secrets.TS_MODELS_PUSH_TOKEN }} # this token expires on 2025-08-10
+          API_TOKEN_GITHUB: ${{ secrets.TS_MODELS_PUSH_TOKEN }} # this token expires on 2026-05-15
           # it's a Personal Access Token (PAT) with repo scope
           # https://github.com/Hochfrequenz/ahbicht/settings/secrets/actions/TS_MODELS_PUSH_TOKEN
+          # https://github.com/settings/tokens/811841099
         with:
           source-directory: "ts_models"
           target-directory: "src"
