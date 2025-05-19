@@ -49,7 +49,7 @@ maus==0.6.1
     # via ahbicht (pyproject.toml)
 more-itertools==10.7.0
     # via maus
-packaging==24.1
+packaging==25.0
     # via
     #   marshmallow
     #   sphinx
