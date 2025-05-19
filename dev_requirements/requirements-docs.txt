@@ -53,7 +53,7 @@ packaging==25.0
     # via
     #   marshmallow
     #   sphinx
-pygments==2.18.0
+pygments==2.19.1
     # via sphinx
 pytz==2025.2
     # via
