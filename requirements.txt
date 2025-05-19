@@ -18,7 +18,7 @@ marshmallow==3.26.1
     #   marshmallow-enum
 marshmallow-enum==1.5.1
     # via ahbicht (pyproject.toml)
-packaging==24.1
+packaging==25.0
     # via marshmallow
 pytz==2025.2
     # via
