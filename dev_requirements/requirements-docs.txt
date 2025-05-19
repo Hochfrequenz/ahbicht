@@ -10,7 +10,7 @@ attrs==25.3.0
     # via
     #   ahbicht (pyproject.toml)
     #   maus
-babel==2.16.0
+babel==2.17.0
     # via sphinx
 certifi==2025.4.26
     # via requests
