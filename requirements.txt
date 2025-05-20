@@ -6,7 +6,7 @@
 #
 attrs==25.3.0
     # via ahbicht (pyproject.toml)
-efoli==1.4.0
+efoli==2.0.0
     # via ahbicht (pyproject.toml)
 inject==5.2.1
     # via ahbicht (pyproject.toml)
