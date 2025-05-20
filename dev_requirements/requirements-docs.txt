@@ -22,7 +22,7 @@ docutils==0.21.2
     # via
     #   sphinx
     #   sphinx-rtd-theme
-efoli==1.4.0
+efoli==2.0.0
     # via
     #   ahbicht (pyproject.toml)
     #   maus
