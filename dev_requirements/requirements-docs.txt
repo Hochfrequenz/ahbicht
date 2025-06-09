@@ -59,7 +59,7 @@ pytz==2025.2
     # via
     #   ahbicht (pyproject.toml)
     #   efoli
-requests==2.32.3
+requests==2.32.4
     # via sphinx
 snowballstemmer==3.0.1
     # via sphinx
