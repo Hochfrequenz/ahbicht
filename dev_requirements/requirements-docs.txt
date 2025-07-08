@@ -30,7 +30,7 @@ idna==3.10
     # via requests
 imagesize==1.4.1
     # via sphinx
-inject==5.2.1
+inject==5.3.0
     # via ahbicht (pyproject.toml)
 jinja2==3.1.6
     # via sphinx
