@@ -52,7 +52,7 @@ tests = [
     "pytest-datafiles==3.0.0",
     "pytest-mock==3.14.1",
 ]
-type_check = ["mypy==1.15.0", "types-pytz==2025.2.0.20250516"]
+type_check = ["mypy==1.17.1", "types-pytz==2025.2.0.20250516"]
 dev = ["pip-tools"]
 
 [tool.setuptools.dynamic]
