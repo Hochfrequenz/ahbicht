@@ -47,7 +47,7 @@ marshmallow-enum==1.5.1
     # via ahbicht (pyproject.toml)
 maus==0.6.1
     # via ahbicht (pyproject.toml)
-more-itertools==10.7.0
+more-itertools==10.8.0
     # via maus
 packaging==25.0
     # via
