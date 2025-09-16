@@ -12,7 +12,7 @@ import asyncio
 import inspect
 from abc import ABC
 from contextvars import ContextVar
-from typing import Callable, Coroutine, Dict, List, Optional
+from typing import Callable, Coroutine, Optional
 
 import inject
 
@@ -138,16 +138,16 @@ class FcEvaluator(Evaluator, ABC):
         )
         return result
 
-    async def evaluate_format_constraints(self, condition_keys: List[str]) -> Dict[str, EvaluatedFormatConstraint]:
+    async def evaluate_format_constraints(self, condition_keys: list[str]) -> dict[str, EvaluatedFormatConstraint]:
         """
         Evaluate the entered_input in regard to all the formats provided in condition_keys.
         """
-        tasks: List[Coroutine] = [
+        tasks: list[Coroutine] = [
             self.evaluate_single_format_constraint(condition_key) for condition_key in condition_keys
         ]
-        results: List[EvaluatedFormatConstraint] = await asyncio.gather(*tasks)
+        results: list[EvaluatedFormatConstraint] = await asyncio.gather(*tasks)
 
-        result: Dict[str, EvaluatedFormatConstraint] = dict(zip(condition_keys, results))
+        result: dict[str, EvaluatedFormatConstraint] = dict(zip(condition_keys, results))
         return result
 
 
@@ -157,13 +157,13 @@ class DictBasedFcEvaluator(FcEvaluator):
     Once initialized the outcome of the evaluation won't change anymore.
     """
 
-    def __init__(self, results: Dict[str, EvaluatedFormatConstraint]):
+    def __init__(self, results: dict[str, EvaluatedFormatConstraint]):
         """
         Initialize with a dictionary that contains all the format constraint evaluation results.
         :param results:
         """
         super().__init__()
-        self._results: Dict[str, EvaluatedFormatConstraint] = results
+        self._results: dict[str, EvaluatedFormatConstraint] = results
 
     # pylint: disable=unused-argument
     async def evaluate_single_format_constraint(self, condition_key: str) -> EvaluatedFormatConstraint:

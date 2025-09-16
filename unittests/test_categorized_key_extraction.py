@@ -2,7 +2,6 @@
 
 import json
 from pathlib import Path
-from typing import List
 
 import pytest
 
@@ -169,7 +168,7 @@ class TestCategorizedKeyExtraction:
         ],
     )
     def test_possible_cer_generation_small_results(
-        self, key_extract: CategorizedKeyExtract, expected_cers: List[ContentEvaluationResult]
+        self, key_extract: CategorizedKeyExtract, expected_cers: list[ContentEvaluationResult]
     ):
         actual = key_extract.generate_possible_content_evaluation_results()
         # We only test the small edge cases as real code.

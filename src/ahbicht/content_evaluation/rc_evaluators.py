@@ -8,7 +8,7 @@ Typical use-cases are for example
 import asyncio
 import inspect
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional
+from typing import Optional
 
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluationContext
 from ahbicht.content_evaluation.evaluators import Evaluator
@@ -53,10 +53,10 @@ class RcEvaluator(Evaluator, ABC):
 
     async def evaluate_conditions(
         self,
-        condition_keys: List[str],
+        condition_keys: list[str],
         evaluatable_data: EvaluatableData,
-        condition_keys_with_context: Optional[Dict[str, EvaluationContext]] = None,
-    ) -> Dict[str, ConditionFulfilledValue]:
+        condition_keys_with_context: Optional[dict[str, EvaluationContext]] = None,
+    ) -> dict[str, ConditionFulfilledValue]:
         """
         Validate all the conditions provided in condition_keys in their respective context.
         """
@@ -93,13 +93,13 @@ class DictBasedRcEvaluator(RcEvaluator):
     The outcome of the evaluation does not change anymore after the initialization.
     """
 
-    def __init__(self, results: Dict[str, ConditionFulfilledValue]):
+    def __init__(self, results: dict[str, ConditionFulfilledValue]):
         """
         Initialize with a dictionary that contains all the requirement constraint evaluation results.
         :param results:
         """
         super().__init__()
-        self._results: Dict[str, ConditionFulfilledValue] = results
+        self._results: dict[str, ConditionFulfilledValue] = results
 
     def _get_default_context(self) -> EvaluationContext:
         raise NotImplementedError()

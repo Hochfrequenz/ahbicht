@@ -5,7 +5,7 @@ The AhbExpressionTransformer defines the rules how the different parts of the pa
 The used terms are defined in the README.md.
 """
 
-from typing import Awaitable, Dict, List, Union
+from typing import Awaitable, Union
 
 from lark import Token, Transformer, Tree, v_args
 from lark.exceptions import VisitError
@@ -20,7 +20,7 @@ from ahbicht.models.evaluation_results import (
 )
 from ahbicht.utility_functions import gather_if_necessary
 
-_str_to_modal_mark_mapping: Dict[str, ModalMark] = {
+_str_to_modal_mark_mapping: dict[str, ModalMark] = {
     "MUSS": ModalMark.MUSS,
     "M": ModalMark.MUSS,
     "KANN": ModalMark.KANN,
@@ -111,7 +111,7 @@ class AhbExpressionTransformer(Transformer):
     # pylint: disable=(line-too-long)
     def ahb_expression(
         self,
-        list_of_single_requirement_indicator_expressions: List[
+        list_of_single_requirement_indicator_expressions: list[
             Union[AhbExpressionEvaluationResult, Awaitable[AhbExpressionEvaluationResult]]
         ],
     ) -> Awaitable[AhbExpressionEvaluationResult]:
@@ -124,7 +124,7 @@ class AhbExpressionTransformer(Transformer):
 
     async def _ahb_expression_async(
         self,
-        list_of_single_requirement_indicator_expressions: List[
+        list_of_single_requirement_indicator_expressions: list[
             Union[AhbExpressionEvaluationResult, Awaitable[AhbExpressionEvaluationResult]]
         ],
     ) -> AhbExpressionEvaluationResult:
