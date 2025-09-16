@@ -10,19 +10,19 @@ attrs==25.3.0
     # via
     #   ahbicht (pyproject.toml)
     #   maus
-babel==2.16.0
+babel==2.17.0
     # via sphinx
-certifi==2024.8.30
+certifi==2025.8.3
     # via requests
-charset-normalizer==3.3.2
+charset-normalizer==3.4.3
     # via requests
 colorama==0.4.6
     # via sphinx
-docutils==0.20.1
+docutils==0.21.2
     # via
     #   sphinx
     #   sphinx-rtd-theme
-efoli==1.4.0
+efoli==2.0.0
     # via
     #   ahbicht (pyproject.toml)
     #   maus
@@ -30,13 +30,13 @@ idna==3.10
     # via requests
 imagesize==1.4.1
     # via sphinx
-inject==5.2.1
+inject==5.3.0
     # via ahbicht (pyproject.toml)
 jinja2==3.1.6
     # via sphinx
 lark==1.2.2
     # via ahbicht (pyproject.toml)
-markupsafe==2.1.5
+markupsafe==3.0.2
     # via jinja2
 marshmallow==3.26.1
     # via
@@ -47,21 +47,21 @@ marshmallow-enum==1.5.1
     # via ahbicht (pyproject.toml)
 maus==0.6.1
     # via ahbicht (pyproject.toml)
-more-itertools==10.5.0
+more-itertools==10.8.0
     # via maus
-packaging==24.1
+packaging==25.0
     # via
     #   marshmallow
     #   sphinx
-pygments==2.18.0
+pygments==2.19.2
     # via sphinx
 pytz==2025.2
     # via
     #   ahbicht (pyproject.toml)
     #   efoli
-requests==2.32.3
+requests==2.32.4
     # via sphinx
-snowballstemmer==2.2.0
+snowballstemmer==3.0.1
     # via sphinx
 sphinx==8.1.3
     # via
@@ -84,5 +84,5 @@ sphinxcontrib-qthelp==2.0.0
     # via sphinx
 sphinxcontrib-serializinghtml==2.0.0
     # via sphinx
-urllib3==2.2.3
+urllib3==2.5.0
     # via requests

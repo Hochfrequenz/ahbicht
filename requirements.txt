@@ -8,9 +8,9 @@ annotated-types==0.7.0
     # via pydantic
 attrs==25.3.0
     # via ahbicht (pyproject.toml)
-efoli==1.4.0
+efoli==2.0.0
     # via ahbicht (pyproject.toml)
-inject==5.2.1
+inject==5.3.0
     # via ahbicht (pyproject.toml)
 lark==1.2.2
     # via ahbicht (pyproject.toml)
@@ -20,7 +20,7 @@ marshmallow==3.26.1
     #   marshmallow-enum
 marshmallow-enum==1.5.1
     # via ahbicht (pyproject.toml)
-packaging==24.1
+packaging==25.0
     # via marshmallow
 pydantic==2.11.4
     # via ahbicht (pyproject.toml)
