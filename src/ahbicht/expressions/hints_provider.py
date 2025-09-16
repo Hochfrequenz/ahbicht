@@ -9,7 +9,7 @@ import json
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Dict, List, Mapping, Optional
+from typing import Mapping, Optional
 
 import inject
 from efoli import EdifactFormat, EdifactFormatVersion
@@ -50,17 +50,17 @@ class HintsProvider(ABC):
         """
         raise NotImplementedError("The inheriting class has to implement this method")
 
-    async def get_hints(self, condition_keys: List[str], raise_key_error: bool = True) -> Dict[str, Hint]:
+    async def get_hints(self, condition_keys: list[str], raise_key_error: bool = True) -> dict[str, Hint]:
         """
         Get Hints for given condition keys by asynchronously awaiting all self.get_hint_text at once
         """
-        results: List[Optional[str]]
+        results: list[Optional[str]]
         if inspect.iscoroutinefunction(self.get_hint_text):
             tasks = [self.get_hint_text(ck) for ck in condition_keys]
             results = await asyncio.gather(*tasks)
         else:
             results = [self.get_hint_text(ck) for ck in condition_keys]  # type:ignore[misc]
-        result: Dict[str, Hint] = {}
+        result: dict[str, Hint] = {}
         for key, value in zip(condition_keys, results):
             if value is None:
                 if raise_key_error:
@@ -103,7 +103,7 @@ class JsonFileHintsProvider(DictBasedHintsProvider):
         self.edifact_format_version = edifact_format_version
 
     @staticmethod
-    def _open_and_load_hint_json(file_path: Path) -> Dict[str, str]:
+    def _open_and_load_hint_json(file_path: Path) -> dict[str, str]:
         """
         Opens the hint json file and loads it into an attribute of the class.
         """

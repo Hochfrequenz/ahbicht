@@ -5,7 +5,7 @@ It creates json schema files as described in the README.md in the same directory
 
 import json
 import pathlib
-from typing import List, Type
+from typing import Type
 
 from marshmallow import Schema, fields
 from marshmallow_jsonschema import JSONSchema  # type:ignore[import]
@@ -24,7 +24,7 @@ from ahbicht.models.mapping_results import (
     PackageKeyConditionExpressionMappingSchema,
 )
 
-schema_types: List[Type[Schema]] = [
+schema_types: list[Type[Schema]] = [
     RequirementConstraintEvaluationResultSchema,
     FormatConstraintEvaluationResultSchema,
     EvaluatedFormatConstraintSchema,

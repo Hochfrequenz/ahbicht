@@ -3,7 +3,7 @@ Contains a class that is able to provide any RC/FC Evaluator, HintsProvider or P
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Union
+from typing import Optional, Union
 
 from efoli import EdifactFormat, EdifactFormatVersion
 
@@ -77,11 +77,11 @@ class SingletonTokenLogicProvider(TokenLogicProvider):
         # we don't care what the key is, it just has to be unique and consistent
         return f"{edifact_format}-{format_version}"
 
-    def __init__(self, inputs: List[Union[Evaluator, PackageResolver, HintsProvider]]):
-        self._rc_evaluators: Dict[str, RcEvaluator] = {}
-        self._fc_evaluators: Dict[str, FcEvaluator] = {}
-        self._hints_providers: Dict[str, HintsProvider] = {}
-        self._package_resolvers: Dict[str, PackageResolver] = {}
+    def __init__(self, inputs: list[Union[Evaluator, PackageResolver, HintsProvider]]):
+        self._rc_evaluators: dict[str, RcEvaluator] = {}
+        self._fc_evaluators: dict[str, FcEvaluator] = {}
+        self._hints_providers: dict[str, HintsProvider] = {}
+        self._package_resolvers: dict[str, PackageResolver] = {}
         for instance in inputs:
             key: str
             try:

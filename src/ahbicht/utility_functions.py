@@ -6,7 +6,7 @@ import asyncio
 import inspect
 import re
 from re import Match
-from typing import Awaitable, Callable, List, Literal, Optional, TypeVar, Union
+from typing import Awaitable, Callable, Literal, Optional, TypeVar, Union
 
 from lark import Tree
 
@@ -21,7 +21,7 @@ _repeatability_pattern = re.compile(
 )  #: a pattern to match "n..m" repeatabilities
 
 
-async def gather_if_necessary(results_and_awaitable_results: List[Union[Result, Awaitable[Result]]]) -> List[Result]:
+async def gather_if_necessary(results_and_awaitable_results: list[Union[Result, Awaitable[Result]]]) -> list[Result]:
     """
     Await the awaitables, pass the un-awaitable results
     :param results_and_awaitable_results: heterogeneous list of both Ts and Awaitable[T]s.
@@ -29,7 +29,7 @@ async def gather_if_necessary(results_and_awaitable_results: List[Union[Result, 
     """
     awaitable_indexes = [n for n, x in enumerate(results_and_awaitable_results) if inspect.isawaitable(x)]
     awaited_results = await asyncio.gather(*[x for x in results_and_awaitable_results if inspect.isawaitable(x)])
-    result: List[Result] = []
+    result: list[Result] = []
     awaited_results_index = 0
     for index, obj in enumerate(results_and_awaitable_results):
         if index in awaitable_indexes:

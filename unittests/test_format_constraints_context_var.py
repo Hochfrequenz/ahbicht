@@ -1,5 +1,5 @@
 import asyncio
-from typing import Dict, Optional
+from typing import Optional
 
 from ahbicht.content_evaluation import fc_evaluators
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
@@ -45,7 +45,7 @@ class _MyFcEvaluator(FcEvaluator):
         return self._evaluate_has_length(entered_input, 4)
 
 
-def _build_expectations(actual_length: int) -> Dict[str, EvaluatedFormatConstraint]:
+def _build_expectations(actual_length: int) -> dict[str, EvaluatedFormatConstraint]:
     result = {}
     for length in range(1, 5):
         error_message: Optional[str]
