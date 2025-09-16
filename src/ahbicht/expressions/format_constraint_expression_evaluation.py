@@ -6,7 +6,7 @@ of the format constraint expression tree are handled.
 The used terms are defined in the README_conditions.md.
 """
 
-from typing import Dict, List, Mapping, Optional
+from typing import Mapping, Optional
 
 import inject
 from lark import Token, Tree, v_args
@@ -101,10 +101,10 @@ async def format_constraint_evaluation(
         format_constraints_fulfilled = True
     else:
         parsed_tree_fc: Tree = parse_condition_expression_to_tree(format_constraints_expression)
-        all_evaluatable_format_constraint_keys: List[str] = [
+        all_evaluatable_format_constraint_keys: list[str] = [
             t.value for t in parsed_tree_fc.scan_values(lambda v: isinstance(v, Token))
         ]
-        input_values: Dict[str, EvaluatedFormatConstraint] = (
+        input_values: dict[str, EvaluatedFormatConstraint] = (
             await _build_evaluated_format_constraint_nodes(  # pylint:disable=no-value-for-parameter
                 all_evaluatable_format_constraint_keys
             )
@@ -123,9 +123,9 @@ async def format_constraint_evaluation(
 @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
 # search for binder.bind_to_provider(EvaluatableDataProvider, your_function_that_returns_evaluatable_data_goes_here)
 async def _build_evaluated_format_constraint_nodes(
-    evaluatable_format_constraint_keys: List[str],
+    evaluatable_format_constraint_keys: list[str],
     evaluatable_data: EvaluatableData,
-) -> Dict[str, EvaluatedFormatConstraint]:
+) -> dict[str, EvaluatedFormatConstraint]:
     """Build evaluated format constraint nodes."""
 
     token_logic_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)  # type:ignore[assignment]

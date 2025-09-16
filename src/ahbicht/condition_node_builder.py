@@ -4,7 +4,7 @@ If necessary it evaluates the needed attributes.
 """
 
 import sys
-from typing import Dict, List, Tuple, Union
+from typing import Union
 
 import inject
 
@@ -29,7 +29,7 @@ class ConditionNodeBuilder:
     It distinguishes between requirement constraint evaluation and format constraint evaluation.
     """
 
-    def __init__(self, condition_keys: List[str]):
+    def __init__(self, condition_keys: list[str]):
         self.token_logic_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)  # type:ignore[assignment]
         self.condition_keys = condition_keys
         (
@@ -38,7 +38,7 @@ class ConditionNodeBuilder:
             self.format_constraints_condition_keys,
         ) = self._seperate_condition_keys_into_each_type()
 
-    def _seperate_condition_keys_into_each_type(self) -> Tuple[List[str], List[str], List[str]]:
+    def _seperate_condition_keys_into_each_type(self) -> tuple[list[str], list[str], list[str]]:
         """
         Separates the list of all condition keys into three lists of their respective types.
         """
@@ -52,16 +52,16 @@ class ConditionNodeBuilder:
 
     @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
     # search for binder.bind_to_provider(EvaluatableDataProvider, your_function_that_returns_evaluatable_data_goes_here)
-    async def _build_hint_nodes(self, evaluatable_data: EvaluatableData) -> Dict[str, Hint]:
+    async def _build_hint_nodes(self, evaluatable_data: EvaluatableData) -> dict[str, Hint]:
         """Builds Hint nodes from their condition keys by getting all hint texts from the HintsProvider."""
         hints_provider = self.token_logic_provider.get_hints_provider(
             evaluatable_data.edifact_format, evaluatable_data.edifact_format_version
         )
         return await hints_provider.get_hints(self.hints_condition_keys)
 
-    def _build_unevaluated_format_constraint_nodes(self) -> Dict[str, UnevaluatedFormatConstraint]:
+    def _build_unevaluated_format_constraint_nodes(self) -> dict[str, UnevaluatedFormatConstraint]:
         """Build unevaluated format constraint nodes."""
-        unevaluated_format_constraints: Dict[str, UnevaluatedFormatConstraint] = {}
+        unevaluated_format_constraints: dict[str, UnevaluatedFormatConstraint] = {}
         for condition_key in self.format_constraints_condition_keys:
             unevaluated_format_constraints[condition_key] = UnevaluatedFormatConstraint(condition_key=condition_key)
         return unevaluated_format_constraints
@@ -70,7 +70,7 @@ class ConditionNodeBuilder:
     # search for binder.bind_to_provider(EvaluatableDataProvider, your_function_that_returns_evaluatable_data_goes_here)
     async def _build_requirement_constraint_nodes(
         self, evaluatable_data: EvaluatableData
-    ) -> Dict[str, RequirementConstraint]:
+    ) -> dict[str, RequirementConstraint]:
         """
         Build requirement constraint nodes by evaluating the constraints
         with the help of the respective Evaluator.
@@ -81,7 +81,7 @@ class ConditionNodeBuilder:
         evaluated_conditions_fulfilled_attribute = await rc_evaluator.evaluate_conditions(
             condition_keys=self.requirement_constraints_condition_keys, evaluatable_data=evaluatable_data
         )
-        evaluated_requirement_constraints: Dict[str, RequirementConstraint] = {}
+        evaluated_requirement_constraints: dict[str, RequirementConstraint] = {}
         for condition_key in self.requirement_constraints_condition_keys:
             evaluated_requirement_constraints[condition_key] = RequirementConstraint(
                 condition_key=condition_key,
@@ -89,7 +89,7 @@ class ConditionNodeBuilder:
             )
         return evaluated_requirement_constraints
 
-    async def requirement_content_evaluation_for_all_condition_keys(self) -> Dict[str, TRCTransformerArgument]:
+    async def requirement_content_evaluation_for_all_condition_keys(self) -> dict[str, TRCTransformerArgument]:
         """Gets input nodes for all condition keys."""
         try:
             requirement_constraint_nodes = (
@@ -112,7 +112,7 @@ class ConditionNodeBuilder:
             raise  # re-raise with an eventually slightly modified error message
         hint_nodes = await self._build_hint_nodes()  # pylint:disable=no-value-for-parameter
         unevaluated_format_constraint_nodes = self._build_unevaluated_format_constraint_nodes()
-        input_nodes: Dict[str, TRCTransformerArgument] = {
+        input_nodes: dict[str, TRCTransformerArgument] = {
             **requirement_constraint_nodes,
             **hint_nodes,
             **unevaluated_format_constraint_nodes,

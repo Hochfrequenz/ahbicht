@@ -24,7 +24,7 @@ from ahbicht.models.mapping_results import (
     PackageKeyConditionExpressionMappingSchema,
 )
 
-schema_types: List[Type[Schema]] = [
+schema_types: list[Type[Schema]] = [
     RequirementConstraintEvaluationResultSchema,
     FormatConstraintEvaluationResultSchema,
     EvaluatedFormatConstraintSchema,

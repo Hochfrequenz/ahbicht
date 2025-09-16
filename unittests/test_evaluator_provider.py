@@ -1,5 +1,3 @@
-from typing import List
-
 import pytest
 from efoli import EdifactFormat, EdifactFormatVersion
 
@@ -15,7 +13,7 @@ class TestEvaluatorProvider:
     """
 
     def test_initialization(self):
-        evaluators: List[Evaluator] = []
+        evaluators: list[Evaluator] = []
         # setup some test data/instances
         for edifact_format in EdifactFormat:
             if edifact_format == EdifactFormat.COMDIS:

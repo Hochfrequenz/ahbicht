@@ -6,7 +6,7 @@ of the condition expression tree are handled.
 The used terms are defined in the README_conditions.md.
 """
 
-from typing import List, Literal, Mapping, Optional, Type, Union
+from typing import Literal, Mapping, Optional, Type, Union
 
 from lark import Token, Tree, v_args
 from lark.exceptions import VisitError
@@ -256,7 +256,7 @@ async def requirement_constraint_evaluation(
         parsed_tree_rc = condition_expression
 
     # get all condition keys from tree
-    all_condition_keys: List[str] = [t.value for t in parsed_tree_rc.scan_values(lambda v: isinstance(v, Token))]
+    all_condition_keys: list[str] = [t.value for t in parsed_tree_rc.scan_values(lambda v: isinstance(v, Token))]
     condition_node_builder = ConditionNodeBuilder(all_condition_keys)
     input_nodes = await condition_node_builder.requirement_content_evaluation_for_all_condition_keys()
 

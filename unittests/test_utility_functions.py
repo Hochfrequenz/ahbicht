@@ -2,7 +2,7 @@
 Tests the utility functions.
 """
 
-from typing import Awaitable, List, TypeVar, Union
+from typing import Awaitable, TypeVar, Union
 
 import pytest
 
@@ -33,7 +33,7 @@ class TestUtilityFunctions:
             pytest.param([_return_awaitable("a"), _return_awaitable("b")], ["a", "b"]),
         ],
     )
-    async def test_gather_if_necessary(self, mixed_input: List[Union[T, Awaitable[T]]], expected_result: List[T]):
+    async def test_gather_if_necessary(self, mixed_input: list[Union[T, Awaitable[T]]], expected_result: list[T]):
         actual = await gather_if_necessary(mixed_input)
         assert actual == expected_result
 

@@ -3,7 +3,7 @@ Test for the expansion of packages.
 """
 
 from logging import LogRecord
-from typing import List, Mapping, Optional
+from typing import Mapping, Optional
 
 import inject
 import pytest
@@ -106,7 +106,7 @@ class TestPackageResolver:
         assert await package_resolver.get_condition_expression("456P") == PackageKeyConditionExpressionMapping(
             edifact_format=EdifactFormat.UTILMD, package_key="456P", package_expression="[4] U [5] X [6]"
         )
-        log_entries: List[LogRecord] = caplog.records
+        log_entries: list[LogRecord] = caplog.records
         assert log_entries[0].message == "Instantiated JsonFilePackageResolver"
         assert log_entries[1].message.startswith("Resolved expression")
 

@@ -6,7 +6,7 @@ Parsing expressions that are nested into other expressions is referred to as "re
 
 import asyncio
 import inspect
-from typing import Awaitable, List, Optional, Union, cast
+from typing import Awaitable, Optional, Union, cast
 
 import inject
 from lark import Token, Transformer, Tree
@@ -131,7 +131,7 @@ class PackageExpansionTransformer(Transformer):
         self.token_logic_provider = cast(TokenLogicProvider, inject.instance(TokenLogicProvider))
         self.include_package_repeatabilities = include_package_repeatabilities
 
-    def package(self, tokens: List[Token]) -> Awaitable[Tree]:
+    def package(self, tokens: list[Token]) -> Awaitable[Tree]:
         """
         try to resolve the package using the injected PackageResolver
         """
@@ -222,7 +222,7 @@ class TimeConditionTransformer(Transformer):
         super().__init__()
         self.replace_time_conditions = replace_time_conditions
 
-    def time_condition(self, tokens: List[Token]) -> Tree:
+    def time_condition(self, tokens: list[Token]) -> Tree:
         """
         Replace or resolve time conditions.
         """
@@ -230,7 +230,7 @@ class TimeConditionTransformer(Transformer):
             return self._replace_time_condition(tokens)
         return self._expand_time_condition(tokens)
 
-    def _replace_time_condition(self, tokens: List[Token]) -> Tree:
+    def _replace_time_condition(self, tokens: list[Token]) -> Tree:
         """
         Replace and resolve time conditions.
         """
@@ -247,7 +247,7 @@ class TimeConditionTransformer(Transformer):
             return parse_condition_expression_to_tree("[932][492]X[934][493]")
         raise NotImplementedError(f"The time_condition '{time_condition_key}' is not implemented")
 
-    def _expand_time_condition(self, tokens: List[Token]) -> Tree:
+    def _expand_time_condition(self, tokens: list[Token]) -> Tree:
         """
         try to resolve the time conditions using the injected PackageResolver
         """
