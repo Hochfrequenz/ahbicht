@@ -3,7 +3,7 @@ Contains a class that is able to provide any RC/FC Evaluator, HintsProvider or P
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from efoli import EdifactFormat, EdifactFormatVersion
 
@@ -91,7 +91,9 @@ class SingletonTokenLogicProvider(TokenLogicProvider):
                 # if the user tries to provide more than 1 instance of the same kind without specifying format(version)
                 # they'll run into an value error below
                 key = SingletonTokenLogicProvider._unknown_key
-            target_dict: Dict[str, Any]
+            target_dict: (
+                dict[str, RcEvaluator] | dict[str, FcEvaluator] | dict[str, HintsProvider] | dict[str, PackageResolver]
+            )
             if isinstance(instance, RcEvaluator):
                 target_dict = self._rc_evaluators
             elif isinstance(instance, FcEvaluator):
@@ -107,7 +109,7 @@ class SingletonTokenLogicProvider(TokenLogicProvider):
                 raise ValueError(
                     f"The key '{key}' is already used by {conflict}. For this reason you cannot add '{instance}'"
                 )
-            target_dict[key] = instance
+            target_dict[key] = instance  # type:ignore[assignment]
 
     def get_fc_evaluator(
         self, edifact_format: Optional[EdifactFormat] = None, format_version: Optional[EdifactFormatVersion] = None

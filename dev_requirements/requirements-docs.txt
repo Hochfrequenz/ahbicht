@@ -14,7 +14,7 @@ babel==2.17.0
     # via sphinx
 certifi==2025.8.3
     # via requests
-charset-normalizer==3.4.2
+charset-normalizer==3.4.3
     # via requests
 colorama==0.4.6
     # via sphinx
@@ -47,7 +47,7 @@ marshmallow-enum==1.5.1
     # via ahbicht (pyproject.toml)
 maus==0.6.1
     # via ahbicht (pyproject.toml)
-more-itertools==10.7.0
+more-itertools==10.8.0
     # via maus
 packaging==25.0
     # via

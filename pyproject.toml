@@ -47,12 +47,12 @@ test_packaging = [
     "twine==6.1.0",
 ]
 tests = [
-    "pytest==8.4.1",
+    "pytest==8.4.2",
     "pytest-asyncio==1.1.0",
     "pytest-datafiles==3.0.0",
     "pytest-mock==3.14.1",
 ]
-type_check = ["mypy==1.15.0", "types-pytz==2025.2.0.20250809"]
+type_check = ["mypy==1.18.1", "types-pytz==2025.2.0.20250809"]
 dev = ["pip-tools"]
 
 [tool.setuptools.dynamic]
