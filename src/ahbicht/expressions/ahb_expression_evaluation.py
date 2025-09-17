@@ -40,7 +40,7 @@ class AhbExpressionTransformer(Transformer):
     their respective condition expressions already evaluated to booleans.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         The input are the evaluated format constraint conditions in the form of ConditionNodes.
         """

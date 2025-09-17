@@ -77,7 +77,7 @@ class SingletonTokenLogicProvider(TokenLogicProvider):
         # we don't care what the key is, it just has to be unique and consistent
         return f"{edifact_format}-{format_version}"
 
-    def __init__(self, inputs: list[Union[Evaluator, PackageResolver, HintsProvider]]):
+    def __init__(self, inputs: list[Union[Evaluator, PackageResolver, HintsProvider]]) -> None:
         self._rc_evaluators: dict[str, RcEvaluator] = {}
         self._fc_evaluators: dict[str, FcEvaluator] = {}
         self._hints_providers: dict[str, HintsProvider] = {}
