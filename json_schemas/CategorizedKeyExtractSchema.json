@@ -1,303 +1,44 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "definitions": {
-        "AhbExpressionEvaluationResultSchema": {
-            "additionalProperties": false,
-            "properties": {
-                "format_constraint_evaluation_result": {
-                    "$ref": "#/definitions/FormatConstraintEvaluationResultSchema",
-                    "type": "object"
-                },
-                "requirement_constraint_evaluation_result": {
-                    "$ref": "#/definitions/RequirementConstraintEvaluationResultSchema",
-                    "type": "object"
-                },
-                "requirement_indicator": {
-                    "title": "",
-                    "type": "string"
-                }
+    "description": "A Categorized Key Extract contains those condition keys that are contained inside an expression.\nFor expressions (that do not contain any unresolved package) it's possible to pre-generate all possible outcomes of\na content evaluation. CategorizedKeyExtract is also the answer to the question:\n'Which information do I need to provide in a ContentEvaluationResult in order to evaluate a given expression?'",
+    "properties": {
+        "format_constraint_keys": {
+            "items": {
+                "type": "string"
             },
-            "type": "object"
+            "title": "Format Constraint Keys",
+            "type": "array"
         },
-        "CategorizedKeyExtractSchema": {
-            "additionalProperties": false,
-            "properties": {
-                "format_constraint_keys": {
-                    "items": {
-                        "title": "format_constraint_keys",
-                        "type": "string"
-                    },
-                    "title": "format_constraint_keys",
-                    "type": "array"
-                },
-                "hint_keys": {
-                    "items": {
-                        "title": "hint_keys",
-                        "type": "string"
-                    },
-                    "title": "hint_keys",
-                    "type": "array"
-                },
-                "package_keys": {
-                    "items": {
-                        "title": "package_keys",
-                        "type": "string"
-                    },
-                    "title": "package_keys",
-                    "type": "array"
-                },
-                "requirement_constraint_keys": {
-                    "items": {
-                        "title": "requirement_constraint_keys",
-                        "type": "string"
-                    },
-                    "title": "requirement_constraint_keys",
-                    "type": "array"
-                },
-                "time_condition_keys": {
-                    "items": {
-                        "title": "time_condition_keys",
-                        "type": "string"
-                    },
-                    "title": "time_condition_keys",
-                    "type": "array"
-                }
+        "hint_keys": {
+            "items": {
+                "type": "string"
             },
-            "type": "object"
+            "title": "Hint Keys",
+            "type": "array"
         },
-        "ConditionKeyConditionTextMappingSchema": {
-            "additionalProperties": false,
-            "properties": {
-                "condition_key": {
-                    "title": "condition_key",
-                    "type": "string"
-                },
-                "condition_text": {
-                    "title": "condition_text",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "edifact_format": {
-                    "enum": [
-                        "APERAK",
-                        "COMDIS",
-                        "CONTRL",
-                        "IFTSTA",
-                        "INSRPT",
-                        "INVOIC",
-                        "MSCONS",
-                        "ORDCHG",
-                        "ORDERS",
-                        "ORDRSP",
-                        "PRICAT",
-                        "QUOTES",
-                        "REMADV",
-                        "REQOTE",
-                        "PARTIN",
-                        "UTILMD",
-                        "UTILMDG",
-                        "UTILMDS",
-                        "UTILMDW",
-                        "UTILTS"
-                    ],
-                    "title": "edifact_format",
-                    "type": "string"
-                }
+        "package_keys": {
+            "items": {
+                "pattern": "^\\d+P$",
+                "type": "string"
             },
-            "type": "object"
+            "title": "Package Keys",
+            "type": "array"
         },
-        "ContentEvaluationResultSchema": {
-            "additionalProperties": false,
-            "properties": {
-                "format_constraints": {
-                    "additionalProperties": {
-                        "$ref": "#/definitions/EvaluatedFormatConstraintSchema",
-                        "type": "object"
-                    },
-                    "title": "format_constraints",
-                    "type": "object"
-                },
-                "hints": {
-                    "additionalProperties": {
-                        "title": "hints",
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    },
-                    "title": "hints",
-                    "type": "object"
-                },
-                "id": {
-                    "default": false,
-                    "format": "uuid",
-                    "title": "id",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "packages": {
-                    "additionalProperties": {
-                        "title": "packages",
-                        "type": "string"
-                    },
-                    "title": "packages",
-                    "type": [
-                        "object",
-                        "null"
-                    ]
-                },
-                "requirement_constraints": {
-                    "additionalProperties": {
-                        "title": "requirement_constraints",
-                        "type": "string"
-                    },
-                    "title": "requirement_constraints",
-                    "type": "object"
-                }
+        "requirement_constraint_keys": {
+            "items": {
+                "type": "string"
             },
-            "required": [
-                "format_constraints",
-                "hints",
-                "requirement_constraints"
-            ],
-            "type": "object"
+            "title": "Requirement Constraint Keys",
+            "type": "array"
         },
-        "EvaluatedFormatConstraintSchema": {
-            "additionalProperties": false,
-            "properties": {
-                "error_message": {
-                    "default": true,
-                    "title": "error_message",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "format_constraint_fulfilled": {
-                    "title": "format_constraint_fulfilled",
-                    "type": "boolean"
-                }
+        "time_condition_keys": {
+            "items": {
+                "pattern": "^UB(?:1|2|3)$",
+                "type": "string"
             },
-            "required": [
-                "format_constraint_fulfilled"
-            ],
-            "type": "object"
-        },
-        "FormatConstraintEvaluationResultSchema": {
-            "additionalProperties": false,
-            "properties": {
-                "error_message": {
-                    "title": "error_message",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "format_constraints_fulfilled": {
-                    "title": "format_constraints_fulfilled",
-                    "type": "boolean"
-                }
-            },
-            "type": "object"
-        },
-        "PackageKeyConditionExpressionMappingSchema": {
-            "additionalProperties": false,
-            "properties": {
-                "edifact_format": {
-                    "enum": [
-                        "APERAK",
-                        "COMDIS",
-                        "CONTRL",
-                        "IFTSTA",
-                        "INSRPT",
-                        "INVOIC",
-                        "MSCONS",
-                        "ORDCHG",
-                        "ORDERS",
-                        "ORDRSP",
-                        "PRICAT",
-                        "QUOTES",
-                        "REMADV",
-                        "REQOTE",
-                        "PARTIN",
-                        "UTILMD",
-                        "UTILMDG",
-                        "UTILMDS",
-                        "UTILMDW",
-                        "UTILTS"
-                    ],
-                    "title": "edifact_format",
-                    "type": "string"
-                },
-                "package_expression": {
-                    "title": "package_expression",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "package_key": {
-                    "title": "package_key",
-                    "type": "string"
-                }
-            },
-            "type": "object"
-        },
-        "RequirementConstraintEvaluationResultSchema": {
-            "additionalProperties": false,
-            "properties": {
-                "format_constraints_expression": {
-                    "title": "format_constraints_expression",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "hints": {
-                    "title": "hints",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "requirement_constraints_fulfilled": {
-                    "title": "requirement_constraints_fulfilled",
-                    "type": "boolean"
-                },
-                "requirement_is_conditional": {
-                    "title": "requirement_is_conditional",
-                    "type": "boolean"
-                }
-            },
-            "type": "object"
-        },
-        "TokenSchema": {
-            "additionalProperties": false,
-            "properties": {
-                "type": {
-                    "default": false,
-                    "title": "type",
-                    "type": "string"
-                },
-                "value": {
-                    "default": false,
-                    "title": "value",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                }
-            },
-            "type": "object"
+            "title": "Time Condition Keys",
+            "type": "array"
         }
     },
-    "properties": {
-        "$ref": "#/definitions/CategorizedKeyExtractSchema/properties"
-    },
-    "title": "CategorizedKeyExtractSchema",
+    "title": "CategorizedKeyExtract",
     "type": "object"
 }
