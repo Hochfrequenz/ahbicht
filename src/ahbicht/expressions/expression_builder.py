@@ -88,7 +88,7 @@ class FormatConstraintExpressionBuilder(ExpressionBuilder[TSupportedFCExpression
 
     # (?P<group_name>...) is a named group: https://docs.python.org/3/howto/regex.html#non-capturing-and-named-groups
 
-    def __init__(self, init_condition_or_expression: TSupportedFCExpressionBuilderArguments):
+    def __init__(self, init_condition_or_expression: TSupportedFCExpressionBuilderArguments) -> None:
         """
         Start with a plain expression
         :param init_condition_or_expression: initial format constraint or existing expression
@@ -184,7 +184,7 @@ class HintExpressionBuilder(ExpressionBuilder[ClassesWithHintAttribute]):
             return hinty_object
         return getattr(hinty_object, "hint", None)
 
-    def __init__(self, init_condition: Optional[_ClassesWithHintAttribute]):
+    def __init__(self, init_condition: Optional[_ClassesWithHintAttribute]) -> None:
         """
         Initialize by providing either a Hint Node or a hint string
         """
@@ -225,7 +225,7 @@ class FormatErrorMessageExpressionBuilder(ExpressionBuilder[EvaluatedFormatConst
     Class to build the error messages for the format constraint evaluation.
     """
 
-    def __init__(self, init_condition: EvaluatedFormatConstraint):
+    def __init__(self, init_condition: EvaluatedFormatConstraint) -> None:
         self._expression = init_condition.error_message
         self.format_constraint_fulfilled = init_condition.format_constraint_fulfilled
 

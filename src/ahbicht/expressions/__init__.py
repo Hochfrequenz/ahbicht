@@ -15,7 +15,7 @@ class InvalidExpressionError(BaseException):
     A syntactical error leads to a SyntaxError during parsing with lark whereas this exception occurs during evaluation.
     """
 
-    def __init__(self, error_message: str, invalid_expression: Optional[str] = None):
+    def __init__(self, error_message: str, invalid_expression: Optional[str] = None) -> None:
         """
         initialize the exception
         :param invalid_expression: the expression which is invalid (if known)
