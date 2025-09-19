@@ -4,7 +4,7 @@ Tests that the parsed trees are JSON serializable
 
 import json
 import uuid
-from typing import TypeVar
+from typing import Optional, TypeVar
 
 import pytest
 from efoli import EdifactFormat
@@ -34,7 +34,7 @@ from ahbicht.models.mapping_results import (
 T = TypeVar("T")
 
 
-def _test_serialization_roundtrip(serializable_object: T, schema: Schema | None, expected_json_dict: dict) -> T:
+def _test_serialization_roundtrip(serializable_object: T, schema: Optional[Schema], expected_json_dict: dict) -> T:
     """
     Serializes the serializable_object using the provided schema (or None for pydantic models),
     asserts, that the result is equal to the expected_json_dict
