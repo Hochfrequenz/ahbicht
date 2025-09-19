@@ -157,7 +157,7 @@ class DictBasedFcEvaluator(FcEvaluator):
     Once initialized the outcome of the evaluation won't change anymore.
     """
 
-    def __init__(self, results: dict[str, EvaluatedFormatConstraint]):
+    def __init__(self, results: dict[str, EvaluatedFormatConstraint]) -> None:
         """
         Initialize with a dictionary that contains all the format constraint evaluation results.
         :param results:
@@ -187,7 +187,7 @@ class ContentEvaluationResultBasedFcEvaluator(FcEvaluator):
     Other than the DictBasedFcEvaluator the outcome is not dependent on the initialization but on the evaluatable data.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._schema = ContentEvaluationResultSchema()
 

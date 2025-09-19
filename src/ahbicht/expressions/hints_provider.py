@@ -36,7 +36,7 @@ class HintsProvider(ABC):
         "The inheriting class needs to define a format version."
     )
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.logger = logging.getLogger(self.__module__)
         self.logger.setLevel(logging.DEBUG)
         self.logger.info("Instantiated %s", self.__class__.__name__)
@@ -76,7 +76,7 @@ class DictBasedHintsProvider(HintsProvider):
     A Hints Provider that is based on hardcoded values from a dictionary
     """
 
-    def __init__(self, results: Mapping[str, Optional[str]]):
+    def __init__(self, results: Mapping[str, Optional[str]]) -> None:
         """
         Initialize with a dictionary that contains all the Hinweis texts.
         :param results:
@@ -97,7 +97,9 @@ class JsonFileHintsProvider(DictBasedHintsProvider):
     The JsonFileHintsProvider loads hints from a JSON file.
     """
 
-    def __init__(self, edifact_format: EdifactFormat, edifact_format_version: EdifactFormatVersion, file_path: Path):
+    def __init__(
+        self, edifact_format: EdifactFormat, edifact_format_version: EdifactFormatVersion, file_path: Path
+    ) -> None:
         super().__init__(self._open_and_load_hint_json(file_path))
         self.edifact_format = edifact_format
         self.edifact_format_version = edifact_format_version
@@ -118,7 +120,7 @@ class ContentEvaluationResultBasedHintsProvider(HintsProvider):
     data.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._schema = ContentEvaluationResultSchema()
 

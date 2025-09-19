@@ -126,7 +126,7 @@ class PackageExpansionTransformer(Transformer):
     package repetitions in the future (cf.  https://github.com/Hochfrequenz/ahbicht/pull/565).
     """
 
-    def __init__(self, include_package_repeatabilities: bool = False):
+    def __init__(self, include_package_repeatabilities: bool = False) -> None:
         super().__init__()
         self.token_logic_provider = cast(TokenLogicProvider, inject.instance(TokenLogicProvider))
         self.include_package_repeatabilities = include_package_repeatabilities
@@ -162,6 +162,7 @@ class PackageExpansionTransformer(Transformer):
         if not resolved_package.has_been_resolved_successfully():
             raise NotImplementedError(f"The package '{package_key_token.value}' could not be resolved by {resolver}")
         # the package_expression is not None because that's the definition of "has been resolved successfully"
+        assert resolved_package.package_expression is not None  # this is to please mypy (see comment above)
         tree_result = parse_condition_expression_to_tree(resolved_package.package_expression)
         if self.include_package_repeatabilities and repeatability_token is not None:
             # We add the repeatability as a condition expression to the resolved package condition expression,
@@ -218,7 +219,7 @@ class TimeConditionTransformer(Transformer):
     constraint for the respective division.
     """
 
-    def __init__(self, replace_time_conditions: bool = True):
+    def __init__(self, replace_time_conditions: bool = True) -> None:
         super().__init__()
         self.replace_time_conditions = replace_time_conditions
 
