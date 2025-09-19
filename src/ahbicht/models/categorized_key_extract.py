@@ -4,7 +4,7 @@ Contains the CategorizedKeyExtract and a schema for (de)serialization.
 
 from itertools import combinations, product
 
-from pydantic import BaseModel, RootModel, constr, Field
+from pydantic import BaseModel, Field, RootModel, constr
 
 from ahbicht.models.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult
@@ -27,11 +27,13 @@ class CategorizedKeyExtract(BaseModel):
     #: list of keys for which you'll need to provide ConditionFulfilledValues
     requirement_constraint_keys: list[str] = Field(default_factory=list)
 
+    # for the valid-type ignore: https://stackoverflow.com/questions/67009123/how-can-mypy-accept-pydantics-constr-types
+
     #: list of packages that need to be resolved (additionally)
-    package_keys: list[constr(pattern=r"^\d+P$")] = Field(default_factory=list)
+    package_keys: list[constr(pattern=r"^\d+P$")] = Field(default_factory=list)  # type:ignore[valid-type]
 
     #: a list of time conditions, if present
-    time_condition_keys: list[constr(pattern=r"^UB(?:1|2|3)$")] = Field(default_factory=list)
+    time_condition_keys: list[constr(pattern=r"^UB(?:1|2|3)$")] = Field(default_factory=list)  # type:ignore[valid-type]
 
     def _remove_duplicates(self) -> None:
         """
