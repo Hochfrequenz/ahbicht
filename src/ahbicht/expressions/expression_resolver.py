@@ -162,6 +162,7 @@ class PackageExpansionTransformer(Transformer):
         if not resolved_package.has_been_resolved_successfully():
             raise NotImplementedError(f"The package '{package_key_token.value}' could not be resolved by {resolver}")
         # the package_expression is not None because that's the definition of "has been resolved successfully"
+        assert resolved_package.package_expression is not None  # this is to please mypy (see comment above)
         tree_result = parse_condition_expression_to_tree(resolved_package.package_expression)
         if self.include_package_repeatabilities and repeatability_token is not None:
             # We add the repeatability as a condition expression to the resolved package condition expression,
