@@ -6,7 +6,7 @@ Parsing expressions that are nested into other expressions is referred to as "re
 
 import asyncio
 import inspect
-from typing import Awaitable, List, Optional, Union, cast
+from typing import Awaitable, Optional, Union, cast
 
 import inject
 from lark import Token, Transformer, Tree
@@ -126,12 +126,12 @@ class PackageExpansionTransformer(Transformer):
     package repetitions in the future (cf.  https://github.com/Hochfrequenz/ahbicht/pull/565).
     """
 
-    def __init__(self, include_package_repeatabilities: bool = False):
+    def __init__(self, include_package_repeatabilities: bool = False) -> None:
         super().__init__()
         self.token_logic_provider = cast(TokenLogicProvider, inject.instance(TokenLogicProvider))
         self.include_package_repeatabilities = include_package_repeatabilities
 
-    def package(self, tokens: List[Token]) -> Awaitable[Tree]:
+    def package(self, tokens: list[Token]) -> Awaitable[Tree]:
         """
         try to resolve the package using the injected PackageResolver
         """
@@ -162,6 +162,7 @@ class PackageExpansionTransformer(Transformer):
         if not resolved_package.has_been_resolved_successfully():
             raise NotImplementedError(f"The package '{package_key_token.value}' could not be resolved by {resolver}")
         # the package_expression is not None because that's the definition of "has been resolved successfully"
+        assert resolved_package.package_expression is not None  # this is to please mypy (see comment above)
         tree_result = parse_condition_expression_to_tree(resolved_package.package_expression)
         if self.include_package_repeatabilities and repeatability_token is not None:
             # We add the repeatability as a condition expression to the resolved package condition expression,
@@ -218,11 +219,11 @@ class TimeConditionTransformer(Transformer):
     constraint for the respective division.
     """
 
-    def __init__(self, replace_time_conditions: bool = True):
+    def __init__(self, replace_time_conditions: bool = True) -> None:
         super().__init__()
         self.replace_time_conditions = replace_time_conditions
 
-    def time_condition(self, tokens: List[Token]) -> Tree:
+    def time_condition(self, tokens: list[Token]) -> Tree:
         """
         Replace or resolve time conditions.
         """
@@ -230,7 +231,7 @@ class TimeConditionTransformer(Transformer):
             return self._replace_time_condition(tokens)
         return self._expand_time_condition(tokens)
 
-    def _replace_time_condition(self, tokens: List[Token]) -> Tree:
+    def _replace_time_condition(self, tokens: list[Token]) -> Tree:
         """
         Replace and resolve time conditions.
         """
@@ -247,7 +248,7 @@ class TimeConditionTransformer(Transformer):
             return parse_condition_expression_to_tree("[932][492]X[934][493]")
         raise NotImplementedError(f"The time_condition '{time_condition_key}' is not implemented")
 
-    def _expand_time_condition(self, tokens: List[Token]) -> Tree:
+    def _expand_time_condition(self, tokens: list[Token]) -> Tree:
         """
         try to resolve the time conditions using the injected PackageResolver
         """

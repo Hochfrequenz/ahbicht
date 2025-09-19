@@ -1,7 +1,6 @@
 """Test for the evaluation of the ahb expression conditions tests (Mussfeldprüfung)"""
 
 import uuid
-from typing import List
 from unittest.mock import AsyncMock
 
 import inject
@@ -76,7 +75,7 @@ class TestAHBExpressionEvaluation:
         This is a very basic assertion but not always given.
         """
         expression = "Muss [1] U [2]"
-        evaluation_results: List[AhbExpressionEvaluationResult] = []
+        evaluation_results: list[AhbExpressionEvaluationResult] = []
         for _ in range(9):
             # see iterating_rc_evaluator for the behaviour of 1 and 2. Both iterate
             # 1: (true, false, true, false, ...)

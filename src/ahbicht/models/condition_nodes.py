@@ -10,7 +10,7 @@ The used terms are defined in the README_conditions.md.
 
 from abc import ABC
 from enum import Enum
-from typing import Optional, TypeVar
+from typing import Any, Optional, TypeVar
 
 import attrs
 
@@ -33,10 +33,10 @@ class ConditionFulfilledValue(str, Enum):
     #: a hint or unevaluated format constraint which does not have a status of being fulfilled or not
     NEUTRAL = "NEUTRAL"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.value
 
-    def __or__(self, other):
+    def __or__(self, other: "ConditionFulfilledValue") -> "ConditionFulfilledValue":
         if other == ConditionFulfilledValue.NEUTRAL:  # todo: the next 8 lines are nearly identical with __and__
             return self
         if self == ConditionFulfilledValue.NEUTRAL:
@@ -50,7 +50,7 @@ class ConditionFulfilledValue(str, Enum):
             return ConditionFulfilledValue.UNKNOWN
         return ConditionFulfilledValue.UNFULFILLED
 
-    def __and__(self, other):
+    def __and__(self, other: "ConditionFulfilledValue") -> "ConditionFulfilledValue":
         if other == ConditionFulfilledValue.NEUTRAL:  # todo: the next 8 lines are nearly identical with __or__
             return self
         if self == ConditionFulfilledValue.NEUTRAL:
@@ -65,7 +65,7 @@ class ConditionFulfilledValue(str, Enum):
             return ConditionFulfilledValue.FULFILLED
         return ConditionFulfilledValue.UNFULFILLED
 
-    def __xor__(self, other):
+    def __xor__(self, other: "ConditionFulfilledValue") -> "ConditionFulfilledValue":
         if other == ConditionFulfilledValue.NEUTRAL:
             return self
         if self == ConditionFulfilledValue.NEUTRAL:
@@ -164,7 +164,7 @@ class EvaluatedFormatConstraintSchema(Schema):
 
     # pylint: disable=unused-argument
     @post_load
-    def deserialize(self, data, **kwargs) -> EvaluatedFormatConstraint:
+    def deserialize(self, data: dict[str, Any], **kwargs: int) -> EvaluatedFormatConstraint:
         """
         converts the barely typed data dictionary into an actual EvaluatedFormatConstraint
         :param data:

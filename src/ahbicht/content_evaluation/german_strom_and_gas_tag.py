@@ -5,7 +5,7 @@ A module to evaluate datetimes and whether they are "on the edge" of a German "S
 import re
 from datetime import datetime, time, timedelta
 from datetime import timezone as tz
-from typing import Callable, Literal, Optional, Tuple, Union
+from typing import Callable, Literal, Optional, Union
 
 # The problem with the stdlib zoneinfo is, that the availability of timezones via ZoneInfo(zone_key) depends on the OS
 # and system on which you're running it. In some cases "Europe/Berlin" might be available, but generally it's not,
@@ -78,7 +78,7 @@ EDIFACT_TIME_QUANTITY_REGEX = re.compile(r"^(?P<quantity>\d{2})(?P<unit>[TWM])(?
 
 
 # the functions below are excessively unit tested; Please add a test case if you suspect their behaviour to be wrong
-def parse_as_datetime(entered_input: str) -> Tuple[Optional[datetime], Optional[EvaluatedFormatConstraint]]:
+def parse_as_datetime(entered_input: str) -> tuple[Optional[datetime], Optional[EvaluatedFormatConstraint]]:
     """
     Try to parse the given entered_input as datetime
     :param entered_input: a string

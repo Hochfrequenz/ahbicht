@@ -3,7 +3,6 @@ Contains the CategorizedKeyExtract and a schema for (de)serialization.
 """
 
 from itertools import combinations, product
-from typing import List
 
 import attrs
 from marshmallow import Schema, fields, post_load
@@ -23,27 +22,27 @@ class CategorizedKeyExtract:
     """
 
     #: list of keys for which you'll need to provide hint texts in a ContentEvaluationResult
-    hint_keys: List[str] = attrs.field(
+    hint_keys: list[str] = attrs.field(
         validator=attrs.validators.deep_iterable(
             member_validator=attrs.validators.instance_of(str), iterable_validator=attrs.validators.instance_of(list)
         )
     )
     #: list of keys for which you'll need to provide EvaluatedFormatConstraints
-    format_constraint_keys: List[str] = attrs.field(
+    format_constraint_keys: list[str] = attrs.field(
         validator=attrs.validators.deep_iterable(
             member_validator=attrs.validators.instance_of(str), iterable_validator=attrs.validators.instance_of(list)
         )
     )
 
     #: list of keys for which you'll need to provide ConditionFulfilledValues
-    requirement_constraint_keys: List[str] = attrs.field(
+    requirement_constraint_keys: list[str] = attrs.field(
         validator=attrs.validators.deep_iterable(
             member_validator=attrs.validators.instance_of(str), iterable_validator=attrs.validators.instance_of(list)
         )
     )
 
     #: list of packages that need to be resolved (additionally)
-    package_keys: List[str] = attrs.field(
+    package_keys: list[str] = attrs.field(
         validator=attrs.validators.deep_iterable(
             member_validator=attrs.validators.matches_re(r"^\d+P$"),
             iterable_validator=attrs.validators.instance_of(list),
@@ -52,7 +51,7 @@ class CategorizedKeyExtract:
     )
 
     #: a list of time conditions, if present
-    time_condition_keys: List[str] = attrs.field(
+    time_condition_keys: list[str] = attrs.field(
         validator=attrs.validators.deep_iterable(
             member_validator=attrs.validators.matches_re(r"^UB(?:1|2|3)$"),
             iterable_validator=attrs.validators.instance_of(list),
@@ -113,12 +112,12 @@ class CategorizedKeyExtract:
         self._remove_duplicates()
         self._sort_keys()
 
-    def generate_possible_content_evaluation_results(self) -> List[ContentEvaluationResult]:
+    def generate_possible_content_evaluation_results(self) -> list[ContentEvaluationResult]:
         """
         A categorized key extract allows generating nearly all possible content evaluation results,
         except for hints, error messages, resolving packages.
         """
-        results: List[ContentEvaluationResult] = []
+        results: list[ContentEvaluationResult] = []
         if len(self.format_constraint_keys) == 0 and len(self.requirement_constraint_keys) == 0:
             return results
         # for easier debugging below, replace the generators "(" with a materialized lists "["

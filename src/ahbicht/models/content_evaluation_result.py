@@ -2,7 +2,7 @@
 This module contains a class to store _all_ kinds of content evaluation results.
 """
 
-from typing import Dict, Optional
+from typing import Optional
 from uuid import UUID
 
 import attrs
@@ -24,7 +24,7 @@ class ContentEvaluationResult:
     """
 
     #: maps the key of a hint (e.g. "501" to a hint text)
-    hints: Dict[str, Optional[str]] = attrs.field(
+    hints: dict[str, Optional[str]] = attrs.field(
         validator=attrs.validators.deep_mapping(
             key_validator=attrs.validators.instance_of(str),
             value_validator=attrs.validators.optional(attrs.validators.instance_of(str)),
@@ -32,21 +32,21 @@ class ContentEvaluationResult:
     )
 
     #: maps the key of a format constraint to the respective evaluation result
-    format_constraints: Dict[str, EvaluatedFormatConstraint] = attrs.field(
+    format_constraints: dict[str, EvaluatedFormatConstraint] = attrs.field(
         validator=attrs.validators.deep_mapping(
             key_validator=attrs.validators.instance_of(str),
             value_validator=attrs.validators.instance_of(EvaluatedFormatConstraint),
         )
     )
     #: maps the key of a requirement_constraint to the respective evaluation result
-    requirement_constraints: Dict[str, ConditionFulfilledValue] = attrs.field(
+    requirement_constraints: dict[str, ConditionFulfilledValue] = attrs.field(
         validator=attrs.validators.deep_mapping(
             key_validator=attrs.validators.instance_of(str),
             value_validator=attrs.validators.instance_of(ConditionFulfilledValue),
         )
     )
 
-    packages: Optional[Dict[str, str]] = attrs.field(  # Union[str, ConditionFulfilledValue]]
+    packages: Optional[dict[str, str]] = attrs.field(  # Union[str, ConditionFulfilledValue]]
         validator=attrs.validators.optional(
             attrs.validators.deep_mapping(  # type: ignore[arg-type]
                 key_validator=attrs.validators.and_(

@@ -1,7 +1,7 @@
 """Test for the evaluation of the format constraint expression."""
 
 from logging import LogRecord
-from typing import List, Optional
+from typing import Optional
 
 import inject
 import pytest
@@ -192,7 +192,7 @@ class TestFormatConstraintExpressionEvaluation:
         fc_evaluators.text_to_be_evaluated_by_format_constraint.set(entered_input)
         evaluated_fc_nodes = await _build_evaluated_format_constraint_nodes(condition_keys)
         assert evaluated_fc_nodes == expected_evaluated_fc_nodes
-        log_entries: List[LogRecord] = list(caplog.records)
+        log_entries: list[LogRecord] = list(caplog.records)
         assert len(log_entries) == 2  # because in both parametrized test cases we evaluate 2 FCs
         for log_entry in log_entries:
             assert log_entry.message.startswith("The format constraint")

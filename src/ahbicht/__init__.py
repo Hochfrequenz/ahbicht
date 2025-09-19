@@ -22,3 +22,6 @@ else:
         """
 
         # We'll live with this  class for Python <v3.11. The unit test for python 3.9-3.11 ensure that this works.
+
+
+__all__ = ["StrEnum"]

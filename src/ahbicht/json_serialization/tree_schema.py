@@ -17,7 +17,7 @@ class _TokenOrTree:
     A class that is easily serializable as dictionary and allows us to _not_ use the marshmallow-union package.
     """
 
-    def __init__(self, token: Optional[Token] = None, tree: Optional[Tree] = None):
+    def __init__(self, token: Optional[Token] = None, tree: Optional[Tree] = None) -> None:
         self.token = token
         self.tree = tree
 

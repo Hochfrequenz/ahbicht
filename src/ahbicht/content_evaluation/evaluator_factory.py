@@ -10,7 +10,7 @@ ContentEvaluationResult. Now the methods below are useful. Simply provide a cont
 the evaluators are created based on the already known outcomes. You do not have to actually touch any evaluator code.
 """
 
-from typing import Callable, Iterable, Optional, Protocol, Tuple
+from typing import Callable, Iterable, Optional, Protocol
 
 import inject
 from efoli import EdifactFormat, EdifactFormatVersion
@@ -62,7 +62,7 @@ def create_hardcoded_evaluators(
     content_evaluation_result: ContentEvaluationResult,
     edifact_format: Optional[EdifactFormat] = None,
     edifact_format_version: Optional[EdifactFormatVersion] = None,
-) -> Tuple[RcEvaluator, FcEvaluator, HintsProvider, PackageResolver]:
+) -> tuple[RcEvaluator, FcEvaluator, HintsProvider, PackageResolver]:
     """
     Creates evaluators based on the given content_evaluation_result
 
@@ -82,7 +82,7 @@ def create_hardcoded_evaluators(
 def create_content_evaluation_result_based_evaluators(
     edifact_format: Optional[EdifactFormat] = None,
     edifact_format_version: Optional[EdifactFormatVersion] = None,
-) -> Tuple[RcEvaluator, FcEvaluator, HintsProvider, PackageResolver]:
+) -> tuple[RcEvaluator, FcEvaluator, HintsProvider, PackageResolver]:
     """
     Creates evaluators that expect the content evaluation result to be present in the evaluatble data
     """

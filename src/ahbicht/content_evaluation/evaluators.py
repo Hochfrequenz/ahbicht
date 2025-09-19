@@ -8,7 +8,7 @@ import inspect
 import logging
 import re
 from abc import ABC
-from typing import Callable, Dict, Optional
+from typing import Callable, Optional
 
 import inject
 from efoli import EdifactFormat, EdifactFormatVersion
@@ -34,11 +34,11 @@ class Evaluator(ABC):
     )
     _evaluation_method_name_pattern = re.compile(r"^evaluate_(?P<condition_key>\d+)$")
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         initializes a cache with all evaluation methods defined in the (child) class
         """
-        self._evaluation_methods: Dict[str, Callable] = {}
+        self._evaluation_methods: dict[str, Callable] = {}
         self.logger: logging.Logger = logging.getLogger(self.__module__)
         self.logger.setLevel(logging.DEBUG)
         try:

@@ -7,7 +7,7 @@ The used terms are defined in the README_conditions.md.
 
 # pylint:disable=cyclic-import
 from functools import lru_cache
-from typing import List, Union
+from typing import Union
 
 from lark import Lark, Token, Tree
 from lark.exceptions import UnexpectedCharacters, UnexpectedEOF
@@ -83,7 +83,7 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree[Token]
 
 
 def extract_categorized_keys_from_tree(
-    tree_or_list: Union[Tree, List[str]], sanitize: bool = False
+    tree_or_list: Union[Tree, list[str]], sanitize: bool = False
 ) -> CategorizedKeyExtract:
     """
     find different types of condition nodes inside the given tree or list of keys.
@@ -97,7 +97,7 @@ def extract_categorized_keys_from_tree(
         package_keys=[],
         time_condition_keys=[],
     )
-    condition_keys: List[str]
+    condition_keys: list[str]
     if isinstance(tree_or_list, list):
         condition_keys = tree_or_list
     elif isinstance(tree_or_list, Tree):

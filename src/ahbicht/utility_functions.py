@@ -6,7 +6,7 @@ import asyncio
 import inspect
 import re
 from re import Match
-from typing import Awaitable, Callable, List, Literal, Optional, TypeVar, Union
+from typing import Awaitable, Callable, Literal, Optional, TypeVar, Union
 
 from lark import Tree
 
@@ -21,7 +21,7 @@ _repeatability_pattern = re.compile(
 )  #: a pattern to match "n..m" repeatabilities
 
 
-async def gather_if_necessary(results_and_awaitable_results: List[Union[Result, Awaitable[Result]]]) -> List[Result]:
+async def gather_if_necessary(results_and_awaitable_results: list[Union[Result, Awaitable[Result]]]) -> list[Result]:
     """
     Await the awaitables, pass the un-awaitable results
     :param results_and_awaitable_results: heterogeneous list of both Ts and Awaitable[T]s.
@@ -29,7 +29,7 @@ async def gather_if_necessary(results_and_awaitable_results: List[Union[Result, 
     """
     awaitable_indexes = [n for n, x in enumerate(results_and_awaitable_results) if inspect.isawaitable(x)]
     awaited_results = await asyncio.gather(*[x for x in results_and_awaitable_results if inspect.isawaitable(x)])
-    result: List[Result] = []
+    result: list[Result] = []
     awaited_results_index = 0
     for index, obj in enumerate(results_and_awaitable_results):
         if index in awaitable_indexes:
@@ -48,7 +48,7 @@ We use it to log cache accesses but not spam at log level DEBUG.
 """
 
 
-def tree_copy(lru_cached_parsing_func: Callable[[str], Tree]):
+def tree_copy(lru_cached_parsing_func: Callable[[str], Tree]) -> Callable[[str], Tree]:
     """
     A decorator that returns copy of the cached result from the lru_cached_parsing_func.
     Rationale: We want to cache the tree for various expressions because this is definitely faster than re-parsing it.
@@ -60,10 +60,10 @@ def tree_copy(lru_cached_parsing_func: Callable[[str], Tree]):
     :return: the decorated function that always returns a copy of the cached result instead of the same instance
     """
 
-    def decorated(*args, **kwargs):
-        cache_size_before_parsing = lru_cached_parsing_func.cache_info().currsize
+    def decorated(*args, **kwargs) -> Tree:
+        cache_size_before_parsing = lru_cached_parsing_func.cache_info().currsize  # type:ignore[attr-defined]
         tree_result: Tree = lru_cached_parsing_func(*args, **kwargs)
-        cache_size_after_parsing = lru_cached_parsing_func.cache_info().currsize
+        cache_size_after_parsing = lru_cached_parsing_func.cache_info().currsize  # type:ignore[attr-defined]
         if cache_size_after_parsing == cache_size_before_parsing:
             parsing_logger.log(_CACHE_LOG_LEVEL, "The parsed tree for '%s' has been loaded from the cache", args[0])
         return tree_result.copy()

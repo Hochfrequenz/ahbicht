@@ -7,7 +7,7 @@ import json
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Dict, List, Mapping, Optional
+from typing import Mapping, Optional
 
 import inject
 from efoli import EdifactFormat, EdifactFormatVersion
@@ -34,7 +34,7 @@ class PackageResolver(ABC):
         "The inheriting package resolver needs to define a format version."
     )  #: the format version for which the resolver may be used
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.logger = logging.getLogger(self.__module__)
         self.logger.setLevel(logging.DEBUG)
         self.logger.info("Instantiated %s", self.__class__.__name__)
@@ -55,7 +55,7 @@ class DictBasedPackageResolver(PackageResolver):
     A Package Resolver that is based on hardcoded values from a dictionary
     """
 
-    def __init__(self, results: Mapping[str, Optional[str]]):
+    def __init__(self, results: Mapping[str, Optional[str]]) -> None:
         """
         Initialize with a dictionary that contains all the condition expressions.
         :param results: maps the package key (e.g. '123') to the package expression (e.g. '[1] U [2]')
@@ -93,13 +93,15 @@ class JsonFilePackageResolver(DictBasedPackageResolver):
     The JsonFilePackageResolver loads package keys/expressions from a JSON file.
     """
 
-    def __init__(self, edifact_format: EdifactFormat, edifact_format_version: EdifactFormatVersion, file_path: Path):
+    def __init__(
+        self, edifact_format: EdifactFormat, edifact_format_version: EdifactFormatVersion, file_path: Path
+    ) -> None:
         super().__init__(self._open_and_load_package_mappings(file_path))
         self.edifact_format = edifact_format
         self.edifact_format_version = edifact_format_version
 
     @staticmethod
-    def _open_and_load_package_mappings(file_path: Path) -> Dict[str, Optional[str]]:
+    def _open_and_load_package_mappings(file_path: Path) -> dict[str, Optional[str]]:
         """
         Opens the hint json file and loads it into an attribute of the class.
         The method can read both a dictionary of package key/package expression mappings and a
@@ -111,7 +113,7 @@ class JsonFilePackageResolver(DictBasedPackageResolver):
             # {"1P": "[2] U [3]", "2P": "[4] O [5]"...
             return json_body
         # [{PackageKeyConditionExpressionMapping},...]
-        mapping_list: List[PackageKeyConditionExpressionMapping] = PackageKeyConditionExpressionMappingSchema().load(
+        mapping_list: list[PackageKeyConditionExpressionMapping] = PackageKeyConditionExpressionMappingSchema().load(
             json_body, many=True
         )
         return {mapping.package_key: mapping.package_expression for mapping in mapping_list}
@@ -124,7 +126,7 @@ class ContentEvaluationResultBasedPackageResolver(PackageResolver):
     evaluatable data.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._schema = ContentEvaluationResultSchema()
 

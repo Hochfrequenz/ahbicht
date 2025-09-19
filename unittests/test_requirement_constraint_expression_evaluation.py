@@ -1,6 +1,6 @@
 """Test for the evaluation of the conditions tests (Mussfeldprüfung)"""
 
-from typing import Dict, Optional
+from typing import Optional
 
 import pytest
 
@@ -367,7 +367,7 @@ class TestRequirementConstraintEvaluation:
     )
     def test_format_constraints_example_from_allgemeine_festlegungen(
         self,
-        input_values: Dict[str, ConditionNode],
+        input_values: dict[str, ConditionNode],
         expected_evaluated_result: EvaluatedComposition,
     ):
         """Test the example from allgemeine Festlegungen"""

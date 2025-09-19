@@ -30,7 +30,7 @@ class BaseTransformer(Transformer, ABC, Generic[SupportedArgumentNode, Supported
     the format constraint expression is fulfilled or not.
     """
 
-    def __init__(self, input_values: Mapping[str, SupportedArgumentNode]):
+    def __init__(self, input_values: Mapping[str, SupportedArgumentNode]) -> None:
         """
         The input are the evaluated format constraint conditions in the form of ConditionNodes.
         :param input_values: something that maps a condition key (str) onto an argument
