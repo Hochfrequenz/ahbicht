@@ -34,7 +34,7 @@ class Evaluator(ABC):
     )
     _evaluation_method_name_pattern = re.compile(r"^evaluate_(?P<condition_key>\d+)$")
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         initializes a cache with all evaluation methods defined in the (child) class
         """
