@@ -3,7 +3,7 @@ Enums used in AHB and condition expressions.
 """
 
 from enum import unique
-from typing import Literal, Union
+from typing import Any, Literal, Union
 
 from marshmallow import Schema, fields, post_dump, post_load, pre_load
 
@@ -93,12 +93,12 @@ class RequirementIndicatorSchema(Schema):
     value = fields.String()
 
     @pre_load
-    def pre_load(self, data, **kwargs) -> dict[Literal["value"], str]:
+    def pre_load(self, data: Any, **kwargs: int) -> dict[Literal["value"], Any]:
         """puts the value in an artificial dictionary"""
         return {"value": data}
 
     @post_load
-    def post_load(self, data, **kwargs) -> RequirementIndicator:
+    def post_load(self, data: dict[Literal["value"], str], **kwargs: int) -> RequirementIndicator:
         """tries to parse the data as either PrefixOperator or ModalMark"""
         try:
             return ModalMark(data["value"])
@@ -106,7 +106,7 @@ class RequirementIndicatorSchema(Schema):
             return PrefixOperator(data["value"])
 
     @post_dump
-    def post_dump(self, data, **kwargs):
+    def post_dump(self, data: dict[Literal["value"], str], **kwargs: int) -> str:
         """
         returns the enum value as upper case
         """
