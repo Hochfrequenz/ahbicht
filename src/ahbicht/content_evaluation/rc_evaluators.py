@@ -93,7 +93,7 @@ class DictBasedRcEvaluator(RcEvaluator):
     The outcome of the evaluation does not change anymore after the initialization.
     """
 
-    def __init__(self, results: dict[str, ConditionFulfilledValue]):
+    def __init__(self, results: dict[str, ConditionFulfilledValue]) -> None:
         """
         Initialize with a dictionary that contains all the requirement constraint evaluation results.
         :param results:
