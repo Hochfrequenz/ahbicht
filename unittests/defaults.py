@@ -34,7 +34,7 @@ class EmptyDefaultRcEvaluator(RcEvaluator):
     def _get_default_context(self):
         return None
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.edifact_format = default_test_format
         self.edifact_format_version = default_test_version
@@ -47,7 +47,7 @@ class IteratingFulfilledUnfulfilledRcEvaluator(RcEvaluator):
     def _get_default_context(self):
         return None
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.edifact_format = default_test_format
         self.edifact_format_version = default_test_version
@@ -80,7 +80,7 @@ class EmptyDefaultFcEvaluator(FcEvaluator):
     An (empty) FC Evaluator in the default edifact format and edifact format version
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.edifact_format = default_test_format
         self.edifact_format_version = default_test_version
@@ -94,7 +94,7 @@ class DefaultHintsProvider(DictBasedHintsProvider):
     An (empty) Hints Provider in the default edifact format and edifact format version
     """
 
-    def __init__(self, mappings):
+    def __init__(self, mappings) -> None:
         super().__init__(mappings)
         self.edifact_format = default_test_format
         self.edifact_format_version = default_test_version
@@ -108,7 +108,7 @@ class DefaultPackageResolver(DictBasedPackageResolver):
     An (empty) Package Resolver in the default edifact format and edifact format version
     """
 
-    def __init__(self, mappings):
+    def __init__(self, mappings) -> None:
         super().__init__(mappings)
         self.edifact_format = default_test_format
         self.edifact_format_version = default_test_version

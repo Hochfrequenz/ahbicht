@@ -126,7 +126,7 @@ class PackageExpansionTransformer(Transformer):
     package repetitions in the future (cf.  https://github.com/Hochfrequenz/ahbicht/pull/565).
     """
 
-    def __init__(self, include_package_repeatabilities: bool = False):
+    def __init__(self, include_package_repeatabilities: bool = False) -> None:
         super().__init__()
         self.token_logic_provider = cast(TokenLogicProvider, inject.instance(TokenLogicProvider))
         self.include_package_repeatabilities = include_package_repeatabilities
@@ -219,7 +219,7 @@ class TimeConditionTransformer(Transformer):
     constraint for the respective division.
     """
 
-    def __init__(self, replace_time_conditions: bool = True):
+    def __init__(self, replace_time_conditions: bool = True) -> None:
         super().__init__()
         self.replace_time_conditions = replace_time_conditions
 

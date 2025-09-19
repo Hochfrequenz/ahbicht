@@ -25,13 +25,13 @@ class TestEvaluatorProvider:
                     def _get_default_context(self):
                         return None
 
-                    def __init__(self):
+                    def __init__(self) -> None:
                         super().__init__()
                         self.edifact_format_version = edifact_format_version
                         self.edifact_format = edifact_format
 
                 class ExampleFcEvaluator(FcEvaluator):
-                    def __init__(self):
+                    def __init__(self) -> None:
                         super().__init__()
                         self.edifact_format_version = edifact_format_version
                         self.edifact_format = edifact_format

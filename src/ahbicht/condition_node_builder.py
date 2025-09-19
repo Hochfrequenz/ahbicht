@@ -29,7 +29,7 @@ class ConditionNodeBuilder:
     It distinguishes between requirement constraint evaluation and format constraint evaluation.
     """
 
-    def __init__(self, condition_keys: list[str]):
+    def __init__(self, condition_keys: list[str]) -> None:
         self.token_logic_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)  # type:ignore[assignment]
         self.condition_keys = condition_keys
         (
