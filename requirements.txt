@@ -22,7 +22,7 @@ marshmallow-enum==1.5.1
     # via ahbicht (pyproject.toml)
 packaging==25.0
     # via marshmallow
-pydantic==2.11.4
+pydantic==2.11.9
     # via ahbicht (pyproject.toml)
 pydantic-core==2.33.2
     # via pydantic
