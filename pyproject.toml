@@ -29,7 +29,7 @@ dependencies = [
     "marshmallow<4",
     "marshmallow_enum",
     "pytz",
-    "efoli>=2.0.0",
+    "efoli>=2.1.0",
     "pydantic>=2"
 ] # add all the dependencies here
 dynamic = ["readme", "version"]
