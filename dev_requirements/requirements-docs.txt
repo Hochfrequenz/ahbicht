@@ -6,7 +6,7 @@
 #
 alabaster==0.7.16
     # via sphinx
-attrs==25.3.0
+attrs==25.4.0
     # via
     #   ahbicht (pyproject.toml)
     #   maus
