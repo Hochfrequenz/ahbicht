@@ -30,7 +30,7 @@ pytz==2025.2
     # via
     #   ahbicht (pyproject.toml)
     #   efoli
-typing-extensions==4.13.2
+typing-extensions==4.15.0
     # via
     #   pydantic
     #   pydantic-core
