@@ -26,7 +26,7 @@ efoli==2.1.1
     # via
     #   ahbicht (pyproject.toml)
     #   maus
-idna==3.10
+idna==3.11
     # via requests
 imagesize==1.4.1
     # via sphinx
