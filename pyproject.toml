@@ -44,7 +44,7 @@ spellcheck = ["codespell==2.4.1"]
 test_packaging = [
     "build==1.3.0",
     "setuptools==80.9.0",
-    "setuptools-scm==9.2.0",
+    "setuptools-scm==9.2.1",
     "twine==6.2.0",
 ]
 tests = [
