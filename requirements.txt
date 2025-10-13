@@ -24,7 +24,7 @@ packaging==25.0
     # via marshmallow
 pydantic==2.12.0
     # via ahbicht (pyproject.toml)
-pydantic-core==2.41.1
+pydantic-core==2.41.3
     # via pydantic
 pytz==2025.2
     # via
