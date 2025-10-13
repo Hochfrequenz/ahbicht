@@ -3,11 +3,10 @@ name: "Formatting"
 on: [push]
 jobs:
   black:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.13"]
-        os: [ubuntu-latest]
+        python-version: ["3.14"]
         tool: ["black", "isort"]
     steps:
       - uses: actions/checkout@v5
