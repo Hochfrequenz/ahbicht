@@ -4,16 +4,14 @@ Contains the CategorizedKeyExtract and a schema for (de)serialization.
 
 from itertools import combinations, product
 
-import attrs
-from marshmallow import Schema, fields, post_load
+from pydantic import BaseModel, Field, RootModel, constr
 
 from ahbicht.models.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 
 
 # pylint: disable=too-few-public-methods,  unused-argument
-@attrs.define(auto_attribs=True)
-class CategorizedKeyExtract:
+class CategorizedKeyExtract(BaseModel):
     """
     A Categorized Key Extract contains those condition keys that are contained inside an expression.
     For expressions (that do not contain any unresolved package) it's possible to pre-generate all possible outcomes of
@@ -22,41 +20,20 @@ class CategorizedKeyExtract:
     """
 
     #: list of keys for which you'll need to provide hint texts in a ContentEvaluationResult
-    hint_keys: list[str] = attrs.field(
-        validator=attrs.validators.deep_iterable(
-            member_validator=attrs.validators.instance_of(str), iterable_validator=attrs.validators.instance_of(list)
-        )
-    )
+    hint_keys: list[str] = Field(default_factory=list)
     #: list of keys for which you'll need to provide EvaluatedFormatConstraints
-    format_constraint_keys: list[str] = attrs.field(
-        validator=attrs.validators.deep_iterable(
-            member_validator=attrs.validators.instance_of(str), iterable_validator=attrs.validators.instance_of(list)
-        )
-    )
+    format_constraint_keys: list[str] = Field(default_factory=list)
 
     #: list of keys for which you'll need to provide ConditionFulfilledValues
-    requirement_constraint_keys: list[str] = attrs.field(
-        validator=attrs.validators.deep_iterable(
-            member_validator=attrs.validators.instance_of(str), iterable_validator=attrs.validators.instance_of(list)
-        )
-    )
+    requirement_constraint_keys: list[str] = Field(default_factory=list)
+
+    # for the valid-type ignore: https://stackoverflow.com/questions/67009123/how-can-mypy-accept-pydantics-constr-types
 
     #: list of packages that need to be resolved (additionally)
-    package_keys: list[str] = attrs.field(
-        validator=attrs.validators.deep_iterable(
-            member_validator=attrs.validators.matches_re(r"^\d+P$"),
-            iterable_validator=attrs.validators.instance_of(list),
-            # todo: implement wiederholbarkeiten
-        )
-    )
+    package_keys: list[constr(pattern=r"^\d+P$")] = Field(default_factory=list)  # type:ignore[valid-type]
 
     #: a list of time conditions, if present
-    time_condition_keys: list[str] = attrs.field(
-        validator=attrs.validators.deep_iterable(
-            member_validator=attrs.validators.matches_re(r"^UB(?:1|2|3)$"),
-            iterable_validator=attrs.validators.instance_of(list),
-        )
-    )
+    time_condition_keys: list[constr(pattern=r"^UB(?:1|2|3)$")] = Field(default_factory=list)  # type:ignore[valid-type]
 
     def _remove_duplicates(self) -> None:
         """
@@ -170,20 +147,6 @@ class CategorizedKeyExtract:
         return results
 
 
-class CategorizedKeyExtractSchema(Schema):
-    """
-    A schema to (de)serialize CategorizedKeyExtractSchema
-    """
+CategorizedKeyExtracts = RootModel[list[CategorizedKeyExtract]]
 
-    hint_keys = fields.List(fields.String())
-    format_constraint_keys = fields.List(fields.String())
-    requirement_constraint_keys = fields.List(fields.String())
-    package_keys = fields.List(fields.String())
-    time_condition_keys = fields.List(fields.String())
-
-    @post_load
-    def deserialize(self, data, **kwargs) -> CategorizedKeyExtract:
-        """
-        Converts the barely typed data dictionary into an actual CategorizedKeyExtractSchema
-        """
-        return CategorizedKeyExtract(**data)
+__all__ = ["CategorizedKeyExtract", "CategorizedKeyExtracts"]
