@@ -15,7 +15,7 @@ from ahbicht.expressions import parsing_logger
 from ahbicht.expressions.sanitizer import sanitize_expression
 from ahbicht.utility_functions import tree_copy
 
-GRAMMAR = """
+GRAMMAR = r"""
 ahb_expression: modal_mark_expression+
                 | prefix_operator_expression
                 | requirement_indicator
