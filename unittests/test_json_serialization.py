@@ -4,13 +4,13 @@ Tests that the parsed trees are JSON serializable
 
 import json
 import uuid
-from typing import TypeVar
+from typing import Optional, TypeVar
 
 import pytest
 from efoli import EdifactFormat
 from marshmallow import Schema, ValidationError
 
-from ahbicht.models.categorized_key_extract import CategorizedKeyExtract, CategorizedKeyExtractSchema
+from ahbicht.models.categorized_key_extract import CategorizedKeyExtract
 from ahbicht.models.condition_nodes import (
     ConditionFulfilledValue,
     EvaluatedFormatConstraint,
@@ -34,18 +34,29 @@ from ahbicht.models.mapping_results import (
 T = TypeVar("T")
 
 
-def _test_serialization_roundtrip(serializable_object: T, schema: Schema, expected_json_dict: dict) -> T:
+def _test_serialization_roundtrip(serializable_object: T, schema: Optional[Schema], expected_json_dict: dict) -> T:
     """
-    Serializes the serializable_object using the provided schema,
+    Serializes the serializable_object using the provided schema (or None for pydantic models),
     asserts, that the result is equal to the expected_json_dict
     then deserializes it again and asserts on equality with the original serializable_object
     :returns the deserialized_object
     """
-    json_string = schema.dumps(serializable_object)
-    assert json_string is not None
-    actual_json_dict = json.loads(json_string)
-    assert actual_json_dict == expected_json_dict
-    deserialized_object = schema.loads(json_data=json_string)
+    is_pydantic_class: bool = schema is None and hasattr(serializable_object, "model_dump")
+    deserialized_object: T
+    if is_pydantic_class:
+        assert hasattr(serializable_object, "model_dump")
+        json_dict = serializable_object.model_dump(mode="json")
+        assert json_dict == expected_json_dict
+        type_instance = type(serializable_object)
+        assert hasattr(type_instance, "model_validate")
+        deserialized_object = type_instance.model_validate(json_dict)  # type:ignore[attr-defined]
+    else:  # deprecated marshmallow approach - to be phased out one after another
+        assert schema is not None
+        json_string = schema.dumps(serializable_object)
+        assert json_string is not None
+        actual_json_dict = json.loads(json_string)
+        assert actual_json_dict == expected_json_dict
+        deserialized_object = schema.loads(json_data=json_string)
     assert isinstance(deserialized_object, type(serializable_object))
     assert deserialized_object == serializable_object
     return deserialized_object
@@ -309,4 +320,4 @@ class TestJsonSerialization:
     def test_categorized_key_extract_serialization(
         self, categorized_key_extract: CategorizedKeyExtract, expected_json_dict: dict
     ):
-        _test_serialization_roundtrip(categorized_key_extract, CategorizedKeyExtractSchema(), expected_json_dict)
+        _test_serialization_roundtrip(categorized_key_extract, None, expected_json_dict)

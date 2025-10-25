@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 
 from ahbicht.expressions.condition_expression_parser import extract_categorized_keys
-from ahbicht.models.categorized_key_extract import CategorizedKeyExtract, CategorizedKeyExtractSchema
+from ahbicht.models.categorized_key_extract import CategorizedKeyExtract
 from ahbicht.models.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
 
@@ -193,7 +193,7 @@ class TestCategorizedKeyExtraction:
     def test_possible_cer_generation_large_results(self, test_file_path: str, datafiles):
         with open(datafiles / Path(test_file_path), "r", encoding="utf-8") as infile:
             file_content = json.load(infile)
-        categorized_keys = CategorizedKeyExtractSchema().load(file_content["categorizedKeyExtract"])
+        categorized_keys = CategorizedKeyExtract.model_validate(file_content["categorizedKeyExtract"])
         expected_result = ContentEvaluationResultSchema(many=True).load(file_content["expected_result"])
         actual = categorized_keys.generate_possible_content_evaluation_results()
         # json_string = ContentEvaluationResultSchema(many=True).dumps(actual)
