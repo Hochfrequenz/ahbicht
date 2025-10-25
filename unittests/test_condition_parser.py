@@ -3,11 +3,22 @@
 import asyncio
 import datetime
 import random
+import sys
 
 import pytest
 from lark import Token, Tree
 
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
+
+
+def _get_now() -> datetime.datetime:
+    """works in both python <3.11 and >=3.11"""
+    if sys.version_info >= (3, 11):
+        # added UTC in 3.11 https://docs.python.org/3/library/datetime.html#datetime.UTC
+        from datetime import UTC
+
+        return datetime.datetime.now(UTC)
+    return datetime.datetime.utcnow()
 
 
 class TestConditionParser:
@@ -552,7 +563,7 @@ class TestConditionParser:
             assert tree is not None
 
         tasks = [parse_arbitrary_expression() for _ in range(100)]  # create 100 threads
-        start = datetime.datetime.utcnow()
+        start = _get_now()
         await asyncio.gather(*tasks)
-        stop = datetime.datetime.utcnow()
+        stop = _get_now()
         assert (stop - start).total_seconds() < 10  # meaning: significantly smaller than 100
