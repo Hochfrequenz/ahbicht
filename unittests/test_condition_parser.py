@@ -3,6 +3,7 @@
 import asyncio
 import datetime
 import random
+from datetime import UTC
 
 import pytest
 from lark import Token, Tree
@@ -552,7 +553,7 @@ class TestConditionParser:
             assert tree is not None
 
         tasks = [parse_arbitrary_expression() for _ in range(100)]  # create 100 threads
-        start = datetime.datetime.now(datetime.UTC)
+        start = datetime.datetime.now(UTC)
         await asyncio.gather(*tasks)
-        stop = datetime.datetime.now(datetime.UTC)
+        stop = datetime.datetime.now(UTC)
         assert (stop - start).total_seconds() < 10  # meaning: significantly smaller than 100
