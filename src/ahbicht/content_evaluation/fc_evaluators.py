@@ -20,7 +20,7 @@ from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, Eval
 from ahbicht.content_evaluation.evaluators import Evaluator
 from ahbicht.content_evaluation.german_strom_and_gas_tag import has_no_utc_offset, is_xtag_limit
 from ahbicht.models.condition_nodes import EvaluatedFormatConstraint
-from ahbicht.models.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
+from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 from ahbicht.models.evaluation_results import FormatConstraintEvaluationResult
 
 text_to_be_evaluated_by_format_constraint: ContextVar[Optional[str]] = ContextVar(
@@ -187,10 +187,6 @@ class ContentEvaluationResultBasedFcEvaluator(FcEvaluator):
     Other than the DictBasedFcEvaluator the outcome is not dependent on the initialization but on the evaluatable data.
     """
 
-    def __init__(self) -> None:
-        super().__init__()
-        self._schema = ContentEvaluationResultSchema()
-
     async def evaluate_single_format_constraint(self, condition_key: str) -> EvaluatedFormatConstraint:
         # the missing second argument to the private method call in the next line should be injected automatically
         return await self._evaluate_single_format_constraint(condition_key)  # pylint:disable=no-value-for-parameter
@@ -199,7 +195,7 @@ class ContentEvaluationResultBasedFcEvaluator(FcEvaluator):
     async def _evaluate_single_format_constraint(
         self, condition_key: str, evaluatable_data: EvaluatableData
     ) -> EvaluatedFormatConstraint:
-        content_evaluation_result: ContentEvaluationResult = self._schema.load(evaluatable_data.body)
+        content_evaluation_result = ContentEvaluationResult.model_validate(evaluatable_data.body)
         try:
             self.logger.debug("Retrieving key %s' from Content Evaluation Result", condition_key)
             return content_evaluation_result.format_constraints[condition_key]

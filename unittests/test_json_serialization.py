@@ -8,15 +8,12 @@ from typing import Optional, TypeVar
 
 import pytest
 from efoli import EdifactFormat
-from marshmallow import Schema, ValidationError
+from marshmallow import Schema
+from pydantic import ValidationError
 
 from ahbicht.models.categorized_key_extract import CategorizedKeyExtract
-from ahbicht.models.condition_nodes import (
-    ConditionFulfilledValue,
-    EvaluatedFormatConstraint,
-    EvaluatedFormatConstraintSchema,
-)
-from ahbicht.models.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
+from ahbicht.models.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
+from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 from ahbicht.models.enums import ModalMark
 from ahbicht.models.evaluation_results import (
     AhbExpressionEvaluationResult,
@@ -83,24 +80,21 @@ class TestJsonSerialization:
     def test_evaluated_format_constraint_serialization(
         self, evaluated_format_constraint: EvaluatedFormatConstraint, expected_json_dict: dict
     ):
-        _test_serialization_roundtrip(
-            evaluated_format_constraint, EvaluatedFormatConstraintSchema(), expected_json_dict
-        )
+        _test_serialization_roundtrip(evaluated_format_constraint, None, expected_json_dict)
 
     @pytest.mark.parametrize(
         "invalid_content_evaluation_result_dict",
         [
             pytest.param({}, id="empty dict"),
-            pytest.param({"format_constraints": {}, "hints": {}}, id="missing requirement constraints"),
+            pytest.param({"format_constraints": {}, "hints": {}}, id="missing requirement_constraints"),
             pytest.param({"requirement_constraints": {}, "hints": {}}, id="missing format_constraints"),
         ],
     )
     def test_validation_errors_on_content_evaluation_result_deserialization(
         self, invalid_content_evaluation_result_dict: dict
     ):
-        schema = ContentEvaluationResultSchema()
         with pytest.raises(ValidationError):
-            schema.load(invalid_content_evaluation_result_dict)
+            ContentEvaluationResult.model_validate(invalid_content_evaluation_result_dict)
 
     @pytest.mark.parametrize(
         "content_evaluation_result, expected_json_dict",
@@ -141,9 +135,7 @@ class TestJsonSerialization:
     ):
         for rc_evaluation_result in content_evaluation_result.requirement_constraints.values():
             assert isinstance(rc_evaluation_result, ConditionFulfilledValue)
-        deserialized_object = _test_serialization_roundtrip(
-            content_evaluation_result, ContentEvaluationResultSchema(), expected_json_dict
-        )
+        deserialized_object = _test_serialization_roundtrip(content_evaluation_result, None, expected_json_dict)
         for rc_evaluation_result in deserialized_object.requirement_constraints.values():
             assert isinstance(rc_evaluation_result, ConditionFulfilledValue)
         for rc_evaluation_result in content_evaluation_result.requirement_constraints.values():
@@ -160,7 +152,7 @@ class TestJsonSerialization:
             "packages": None,
             "id": "d106f335-f663-4d14-9636-4f43a883ad26",
         }
-        cer = ContentEvaluationResultSchema().load(json_dict)
+        cer = ContentEvaluationResult.model_validate(json_dict)
         assert cer is not None
         assert cer.packages is None
 

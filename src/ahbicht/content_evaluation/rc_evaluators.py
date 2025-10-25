@@ -13,7 +13,7 @@ from typing import Optional
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluationContext
 from ahbicht.content_evaluation.evaluators import Evaluator
 from ahbicht.models.condition_nodes import ConditionFulfilledValue
-from ahbicht.models.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
+from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 
 
 class RcEvaluator(Evaluator, ABC):
@@ -120,10 +120,6 @@ class ContentEvaluationResultBasedRcEvaluator(RcEvaluator):
     Other than the DictBasedRcEvaluator the outcome is not dependent on the initialization but on the evaluatable data.
     """
 
-    def __init__(self) -> None:
-        super().__init__()
-        self._schema: ContentEvaluationResultSchema = ContentEvaluationResultSchema()
-
     def _get_default_context(self) -> EvaluationContext:
         raise NotImplementedError()
 
@@ -131,7 +127,7 @@ class ContentEvaluationResultBasedRcEvaluator(RcEvaluator):
     async def evaluate_single_condition(
         self, condition_key: str, evaluatable_data: EvaluatableData, context: Optional[EvaluationContext] = None
     ) -> ConditionFulfilledValue:
-        content_evaluation_result: ContentEvaluationResult = self._schema.load(evaluatable_data.body)
+        content_evaluation_result = ContentEvaluationResult.model_validate(evaluatable_data.body)
         try:
             return content_evaluation_result.requirement_constraints[condition_key]
         except KeyError as key_error:

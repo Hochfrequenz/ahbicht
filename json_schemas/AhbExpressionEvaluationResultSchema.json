@@ -19,27 +19,6 @@
             },
             "type": "object"
         },
-        "EvaluatedFormatConstraintSchema": {
-            "additionalProperties": false,
-            "properties": {
-                "error_message": {
-                    "default": true,
-                    "title": "error_message",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "format_constraint_fulfilled": {
-                    "title": "format_constraint_fulfilled",
-                    "type": "boolean"
-                }
-            },
-            "required": [
-                "format_constraint_fulfilled"
-            ],
-            "type": "object"
-        },
         "FormatConstraintEvaluationResultSchema": {
             "additionalProperties": false,
             "properties": {

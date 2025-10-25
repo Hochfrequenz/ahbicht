@@ -4,11 +4,12 @@ import json
 from pathlib import Path
 
 import pytest
+from pydantic import RootModel
 
 from ahbicht.expressions.condition_expression_parser import extract_categorized_keys
 from ahbicht.models.categorized_key_extract import CategorizedKeyExtract
 from ahbicht.models.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
-from ahbicht.models.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
+from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 
 
 class TestCategorizedKeyExtraction:
@@ -194,7 +195,7 @@ class TestCategorizedKeyExtraction:
         with open(datafiles / Path(test_file_path), "r", encoding="utf-8") as infile:
             file_content = json.load(infile)
         categorized_keys = CategorizedKeyExtract.model_validate(file_content["categorizedKeyExtract"])
-        expected_result = ContentEvaluationResultSchema(many=True).load(file_content["expected_result"])
+        expected_result = RootModel[list[ContentEvaluationResult]].model_validate(file_content["expected_result"]).root
         actual = categorized_keys.generate_possible_content_evaluation_results()
         # json_string = ContentEvaluationResultSchema(many=True).dumps(actual)
         assert actual == expected_result

@@ -10,7 +10,7 @@ from _pytest.fixtures import SubRequest
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
 from ahbicht.content_evaluation.evaluator_factory import create_content_evaluation_result_based_evaluators
 from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
-from ahbicht.models.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
+from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 from unittests.defaults import default_test_format, default_test_version
 
 
@@ -22,8 +22,7 @@ def store_content_evaluation_result_in_evaluatable_data(
     :param content_evaluation_result:
     :return: a new EvaluatableData instance
     """
-    schema = ContentEvaluationResultSchema()
-    cer_dict = schema.dump(content_evaluation_result)
+    cer_dict = content_evaluation_result.model_dump(mode="json")
     return EvaluatableData(
         body=cer_dict, edifact_format=default_test_format, edifact_format_version=default_test_version
     )
