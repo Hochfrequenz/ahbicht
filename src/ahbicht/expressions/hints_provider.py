@@ -18,7 +18,7 @@ from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, Eval
 
 # pylint: disable = too-few-public-methods
 from ahbicht.models.condition_nodes import Hint
-from ahbicht.models.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
+from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 
 
 class HintsProvider(ABC):
@@ -120,17 +120,13 @@ class ContentEvaluationResultBasedHintsProvider(HintsProvider):
     data.
     """
 
-    def __init__(self) -> None:
-        super().__init__()
-        self._schema = ContentEvaluationResultSchema()
-
     async def get_hint_text(self, condition_key: str) -> Optional[str]:
         # the missing second argument to the private method call in the next line should be injected automatically
         return await self._get_hint_text(condition_key)  # pylint:disable=no-value-for-parameter
 
     @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
     async def _get_hint_text(self, condition_key: str, evaluatable_data: EvaluatableData) -> Optional[str]:
-        content_evaluation_result: ContentEvaluationResult = self._schema.load(evaluatable_data.body)
+        content_evaluation_result = ContentEvaluationResult.model_validate(evaluatable_data.body)
         try:
             self.logger.debug("Retrieving hint '%s' from Content Evaluation Result", condition_key)
             return content_evaluation_result.hints[condition_key]

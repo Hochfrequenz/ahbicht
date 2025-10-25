@@ -13,7 +13,7 @@ import inject
 from efoli import EdifactFormat, EdifactFormatVersion
 
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
-from ahbicht.models.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
+from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 from ahbicht.models.mapping_results import (
     PackageKeyConditionExpressionMapping,
     PackageKeyConditionExpressionMappingSchema,
@@ -126,10 +126,6 @@ class ContentEvaluationResultBasedPackageResolver(PackageResolver):
     evaluatable data.
     """
 
-    def __init__(self) -> None:
-        super().__init__()
-        self._schema = ContentEvaluationResultSchema()
-
     async def get_condition_expression(self, package_key: str) -> PackageKeyConditionExpressionMapping:
         # the missing second argument to the private method call in the next line should be injected automatically
         return await self._get_condition_expression(package_key)  # pylint:disable=no-value-for-parameter
@@ -138,7 +134,7 @@ class ContentEvaluationResultBasedPackageResolver(PackageResolver):
     async def _get_condition_expression(
         self, package_key: str, evaluatable_data: EvaluatableData
     ) -> PackageKeyConditionExpressionMapping:
-        content_evaluation_result: ContentEvaluationResult = self._schema.load(evaluatable_data.body)
+        content_evaluation_result = ContentEvaluationResult.model_validate(evaluatable_data.body)
         try:
             self.logger.debug("Retrieving package '%s' from Content Evaluation Result", package_key)
             if content_evaluation_result.packages is None:

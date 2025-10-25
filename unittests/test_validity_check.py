@@ -9,7 +9,7 @@ from ahbicht.content_evaluation.evaluator_factory import create_content_evaluati
 from ahbicht.content_evaluation.expression_check import is_valid_expression
 from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
-from ahbicht.models.content_evaluation_result import ContentEvaluationResult, ContentEvaluationResultSchema
+from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 from unittests.defaults import default_test_format, default_test_version
 
 _content_evaluation_result: ContextVar[Optional[ContentEvaluationResult]] = ContextVar(
@@ -26,7 +26,7 @@ def _get_evaluatable_data():
     """
     cer = _content_evaluation_result.get()
     return EvaluatableData(
-        body=ContentEvaluationResultSchema().dump(cer),
+        body=cer.model_dump(mode="json"),
         edifact_format=default_test_format,
         edifact_format_version=default_test_version,
     )

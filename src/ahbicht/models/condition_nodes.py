@@ -8,14 +8,11 @@ the EvaluatedComposition node which results from a combination of two nodes (of 
 The used terms are defined in the README_conditions.md.
 """
 
-from abc import ABC
 from enum import Enum
-from typing import Any, Optional, TypeVar
-
-import attrs
+from typing import Optional, TypeVar
 
 # pylint: disable=too-few-public-methods
-from marshmallow import Schema, fields, post_load
+from pydantic import BaseModel, ConfigDict
 
 
 class ConditionFulfilledValue(str, Enum):
@@ -79,60 +76,50 @@ class ConditionFulfilledValue(str, Enum):
         return ConditionFulfilledValue.UNFULFILLED
 
 
-@attrs.define(auto_attribs=True, kw_only=True, slots=False)
-class ConditionNode(ABC):
+class ConditionNode(BaseModel):
     """
     This abstract class specifies the nodes of the parsed tree.
     The type of the subclass is the decisive factor on how the respective node
     is handled in the context of the compositions it is used in.
     """
 
-    conditions_fulfilled: ConditionFulfilledValue = attrs.field(
-        validator=attrs.validators.instance_of(ConditionFulfilledValue)
-    )
+    model_config = ConfigDict(extra="forbid")
+    conditions_fulfilled: ConditionFulfilledValue
 
 
 # ConditionNodeType_co matches any class inheriting from ConditionNode (in contrast to Type[ConditionNode])
 ConditionNode_co = TypeVar("ConditionNode_co", bound=ConditionNode, covariant=True)
 
 
-@attrs.define(auto_attribs=True, kw_only=True, slots=False)
-class ConditionKeyNodeMixin(ABC):
-    """
-    Nodes that have a condition key.
-    """
-
-    condition_key: str = attrs.field(validator=attrs.validators.instance_of(str))
-
-
-@attrs.define(auto_attribs=True, kw_only=True)
-class RequirementConstraint(ConditionNode, ConditionKeyNodeMixin):
+class RequirementConstraint(ConditionNode):
     """
     Bedingung, with a requirement constraint, e.g. "falls SG2+IDE+CCI == EHZ"
     """
 
+    condition_key: str
 
-@attrs.define(auto_attribs=True, kw_only=True)
-class Hint(ConditionNode, ConditionKeyNodeMixin):
+
+class Hint(ConditionNode):
     """
     A so called 'Hinweis', just a hint, even if it is worded like a condition,
     e.g. "Hinweis: 'Es ist der alte MSB zu verwenden'"
     """
 
+    condition_key: str
     conditions_fulfilled: ConditionFulfilledValue = ConditionFulfilledValue.NEUTRAL
-    hint: str = attrs.field(validator=attrs.validators.instance_of(str))  # an informatory text
+    hint: str  #: an informatory text
 
 
-@attrs.define(auto_attribs=True, kw_only=True)
-class FormatConstraint(ConditionNode, ConditionKeyNodeMixin):
+class FormatConstraint(ConditionNode):
     """
     This class is the base class of all format constraints. FormatConstraints describe that data have to obey certain
     rules, meaning those conditions with an outcome that does not change whether data are obligatory or not but
     validates existing data.
     """
 
+    condition_key: str
 
-@attrs.define(auto_attribs=True, kw_only=True)
+
 class UnevaluatedFormatConstraint(FormatConstraint):
     """
     This class is the base class of all unevaluated format constraints. They are used in the context of the
@@ -142,36 +129,15 @@ class UnevaluatedFormatConstraint(FormatConstraint):
     conditions_fulfilled: ConditionFulfilledValue = ConditionFulfilledValue.NEUTRAL
 
 
-@attrs.define(auto_attribs=True)
-class EvaluatedFormatConstraint:
+class EvaluatedFormatConstraint(BaseModel):
     """
     This class is the base class of all evaluated format constraints. They are used in the context of the
     Mussfeldprüfung after the format constraints are evaluated to see if the format constraint expression is
     fulfilled or not.
     """
 
-    format_constraint_fulfilled: bool = attrs.field(validator=attrs.validators.instance_of(bool))
-    error_message: Optional[str] = attrs.field(default=None)
-
-
-class EvaluatedFormatConstraintSchema(Schema):
-    """
-    A schema to (de)serialize EvaluatedFormatConstraints.
-    """
-
-    format_constraint_fulfilled = fields.Boolean(required=True)
-    error_message = fields.String(required=False, allow_none=True, dump_default=True)
-
-    # pylint: disable=unused-argument
-    @post_load
-    def deserialize(self, data: dict[str, Any], **kwargs: int) -> EvaluatedFormatConstraint:
-        """
-        converts the barely typed data dictionary into an actual EvaluatedFormatConstraint
-        :param data:
-        :param kwargs:
-        :return:
-        """
-        return EvaluatedFormatConstraint(**data)
+    format_constraint_fulfilled: bool
+    error_message: Optional[str] = None
 
 
 # @attrs.define(auto_attribs=True, kw_only=True)
@@ -192,14 +158,13 @@ class EvaluatedFormatConstraintSchema(Schema):
 # + date format constraint ("must obey 'yyyy-mm-dd'")
 
 
-@attrs.define(auto_attribs=True, kw_only=True)
 class EvaluatedComposition(ConditionNode):
     """
     Node which is returned after a composition of two nodes is evaluated.
     """
 
-    hint: Optional[str] = attrs.field(default=None)  # text from hints/notes
-    format_constraints_expression: Optional[str] = attrs.field(default=None)
+    hint: Optional[str] = None  #: text from hints/notes
+    format_constraints_expression: Optional[str] = None
     """
     an expression that consists of (initially unevaluated) format constraints that the evaluated field needs to obey
     """

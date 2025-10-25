@@ -9,12 +9,12 @@ from typing import Any, Type
 
 from marshmallow import Schema, fields
 from marshmallow_jsonschema import JSONSchema  # type:ignore[import]
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 from ahbicht.json_serialization.tree_schema import TokenSchema  # , TreeSchema
 from ahbicht.models.categorized_key_extract import CategorizedKeyExtract
-from ahbicht.models.condition_nodes import EvaluatedFormatConstraintSchema
-from ahbicht.models.content_evaluation_result import ContentEvaluationResultSchema
+from ahbicht.models.condition_nodes import EvaluatedFormatConstraint
+from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 from ahbicht.models.evaluation_results import (
     AhbExpressionEvaluationResultSchema,
     FormatConstraintEvaluationResultSchema,
@@ -28,13 +28,13 @@ from ahbicht.models.mapping_results import (
 schema_types: list[Type[Schema] | Type[BaseModel]] = [
     RequirementConstraintEvaluationResultSchema,  # marshmallow
     FormatConstraintEvaluationResultSchema,  # marshmallow
-    EvaluatedFormatConstraintSchema,  # marshmallow
+    EvaluatedFormatConstraint,  # pydantic
     AhbExpressionEvaluationResultSchema,  # marshmallow
     ConditionKeyConditionTextMappingSchema,  # marshmallow
     PackageKeyConditionExpressionMappingSchema,  #  marshmallow
-    ContentEvaluationResultSchema,  # marshmallow
     TokenSchema,  #  marshmallow
     CategorizedKeyExtract,  # pydantic
+    ContentEvaluationResult,  # pydantic
     # TreeSchema
     # As of 2021-11 the TreeSchema fails, probably because of recursion or the lambda:
     # (<class 'AttributeError'>, AttributeError("'function' object has no attribute 'fields'"), ....)
@@ -63,11 +63,10 @@ for schema_type in schema_types:
             ]:
                 field_dict["requirement_indicator"] = fields.String(name="requirement_indicator")
         json_schema_dict = json_schema.dump(schema_instance)
-    except AttributeError:  # means, we're creating a json schema from a pydantic class
-        instance = schema_type()
+    except (AttributeError, ValidationError):  # means, we're creating a json schema from a pydantic class
         file_name = schema_type.__name__ + "Schema.json"  # other than for the marshmallow classes, we add 'Schema' here
-        assert hasattr(instance, "model_json_schema")
-        json_schema_dict = instance.model_json_schema()
+        assert hasattr(schema_type, "model_json_schema")
+        json_schema_dict = schema_type.model_json_schema()
     file_path = this_directory / file_name
     # We want our JSON schemas to be compatible with a typescript code generator:
     # https://github.com/bcherny/json-schema-to-typescript/

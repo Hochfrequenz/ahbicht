@@ -1,44 +1,44 @@
 {
-    "description": "A Categorized Key Extract contains those condition keys that are contained inside an expression.\nFor expressions (that do not contain any unresolved package) it's possible to pre-generate all possible outcomes of\na content evaluation. CategorizedKeyExtract is also the answer to the question:\n'Which information do I need to provide in a ContentEvaluationResult in order to evaluate a given expression?'",
-    "properties": {
-        "format_constraint_keys": {
-            "items": {
-                "type": "string"
-            },
-            "title": "Format Constraint Keys",
-            "type": "array"
-        },
-        "hint_keys": {
-            "items": {
-                "type": "string"
-            },
-            "title": "Hint Keys",
-            "type": "array"
-        },
-        "package_keys": {
-            "items": {
-                "pattern": "^\\d+P$",
-                "type": "string"
-            },
-            "title": "Package Keys",
-            "type": "array"
-        },
-        "requirement_constraint_keys": {
-            "items": {
-                "type": "string"
-            },
-            "title": "Requirement Constraint Keys",
-            "type": "array"
-        },
-        "time_condition_keys": {
-            "items": {
-                "pattern": "^UB(?:1|2|3)$",
-                "type": "string"
-            },
-            "title": "Time Condition Keys",
-            "type": "array"
-        }
+  "description": "A Categorized Key Extract contains those condition keys that are contained inside an expression.\nFor expressions (that do not contain any unresolved package) it's possible to pre-generate all possible outcomes of\na content evaluation. CategorizedKeyExtract is also the answer to the question:\n'Which information do I need to provide in a ContentEvaluationResult in order to evaluate a given expression?'",
+  "properties": {
+    "format_constraint_keys": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Format Constraint Keys",
+      "type": "array"
     },
-    "title": "CategorizedKeyExtract",
-    "type": "object"
+    "hint_keys": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Hint Keys",
+      "type": "array"
+    },
+    "package_keys": {
+      "items": {
+        "pattern": "^\\d+P$",
+        "type": "string"
+      },
+      "title": "Package Keys",
+      "type": "array"
+    },
+    "requirement_constraint_keys": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Requirement Constraint Keys",
+      "type": "array"
+    },
+    "time_condition_keys": {
+      "items": {
+        "pattern": "^UB(?:1|2|3)$",
+        "type": "string"
+      },
+      "title": "Time Condition Keys",
+      "type": "array"
+    }
+  },
+  "title": "CategorizedKeyExtract",
+  "type": "object"
 }

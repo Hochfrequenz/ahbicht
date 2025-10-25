@@ -1,6 +1,7 @@
 """Tests for creating different condition nodes that are used in the parsed tree."""
 
 import pytest
+from pydantic import ValidationError
 
 from ahbicht.models.condition_nodes import (
     ConditionFulfilledValue,
@@ -32,7 +33,7 @@ class TestConditionNodes:
         [
             pytest.param(
                 {"conditions_fulfilled": ConditionFulfilledValue.FULFILLED},
-                "missing 1 required keyword-only argument",
+                "Field required",
             ),
             pytest.param(
                 {
@@ -40,20 +41,20 @@ class TestConditionNodes:
                     "conditions_fulfilled": ConditionFulfilledValue.FULFILLED,
                     "hint": "foo",
                 },
-                "got an unexpected keyword argument",
+                "Extra inputs are not permitted",
             ),
             pytest.param(
                 {
                     "condition_key": "1",
                     "conditions_fulfilled": "no_ConditionFulfilledValue",
                 },
-                f"'conditions_fulfilled' must be <enum 'ConditionFulfilledValue'>",
+                f"Input should be 'FULFILLED', 'UNFULFILLED', 'UNKNOWN' or 'NEUTRAL'",
             ),
         ],
     )
     def test_invalid_requirement_constraint(self, condition_node_arguments, expected_error_message):
         """Tests if requirements for RequirementConstraints are working as expected."""
-        with pytest.raises(TypeError) as excinfo:
+        with pytest.raises(ValidationError) as excinfo:
             RequirementConstraint(**condition_node_arguments)
         assert expected_error_message in str(excinfo.value)
 
@@ -71,11 +72,11 @@ class TestConditionNodes:
         [
             pytest.param(
                 {"hint": "[501] Hinweis: Foo"},
-                "missing 1 required keyword-only argument",
+                "Field required",
             ),
             pytest.param(
                 {"condition_key": "1"},
-                "missing 1 required keyword-only argument",
+                "Field required",
             ),
             pytest.param(
                 {
@@ -83,18 +84,18 @@ class TestConditionNodes:
                     "hint": "[501] Hinweis: Foo",
                     "format": "bar",
                 },
-                "got an unexpected keyword argument",
+                "Extra inputs are not permitted",
             ),
             pytest.param(
                 {"condition_key": "501", "hint": None},
-                "'hint' must be <class 'str'>",
+                "Input should be a valid string",
             ),
         ],
     )
     def test_invalid_hint(self, hint_node_arguments, expected_error_message):
         """Tests if requirements for Hints are working as expected."""
 
-        with pytest.raises(TypeError) as excinfo:
+        with pytest.raises(ValidationError) as excinfo:
             Hint(**hint_node_arguments)
         assert expected_error_message in str(excinfo.value)
 
@@ -122,25 +123,25 @@ class TestConditionNodes:
         [
             pytest.param(
                 {},
-                "missing 1 required keyword-only argument",
+                "Field required",
             ),
             pytest.param(
                 {
                     "condition": "501",
                     "conditions_fulfilled": True,
                 },
-                "got an unexpected keyword argument",
+                "Extra inputs are not permitted",
             ),
             pytest.param(
                 {
                     "conditions_fulfilled": "no_ConditionFulfilledValue",
                 },
-                f"'conditions_fulfilled' must be <enum '{ConditionFulfilledValue.__name__}'>",
+                f"Input should be 'FULFILLED",
             ),
         ],
     )
     def test_invalid_evaluated_composition(self, resulting_node_arguments, expected_error_message):
         """Tests if requirements for Hints are working as expected."""
-        with pytest.raises(TypeError) as excinfo:
+        with pytest.raises(ValidationError) as excinfo:
             EvaluatedComposition(**resulting_node_arguments)
         assert expected_error_message in str(excinfo.value)
