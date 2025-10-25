@@ -552,7 +552,7 @@ class TestConditionParser:
             assert tree is not None
 
         tasks = [parse_arbitrary_expression() for _ in range(100)]  # create 100 threads
-        start = datetime.datetime.utcnow()
+        start = datetime.datetime.now(datetime.UTC)
         await asyncio.gather(*tasks)
-        stop = datetime.datetime.utcnow()
+        stop = datetime.datetime.now(datetime.UTC)
         assert (stop - start).total_seconds() < 10  # meaning: significantly smaller than 100
