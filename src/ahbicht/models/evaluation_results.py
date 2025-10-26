@@ -6,94 +6,39 @@ A "result" is the outcome of an evaluation. It requires actual data to be presen
 # pylint: disable=too-few-public-methods, no-member,  unused-argument
 from typing import Optional
 
-import attrs
-from marshmallow import Schema, fields, post_load
+from pydantic import BaseModel
 
-from ahbicht.models.enums import RequirementIndicator, RequirementIndicatorSchema
+from ahbicht.models.enums import RequirementIndicator
 
 
-@attrs.define(auto_attribs=True, kw_only=True)
-class RequirementConstraintEvaluationResult:
+class RequirementConstraintEvaluationResult(BaseModel):
     """
     A class for the result of the requirement constraint evaluation.
     """
 
     #: true if condition expression in regard to requirement constraints evaluates to true
-    requirement_constraints_fulfilled: Optional[bool] = attrs.field(
-        validator=attrs.validators.optional(attrs.validators.instance_of(bool))
-    )
+    requirement_constraints_fulfilled: Optional[bool]
     #: true if it is dependent on requirement constraints; None if there are unknown condition nodes left
-    requirement_is_conditional: Optional[bool] = attrs.field(
-        validator=attrs.validators.optional(attrs.validators.instance_of(bool))
-    )
+    requirement_is_conditional: Optional[bool]
 
-    format_constraints_expression: Optional[str] = attrs.field(
-        default=None, validator=attrs.validators.optional(attrs.validators.instance_of(str))
-    )
+    format_constraints_expression: Optional[str] = None
     #: Hint text that should be displayed in the frontend, e.g. "[501] Hinweis: 'ID der Messlokation'"
-    hints: Optional[str] = attrs.field(
-        default=None, validator=attrs.validators.optional(attrs.validators.instance_of(str))
-    )
+    hints: Optional[str] = None
 
 
-class RequirementConstraintEvaluationResultSchema(Schema):
-    """
-    A schema to (de-)serialize RequirementConstraintEvaluationResult
-    """
-
-    requirement_constraints_fulfilled = fields.Boolean()
-    requirement_is_conditional = fields.Boolean()
-
-    format_constraints_expression = fields.String(load_default=None)
-    hints = fields.String(load_default=None)
-
-    @post_load
-    def deserialize(self, data, **kwargs) -> RequirementConstraintEvaluationResult:
-        """
-        Converts the barely typed data dictionary into an actual RequirementConstraintEvaluationResult
-        :param data:
-        :param kwargs:
-        :return:
-        """
-        return RequirementConstraintEvaluationResult(**data)
-
-
-@attrs.define(auto_attribs=True, kw_only=True)
-class FormatConstraintEvaluationResult:
+class FormatConstraintEvaluationResult(BaseModel):
     """
     A class for the result of the format constraint evaluation.
     """
 
     #: true if data entered obey the format constraint expression
-    format_constraints_fulfilled: bool = attrs.field(validator=attrs.validators.instance_of(bool))
+    format_constraints_fulfilled: bool
 
     #: All error messages that lead to not fulfilling the format constraint expression
-    error_message: Optional[str] = attrs.field(
-        default=None, validator=attrs.validators.optional(attrs.validators.instance_of(str))
-    )
+    error_message: Optional[str] = None
 
 
-class FormatConstraintEvaluationResultSchema(Schema):
-    """
-    A class to (de-)serialize FormatConstraintEvaluationResult
-    """
-
-    format_constraints_fulfilled = fields.Boolean()
-    error_message = fields.String(allow_none=True, load_default=None)
-
-    @post_load
-    def deserialize(self, data, **kwargs) -> FormatConstraintEvaluationResult:
-        """
-        Converts the barely typed data dictionary into an actual FormatConstraintEvaluationResult
-        :param data:
-        :param kwargs:
-        :return:
-        """
-        return FormatConstraintEvaluationResult(**data)
-
-
-@attrs.define(auto_attribs=True, kw_only=True)
-class AhbExpressionEvaluationResult:
+class AhbExpressionEvaluationResult(BaseModel):
     """
     A class for the result of an ahb expression evaluation.
     """
@@ -101,20 +46,3 @@ class AhbExpressionEvaluationResult:
     requirement_indicator: RequirementIndicator  # i.e. "Muss", "M", "Soll", "S", "Kann", "K", "X", "O", "U"
     requirement_constraint_evaluation_result: RequirementConstraintEvaluationResult
     format_constraint_evaluation_result: FormatConstraintEvaluationResult
-
-
-class AhbExpressionEvaluationResultSchema(Schema):
-    """
-    A schema to (de-)serialize AhbExpressionEvaluationResults
-    """
-
-    requirement_indicator = fields.Nested(RequirementIndicatorSchema)  # because union is not supported by marshmallow
-    requirement_constraint_evaluation_result = fields.Nested(RequirementConstraintEvaluationResultSchema())
-    format_constraint_evaluation_result = fields.Nested(FormatConstraintEvaluationResultSchema())
-
-    @post_load
-    def deserialize(self, data, **kwargs) -> AhbExpressionEvaluationResult:
-        """
-        Converts the barely typed data dictionary into an actual AhbExpressionEvaluationResult
-        """
-        return AhbExpressionEvaluationResult(**data)

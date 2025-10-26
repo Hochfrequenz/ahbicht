@@ -16,17 +16,17 @@ from ahbicht.models.categorized_key_extract import CategorizedKeyExtract
 from ahbicht.models.condition_nodes import EvaluatedFormatConstraint
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 from ahbicht.models.evaluation_results import (
-    AhbExpressionEvaluationResultSchema,
-    FormatConstraintEvaluationResultSchema,
-    RequirementConstraintEvaluationResultSchema,
+    AhbExpressionEvaluationResult,
+    FormatConstraintEvaluationResult,
+    RequirementConstraintEvaluationResult,
 )
 from ahbicht.models.mapping_results import ConditionKeyConditionTextMapping, PackageKeyConditionExpressionMapping
 
 schema_types: list[Type[Schema] | Type[BaseModel]] = [
-    RequirementConstraintEvaluationResultSchema,  # marshmallow
-    FormatConstraintEvaluationResultSchema,  # marshmallow
+    RequirementConstraintEvaluationResult,  # pydantic
+    FormatConstraintEvaluationResult,  # pydantic
     EvaluatedFormatConstraint,  # pydantic
-    AhbExpressionEvaluationResultSchema,  # marshmallow
+    AhbExpressionEvaluationResult,  # pydantic
     ConditionKeyConditionTextMapping,  # pydantic
     PackageKeyConditionExpressionMapping,  #  pydantic
     TokenSchema,  #  marshmallow

@@ -17,7 +17,6 @@ from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 from ahbicht.models.enums import ModalMark
 from ahbicht.models.evaluation_results import (
     AhbExpressionEvaluationResult,
-    AhbExpressionEvaluationResultSchema,
     FormatConstraintEvaluationResult,
     RequirementConstraintEvaluationResult,
 )
@@ -239,9 +238,7 @@ class TestJsonSerialization:
     def test_ahb_expression_evaluation_result_serialization(
         self, ahb_expression_evaluation_result: AhbExpressionEvaluationResult, expected_json_dict: dict
     ):
-        _test_serialization_roundtrip(
-            ahb_expression_evaluation_result, AhbExpressionEvaluationResultSchema(), expected_json_dict
-        )
+        _test_serialization_roundtrip(ahb_expression_evaluation_result, None, expected_json_dict)
 
     @pytest.mark.parametrize(
         "condition_key_condition_text_mapping, expected_json_dict",
