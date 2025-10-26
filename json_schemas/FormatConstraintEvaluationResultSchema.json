@@ -1,46 +1,24 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "definitions": {
-    "FormatConstraintEvaluationResultSchema": {
-      "additionalProperties": false,
-      "properties": {
-        "error_message": {
-          "title": "error_message",
-          "type": ["string", "null"]
+  "description": "A class for the result of the format constraint evaluation.",
+  "properties": {
+    "error_message": {
+      "anyOf": [
+        {
+          "type": "string"
         },
-        "format_constraints_fulfilled": {
-          "title": "format_constraints_fulfilled",
-          "type": "boolean"
+        {
+          "type": "null"
         }
-      },
-      "type": "object"
+      ],
+      "default": null,
+      "title": "Error Message"
     },
-    "RequirementConstraintEvaluationResultSchema": {
-      "additionalProperties": false,
-      "properties": {
-        "format_constraints_expression": {
-          "title": "format_constraints_expression",
-          "type": ["string", "null"]
-        },
-        "hints": {
-          "title": "hints",
-          "type": ["string", "null"]
-        },
-        "requirement_constraints_fulfilled": {
-          "title": "requirement_constraints_fulfilled",
-          "type": "boolean"
-        },
-        "requirement_is_conditional": {
-          "title": "requirement_is_conditional",
-          "type": "boolean"
-        }
-      },
-      "type": "object"
+    "format_constraints_fulfilled": {
+      "title": "Format Constraints Fulfilled",
+      "type": "boolean"
     }
   },
-  "properties": {
-    "$ref": "#/definitions/FormatConstraintEvaluationResultSchema/properties"
-  },
-  "title": "FormatConstraintEvaluationResultSchema",
+  "required": ["format_constraints_fulfilled"],
+  "title": "FormatConstraintEvaluationResult",
   "type": "object"
 }

@@ -3,9 +3,7 @@ Enums used in AHB and condition expressions.
 """
 
 from enum import unique
-from typing import Any, Literal, Union
-
-from marshmallow import Schema, fields, post_dump, post_load, pre_load
+from typing import Union
 
 from ahbicht import StrEnum
 
@@ -82,35 +80,6 @@ RequirementIndicator = Union[PrefixOperator, ModalMark]
 A Requirement Indicator is either the Merkmal :class:`ModalMark` or the :class:`PrefixOperator` of the
 data element/data element group/segment/segment group at which it is used.
 """
-
-
-# pylint:disable=unused-argument
-class RequirementIndicatorSchema(Schema):
-    """
-    a helper schema because marshmallow does not support something like fields.Union out of the box
-    """
-
-    value = fields.String()
-
-    @pre_load
-    def pre_load(self, data: Any, **kwargs: int) -> dict[Literal["value"], Any]:
-        """puts the value in an artificial dictionary"""
-        return {"value": data}
-
-    @post_load
-    def post_load(self, data: dict[Literal["value"], str], **kwargs: int) -> RequirementIndicator:
-        """tries to parse the data as either PrefixOperator or ModalMark"""
-        try:
-            return ModalMark(data["value"])
-        except ValueError:
-            return PrefixOperator(data["value"])
-
-    @post_dump
-    def post_dump(self, data: dict[Literal["value"], str], **kwargs: int) -> str:
-        """
-        returns the enum value as upper case
-        """
-        return data["value"].upper()
 
 
 class LogicalOperator(StrEnum):

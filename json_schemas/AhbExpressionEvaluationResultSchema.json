@@ -1,64 +1,124 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "definitions": {
-    "AhbExpressionEvaluationResultSchema": {
-      "additionalProperties": false,
-      "properties": {
-        "format_constraint_evaluation_result": {
-          "$ref": "#/definitions/FormatConstraintEvaluationResultSchema",
-          "type": "object"
-        },
-        "requirement_constraint_evaluation_result": {
-          "$ref": "#/definitions/RequirementConstraintEvaluationResultSchema",
-          "type": "object"
-        },
-        "requirement_indicator": {
-          "title": "",
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "FormatConstraintEvaluationResultSchema": {
-      "additionalProperties": false,
+  "$defs": {
+    "FormatConstraintEvaluationResult": {
+      "description": "A class for the result of the format constraint evaluation.",
       "properties": {
         "error_message": {
-          "title": "error_message",
-          "type": ["string", "null"]
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error Message"
         },
         "format_constraints_fulfilled": {
-          "title": "format_constraints_fulfilled",
+          "title": "Format Constraints Fulfilled",
           "type": "boolean"
         }
       },
+      "required": ["format_constraints_fulfilled"],
+      "title": "FormatConstraintEvaluationResult",
       "type": "object"
     },
-    "RequirementConstraintEvaluationResultSchema": {
-      "additionalProperties": false,
+    "ModalMark": {
+      "description": "A modal mark describes if information are obligatory or not. The German term is \"Merkmal\".\nThe modal marks are defined by the EDI Energy group (see edi-energy.de → Dokumente → Allgemeine Festlegungen).\nThe modal mark stands alone or before a condition expression.\nIt can be the start of several requirement indicator expressions in one AHB expression.",
+      "enum": ["MUSS", "SOLL", "KANN"],
+      "title": "ModalMark",
+      "type": "string"
+    },
+    "PrefixOperator": {
+      "description": "Operator which does not function to combine conditions, but as requirement indicator.\nIt stands alone or in front of a condition expression. Please find detailed descriptions of the operators and their\nusage in the \"Allgemeine Festlegungen\".\nNote that with MaKo2022 introced 2022-04-01 the \"O\" and \"U\" prefix operators will be deprecated.\nRefer to the \"Allgemeine Festlegungen\" valid up to 2022-04-01 for deprecated \"O\" and \"U\".",
+      "enum": ["X", "O", "U"],
+      "title": "PrefixOperator",
+      "type": "string"
+    },
+    "RequirementConstraintEvaluationResult": {
+      "description": "A class for the result of the requirement constraint evaluation.",
       "properties": {
         "format_constraints_expression": {
-          "title": "format_constraints_expression",
-          "type": ["string", "null"]
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Format Constraints Expression"
         },
         "hints": {
-          "title": "hints",
-          "type": ["string", "null"]
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hints"
         },
         "requirement_constraints_fulfilled": {
-          "title": "requirement_constraints_fulfilled",
-          "type": "boolean"
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Requirement Constraints Fulfilled"
         },
         "requirement_is_conditional": {
-          "title": "requirement_is_conditional",
-          "type": "boolean"
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Requirement Is Conditional"
         }
       },
+      "required": [
+        "requirement_constraints_fulfilled",
+        "requirement_is_conditional"
+      ],
+      "title": "RequirementConstraintEvaluationResult",
       "type": "object"
     }
   },
+  "description": "A class for the result of an ahb expression evaluation.",
   "properties": {
-    "$ref": "#/definitions/AhbExpressionEvaluationResultSchema/properties"
+    "format_constraint_evaluation_result": {
+      "$ref": "#/$defs/FormatConstraintEvaluationResult"
+    },
+    "requirement_constraint_evaluation_result": {
+      "$ref": "#/$defs/RequirementConstraintEvaluationResult"
+    },
+    "requirement_indicator": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PrefixOperator"
+        },
+        {
+          "$ref": "#/$defs/ModalMark"
+        }
+      ],
+      "title": "Requirement Indicator"
+    }
   },
-  "title": "AhbExpressionEvaluationResultSchema",
+  "required": [
+    "requirement_indicator",
+    "requirement_constraint_evaluation_result",
+    "format_constraint_evaluation_result"
+  ],
+  "title": "AhbExpressionEvaluationResult",
   "type": "object"
 }
