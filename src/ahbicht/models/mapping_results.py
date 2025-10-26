@@ -3,7 +3,7 @@ This module contains classes that are returned by mappers, meaning they contain 
 """
 
 import math
-from typing import Literal, Optional, Self, Union
+from typing import Literal, Optional, Union
 
 from efoli import EdifactFormat
 from pydantic import BaseModel, model_validator
@@ -72,7 +72,7 @@ class Repeatability(BaseModel):
     """
 
     @model_validator(mode="after")
-    def _check__repeatability_values(self) -> Self:
+    def _check__repeatability_values(self) -> "Repeatability":  # switch to typing.Self once Python 3.10 EOL is reachedß
         if self.max_occurrences == "n":
             return self
         check_max_greater_or_equal_than_min(self)
