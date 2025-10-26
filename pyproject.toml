@@ -27,7 +27,6 @@ dependencies = [
     "lark>=1.1.4",
     "inject",
     "marshmallow<4",
-    "marshmallow_enum",
     "pytz",
     "efoli>=2.1.0",
     "pydantic>=2"
