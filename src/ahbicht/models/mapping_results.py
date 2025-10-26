@@ -3,69 +3,38 @@ This module contains classes that are returned by mappers, meaning they contain 
 """
 
 import math
-from typing import Literal, Optional, Union
+from typing import Literal, Optional, Self, Union
 
-import attrs
 from efoli import EdifactFormat
-from marshmallow import Schema, fields, post_load
-from marshmallow_enum import EnumField  # type:ignore[import-untyped]
+from pydantic import BaseModel, model_validator
 
 
 # pylint:disable=too-few-public-methods
-@attrs.define(auto_attribs=True, kw_only=True)
-class ConditionKeyConditionTextMapping:
+class ConditionKeyConditionTextMapping(BaseModel):
     """
     maps a condition from a specified EDIFACT format onto a text as it is found in the AHB.
     """
 
-    edifact_format: EdifactFormat = attrs.field(
-        validator=attrs.validators.instance_of(EdifactFormat)
-    )  #: the format in which the condition is used; e.g. 'UTILMD'
-    condition_key: str = attrs.field(
-        validator=attrs.validators.instance_of(str)
-    )  #: the key of the condition without square brackets; e.g. '78'
-    condition_text: Optional[str] = attrs.field(default=None)
+    edifact_format: EdifactFormat  #: the format in which the condition is used; e.g. 'UTILMD'
+    condition_key: str  #: the key of the condition without square brackets; e.g. '78'
+    condition_text: Optional[str] = None
     """
     the description of the condition as in the AHB; None if unknown;
     e.g. 'Wenn SG4 STS+7++E02 (Transaktionsgrund: Einzug/Neuanlage)  nicht vorhanden'.
     """
 
 
-class ConditionKeyConditionTextMappingSchema(Schema):
-    """
-    A schema to (de-)serialize :class:`.ConditionKeyConditionTextMapping` s
-    """
-
-    edifact_format = EnumField(EdifactFormat)
-    condition_key = fields.String()
-    condition_text = fields.String(load_default=None)
-
-    # pylint:disable=unused-argument
-    @post_load
-    def deserialize(self, data, **kwargs) -> ConditionKeyConditionTextMapping:
-        """
-        Converts the barely typed data dictionary into an actual :class:`.ConditionKeyConditionTextMapping`
-        """
-        return ConditionKeyConditionTextMapping(**data)
-
-
 # pylint:disable=too-few-public-methods
-@attrs.define(auto_attribs=True, kw_only=True)
-class PackageKeyConditionExpressionMapping:
+class PackageKeyConditionExpressionMapping(BaseModel):
     """
     maps a package key from a specified EDIFACT format onto a (not yet parsed) condition expression as it is found in
     the AHB.
     """
 
-    edifact_format: EdifactFormat = attrs.field(
-        validator=attrs.validators.instance_of(EdifactFormat)
-    )  #: the format in which the package is used; e.g. 'UTILMD'
-    package_key: str = attrs.field(
-        validator=attrs.validators.instance_of(str)
-    )  #: the key of the package without square brackets but with trailing P; e.g. '10P'
-    package_expression: Optional[str] = attrs.field(
-        default=None
-    )  #: the expression for which the package is a shortcut; None if unknown e.g. '[20] ∧ [244]'
+    edifact_format: EdifactFormat  #: the format in which the package is used; e.g. 'UTILMD'
+    package_key: str  #: the key of the package without square brackets but with trailing P; e.g. '10P'
+    package_expression: Optional[str] = None
+    """the expression for which the package is a shortcut; None if unknown e.g. '[20] ∧ [244]'"""
 
     def has_been_resolved_successfully(self) -> bool:
         """
@@ -74,26 +43,7 @@ class PackageKeyConditionExpressionMapping:
         return self.package_expression is not None
 
 
-class PackageKeyConditionExpressionMappingSchema(Schema):
-    """
-    A schema to (de-)serialize :class:`.PackageKeyConditionExpressionMapping` s
-    """
-
-    edifact_format = EnumField(EdifactFormat)
-    package_key = fields.String()
-    package_expression = fields.String(load_default=None)
-
-    # pylint:disable=unused-argument
-    @post_load
-    def deserialize(self, data, **kwargs) -> PackageKeyConditionExpressionMapping:
-        """
-        Converts the barely typed data dictionary into an actual :class:`.PackageKeyConditionExpressionMapping`
-        """
-        return PackageKeyConditionExpressionMapping(**data)
-
-
-# pylint:disable=unused-argument
-def check_max_greater_or_equal_than_min(instance: "Repeatability", attribute, value):
+def check_max_greater_or_equal_than_min(instance: "Repeatability"):
     """
     assert that 0<=min<max and not both min and max are 0
     """
@@ -105,29 +55,28 @@ def check_max_greater_or_equal_than_min(instance: "Repeatability", attribute, va
 
 
 # pylint:disable=too-few-public-methods
-@attrs.define(auto_attribs=True, kw_only=True)
-class Repeatability:
+class Repeatability(BaseModel):
     """
     describes how often a segment/code must be used when a "repeatability" is provided with packages
     """
 
-    min_occurrences: int = attrs.field(
-        validator=attrs.validators.and_(attrs.validators.instance_of(int), check_max_greater_or_equal_than_min)
-    )
+    min_occurrences: int
     """
     how often the segment/code has to be repeated (lower, inclusive bound); may be 0 for optional packages
     """
 
-    max_occurrences: Union[int, Literal["n"]] = attrs.field(
-        validator=attrs.validators.or_(  # type:ignore[misc]
-            attrs.validators.and_(attrs.validators.instance_of(int), check_max_greater_or_equal_than_min),
-            attrs.validators.in_("n"),
-        )
-    )
+    max_occurrences: Union[int, Literal["n"]]
     """
-    how often the segment/coode may be repeated at most (upper, inclusive bound).
+    how often the segment/code may be repeated at most (upper, inclusive bound).
     This is inclusive meaning that [123P0..1] leads to max_occurrences==1
     """
+
+    @model_validator(mode="after")
+    def _check__repeatability_values(self) -> Self:
+        if self.max_occurrences == "n":
+            return self
+        check_max_greater_or_equal_than_min(self)
+        return self
 
     def is_optional(self) -> bool:
         """

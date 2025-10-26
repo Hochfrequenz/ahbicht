@@ -11,13 +11,11 @@ from typing import Mapping, Optional
 
 import inject
 from efoli import EdifactFormat, EdifactFormatVersion
+from pydantic import RootModel
 
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult
-from ahbicht.models.mapping_results import (
-    PackageKeyConditionExpressionMapping,
-    PackageKeyConditionExpressionMappingSchema,
-)
+from ahbicht.models.mapping_results import PackageKeyConditionExpressionMapping
 
 
 # pylint:disable=too-few-public-methods
@@ -113,9 +111,7 @@ class JsonFilePackageResolver(DictBasedPackageResolver):
             # {"1P": "[2] U [3]", "2P": "[4] O [5]"...
             return json_body
         # [{PackageKeyConditionExpressionMapping},...]
-        mapping_list: list[PackageKeyConditionExpressionMapping] = PackageKeyConditionExpressionMappingSchema().load(
-            json_body, many=True
-        )
+        mapping_list = RootModel[list[PackageKeyConditionExpressionMapping]].model_validate(json_body).root
         return {mapping.package_key: mapping.package_expression for mapping in mapping_list}
 
 

@@ -20,18 +20,15 @@ from ahbicht.models.evaluation_results import (
     FormatConstraintEvaluationResultSchema,
     RequirementConstraintEvaluationResultSchema,
 )
-from ahbicht.models.mapping_results import (
-    ConditionKeyConditionTextMappingSchema,
-    PackageKeyConditionExpressionMappingSchema,
-)
+from ahbicht.models.mapping_results import ConditionKeyConditionTextMapping, PackageKeyConditionExpressionMapping
 
 schema_types: list[Type[Schema] | Type[BaseModel]] = [
     RequirementConstraintEvaluationResultSchema,  # marshmallow
     FormatConstraintEvaluationResultSchema,  # marshmallow
     EvaluatedFormatConstraint,  # pydantic
     AhbExpressionEvaluationResultSchema,  # marshmallow
-    ConditionKeyConditionTextMappingSchema,  # marshmallow
-    PackageKeyConditionExpressionMappingSchema,  #  marshmallow
+    ConditionKeyConditionTextMapping,  # pydantic
+    PackageKeyConditionExpressionMapping,  #  pydantic
     TokenSchema,  #  marshmallow
     CategorizedKeyExtract,  # pydantic
     ContentEvaluationResult,  # pydantic

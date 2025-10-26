@@ -19,46 +19,6 @@
       },
       "type": "object"
     },
-    "ConditionKeyConditionTextMappingSchema": {
-      "additionalProperties": false,
-      "properties": {
-        "condition_key": {
-          "title": "condition_key",
-          "type": "string"
-        },
-        "condition_text": {
-          "title": "condition_text",
-          "type": ["string", "null"]
-        },
-        "edifact_format": {
-          "enum": [
-            "APERAK",
-            "COMDIS",
-            "CONTRL",
-            "IFTSTA",
-            "INSRPT",
-            "INVOIC",
-            "MSCONS",
-            "ORDCHG",
-            "ORDERS",
-            "ORDRSP",
-            "PRICAT",
-            "QUOTES",
-            "REMADV",
-            "REQOTE",
-            "PARTIN",
-            "UTILMD",
-            "UTILMDG",
-            "UTILMDS",
-            "UTILMDW",
-            "UTILTS"
-          ],
-          "title": "edifact_format",
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
     "FormatConstraintEvaluationResultSchema": {
       "additionalProperties": false,
       "properties": {
@@ -69,46 +29,6 @@
         "format_constraints_fulfilled": {
           "title": "format_constraints_fulfilled",
           "type": "boolean"
-        }
-      },
-      "type": "object"
-    },
-    "PackageKeyConditionExpressionMappingSchema": {
-      "additionalProperties": false,
-      "properties": {
-        "edifact_format": {
-          "enum": [
-            "APERAK",
-            "COMDIS",
-            "CONTRL",
-            "IFTSTA",
-            "INSRPT",
-            "INVOIC",
-            "MSCONS",
-            "ORDCHG",
-            "ORDERS",
-            "ORDRSP",
-            "PRICAT",
-            "QUOTES",
-            "REMADV",
-            "REQOTE",
-            "PARTIN",
-            "UTILMD",
-            "UTILMDG",
-            "UTILMDS",
-            "UTILMDW",
-            "UTILTS"
-          ],
-          "title": "edifact_format",
-          "type": "string"
-        },
-        "package_expression": {
-          "title": "package_expression",
-          "type": ["string", "null"]
-        },
-        "package_key": {
-          "title": "package_key",
-          "type": "string"
         }
       },
       "type": "object"

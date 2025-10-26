@@ -21,12 +21,7 @@ from ahbicht.models.evaluation_results import (
     FormatConstraintEvaluationResult,
     RequirementConstraintEvaluationResult,
 )
-from ahbicht.models.mapping_results import (
-    ConditionKeyConditionTextMapping,
-    ConditionKeyConditionTextMappingSchema,
-    PackageKeyConditionExpressionMapping,
-    PackageKeyConditionExpressionMappingSchema,
-)
+from ahbicht.models.mapping_results import ConditionKeyConditionTextMapping, PackageKeyConditionExpressionMapping
 
 T = TypeVar("T")
 
@@ -264,9 +259,7 @@ class TestJsonSerialization:
     def test_condition_key_condition_text_mapping_serialization(
         self, condition_key_condition_text_mapping: ConditionKeyConditionTextMapping, expected_json_dict: dict
     ):
-        _test_serialization_roundtrip(
-            condition_key_condition_text_mapping, ConditionKeyConditionTextMappingSchema(), expected_json_dict
-        )
+        _test_serialization_roundtrip(condition_key_condition_text_mapping, None, expected_json_dict)
 
     @pytest.mark.parametrize(
         "package_key_condition_expression_mapping, expected_json_dict",
@@ -284,9 +277,7 @@ class TestJsonSerialization:
     def test_package_key_condition_expression_mapping_serialization(
         self, package_key_condition_expression_mapping: PackageKeyConditionExpressionMapping, expected_json_dict: dict
     ):
-        _test_serialization_roundtrip(
-            package_key_condition_expression_mapping, PackageKeyConditionExpressionMappingSchema(), expected_json_dict
-        )
+        _test_serialization_roundtrip(package_key_condition_expression_mapping, None, expected_json_dict)
 
     @pytest.mark.parametrize(
         "categorized_key_extract, expected_json_dict",
