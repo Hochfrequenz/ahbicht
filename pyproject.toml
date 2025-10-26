@@ -24,7 +24,6 @@ classifiers = [
 ]
 
 dependencies = [
-    "attrs>=21.4.0",
     "lark>=1.1.4",
     "inject",
     "marshmallow<4",
