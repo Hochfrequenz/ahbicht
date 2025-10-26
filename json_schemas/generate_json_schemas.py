@@ -42,7 +42,7 @@ for schema_type in schema_types:
     file_name: str
     json_schema_dict: dict[str, Any]
     try:  # marshmallow json schema approach (deprecated - to be phased out one after another)
-        file_name = schema_type.__name__ + ".json"  # pylint:disable=invalid-name
+        FILE_NAME = schema_type.__name__ + ".json"  # pylint:disable=invalid-name
         schema_instance = schema_type()
         if "requirement_indicator" in schema_instance.fields:  # type:ignore[union-attr]
             # raises attribute error for pydantic classes
@@ -61,10 +61,10 @@ for schema_type in schema_types:
                 field_dict["requirement_indicator"] = fields.String(name="requirement_indicator")
         json_schema_dict = json_schema.dump(schema_instance)
     except (AttributeError, ValidationError):  # means, we're creating a json schema from a pydantic class
-        file_name = schema_type.__name__ + "Schema.json"  # other than for the marshmallow classes, we add 'Schema' here
+        FILE_NAME = schema_type.__name__ + "Schema.json"  # other than for the marshmallow classes, we add 'Schema' here
         assert hasattr(schema_type, "model_json_schema")
         json_schema_dict = schema_type.model_json_schema()
-    file_path = this_directory / file_name
+    file_path = this_directory / FILE_NAME
     # We want our JSON schemas to be compatible with a typescript code generator:
     # https://github.com/bcherny/json-schema-to-typescript/
     # However there's an unresolved bug: The root level of the schema must not contain any '$ref' key.
