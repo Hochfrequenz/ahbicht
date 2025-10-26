@@ -194,8 +194,8 @@ class TestAHBExpressionEvaluation:
         )
         mocker.patch(
             "ahbicht.expressions.ahb_expression_evaluation.format_constraint_evaluation",
-            return_value=AsyncMock(
-                side_effect=FormatConstraintEvaluationResult(format_constraints_fulfilled=True, error_message=None)
+            side_effect=AsyncMock(
+                return_value=FormatConstraintEvaluationResult(format_constraints_fulfilled=True, error_message=None)
             ),
         )
 
