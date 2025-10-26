@@ -1,104 +1,56 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "definitions": {
-    "AhbExpressionEvaluationResultSchema": {
-      "additionalProperties": false,
-      "properties": {
-        "format_constraint_evaluation_result": {
-          "$ref": "#/definitions/FormatConstraintEvaluationResultSchema",
-          "type": "object"
-        },
-        "requirement_constraint_evaluation_result": {
-          "$ref": "#/definitions/RequirementConstraintEvaluationResultSchema",
-          "type": "object"
-        },
-        "requirement_indicator": {
-          "title": "",
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "ConditionKeyConditionTextMappingSchema": {
-      "additionalProperties": false,
-      "properties": {
-        "condition_key": {
-          "title": "condition_key",
-          "type": "string"
-        },
-        "condition_text": {
-          "title": "condition_text",
-          "type": ["string", "null"]
-        },
-        "edifact_format": {
-          "enum": [
-            "APERAK",
-            "COMDIS",
-            "CONTRL",
-            "IFTSTA",
-            "INSRPT",
-            "INVOIC",
-            "MSCONS",
-            "ORDCHG",
-            "ORDERS",
-            "ORDRSP",
-            "PRICAT",
-            "QUOTES",
-            "REMADV",
-            "REQOTE",
-            "PARTIN",
-            "UTILMD",
-            "UTILMDG",
-            "UTILMDS",
-            "UTILMDW",
-            "UTILTS"
-          ],
-          "title": "edifact_format",
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "FormatConstraintEvaluationResultSchema": {
-      "additionalProperties": false,
-      "properties": {
-        "error_message": {
-          "title": "error_message",
-          "type": ["string", "null"]
-        },
-        "format_constraints_fulfilled": {
-          "title": "format_constraints_fulfilled",
-          "type": "boolean"
-        }
-      },
-      "type": "object"
-    },
-    "RequirementConstraintEvaluationResultSchema": {
-      "additionalProperties": false,
-      "properties": {
-        "format_constraints_expression": {
-          "title": "format_constraints_expression",
-          "type": ["string", "null"]
-        },
-        "hints": {
-          "title": "hints",
-          "type": ["string", "null"]
-        },
-        "requirement_constraints_fulfilled": {
-          "title": "requirement_constraints_fulfilled",
-          "type": "boolean"
-        },
-        "requirement_is_conditional": {
-          "title": "requirement_is_conditional",
-          "type": "boolean"
-        }
-      },
-      "type": "object"
+  "$defs": {
+    "EdifactFormat": {
+      "description": "existing EDIFACT formats",
+      "enum": [
+        "APERAK",
+        "COMDIS",
+        "CONTRL",
+        "IFTSTA",
+        "INSRPT",
+        "INVOIC",
+        "MSCONS",
+        "ORDCHG",
+        "ORDERS",
+        "ORDRSP",
+        "PRICAT",
+        "QUOTES",
+        "REMADV",
+        "REQOTE",
+        "PARTIN",
+        "UTILMD",
+        "UTILMDG",
+        "UTILMDS",
+        "UTILMDW",
+        "UTILTS"
+      ],
+      "title": "EdifactFormat",
+      "type": "string"
     }
   },
+  "description": "maps a condition from a specified EDIFACT format onto a text as it is found in the AHB.",
   "properties": {
-    "$ref": "#/definitions/ConditionKeyConditionTextMappingSchema/properties"
+    "condition_key": {
+      "title": "Condition Key",
+      "type": "string"
+    },
+    "condition_text": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Condition Text"
+    },
+    "edifact_format": {
+      "$ref": "#/$defs/EdifactFormat"
+    }
   },
-  "title": "ConditionKeyConditionTextMappingSchema",
+  "required": ["edifact_format", "condition_key"],
+  "title": "ConditionKeyConditionTextMapping",
   "type": "object"
 }
