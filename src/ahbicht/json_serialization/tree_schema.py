@@ -5,6 +5,9 @@ Schemata for the JSON serialization of expressions.
 import sys
 from typing import TYPE_CHECKING, Annotated, Any, Literal, TypeAlias, Union
 
+from lark import Token, Tree
+from pydantic import ConfigDict, PlainSerializer, TypeAdapter
+
 if TYPE_CHECKING or sys.version_info >= (3, 12):
     from typing import TypedDict
 else:
@@ -12,8 +15,6 @@ else:
     # Please use `typing_extensions.TypedDict` instead of `typing.TypedDict` on Python < 3.12.
     from typing_extensions import TypedDict
 
-from lark import Token, Tree
-from pydantic import ConfigDict, PlainSerializer, TypeAdapter
 
 # For both of the serialization behaviours: I don't know anymore WHY we chose to do it that way,
 # but at this point we're just maintaining backward compatability in the pydantic world with the marshmallow past.
