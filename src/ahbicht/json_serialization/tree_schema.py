@@ -1,6 +1,7 @@
 """
 Schemata for the JSON serialization of expressions.
 """
+
 import sys
 from typing import TYPE_CHECKING, Annotated, Any, Literal, TypeAlias, Union
 
