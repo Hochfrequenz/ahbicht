@@ -7,7 +7,6 @@ import json
 import pathlib
 from typing import Any, Type
 
-from marshmallow_jsonschema import JSONSchema  # type:ignore[import]
 from pydantic import BaseModel, TypeAdapter
 
 # from ahbicht.json_serialization.tree_schema import TREE_ADAPTER
@@ -32,7 +31,6 @@ schema_types: list[Type[TypeAdapter] | Type[BaseModel]] = [
     CategorizedKeyExtract,  # pydantic
     ContentEvaluationResult,  # pydantic
 ]
-json_schema = JSONSchema()
 for schema_type in schema_types:
     this_directory = pathlib.Path(__file__).parent.absolute()
     file_name: str
