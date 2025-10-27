@@ -10,10 +10,7 @@ from lark import Token, Tree
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
-from ahbicht.json_serialization.concise_condition_key_tree_schema import ConciseConditionKeyTreeSchema
-from ahbicht.json_serialization.concise_tree_schema import ConciseTreeSchema
-from ahbicht.json_serialization.tree_schema import TreeSchema
-from unittests.test_json_serialization import _test_serialization_roundtrip  # type:ignore[import]
+from ahbicht.json_serialization.tree_schema import model_dump_tree
 
 
 class TestTreeSchemas:
@@ -74,7 +71,8 @@ class TestTreeSchemas:
         ],
     )
     def test_tree_serialization(self, tree: Tree, expected_json_dict: dict):
-        _test_serialization_roundtrip(tree, TreeSchema(), expected_json_dict)
+        tree_json_dict = model_dump_tree(tree)
+        assert tree_json_dict == expected_json_dict
 
     @pytest.mark.parametrize(
         "condition_string, expected_json_dict",
@@ -109,7 +107,8 @@ class TestTreeSchemas:
         self, condition_string: str, expected_json_dict: dict
     ):
         tree = parse_ahb_expression_to_single_requirement_indicator_expressions(condition_string)
-        _test_serialization_roundtrip(tree, TreeSchema(), expected_json_dict)
+        tree_json_dict = model_dump_tree(tree)
+        assert tree_json_dict == expected_json_dict
 
     @pytest.mark.parametrize(
         "condition_expression, expected_compact_json_dict",
@@ -148,8 +147,8 @@ class TestTreeSchemas:
         self, condition_expression: str, expected_compact_json_dict: dict
     ):
         tree = parse_condition_expression_to_tree(condition_expression)
-        json_dict = ConciseTreeSchema().dump(tree)
-        assert json_dict == expected_compact_json_dict
+        tree_json_dict = model_dump_tree(tree, mode="concise")
+        assert tree_json_dict == expected_compact_json_dict
 
     @pytest.mark.parametrize(
         "ahb_expression, expected_compact_json_dict",
@@ -212,7 +211,7 @@ class TestTreeSchemas:
         self, ahb_expression: str, expected_compact_json_dict: dict
     ):
         tree = await parse_expression_including_unresolved_subexpressions(ahb_expression)
-        json_dict = ConciseTreeSchema().dump(tree)
+        json_dict = model_dump_tree(tree, mode="concise")
         assert json_dict == expected_compact_json_dict
 
     @pytest.mark.parametrize(
@@ -261,7 +260,7 @@ class TestTreeSchemas:
         self, expression: str, expected_compact_json_dict: dict
     ):
         tree = parse_condition_expression_to_tree(expression)
-        json_dict = ConciseConditionKeyTreeSchema().dump(tree)
+        json_dict = model_dump_tree(tree, mode="compress-conditions-only")
         assert json_dict == expected_compact_json_dict
 
     @pytest.mark.parametrize(
@@ -473,5 +472,5 @@ class TestTreeSchemas:
         self, expression: str, expected_compact_json_dict: dict
     ):
         tree = await parse_expression_including_unresolved_subexpressions(expression)
-        json_dict = ConciseConditionKeyTreeSchema().dump(tree)
+        json_dict = model_dump_tree(tree, mode="compress-conditions-only")
         assert json_dict == expected_compact_json_dict

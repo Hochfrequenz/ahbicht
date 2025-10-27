@@ -2,109 +2,120 @@
 Schemata for the JSON serialization of expressions.
 """
 
-from typing import Optional, Union
+from typing import Annotated, Any, Literal, TypeAlias, TypedDict, Union
 
 from lark import Token, Tree
-from marshmallow import Schema, fields, post_load, pre_dump
+from pydantic import ConfigDict, PlainSerializer, TypeAdapter
 
-# in the classes/schemata we don't care about if there aren't enough public versions.
-# We also don't care about unused kwargs, or no self-use.
-# pylint: disable=too-few-public-methods,unused-argument
+# For both of the serialization behaviours: I don't know anymore WHY we chose to do it that way,
+# but at this point we're just maintaining backward compatability in the pydantic world
+
+_TokenDict: TypeAlias = dict[Literal["value", "type"], Any]
+_TreeDict: TypeAlias = dict[Literal["children", "type"], Any]
 
 
-class _TokenOrTree:
+class _TreeOrTokenDictWithToken(TypedDict):
+    token: _TokenDict
+    tree: None
+
+
+class _TreeOrTokenDictWithTree(TypedDict):
+    token: None
+    tree: _TreeDict
+
+
+_TreeOrTokenDict: TypeAlias = Union[_TreeOrTokenDictWithToken, _TreeOrTokenDictWithTree]
+
+
+def _serialize_children(t: Union[Tree, Token]) -> Union[_TokenDict, _TreeDict]:
+    if isinstance(t, Tree):
+        return TREE_ADAPTER.dump_python(t, mode="json")
+    if isinstance(t, Token):
+        return TOKEN_ADAPTER.dump_python(t, mode="json")
+    raise ValueError(f"Unsupported type {t.__class__.__name__}")
+
+
+def _serialize_tree(tree: Tree) -> _TreeOrTokenDictWithTree:
+    return {"token": None, "tree": {"type": tree.data, "children": [_serialize_children(c) for c in tree.children]}}
+
+
+def _serialize_token(token: Token) -> _TreeOrTokenDictWithToken:
+    return {"tree": None, "token": {"value": token.value, "type": token.type}}
+
+
+TOKEN_ADAPTER: TypeAdapter[Token] = TypeAdapter(
+    Annotated[Token, PlainSerializer(_serialize_token)], config=ConfigDict(arbitrary_types_allowed=True)
+)
+
+TREE_ADAPTER: TypeAdapter[Tree] = TypeAdapter(
+    Annotated[Tree, PlainSerializer(_serialize_tree)], config=ConfigDict(arbitrary_types_allowed=True)
+)
+
+
+def model_dump_tree(
+    tree: Tree, mode: Literal["json", "concise", "compress-conditions-only"] = "json"
+) -> dict[str, Any]:
+    """ahbicht v1 replacement for the removed TreeSchema"""
+    result = TREE_ADAPTER.dump_python(tree, mode="json")
+    if mode == "json":
+        return result["tree"]
+    if mode == "concise":
+        return _compress(result["tree"])
+    if mode == "compress-conditions-only":
+        return _compress_condition_keys_only(result["tree"])
+    raise ValueError(f"Unsupported mode {mode}")
+
+
+def _compress_condition_keys_only(data: dict) -> dict:
     """
-    A class that is easily serializable as dictionary and allows us to _not_ use the marshmallow-union package.
+    a function that merges a condition key node with its only child (a token that has an int value)
     """
+    # this has been found heuristically. There's no way to explain it, just follow the test cases.
+    # there's probably a much easier way, e.g. by using a separate token schema.
+    if "tree" in data and data["tree"] is not None:
+        if "type" in data["tree"]:
+            if data["tree"]["type"] == "single_requirement_indicator_expression":
+                if data["tree"]["children"][0]["token"]["type"] == "MODAL_MARK":
+                    modal_mark = data["tree"]["children"][0]["token"]["value"]
+                    del data["tree"]["children"][0]
+                    data["tree"]["type"] = modal_mark
+                elif data["tree"]["children"][0]["token"]["type"] == "PREFIX_OPERATOR":
+                    prefix_operator = data["tree"]["children"][0]["token"]["value"]
+                    del data["tree"]["children"][0]
+                    data["tree"]["type"] = prefix_operator
+        if data["tree"]["type"] == "condition":
+            return {
+                "token": {"value": data["tree"]["children"][0]["token"]["value"], "type": "condition_key"},
+                "tree": None,
+            }
+        if "token" in data and data["token"] is None and "children" in data["tree"]:
+            data["tree"]["children"] = [_compress_condition_keys_only(child) for child in data["tree"]["children"]]
+    if "type" in data and data["type"] is not None and "children" in data and data["children"] is not None:
+        data["children"] = [_compress_condition_keys_only(child) for child in data["children"]]
+    return data
 
-    def __init__(self, token: Optional[Token] = None, tree: Optional[Tree] = None) -> None:
-        self.token = token
-        self.tree = tree
 
-    token: Optional[Token]
-    tree: Optional[Tree]
-
-
-class _TokenOrTreeSchema(Schema):
+def _compress(data: dict) -> dict:
     """
-    A schema that represents data of the kind Union[str,Tree]
-    There is a python package for that: https://github.com/adamboche/python-marshmallow-union
-    but is only has 15 stars; not sure if it's worth the dependency
+    a function that "throws away" unnecessary data.
+    The price we pay is that we loose the ability to easily deserialize the result.
+    But if we're only interested in a simple tree that's fine.
     """
-
-    token = fields.Nested(
-        lambda: TokenSchema(), allow_none=True, required=False  # pylint: disable=unnecessary-lambda
-    )  # fields.String(dump_default=False, required=False, allow_none=True)
-    # disable unnecessary lambda warning because of circular imports
-    tree = fields.Nested(
-        lambda: TreeSchema(), dump_default=False, required=False, allow_none=True  # pylint: disable=unnecessary-lambda
-    )
-
-    @post_load
-    def deserialize(self, data, **kwargs) -> Union[str, Tree, Token]:
-        """
-        convert a dictionary back to a string, Tree or Token
-        :param data:
-        :param kwargs:
-        :return:
-        """
-        if "tree" in data and data["tree"]:
-            if not isinstance(data["tree"], Tree):
-                return Tree(**data["tree"])
-            return data["tree"]
-        if "token" in data and data["token"]:
-            return data["token"]
-        return data
-
-    @pre_dump
-    def prepare_tree_for_serialization(self, data, **kwargs) -> _TokenOrTree:
-        """
-        Create a string of tree object
-        :param data:
-        :param kwargs:
-        :return:
-        """
-        if isinstance(data, Tree):
-            return _TokenOrTree(token=None, tree=data)
-        if isinstance(data, Token):
-            return _TokenOrTree(token=data, tree=None)
-        raise NotImplementedError(f"Data type of {data} is not implemented for JSON serialization")
+    if (
+        "children" in data
+        and "type" in data
+        and (data["type"].endswith("_composition") or data["type"].endswith("_expression"))
+    ):
+        return {data["type"]: [_compress(child) for child in data["children"]]}
+    if "tree" in data and "token" in data and data["token"] is None:
+        return _compress(data["tree"])
+    if "tree" in data and "token" in data and data["tree"] is None:
+        return _compress(data["token"])
+    if "type" in data and "children" in data:  # and data["type"] in {"MODAL_MARK", "condition_key"}:
+        return _compress(data["children"][0]["token"]["value"])
+    if "type" in data and data["type"] in {"MODAL_MARK"}:
+        return data["value"]
+    return data
 
 
-class TokenSchema(Schema):
-    """
-    A schema that represents a lark Token and allows (de-)serializing is as JSON
-    """
-
-    value = fields.String(dump_default=False, allow_none=True)
-    type = fields.String(dump_default=False, data_key="type")
-
-    @post_load
-    def deserialize(self, data, **kwargs) -> Token:
-        """
-        converts the barely typed data dictionary into an actual Tree
-        :param data:
-        :param kwargs:
-        :return:
-        """
-        return Token(data["type"], data["value"])
-
-
-class TreeSchema(Schema):
-    """
-    A schema that represents a lark tree and allows (de-)serializing it as JSON
-    """
-
-    data = fields.String(data_key="type")  # for example 'or_composition', 'and_composition', 'condition_key'
-    # disable lambda warning. I don't know how to resolve this circular imports
-    children = fields.List(fields.Nested(lambda: _TokenOrTreeSchema()))  # pylint: disable=unnecessary-lambda
-
-    @post_load
-    def deserialize(self, data, **kwargs) -> Tree:
-        """
-        converts the barely typed data dictionary into an actual Tree
-        :param data:
-        :param kwargs:
-        :return:
-        """
-        return Tree(**data)
+__all__ = ["model_dump_tree"]
