@@ -9,7 +9,6 @@ from typing import Any, Type
 
 from pydantic import BaseModel, TypeAdapter
 
-# from ahbicht.json_serialization.tree_schema import TREE_ADAPTER
 from ahbicht.models.categorized_key_extract import CategorizedKeyExtract
 from ahbicht.models.condition_nodes import EvaluatedFormatConstraint
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult
