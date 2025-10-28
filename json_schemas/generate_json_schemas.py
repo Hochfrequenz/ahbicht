@@ -27,7 +27,6 @@ schema_types: list[Type[TypeAdapter] | Type[BaseModel]] = [
     AhbExpressionEvaluationResult,  # pydantic
     ConditionKeyConditionTextMapping,  # pydantic
     PackageKeyConditionExpressionMapping,  #  pydantic
-    # TREE_ADAPTER,  # doesn't work yet but that's ok for now
     CategorizedKeyExtract,  # pydantic
     ContentEvaluationResult,  # pydantic
 ]
