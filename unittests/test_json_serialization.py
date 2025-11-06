@@ -2,13 +2,11 @@
 Tests that the parsed trees are JSON serializable
 """
 
-import json
 import uuid
-from typing import Optional, TypeVar
+from typing import TypeVar
 
 import pytest
 from efoli import EdifactFormat
-from marshmallow import Schema
 from pydantic import ValidationError
 
 from ahbicht.models.categorized_key_extract import CategorizedKeyExtract
@@ -25,29 +23,20 @@ from ahbicht.models.mapping_results import ConditionKeyConditionTextMapping, Pac
 T = TypeVar("T")
 
 
-def _test_serialization_roundtrip(serializable_object: T, schema: Optional[Schema], expected_json_dict: dict) -> T:
+def _test_serialization_roundtrip(serializable_object: T, expected_json_dict: dict) -> T:
     """
     Serializes the serializable_object using the provided schema (or None for pydantic models),
     asserts, that the result is equal to the expected_json_dict
     then deserializes it again and asserts on equality with the original serializable_object
     :returns the deserialized_object
     """
-    is_pydantic_class: bool = schema is None and hasattr(serializable_object, "model_dump")
     deserialized_object: T
-    if is_pydantic_class:
-        assert hasattr(serializable_object, "model_dump")
-        json_dict = serializable_object.model_dump(mode="json")
-        assert json_dict == expected_json_dict
-        type_instance = type(serializable_object)
-        assert hasattr(type_instance, "model_validate")
-        deserialized_object = type_instance.model_validate(json_dict)  # type:ignore[attr-defined]
-    else:  # deprecated marshmallow approach - to be phased out one after another
-        assert schema is not None
-        json_string = schema.dumps(serializable_object)
-        assert json_string is not None
-        actual_json_dict = json.loads(json_string)
-        assert actual_json_dict == expected_json_dict
-        deserialized_object = schema.loads(json_data=json_string)
+    assert hasattr(serializable_object, "model_dump")
+    json_dict = serializable_object.model_dump(mode="json")
+    assert json_dict == expected_json_dict
+    type_instance = type(serializable_object)
+    assert hasattr(type_instance, "model_validate")
+    deserialized_object = type_instance.model_validate(json_dict)  # type:ignore[attr-defined]
     assert isinstance(deserialized_object, type(serializable_object))
     assert deserialized_object == serializable_object
     return deserialized_object
@@ -74,7 +63,7 @@ class TestJsonSerialization:
     def test_evaluated_format_constraint_serialization(
         self, evaluated_format_constraint: EvaluatedFormatConstraint, expected_json_dict: dict
     ):
-        _test_serialization_roundtrip(evaluated_format_constraint, None, expected_json_dict)
+        _test_serialization_roundtrip(evaluated_format_constraint, expected_json_dict)
 
     @pytest.mark.parametrize(
         "invalid_content_evaluation_result_dict",
@@ -129,7 +118,7 @@ class TestJsonSerialization:
     ):
         for rc_evaluation_result in content_evaluation_result.requirement_constraints.values():
             assert isinstance(rc_evaluation_result, ConditionFulfilledValue)
-        deserialized_object = _test_serialization_roundtrip(content_evaluation_result, None, expected_json_dict)
+        deserialized_object = _test_serialization_roundtrip(content_evaluation_result, expected_json_dict)
         for rc_evaluation_result in deserialized_object.requirement_constraints.values():
             assert isinstance(rc_evaluation_result, ConditionFulfilledValue)
         for rc_evaluation_result in content_evaluation_result.requirement_constraints.values():
@@ -238,7 +227,7 @@ class TestJsonSerialization:
     def test_ahb_expression_evaluation_result_serialization(
         self, ahb_expression_evaluation_result: AhbExpressionEvaluationResult, expected_json_dict: dict
     ):
-        _test_serialization_roundtrip(ahb_expression_evaluation_result, None, expected_json_dict)
+        _test_serialization_roundtrip(ahb_expression_evaluation_result, expected_json_dict)
 
     @pytest.mark.parametrize(
         "condition_key_condition_text_mapping, expected_json_dict",
@@ -256,7 +245,7 @@ class TestJsonSerialization:
     def test_condition_key_condition_text_mapping_serialization(
         self, condition_key_condition_text_mapping: ConditionKeyConditionTextMapping, expected_json_dict: dict
     ):
-        _test_serialization_roundtrip(condition_key_condition_text_mapping, None, expected_json_dict)
+        _test_serialization_roundtrip(condition_key_condition_text_mapping, expected_json_dict)
 
     @pytest.mark.parametrize(
         "package_key_condition_expression_mapping, expected_json_dict",
@@ -274,7 +263,7 @@ class TestJsonSerialization:
     def test_package_key_condition_expression_mapping_serialization(
         self, package_key_condition_expression_mapping: PackageKeyConditionExpressionMapping, expected_json_dict: dict
     ):
-        _test_serialization_roundtrip(package_key_condition_expression_mapping, None, expected_json_dict)
+        _test_serialization_roundtrip(package_key_condition_expression_mapping, expected_json_dict)
 
     @pytest.mark.parametrize(
         "categorized_key_extract, expected_json_dict",
@@ -300,4 +289,4 @@ class TestJsonSerialization:
     def test_categorized_key_extract_serialization(
         self, categorized_key_extract: CategorizedKeyExtract, expected_json_dict: dict
     ):
-        _test_serialization_roundtrip(categorized_key_extract, None, expected_json_dict)
+        _test_serialization_roundtrip(categorized_key_extract, expected_json_dict)
