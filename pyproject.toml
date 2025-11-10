@@ -50,7 +50,7 @@ tests = [
     "pytest-datafiles==3.0.0",
     "pytest-mock==3.15.1",
 ]
-type_check = ["mypy[pydantic]==1.18.2", "types-pytz==2025.2.0.20250809"]
+type_check = ["mypy[pydantic]==1.18.2", "types-pytz==2025.2.0.20251108"]
 dev = ["pip-tools"]
 
 [tool.setuptools.dynamic]
