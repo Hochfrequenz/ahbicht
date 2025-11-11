@@ -33,10 +33,10 @@ for schema_type in schema_types:
     this_directory = pathlib.Path(__file__).parent.absolute()
     file_name: str
     json_schema_dict: dict[str, Any]
-    FILE_NAME = schema_type.__name__ + "Schema.json"
+    file_name = schema_type.__name__ + "Schema.json"
     assert hasattr(schema_type, "model_json_schema")
     json_schema_dict = schema_type.model_json_schema()
-    file_path = this_directory / FILE_NAME
+    file_path = this_directory / file_name
     # We want our JSON schemas to be compatible with a typescript code generator:
     # https://github.com/bcherny/json-schema-to-typescript/
     # However there's an unresolved bug: The root level of the schema must not contain any '$ref' key.
