@@ -178,9 +178,7 @@ class TestConditionNodes:
         assert fulfilled.error_message is None
 
         # not fulfilled with error message
-        not_fulfilled = EvaluatedFormatConstraint(
-            format_constraint_fulfilled=False, error_message="something wrong"
-        )
+        not_fulfilled = EvaluatedFormatConstraint(format_constraint_fulfilled=False, error_message="something wrong")
         assert not_fulfilled.format_constraint_fulfilled is False
         assert not_fulfilled.error_message == "something wrong"
 

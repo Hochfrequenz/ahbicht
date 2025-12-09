@@ -128,6 +128,7 @@ class TestFormatConstraintExpressionEvaluation:
             # with brackets
             pytest.param("([902]U[904])O[901]", True, None),
             pytest.param("[902]U([904]O[901])", False, "902 muss erfüllt sein"),
+            pytest.param("[901]U[902]", False, "902 muss erfüllt sein"),
         ],
     )
     async def test_evaluate_valid_format_constraint_expression(
