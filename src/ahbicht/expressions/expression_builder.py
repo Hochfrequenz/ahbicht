@@ -232,6 +232,19 @@ class FormatErrorMessageExpressionBuilder(ExpressionBuilder[EvaluatedFormatConst
     def get_expression(self) -> Optional[str]:
         return self._expression
 
+    @staticmethod
+    def _wrap_message(msg: Optional[str]) -> str:
+        """
+        Wrap a message appropriately for combining with logical operators.
+        Use parentheses for compound expressions, single quotes for simple messages.
+        """
+        if not msg:
+            return "''"
+        # Check if this is already a compound expression (contains logical operators)
+        if " oder " in msg or " und " in msg:
+            return f"({msg})"
+        return f"'{msg}'"
+
     def land(self, other: EvaluatedFormatConstraint) -> ExpressionBuilder:
         if other.format_constraint_fulfilled is True:
             # If a format constraint is connected with "logical and" to another format constraint which is fulfilled,
@@ -241,19 +254,25 @@ class FormatErrorMessageExpressionBuilder(ExpressionBuilder[EvaluatedFormatConst
             if self._expression is None:
                 self._expression = other.error_message
             else:
-                self._expression = f"'{self._expression}' und '{other.error_message}'"
+                left_part = self._wrap_message(self._expression)
+                right_part = self._wrap_message(other.error_message)
+                self._expression = f"{left_part} und {right_part}"
         return self
 
     def lor(self, other: EvaluatedFormatConstraint) -> ExpressionBuilder:
         if self.format_constraint_fulfilled is False and other.format_constraint_fulfilled is False:
-            self._expression = f"'{self._expression}' oder '{other.error_message}'"
+            left_part = self._wrap_message(self._expression)
+            right_part = self._wrap_message(other.error_message)
+            self._expression = f"{left_part} oder {right_part}"
         else:
             self._expression = None
         return self
 
     def xor(self, other: EvaluatedFormatConstraint) -> ExpressionBuilder:
         if self.format_constraint_fulfilled is False and other.format_constraint_fulfilled is False:
-            self._expression = f"Entweder '{self._expression}' oder '{other.error_message}'"
+            left_part = self._wrap_message(self._expression)
+            right_part = self._wrap_message(other.error_message)
+            self._expression = f"Entweder {left_part} oder {right_part}"
         elif self.format_constraint_fulfilled is True and other.format_constraint_fulfilled is True:
             self._expression = "Zwei exklusive Formatdefinitionen dürfen nicht gleichzeitig erfüllt sein"
             # TODO: Do we need to know which one? It's probably more work than benefit.

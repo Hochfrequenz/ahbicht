@@ -423,3 +423,69 @@ class TestAHBExpressionEvaluation:
             assert evaluation_result == expected
         finally:
             inject.clear()
+
+    async def test_nested_xor_format_constraint_error_message(self):
+        """
+        Test that nested XOR expressions with multiple unfulfilled format constraints
+        produce properly formatted error messages using parentheses instead of nested quotes.
+
+        This test uses a real-world expression pattern:
+        X (([950] [521] ∧ ([6] ⊻ [7] ⊻ [26])) ⊻ ([951] [522] ∧ ([6] ⊻ [7] ⊻ [15])) ⊻ ([950] [523] ∧ ([6] ⊻ [7] ⊻ [26])))
+
+        With all format constraints (950, 951) unfulfilled, this should produce an error message
+        with parentheses for compound expressions, not nested single quotes.
+        """
+        # The expression uses X as prefix operator, with nested XOR (⊻) of format constraints
+        # Simplified to focus on the format constraint part: X [950] X [951] X [950]
+        ahb_expression = "X [950] X [951] X [950]"
+
+        content_evaluation_result = ContentEvaluationResult(
+            hints={
+                "521": "Hinweis: Verwendung der ID der Marktlokation",
+                "522": "Hinweis: Verwendung der ID der Messlokation",
+                "523": "Hinweis: Verwendung der ID der Tranche",
+            },
+            format_constraints={
+                "950": EvaluatedFormatConstraint(
+                    format_constraint_fulfilled=False, error_message="Formatbedingung nicht erfüllt"
+                ),
+                "951": EvaluatedFormatConstraint(
+                    format_constraint_fulfilled=False, error_message="Formatbedingung nicht erfüllt"
+                ),
+            },
+            requirement_constraints={
+                "6": ConditionFulfilledValue.FULFILLED,
+                "7": ConditionFulfilledValue.FULFILLED,
+                "15": ConditionFulfilledValue.FULFILLED,
+                "26": ConditionFulfilledValue.UNFULFILLED,
+            },
+            id=uuid.UUID("12345678-1234-1234-1234-123456789abc"),
+            packages={},
+        )
+
+        tree = parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_expression)
+        try:
+            create_and_inject_hardcoded_evaluators(
+                content_evaluation_result,
+                evaluatable_data_provider=return_empty_dummy_evaluatable_data,
+                edifact_format=default_test_format,
+                edifact_format_version=default_test_version,
+            )
+            evaluation_result = await evaluate_ahb_expression_tree(tree)
+
+            assert evaluation_result is not None
+            assert evaluation_result.format_constraint_evaluation_result is not None
+            # With the fix, the error message should use parentheses for compound expressions
+            # instead of nested quotes like "Entweder 'Entweder '...' oder '...'' oder '...'"
+            error_message = evaluation_result.format_constraint_evaluation_result.error_message
+            assert error_message is not None
+            # The message should contain parentheses for the nested compound expression
+            assert "(" in error_message
+            assert ")" in error_message
+            # Verify it's properly formatted with parentheses around the compound expression
+            assert error_message == (
+                "Entweder (Entweder 'Formatbedingung nicht erfüllt' oder 'Formatbedingung nicht erfüllt') "
+                "oder 'Formatbedingung nicht erfüllt'"
+            )
+        finally:
+            inject.clear()
