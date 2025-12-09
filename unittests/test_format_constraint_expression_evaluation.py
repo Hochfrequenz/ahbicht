@@ -61,6 +61,13 @@ class TestFormatConstraintExpressionEvaluation:
         "902": EvaluatedFormatConstraint(format_constraint_fulfilled=False, error_message="902 muss erfüllt sein"),
         "903": EvaluatedFormatConstraint(format_constraint_fulfilled=True),
         "904": EvaluatedFormatConstraint(format_constraint_fulfilled=False, error_message="904 muss erfüllt sein"),
+        # For testing nested XOR with realistic error messages (like [950] and [951] in real usage)
+        "950": EvaluatedFormatConstraint(
+            format_constraint_fulfilled=False, error_message="Formatbedingung nicht erfüllt"
+        ),
+        "951": EvaluatedFormatConstraint(
+            format_constraint_fulfilled=False, error_message="Formatbedingung nicht erfüllt"
+        ),
     }
 
     @pytest_asyncio.fixture()
@@ -92,6 +99,22 @@ class TestFormatConstraintExpressionEvaluation:
             pytest.param("[901]X[902]", True, None),
             pytest.param("[902]X[901]", True, None),
             pytest.param("[902]X[904]", False, "Entweder '902 muss erfüllt sein' oder '904 muss erfüllt sein'"),
+            # Nested XOR: should use parentheses for compound expressions, not nested quotes
+            pytest.param(
+                "[902]X[904]X[902]",
+                False,
+                "Entweder (Entweder '902 muss erfüllt sein' oder '904 muss erfüllt sein') oder '902 muss erfüllt sein'",
+            ),
+            # Realistic nested XOR with format constraints 950/951 (all unfulfilled)
+            # This is a simplified version of: ([950] ⊻ [951] ⊻ [950]) from real AHB expressions
+            # Before fix: "Entweder 'Entweder 'Formatbedingung nicht erfüllt' oder 'Formatbedingung...'' oder '...'"
+            # After fix: Uses parentheses for compound expressions
+            pytest.param(
+                "[950]X[951]X[950]",
+                False,
+                "Entweder (Entweder 'Formatbedingung nicht erfüllt' oder 'Formatbedingung nicht erfüllt') "
+                "oder 'Formatbedingung nicht erfüllt'",
+            ),
             # Tests 'and before or'
             pytest.param("[902]U[904]O[901]", True, None),
             pytest.param("[901]O[902]U[904]", True, None),
