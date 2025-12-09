@@ -7,6 +7,7 @@ from ahbicht.models.condition_nodes import (
     ConditionFulfilledValue,
     ConditionNode,
     EvaluatedComposition,
+    EvaluatedFormatConstraint,
     Hint,
     RequirementConstraint,
 )
@@ -145,3 +146,43 @@ class TestConditionNodes:
         with pytest.raises(ValidationError) as excinfo:
             EvaluatedComposition(**resulting_node_arguments)
         assert expected_error_message in str(excinfo.value)
+
+    @pytest.mark.parametrize(
+        "format_constraint_arguments, expected_error_message",
+        [
+            pytest.param(
+                {"format_constraint_fulfilled": True, "error_message": "some error"},
+                "error_message must be None when format_constraint_fulfilled is True",
+            ),
+            pytest.param(
+                {"format_constraint_fulfilled": True, "error_message": ""},
+                "error_message must be None when format_constraint_fulfilled is True",
+            ),
+            pytest.param(
+                {"format_constraint_fulfilled": False, "error_message": ""},
+                "error_message must not be an empty string",
+            ),
+        ],
+    )
+    def test_invalid_evaluated_format_constraint(self, format_constraint_arguments, expected_error_message):
+        """Tests that EvaluatedFormatConstraint validates error_message correctly."""
+        with pytest.raises(ValidationError) as excinfo:
+            EvaluatedFormatConstraint(**format_constraint_arguments)
+        assert expected_error_message in str(excinfo.value)
+
+    def test_valid_evaluated_format_constraint(self):
+        """Tests valid EvaluatedFormatConstraint instances."""
+        # fulfilled with no error message
+        fulfilled = EvaluatedFormatConstraint(format_constraint_fulfilled=True)
+        assert fulfilled.format_constraint_fulfilled is True
+        assert fulfilled.error_message is None
+
+        # not fulfilled with error message
+        not_fulfilled = EvaluatedFormatConstraint(format_constraint_fulfilled=False, error_message="something wrong")
+        assert not_fulfilled.format_constraint_fulfilled is False
+        assert not_fulfilled.error_message == "something wrong"
+
+        # not fulfilled with no error message (allowed)
+        not_fulfilled_no_msg = EvaluatedFormatConstraint(format_constraint_fulfilled=False)
+        assert not_fulfilled_no_msg.format_constraint_fulfilled is False
+        assert not_fulfilled_no_msg.error_message is None

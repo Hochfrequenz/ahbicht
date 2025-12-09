@@ -12,7 +12,7 @@ from enum import Enum
 from typing import Optional, TypeVar
 
 # pylint: disable=too-few-public-methods
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, model_validator
 
 
 class ConditionFulfilledValue(str, Enum):
@@ -138,6 +138,18 @@ class EvaluatedFormatConstraint(BaseModel):
 
     format_constraint_fulfilled: bool
     error_message: Optional[str] = None
+
+    @model_validator(mode="after")
+    def _validate_error_message(self) -> "EvaluatedFormatConstraint":
+        """
+        Validate that error_message is None when format_constraint_fulfilled is True,
+        and that error_message is not an empty string.
+        """
+        if self.format_constraint_fulfilled and self.error_message is not None:
+            raise ValueError("error_message must be None when format_constraint_fulfilled is True")
+        if self.error_message is not None and self.error_message == "":
+            raise ValueError("error_message must not be an empty string")
+        return self
 
 
 # @attrs.define(auto_attribs=True, kw_only=True)
