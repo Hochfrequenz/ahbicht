@@ -12,6 +12,7 @@ import inject
 from lark import Token, Transformer, Tree
 from lark.exceptions import VisitError
 
+from ahbicht.condition_node_distinction import PACKAGE_1P_HINT_KEY
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
 from ahbicht.content_evaluation.token_logic_provider import TokenLogicProvider
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
@@ -131,7 +132,7 @@ class PackageExpansionTransformer(Transformer):
         self.token_logic_provider = cast(TokenLogicProvider, inject.instance(TokenLogicProvider))
         self.include_package_repeatabilities = include_package_repeatabilities
 
-    def package(self, tokens: list[Token]) -> Awaitable[Tree]:
+    def package(self, tokens: list[Token]) -> Union[Tree[Token], Awaitable[Tree]]:
         """
         try to resolve the package using the injected PackageResolver
         """
@@ -148,6 +149,12 @@ class PackageExpansionTransformer(Transformer):
             repeatability = parse_repeatability(single_repeat_token.value)
         else:
             repeatability = None
+
+        # Special case: Package '1P' is always resolved to a hint node.
+        # See the docstring of PACKAGE_1P_HINT_KEY for details.
+        if package_key_token.value == "1P":
+            return Tree("condition", [Token("CONDITION_KEY", PACKAGE_1P_HINT_KEY)])
+
         return self._package_async(package_key_token, single_repeat_token)  # pylint:disable=no-value-for-parameter
 
     @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type

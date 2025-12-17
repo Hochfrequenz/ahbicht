@@ -11,6 +11,7 @@ from _pytest.fixtures import SubRequest
 from efoli import EdifactFormat, EdifactFormatVersion
 from lark import Token, Tree
 
+from ahbicht.condition_node_distinction import PACKAGE_1P_HINT_KEY
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
 from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
@@ -169,4 +170,56 @@ class TestPackageResolver:
         actual_tree = await parse_expression_including_unresolved_subexpressions(
             expression, resolve_packages=True, include_package_repeatabilities=True
         )
+        assert actual_tree == expected_tree
+
+    @pytest.mark.parametrize(
+        "inject_package_resolver",
+        [{}],  # Empty dict - 1P should work without any resolver configuration
+        indirect=True,
+    )
+    @pytest.mark.parametrize(
+        "unexpanded_expression, expected_tree",
+        [
+            pytest.param(
+                "[1P]",
+                Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", PACKAGE_1P_HINT_KEY)]),
+                id="1P alone resolves to hint key",
+            ),
+            pytest.param(
+                "[1P] U [3]",
+                Tree(  # type:ignore[misc]
+                    "and_composition",
+                    [
+                        Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", PACKAGE_1P_HINT_KEY)]),
+                        Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", "3")]),
+                    ],
+                ),
+                id="1P in and_composition",
+            ),
+            pytest.param(
+                "[3] O [1P]",
+                Tree(  # type:ignore[misc]
+                    "or_composition",
+                    [
+                        Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", "3")]),
+                        Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", PACKAGE_1P_HINT_KEY)]),
+                    ],
+                ),
+                id="1P in or_composition",
+            ),
+        ],
+    )
+    async def test_package_1p_resolves_to_hint(
+        self, inject_package_resolver, unexpanded_expression: str, expected_tree: Tree[Token]
+    ):
+        """
+        Test that package '1P' is always resolved to a hint node with key PACKAGE_1P_HINT_KEY (9999),
+        regardless of any PackageResolver configuration.
+
+        See the docstring of PACKAGE_1P_HINT_KEY in condition_node_distinction.py for details.
+        See also: https://github.com/Hochfrequenz/AHahnB/issues/715
+        """
+        unexpanded_tree = parse_condition_expression_to_tree(unexpanded_expression)
+        actual_tree = await expand_packages(parsed_tree=unexpanded_tree)
+        assert actual_tree is not None
         assert actual_tree == expected_tree

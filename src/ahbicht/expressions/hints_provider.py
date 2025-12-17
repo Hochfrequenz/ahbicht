@@ -14,11 +14,27 @@ from typing import Mapping, Optional
 import inject
 from efoli import EdifactFormat, EdifactFormatVersion
 
+from ahbicht.condition_node_distinction import PACKAGE_1P_HINT_KEY
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
 
 # pylint: disable = too-few-public-methods
 from ahbicht.models.condition_nodes import Hint
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult
+
+PACKAGE_1P_HINT_TEXT: str = (
+    "Hinweis: Das ist das Standardpaket, wenn keine Bedingung zum Tragen kommt, z.B. im COM-Segment."
+)
+"""
+The hardcoded hint text for package '1P'.
+
+Package '1P' is resolved to a synthetic hint with condition key PACKAGE_1P_HINT_KEY (9999).
+This hint text is returned for that key, regardless of any configuration.
+
+See PACKAGE_1P_HINT_KEY in condition_node_distinction.py for the full explanation of why
+we use a synthetic hint key for package '1P'.
+
+See also: https://github.com/Hochfrequenz/AHahnB/issues/715
+"""
 
 
 class HintsProvider(ABC):
@@ -87,6 +103,10 @@ class DictBasedHintsProvider(HintsProvider):
     async def get_hint_text(self, condition_key: str) -> Optional[str]:
         if not condition_key:
             raise ValueError(f"The condition key must not be None/empty but was '{condition_key}'")
+        # Special case: Package '1P' hint key is always resolved to the hardcoded hint text.
+        # See PACKAGE_1P_HINT_KEY docstring for details.
+        if condition_key == PACKAGE_1P_HINT_KEY:
+            return PACKAGE_1P_HINT_TEXT
         if condition_key in self._all_hints:
             return self._all_hints[condition_key]
         return None
@@ -121,6 +141,10 @@ class ContentEvaluationResultBasedHintsProvider(HintsProvider):
     """
 
     async def get_hint_text(self, condition_key: str) -> Optional[str]:
+        # Special case: Package '1P' hint key is always resolved to the hardcoded hint text.
+        # See PACKAGE_1P_HINT_KEY docstring for details.
+        if condition_key == PACKAGE_1P_HINT_KEY:
+            return PACKAGE_1P_HINT_TEXT
         # the missing second argument to the private method call in the next line should be injected automatically
         return await self._get_hint_text(condition_key)  # pylint:disable=no-value-for-parameter
 

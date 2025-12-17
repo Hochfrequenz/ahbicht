@@ -9,7 +9,13 @@ from logging import LogRecord
 import pytest
 from efoli import EdifactFormat, EdifactFormatVersion
 
-from ahbicht.expressions.hints_provider import HintsProvider, JsonFileHintsProvider
+from ahbicht.condition_node_distinction import PACKAGE_1P_HINT_KEY
+from ahbicht.expressions.hints_provider import (
+    PACKAGE_1P_HINT_TEXT,
+    DictBasedHintsProvider,
+    HintsProvider,
+    JsonFileHintsProvider,
+)
 
 
 class Dummy1sHintsProvider(HintsProvider):
@@ -75,3 +81,29 @@ class TestHintsProvider:
         hints_provider = DummyAsyncHintsProvider()
         dummy_keys = ["1", "2", "3"]
         await hints_provider.get_hints(dummy_keys)
+
+    async def test_package_1p_hint_key_returns_hardcoded_text(self):
+        """
+        Test that the special hint key for package '1P' (PACKAGE_1P_HINT_KEY = 9999) always returns
+        the hardcoded hint text, regardless of the provider's configured hints.
+
+        See the docstring of PACKAGE_1P_HINT_KEY in condition_node_distinction.py for details.
+        See also: https://github.com/Hochfrequenz/AHahnB/issues/715
+        """
+        # Even an empty hints provider should return the hardcoded text for 9999
+        hints_provider = DictBasedHintsProvider({})
+        hint_text = await hints_provider.get_hint_text(PACKAGE_1P_HINT_KEY)
+        assert hint_text == PACKAGE_1P_HINT_TEXT
+
+    async def test_package_1p_hint_key_in_get_hints(self):
+        """
+        Test that get_hints correctly handles the special hint key for package '1P' (PACKAGE_1P_HINT_KEY = 9999).
+
+        See the docstring of PACKAGE_1P_HINT_KEY in condition_node_distinction.py for details.
+        See also: https://github.com/Hochfrequenz/AHahnB/issues/715
+        """
+        hints_provider = DictBasedHintsProvider({})
+        hints = await hints_provider.get_hints([PACKAGE_1P_HINT_KEY])
+        assert PACKAGE_1P_HINT_KEY in hints
+        assert hints[PACKAGE_1P_HINT_KEY].hint == PACKAGE_1P_HINT_TEXT
+        assert hints[PACKAGE_1P_HINT_KEY].condition_key == PACKAGE_1P_HINT_KEY
