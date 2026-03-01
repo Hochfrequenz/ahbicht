@@ -128,7 +128,7 @@ async def _build_evaluated_format_constraint_nodes(
 ) -> dict[str, EvaluatedFormatConstraint]:
     """Build evaluated format constraint nodes."""
 
-    token_logic_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)  # type:ignore[assignment]
+    token_logic_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)  # type: ignore[assignment]
     evaluator: FcEvaluator = token_logic_provider.get_fc_evaluator(
         evaluatable_data.edifact_format, evaluatable_data.edifact_format_version
     )

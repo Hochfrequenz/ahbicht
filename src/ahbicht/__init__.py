@@ -15,7 +15,7 @@ if sys.version_info.major == 3 and sys.version_info.minor >= 11:
     # Using the old (str, Enum) in Python 3.11 causes errors e.g. in the ExpressionBuilders.
 else:
 
-    class StrEnum(str, Enum):  # type:ignore[no-redef]
+    class StrEnum(str, Enum):  # type: ignore[no-redef]
         """
         An enum class of which each member has a string representation.
         This is a workaround for Python <v3.11 because enum.StrEnum was introduced in Python 3.11.

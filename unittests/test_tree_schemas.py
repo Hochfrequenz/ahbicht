@@ -1,4 +1,4 @@
-# type:ignore
+# type: ignore
 # MyPy will (reproducible) run in an infinite loop if you remove the type ignore in the test! We literally killed it 💀
 """
 Tests that the parsed trees are JSON serializable
@@ -23,11 +23,11 @@ class TestTreeSchemas:
         "tree, expected_json_dict",
         [
             pytest.param(
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "or_composition",
                     [
                         Tree("condition_key", [Token("INT", "53")]),
-                        Tree(  # type:ignore[misc]
+                        Tree(  # type: ignore[misc]
                             "and_composition",
                             [Tree("condition_key", [Token("INT", "1")]), Tree("condition_key", [Token("INT", "2")])],
                         ),

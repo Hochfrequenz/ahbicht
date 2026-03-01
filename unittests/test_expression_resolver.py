@@ -10,14 +10,14 @@ class TestExpressionResolver:
         [
             pytest.param(
                 "Muss[3]U[4] Soll[5]",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(  # type:ignore[misc]
+                        Tree(  # type: ignore[misc]
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "Muss"),
-                                Tree(  # type:ignore[misc]
+                                Tree(  # type: ignore[misc]
                                     "and_composition",
                                     [
                                         Tree("condition", [Token("CONDITION_KEY", "3")]),
@@ -26,7 +26,7 @@ class TestExpressionResolver:
                                 ),
                             ],
                         ),
-                        Tree(  # type:ignore[misc]
+                        Tree(  # type: ignore[misc]
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "Soll"),
@@ -38,14 +38,14 @@ class TestExpressionResolver:
             ),
             pytest.param(
                 "X[504]O[6]",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(  # type:ignore[misc]
+                        Tree(  # type: ignore[misc]
                             "single_requirement_indicator_expression",
                             [
                                 Token("PREFIX_OPERATOR", "X"),
-                                Tree(  # type:ignore[misc]
+                                Tree(  # type: ignore[misc]
                                     "or_composition",
                                     [
                                         Tree("condition", [Token("CONDITION_KEY", "504")]),
@@ -59,11 +59,11 @@ class TestExpressionResolver:
             ),
             pytest.param(
                 "[905]([504]U[6])",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "then_also_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "905")]),
-                        Tree(  # type:ignore[misc]
+                        Tree(  # type: ignore[misc]
                             "and_composition",
                             [
                                 Tree("condition", [Token("CONDITION_KEY", "504")]),
@@ -75,7 +75,7 @@ class TestExpressionResolver:
             ),
             pytest.param(
                 "Muss[3]U[4P0..1]",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     Token("RULE", "ahb_expression"),
                     [
                         Tree(
@@ -119,9 +119,7 @@ class TestExpressionResolver:
 
         assert """Please make sure that the ahb_expression starts with a requirement indicator \
 (i.e Muss/M, Soll/S, Kann/K, X, O, U) and the condition expressions consist of only \
-the following characters: [ ] ( ) U ∧ O ∨ X ⊻ and digits.""" in str(
-            excinfo.value
-        )
+the following characters: [ ] ( ) U ∧ O ∨ X ⊻ and digits.""" in str(excinfo.value)
 
         assert """Please make sure that:
              * all conditions have the form [INT]
@@ -129,7 +127,5 @@ the following characters: [ ] ( ) U ∧ O ∨ X ⊻ and digits.""" in str(
              * no conditions are empty
              * all compositions are combined by operators 'U'/'O'/'X' or without an operator
              * all open brackets are closed again and vice versa
-             """ in str(
-            excinfo.value
-        )
+             """ in str(excinfo.value)
         # todo: implement wiederholbarkeiten

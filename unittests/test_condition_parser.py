@@ -40,7 +40,7 @@ class TestConditionParser:
             pytest.param(
                 # simple or_composition
                 "[1]O[2]",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "or_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -51,7 +51,7 @@ class TestConditionParser:
             pytest.param(
                 # simple or_composition with lower case "o"
                 "[1]o[2]",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "or_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -62,7 +62,7 @@ class TestConditionParser:
             pytest.param(
                 # simple and_composition with lower case "u"
                 "[1]u[2]",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "and_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -73,7 +73,7 @@ class TestConditionParser:
             pytest.param(
                 # simple or_composition with whitespace
                 " [1] O[ 2]",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "or_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -84,7 +84,7 @@ class TestConditionParser:
             pytest.param(
                 # simple or_composition with whitespace and tab
                 " [1]\tO[ 2]",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "or_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -95,10 +95,10 @@ class TestConditionParser:
             pytest.param(
                 # and/or combination, and before or
                 "[1]U[2]    O[53]",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "or_composition",
                     [
-                        Tree(  # type:ignore[misc]
+                        Tree(  # type: ignore[misc]
                             "and_composition",
                             [
                                 Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -112,11 +112,11 @@ class TestConditionParser:
             pytest.param(
                 # and/or combination, and before or, different order
                 "[53]O[1]U[2]",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "or_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "53")]),
-                        Tree(  # type:ignore[misc]
+                        Tree(  # type: ignore[misc]
                             "and_composition",
                             [
                                 Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -129,7 +129,7 @@ class TestConditionParser:
             pytest.param(
                 # xor_composition
                 "[1]X[2]",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "xor_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -140,7 +140,7 @@ class TestConditionParser:
             pytest.param(
                 # xor_composition with lower case "x"
                 "[1]x[2]",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "xor_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -151,7 +151,7 @@ class TestConditionParser:
             pytest.param(
                 # xor_composition
                 "[1]⊻[2]",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "xor_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -162,7 +162,7 @@ class TestConditionParser:
             pytest.param(
                 # time condition
                 "[UB1]u[2]",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "and_composition",
                     [
                         Tree("time_condition", [Token("TIME_CONDITION_KEY", "UB1")]),
@@ -188,7 +188,7 @@ class TestConditionParser:
             pytest.param(
                 #  no brackets
                 " [1][987]",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "then_also_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -199,7 +199,7 @@ class TestConditionParser:
             pytest.param(
                 #  two format constraints with an operator
                 "[901]U[987]",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "and_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "901")]),
@@ -210,10 +210,10 @@ class TestConditionParser:
             pytest.param(
                 # format constraint is attached as suffix _without_ an operator
                 "([1]U[2])[987]",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "then_also_composition",
                     [
-                        Tree(  # type:ignore[misc]
+                        Tree(  # type: ignore[misc]
                             "and_composition",
                             [
                                 Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -227,11 +227,11 @@ class TestConditionParser:
             pytest.param(
                 # format constraint is attached as prefix _without_ an operator
                 "[987]([1]U[2])",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "then_also_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "987")]),
-                        Tree(  # type:ignore[misc]
+                        Tree(  # type: ignore[misc]
                             "and_composition",
                             [
                                 Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -244,11 +244,11 @@ class TestConditionParser:
             pytest.param(
                 # MSCONS AHB, Kapitel 7
                 "([902] U [906] [46])",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "and_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "902")]),
-                        Tree(  # type:ignore[misc]
+                        Tree(  # type: ignore[misc]
                             "then_also_composition",
                             [
                                 Tree("condition", [Token("CONDITION_KEY", "906")]),
@@ -261,14 +261,14 @@ class TestConditionParser:
             pytest.param(
                 # two format constraints
                 "([950]([2]U[4]))O([951]([1]U[3]))",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "or_composition",
                     [
-                        Tree(  # type:ignore[misc]
+                        Tree(  # type: ignore[misc]
                             "then_also_composition",
                             [
                                 Tree("condition", [Token("CONDITION_KEY", "950")]),
-                                Tree(  # type:ignore[misc]
+                                Tree(  # type: ignore[misc]
                                     "and_composition",
                                     [
                                         Tree("condition", [Token("CONDITION_KEY", "2")]),
@@ -277,11 +277,11 @@ class TestConditionParser:
                                 ),
                             ],
                         ),
-                        Tree(  # type:ignore[misc]
+                        Tree(  # type: ignore[misc]
                             "then_also_composition",
                             [
                                 Tree("condition", [Token("CONDITION_KEY", "951")]),
-                                Tree(  # type:ignore[misc]
+                                Tree(  # type: ignore[misc]
                                     "and_composition",
                                     [
                                         Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -317,7 +317,7 @@ class TestConditionParser:
             pytest.param(
                 # simple or_composition
                 "([1]O[2])",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "or_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -328,10 +328,10 @@ class TestConditionParser:
             pytest.param(
                 # and/or combination, and in brackets
                 "([1]U[2])O[53]",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "or_composition",
                     [
-                        Tree(  # type:ignore[misc]
+                        Tree(  # type: ignore[misc]
                             "and_composition",
                             [
                                 Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -345,10 +345,10 @@ class TestConditionParser:
             pytest.param(
                 # and/or combination, or in brackets
                 "([1]O[2])U[53]",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "and_composition",
                     [
-                        Tree(  # type:ignore[misc]
+                        Tree(  # type: ignore[misc]
                             "or_composition",
                             [
                                 Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -362,11 +362,11 @@ class TestConditionParser:
             pytest.param(
                 # and/or combination, or in brackets, different order
                 "[53]U([1]O[2])",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "and_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "53")]),
-                        Tree(  # type:ignore[misc]
+                        Tree(  # type: ignore[misc]
                             "or_composition",
                             [
                                 Tree("condition", [Token("CONDITION_KEY", "1")]),
@@ -379,20 +379,20 @@ class TestConditionParser:
             pytest.param(
                 # complex expression with two brackets
                 "([1]O[2])U([53]U[4]O[12])",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "and_composition",
                     [
-                        Tree(  # type:ignore[misc]
+                        Tree(  # type: ignore[misc]
                             "or_composition",
                             [
                                 Tree("condition", [Token("CONDITION_KEY", "1")]),
                                 Tree("condition", [Token("CONDITION_KEY", "2")]),
                             ],
                         ),
-                        Tree(  # type:ignore[misc]
+                        Tree(  # type: ignore[misc]
                             "or_composition",
                             [
-                                Tree(  # type:ignore[misc]
+                                Tree(  # type: ignore[misc]
                                     "and_composition",
                                     [
                                         Tree("condition", [Token("CONDITION_KEY", "53")]),
@@ -408,20 +408,20 @@ class TestConditionParser:
             pytest.param(
                 # complex expression with two brackets
                 "([1]∨[2])∧([53]∧[4]∨[12])",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "and_composition",
                     [
-                        Tree(  # type:ignore[misc]
+                        Tree(  # type: ignore[misc]
                             "or_composition",
                             [
                                 Tree("condition", [Token("CONDITION_KEY", "1")]),
                                 Tree("condition", [Token("CONDITION_KEY", "2")]),
                             ],
                         ),
-                        Tree(  # type:ignore[misc]
+                        Tree(  # type: ignore[misc]
                             "or_composition",
                             [
-                                Tree(  # type:ignore[misc]
+                                Tree(  # type: ignore[misc]
                                     "and_composition",
                                     [
                                         Tree("condition", [Token("CONDITION_KEY", "53")]),
@@ -437,15 +437,15 @@ class TestConditionParser:
             pytest.param(
                 # nested brackets
                 "[100]U([2]U([53]O[4]))",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "and_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "100")]),
-                        Tree(  # type:ignore[misc]
+                        Tree(  # type: ignore[misc]
                             "and_composition",
                             [
                                 Tree("condition", [Token("CONDITION_KEY", "2")]),
-                                Tree(  # type:ignore[misc]
+                                Tree(  # type: ignore[misc]
                                     "or_composition",
                                     [
                                         Tree("condition", [Token("CONDITION_KEY", "53")]),
@@ -460,11 +460,11 @@ class TestConditionParser:
             pytest.param(
                 # nested brackets
                 "[10P]U([1]O[2])",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "and_composition",
                     [
                         Tree(Token("RULE", "package"), [Token("PACKAGE_KEY", "10P")]),
-                        Tree(  # type:ignore[misc]
+                        Tree(  # type: ignore[misc]
                             "or_composition",
                             [
                                 Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", "1")]),
@@ -477,11 +477,11 @@ class TestConditionParser:
             pytest.param(
                 # nested brackets
                 "[10P1..5]U([1]O[2])",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "and_composition",
                     [
                         Tree(Token("RULE", "package"), [Token("PACKAGE_KEY", "10P"), Token("REPEATABILITY", "1..5")]),
-                        Tree(  # type:ignore[misc]
+                        Tree(  # type: ignore[misc]
                             "or_composition",
                             [
                                 Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", "1")]),
@@ -531,9 +531,7 @@ class TestConditionParser:
              * no conditions are empty
              * all compositions are combined by operators 'U'/'O'/'X' or without an operator
              * all open brackets are closed again and vice versa
-             """ in str(
-            excinfo.value
-        )
+             """ in str(excinfo.value)
 
     @pytest.mark.parametrize(
         "old_expression, new_expression",

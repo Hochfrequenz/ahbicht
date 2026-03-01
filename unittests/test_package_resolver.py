@@ -35,7 +35,7 @@ class TestPackageResolver:
         result_dict: Mapping[str, Optional[str]] = request.param
         resolver = DefaultPackageResolver(result_dict)
         inject.clear_and_configure(
-            lambda binder: binder.bind(  # type:ignore[arg-type]
+            lambda binder: binder.bind(  # type: ignore[arg-type]
                 TokenLogicProvider, SingletonTokenLogicProvider([resolver])
             ).bind_to_provider(EvaluatableDataProvider, return_empty_dummy_evaluatable_data)
         )
@@ -131,7 +131,7 @@ class TestPackageResolver:
         [
             pytest.param(
                 "Muss[3]U[4P0..1]",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     Token("RULE", "ahb_expression"),
                     [
                         Tree(
@@ -187,7 +187,7 @@ class TestPackageResolver:
             ),
             pytest.param(
                 "[1P] U [3]",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "and_composition",
                     [
                         Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", PACKAGE_1P_HINT_KEY)]),
@@ -198,7 +198,7 @@ class TestPackageResolver:
             ),
             pytest.param(
                 "[3] O [1P]",
-                Tree(  # type:ignore[misc]
+                Tree(  # type: ignore[misc]
                     "or_composition",
                     [
                         Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", "3")]),

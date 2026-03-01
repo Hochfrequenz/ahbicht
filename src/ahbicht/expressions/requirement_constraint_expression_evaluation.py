@@ -132,8 +132,8 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
 
         evaluated_composition.format_constraints_expression = (
             # todo: ask annika why the case of "invalid arguments" never happens here...
-            FormatConstraintExpressionBuilder(left)  # type:ignore[arg-type]
-            .lor(right)  # type:ignore[arg-type]
+            FormatConstraintExpressionBuilder(left)  # type: ignore[arg-type]
+            .lor(right)  # type: ignore[arg-type]
             .get_expression()
         )
         evaluated_composition.hint = (
@@ -149,8 +149,8 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
 
         evaluated_composition.format_constraints_expression = (
             # todo: ask annika why the case of "invalid arguments" never happens here...
-            FormatConstraintExpressionBuilder(left)  # type:ignore[arg-type]
-            .xor(right)  # type:ignore[arg-type]
+            FormatConstraintExpressionBuilder(left)  # type: ignore[arg-type]
+            .xor(right)  # type: ignore[arg-type]
             .get_expression()
         )
         evaluated_composition.hint = (
@@ -208,7 +208,7 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
         if isinstance(left, UnevaluatedFormatConstraint):
             return self._then_also(format_constraint=left, other_condition=right)
         return self._then_also(
-            format_constraint=right,  # type:ignore[arg-type]
+            format_constraint=right,  # type: ignore[arg-type]
             # #because typically format constraints are "attached" to the right side of an expression
             other_condition=left,
         )  # this might raise the NotImplementedError
@@ -230,10 +230,8 @@ def evaluate_requirement_constraint_tree(
         isinstance(input_value, (RequirementConstraint, Hint, FormatConstraint))
         for input_value in input_values.values()
     ):
-        raise ValueError(
-            """Please make sure that the passed values are ConditionNodes \
-of the type RequirementConstraint, Hint or FormatConstraint."""
-        )
+        raise ValueError("""Please make sure that the passed values are ConditionNodes \
+of the type RequirementConstraint, Hint or FormatConstraint.""")
     try:
         result = RequirementConstraintTransformer(input_values).transform(parsed_tree)
     except VisitError as visit_err:
