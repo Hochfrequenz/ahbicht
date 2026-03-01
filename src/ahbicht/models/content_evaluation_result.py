@@ -24,7 +24,7 @@ class ContentEvaluationResult(BaseModel):
     #: maps the key of a requirement_constraint to the respective evaluation result
     requirement_constraints: dict[str, ConditionFulfilledValue]
 
-    packages: Optional[dict[constr(pattern=r"^\d+P$"), str]] = Field(default=None)  # type:ignore[valid-type]
+    packages: Optional[dict[constr(pattern=r"^\d+P$"), str]] = Field(default=None)  # type: ignore[valid-type]
     """
     maps the key of a package (e.g. '123') to the respective expression (e.g. '[1] U ([2] O [3])'
     """

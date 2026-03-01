@@ -68,8 +68,7 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree[Token]
         parsing_logger.warning(
             "The condition expression is syntactically incorrect: '%s'", condition_expression, exc_info=eof
         )
-        raise SyntaxError(
-            f"""
+        raise SyntaxError(f"""
             condition expression: {condition_expression}
             Please make sure that:
              * all conditions have the form [INT]
@@ -77,8 +76,7 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree[Token]
              * no conditions are empty
              * all compositions are combined by operators 'U'/'O'/'X' or without an operator
              * all open brackets are closed again and vice versa
-             """
-        ) from eof
+             """) from eof
     return parsed_tree
 
 
@@ -103,20 +101,16 @@ def extract_categorized_keys_from_tree(
     elif isinstance(tree_or_list, Tree):
         condition_keys = [
             x.value
-            for x in tree_or_list.scan_values(
-                lambda token: token.type == "CONDITION_KEY"  # type:ignore[union-attr]
-            )
+            for x in tree_or_list.scan_values(lambda token: token.type == "CONDITION_KEY")  # type: ignore[union-attr]
         ]
         result.package_keys = [
             x.value
-            for x in tree_or_list.scan_values(
-                lambda token: token.type == "PACKAGE_KEY"  # type:ignore[union-attr]
-            )
+            for x in tree_or_list.scan_values(lambda token: token.type == "PACKAGE_KEY")  # type: ignore[union-attr]
         ]
         result.time_condition_keys = [
             x.value
             for x in tree_or_list.scan_values(
-                lambda token: token.type == "TIME_CONDITION_KEY"  # type:ignore[union-attr]
+                lambda token: token.type == "TIME_CONDITION_KEY"  # type: ignore[union-attr]
             )
         ]
     else:

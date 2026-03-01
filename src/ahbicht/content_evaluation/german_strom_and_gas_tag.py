@@ -139,8 +139,8 @@ def has_no_utc_offset(entered_input: str) -> EvaluatedFormatConstraint:
     date_time, error_result = parse_as_datetime(entered_input)
     if error_result is not None:
         return error_result
-    original_time = date_time.time()  # type:ignore[union-attr]
-    utc_time = date_time.astimezone(tz=utc).time()  # type:ignore[union-attr]
+    original_time = date_time.time()  # type: ignore[union-attr]
+    utc_time = date_time.astimezone(tz=utc).time()  # type: ignore[union-attr]
     if utc_time == original_time and utc_time.hour == 0 and utc_time.minute == 0 and utc_time.second == 0:
         return EvaluatedFormatConstraint(format_constraint_fulfilled=True, error_message=None)
     error_message = f"The provided date time '{entered_input}' has a UTC offset of {utc_time}."
@@ -181,9 +181,9 @@ def is_xtag_limit(entered_input: str, division: Union[Literal["Strom"], Literal[
         xtag_evaluator = is_gastag_limit
     else:
         raise NotImplementedError(f"The division must either be 'Strom' or 'Gas': '{division}'")
-    if xtag_evaluator(date_time):  # type:ignore[arg-type]
+    if xtag_evaluator(date_time):  # type: ignore[arg-type]
         return EvaluatedFormatConstraint(format_constraint_fulfilled=True, error_message=None)
     error_message = (
-        f"The given datetime '{date_time.isoformat()}' is not the limit of a {division}tag"  # type:ignore[union-attr]
+        f"The given datetime '{date_time.isoformat()}' is not the limit of a {division}tag"  # type: ignore[union-attr]
     )
     return EvaluatedFormatConstraint(format_constraint_fulfilled=False, error_message=error_message)

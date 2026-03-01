@@ -25,10 +25,10 @@ class PackageResolver(ABC):
     """
 
     # define some common attributes. They will be needed to find the correct resolver for each use case.
-    edifact_format: EdifactFormat = NotImplementedError(  # type:ignore[assignment]
+    edifact_format: EdifactFormat = NotImplementedError(  # type: ignore[assignment]
         "The inheriting package resolver needs to define a format to which it is applicable."
     )  #: the format for which the resolver may be used
-    edifact_format_version: EdifactFormatVersion = NotImplementedError(  # type:ignore[assignment]
+    edifact_format_version: EdifactFormatVersion = NotImplementedError(  # type: ignore[assignment]
         "The inheriting package resolver needs to define a format version."
     )  #: the format version for which the resolver may be used
 

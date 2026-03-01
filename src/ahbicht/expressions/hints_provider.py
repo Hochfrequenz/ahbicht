@@ -44,11 +44,11 @@ class HintsProvider(ABC):
     as dictionary with the condition keys as keys and the hint texts as values.
     """
 
-    edifact_format: EdifactFormat = NotImplementedError(  # type:ignore[assignment]
+    edifact_format: EdifactFormat = NotImplementedError(  # type: ignore[assignment]
         "The inheriting class needs to define a format to which it is applicable."
     )
 
-    edifact_format_version: EdifactFormatVersion = NotImplementedError(  # type:ignore[assignment]
+    edifact_format_version: EdifactFormatVersion = NotImplementedError(  # type: ignore[assignment]
         "The inheriting class needs to define a format version."
     )
 
@@ -75,7 +75,7 @@ class HintsProvider(ABC):
             tasks = [self.get_hint_text(ck) for ck in condition_keys]
             results = await asyncio.gather(*tasks)
         else:
-            results = [self.get_hint_text(ck) for ck in condition_keys]  # type:ignore[misc]
+            results = [self.get_hint_text(ck) for ck in condition_keys]  # type: ignore[misc]
         result: dict[str, Hint] = {}
         for key, value in zip(condition_keys, results):
             if value is None:

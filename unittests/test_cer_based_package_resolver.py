@@ -55,7 +55,7 @@ class TestCerBasedPackageResolver:
     async def test_evaluation(
         self, condition_key: str, expected_result: PackageKeyConditionExpressionMapping, inject_cer_evaluators
     ):
-        token_logic_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)  # type:ignore[assignment]
+        token_logic_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)  # type: ignore[assignment]
         package_resolver = token_logic_provider.get_package_resolver(default_test_format, default_test_version)
         actual = await package_resolver.get_condition_expression(condition_key)
         assert actual == expected_result
