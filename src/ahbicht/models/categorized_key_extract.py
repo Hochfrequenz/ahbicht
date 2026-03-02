@@ -33,7 +33,9 @@ class CategorizedKeyExtract(BaseModel):
     package_keys: list[constr(pattern=r"^\d+P$")] = Field(default_factory=list)  # type: ignore[valid-type]
 
     #: a list of time conditions, if present
-    time_condition_keys: list[constr(pattern=r"^UB(?:1|2|3)$")] = Field(default_factory=list)  # type: ignore[valid-type]
+    time_condition_keys: list[constr(pattern=r"^UB(?:1|2|3)$")] = Field(  # type: ignore[valid-type]
+        default_factory=list,
+    )
 
     def _remove_duplicates(self) -> None:
         """
