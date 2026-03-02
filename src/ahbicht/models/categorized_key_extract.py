@@ -30,10 +30,12 @@ class CategorizedKeyExtract(BaseModel):
     # for the valid-type ignore: https://stackoverflow.com/questions/67009123/how-can-mypy-accept-pydantics-constr-types
 
     #: list of packages that need to be resolved (additionally)
-    package_keys: list[constr(pattern=r"^\d+P$")] = Field(default_factory=list)  # type:ignore[valid-type]
+    package_keys: list[constr(pattern=r"^\d+P$")] = Field(default_factory=list)  # type: ignore[valid-type]
 
     #: a list of time conditions, if present
-    time_condition_keys: list[constr(pattern=r"^UB(?:1|2|3)$")] = Field(default_factory=list)  # type:ignore[valid-type]
+    time_condition_keys: list[constr(pattern=r"^UB(?:1|2|3)$")] = Field(  # type: ignore[valid-type]
+        default_factory=list,
+    )
 
     def _remove_duplicates(self) -> None:
         """
@@ -113,7 +115,7 @@ class CategorizedKeyExtract(BaseModel):
                 if len({y[0] for y in z}) == len(self.format_constraint_keys)
             )
         else:
-            possible_fcs = [(("fc_dummy", True),)]  # type:ignore[assignment]
+            possible_fcs = [(("fc_dummy", True),)]  # type: ignore[assignment]
 
         if len(self.requirement_constraint_keys) > 0:
             possible_rcs = (
@@ -125,7 +127,7 @@ class CategorizedKeyExtract(BaseModel):
                 if len({y[0] for y in z}) == len(self.requirement_constraint_keys)
             )
         else:
-            possible_rcs = [(("rc_dummy", ConditionFulfilledValue.NEUTRAL),)]  # type:ignore[assignment]
+            possible_rcs = [(("rc_dummy", ConditionFulfilledValue.NEUTRAL),)]  # type: ignore[assignment]
 
         for fc_rc_tuple in product(possible_fcs, possible_rcs):
             # This product would have length 0 if one of the "factors" had length 0.

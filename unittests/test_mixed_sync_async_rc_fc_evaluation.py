@@ -27,7 +27,7 @@ class MixedSyncAsyncRcEvaluator(RcEvaluator):
     edifact_format_version = default_test_version
 
     def _get_default_context(self):
-        return None  # type:ignore[return-value]
+        return None  # type: ignore[return-value]
 
     def evaluate_1(self, evaluatable_data, context):
         assert isinstance(evaluatable_data, EvaluatableData)
@@ -70,7 +70,7 @@ class TestMixedSyncAsyncEvaluation:
         fc_evaluator = MixedSyncAsyncFcEvaluator()
         rc_evaluator = MixedSyncAsyncRcEvaluator()
         inject.clear_and_configure(
-            lambda binder: binder.bind(  # type:ignore[arg-type]
+            lambda binder: binder.bind(  # type: ignore[arg-type]
                 TokenLogicProvider,
                 SingletonTokenLogicProvider([rc_evaluator, fc_evaluator, empty_default_hints_provider]),
             ).bind_to_provider(EvaluatableDataProvider, return_empty_dummy_evaluatable_data)

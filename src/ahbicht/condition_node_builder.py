@@ -30,7 +30,7 @@ class ConditionNodeBuilder:
     """
 
     def __init__(self, condition_keys: list[str]) -> None:
-        self.token_logic_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)  # type:ignore[assignment]
+        self.token_logic_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)  # type: ignore[assignment]
         self.condition_keys = condition_keys
         (
             self.requirement_constraints_condition_keys,

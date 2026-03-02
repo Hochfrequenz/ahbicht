@@ -37,7 +37,7 @@ async def gather_if_necessary(results_and_awaitable_results: list[Union[Result, 
             awaited_results_index += 1
         else:
             # we are sure obj is of type T
-            result.append(obj)  # type:ignore[arg-type]
+            result.append(obj)  # type: ignore[arg-type]
     return result
 
 
@@ -61,9 +61,9 @@ def tree_copy(lru_cached_parsing_func: Callable[[str], Tree]) -> Callable[[str],
     """
 
     def decorated(*args, **kwargs) -> Tree:
-        cache_size_before_parsing = lru_cached_parsing_func.cache_info().currsize  # type:ignore[attr-defined]
+        cache_size_before_parsing = lru_cached_parsing_func.cache_info().currsize  # type: ignore[attr-defined]
         tree_result: Tree = lru_cached_parsing_func(*args, **kwargs)
-        cache_size_after_parsing = lru_cached_parsing_func.cache_info().currsize  # type:ignore[attr-defined]
+        cache_size_after_parsing = lru_cached_parsing_func.cache_info().currsize  # type: ignore[attr-defined]
         if cache_size_after_parsing == cache_size_before_parsing:
             parsing_logger.log(_CACHE_LOG_LEVEL, "The parsed tree for '%s' has been loaded from the cache", args[0])
         return tree_result.copy()

@@ -82,7 +82,7 @@ class TestEvaluatorFactory:
         if expected_in_hints is not None:
             assert (
                 expected_in_hints
-                in expression_evaluation_result.requirement_constraint_evaluation_result.hints  # type:ignore[operator]
+                in expression_evaluation_result.requirement_constraint_evaluation_result.hints  # type: ignore[operator]
             )
         else:
             assert expression_evaluation_result.requirement_constraint_evaluation_result.hints is None
