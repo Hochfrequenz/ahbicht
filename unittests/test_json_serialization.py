@@ -36,7 +36,7 @@ def _test_serialization_roundtrip(serializable_object: T, expected_json_dict: di
     assert json_dict == expected_json_dict
     type_instance = type(serializable_object)
     assert hasattr(type_instance, "model_validate")
-    deserialized_object = type_instance.model_validate(json_dict)  # type:ignore[attr-defined]
+    deserialized_object = type_instance.model_validate(json_dict)  # type: ignore[attr-defined]
     assert isinstance(deserialized_object, type(serializable_object))
     assert deserialized_object == serializable_object
     return deserialized_object

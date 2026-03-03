@@ -109,7 +109,7 @@ class SingletonTokenLogicProvider(TokenLogicProvider):
                 raise ValueError(
                     f"The key '{key}' is already used by {conflict}. For this reason you cannot add '{instance}'"
                 )
-            target_dict[key] = instance  # type:ignore[assignment]
+            target_dict[key] = instance  # type: ignore[assignment]
 
     def get_fc_evaluator(
         self, edifact_format: Optional[EdifactFormat] = None, format_version: Optional[EdifactFormatVersion] = None

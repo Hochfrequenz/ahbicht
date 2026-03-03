@@ -33,7 +33,7 @@ class DummyFcEvaluator(FcEvaluator):
         [950] Format: Marktlokations-ID
         """
         # this is just a minimal working example; we skip all the stuff like check digits and so on for simplicity
-        is_malo: bool = entered_input and len(entered_input) == 11  # type:ignore[assignment]
+        is_malo: bool = entered_input and len(entered_input) == 11  # type: ignore[assignment]
         if is_malo:
             error_message = None
         else:
@@ -45,7 +45,7 @@ class DummyFcEvaluator(FcEvaluator):
         [951] Format: Zählpunktbezeichnung
         """
         # this is just a minimal working example; we skip regex matching and integrity checks for simplicity
-        is_zaehlpunkt: bool = entered_input and len(entered_input) == 33  # type:ignore[assignment]
+        is_zaehlpunkt: bool = entered_input and len(entered_input) == 33  # type: ignore[assignment]
         if is_zaehlpunkt:
             error_message = None
         else:
@@ -258,4 +258,4 @@ class TestFormatConstraintExpressionEvaluation:
         assert result is not None
         assert result.format_constraints_fulfilled == is_successful
         if is_successful is False and error_message is not None:
-            assert error_message in result.error_message  # type:ignore[operator]
+            assert error_message in result.error_message  # type: ignore[operator]
