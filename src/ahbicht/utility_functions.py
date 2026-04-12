@@ -6,7 +6,7 @@ import asyncio
 import inspect
 import re
 from re import Match
-from typing import Awaitable, Callable, Literal, Optional, TypeVar, Union
+from typing import Any, Awaitable, Callable, Literal, Optional, TypeVar, Union
 
 from lark import Tree
 
@@ -60,7 +60,7 @@ def tree_copy(lru_cached_parsing_func: Callable[[str], Tree]) -> Callable[[str],
     :return: the decorated function that always returns a copy of the cached result instead of the same instance
     """
 
-    def decorated(*args, **kwargs) -> Tree:
+    def decorated(*args: str, **kwargs: Any) -> Tree:
         cache_size_before_parsing = lru_cached_parsing_func.cache_info().currsize  # type: ignore[attr-defined]
         tree_result: Tree = lru_cached_parsing_func(*args, **kwargs)
         cache_size_after_parsing = lru_cached_parsing_func.cache_info().currsize  # type: ignore[attr-defined]

@@ -38,9 +38,9 @@ _TreeOrTokenDict: TypeAlias = Union[_TreeOrTokenDictWithToken, _TreeOrTokenDictW
 
 def _serialize_children(t: Union[Tree, Token]) -> Union[_TokenDict, _TreeDict]:
     if isinstance(t, Tree):
-        return TREE_ADAPTER.dump_python(t, mode="json")
+        return TREE_ADAPTER.dump_python(t, mode="json")  # type: ignore[no-any-return]
     if isinstance(t, Token):
-        return TOKEN_ADAPTER.dump_python(t, mode="json")
+        return TOKEN_ADAPTER.dump_python(t, mode="json")  # type: ignore[no-any-return]
     raise ValueError(f"Unsupported type {t.__class__.__name__}")
 
 
@@ -65,17 +65,17 @@ def model_dump_tree(
     tree: Tree, mode: Literal["json", "concise", "compress-conditions-only"] = "json"
 ) -> dict[str, Any]:
     """ahbicht v1 replacement for the removed TreeSchema"""
-    result = TREE_ADAPTER.dump_python(tree, mode="json")
+    result: dict[str, Any] = TREE_ADAPTER.dump_python(tree, mode="json")
     if mode == "json":
-        return result["tree"]
+        return result["tree"]  # type: ignore[no-any-return]
     if mode == "concise":
-        return _compress(result["tree"])
+        return _compress(result["tree"])  # type: ignore[no-any-return]
     if mode == "compress-conditions-only":
         return _compress_condition_keys_only(result["tree"])
     raise ValueError(f"Unsupported mode {mode}")
 
 
-def _compress_condition_keys_only(data: dict) -> dict:
+def _compress_condition_keys_only(data: dict[str, Any]) -> dict[str, Any]:
     """
     a function that merges a condition key node with its only child (a token that has an int value)
     """
@@ -104,7 +104,7 @@ def _compress_condition_keys_only(data: dict) -> dict:
     return data
 
 
-def _compress(data: dict) -> dict:
+def _compress(data: Any) -> Any:
     """
     a function that "throws away" unnecessary data.
     The price we pay is that we loose the ability to easily deserialize the result.

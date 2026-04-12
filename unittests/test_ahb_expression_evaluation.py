@@ -1,6 +1,7 @@
 """Test for the evaluation of the ahb expression conditions tests (Mussfeldprüfung)"""
 
 import uuid
+from typing import Any, Optional
 from unittest.mock import AsyncMock
 
 import pytest
@@ -27,10 +28,10 @@ from unittests.defaults import (
 
 
 def _make_ahb_context(
-    rc=None,
-    fc=None,
-    hints=None,
-    packages=None,
+    rc: Optional[dict[str, ConditionFulfilledValue]] = None,
+    fc: Optional[dict[str, EvaluatedFormatConstraint]] = None,
+    hints: Optional[dict[str, Optional[str]]] = None,
+    packages: Optional[dict[str, str]] = None,
 ) -> AhbContext:
     """Helper to build an AhbContext from a ContentEvaluationResult."""
     cer = ContentEvaluationResult(
@@ -90,20 +91,20 @@ class TestAHBExpressionEvaluation:
     )
     async def test_evaluate_valid_ahb_expression(
         self,
-        mocker,
-        ahb_expression,
+        mocker: Any,
+        ahb_expression: str,
         expected_requirement_indicator: RequirementIndicator,
-        expected_requirement_constraints_fulfilled,
-        expected_requirement_is_conditional,
-        expected_format_constraints_expression,
-        expected_hints,
-    ):
+        expected_requirement_constraints_fulfilled: bool,
+        expected_requirement_is_conditional: bool,
+        expected_format_constraints_expression: Optional[str],
+        expected_hints: Optional[str],
+    ) -> None:
         """
         Tests that valid ahb expressions are evaluated as expected.
         Odd condition_keys are True, even condition_keys are False
         """
 
-        def side_effect_rc_evaluation(condition_expression, ahb_context=None):
+        def side_effect_rc_evaluation(condition_expression: str, ahb_context: object = None) -> Optional[RequirementConstraintEvaluationResult]:
             if condition_expression.lower() in ["[1]", " [ 1]  ", "[3]", "([1]o[2])u[3]"]:
                 return RequirementConstraintEvaluationResult(
                     requirement_constraints_fulfilled=True,
@@ -140,6 +141,7 @@ class TestAHBExpressionEvaluation:
                     format_constraints_expression=condition_expression,
                     hints=None,
                 )
+            return None
 
         mocker.patch(
             "ahbicht.expressions.ahb_expression_evaluation.requirement_constraint_evaluation",
@@ -194,12 +196,12 @@ class TestAHBExpressionEvaluation:
     )
     async def test_not_wellformed_ahb_expressions(
         self, expression: str, expected_error: type, expected_error_message: str
-    ):
+    ) -> None:
         """Tests that an error is raised when trying to pass invalid values."""
         ctx = _make_ahb_context()
         parsed_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(expression)
 
-        with pytest.raises(expected_error) as excinfo:  # type: ignore[var-annotated]
+        with pytest.raises(expected_error) as excinfo:
             await evaluate_ahb_expression_tree(parsed_tree, ahb_context=ctx)
 
         assert expected_error_message in str(excinfo.value)
@@ -226,7 +228,7 @@ class TestAHBExpressionEvaluation:
     )
     async def test_all_serializations_work_similar(
         self, ahb_expression: str, content_evaluation_result: ContentEvaluationResult
-    ):
+    ) -> None:
         ctx = AhbContext.from_content_evaluation_result(
             content_evaluation_result,
             edifact_format=default_test_format,
@@ -279,7 +281,7 @@ class TestAHBExpressionEvaluation:
     )
     async def test_valid_expression_evaluation(
         self, ahb_expression: str, content_evaluation_result: ContentEvaluationResult
-    ):
+    ) -> None:
         ctx = AhbContext.from_content_evaluation_result(
             content_evaluation_result,
             edifact_format=default_test_format,
@@ -347,7 +349,7 @@ class TestAHBExpressionEvaluation:
         ahb_expression: str,
         content_evaluation_result: ContentEvaluationResult,
         expected: AhbExpressionEvaluationResult,
-    ):
+    ) -> None:
         ctx = AhbContext.from_content_evaluation_result(
             content_evaluation_result,
             edifact_format=default_test_format,
@@ -358,7 +360,7 @@ class TestAHBExpressionEvaluation:
         assert evaluation_result is not None
         assert evaluation_result == expected
 
-    async def test_nested_xor_format_constraint_error_message(self):
+    async def test_nested_xor_format_constraint_error_message(self) -> None:
         """
         Test that nested XOR expressions with multiple unfulfilled format constraints
         produce properly formatted error messages using parentheses instead of nested quotes.
@@ -415,7 +417,7 @@ class TestAhbExpressionEvaluationWithAhbContext:
     This proves the full pipeline works without the global DI container.
     """
 
-    async def test_simple_muss_fulfilled(self):
+    async def test_simple_muss_fulfilled(self) -> None:
         """Muss [1] where [1] is FULFILLED -> requirement_indicator=MUSS, fulfilled=True"""
         ctx = _make_ahb_context(
             rc={"1": ConditionFulfilledValue.FULFILLED},
@@ -425,7 +427,7 @@ class TestAhbExpressionEvaluationWithAhbContext:
         assert result.requirement_indicator == ModalMark.MUSS
         assert result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled is True
 
-    async def test_simple_muss_unfulfilled(self):
+    async def test_simple_muss_unfulfilled(self) -> None:
         """Muss [1] where [1] is UNFULFILLED -> fulfilled=False"""
         ctx = _make_ahb_context(
             rc={"1": ConditionFulfilledValue.UNFULFILLED},
@@ -434,7 +436,7 @@ class TestAhbExpressionEvaluationWithAhbContext:
         result = await evaluate_ahb_expression_tree(tree, ahb_context=ctx)
         assert result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled is False
 
-    async def test_and_composition_with_format_constraint(self):
+    async def test_and_composition_with_format_constraint(self) -> None:
         """Muss [1] U [2][901] -- RC fulfilled, FC fulfilled"""
         ctx = _make_ahb_context(
             rc={"1": ConditionFulfilledValue.FULFILLED, "2": ConditionFulfilledValue.FULFILLED},
@@ -445,7 +447,7 @@ class TestAhbExpressionEvaluationWithAhbContext:
         assert result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled is True
         assert result.format_constraint_evaluation_result.format_constraints_fulfilled is True
 
-    async def test_or_composition(self):
+    async def test_or_composition(self) -> None:
         """Muss [1] O [2] -- one fulfilled -> fulfilled"""
         ctx = _make_ahb_context(
             rc={"1": ConditionFulfilledValue.UNFULFILLED, "2": ConditionFulfilledValue.FULFILLED},
@@ -454,7 +456,7 @@ class TestAhbExpressionEvaluationWithAhbContext:
         result = await evaluate_ahb_expression_tree(tree, ahb_context=ctx)
         assert result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled is True
 
-    async def test_with_hints(self):
+    async def test_with_hints(self) -> None:
         """Muss [501] -- hint key, always neutral -> fulfilled with hint text"""
         ctx = _make_ahb_context(
             hints={"501": "Hinweis 501"},
@@ -464,7 +466,7 @@ class TestAhbExpressionEvaluationWithAhbContext:
         assert result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled is True
         assert result.requirement_constraint_evaluation_result.hints == "Hinweis 501"
 
-    async def test_modal_mark_fallthrough(self):
+    async def test_modal_mark_fallthrough(self) -> None:
         """Muss [1] Kann -- first unfulfilled, falls through to Kann"""
         ctx = _make_ahb_context(
             rc={"1": ConditionFulfilledValue.UNFULFILLED},

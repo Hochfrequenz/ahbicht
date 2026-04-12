@@ -35,7 +35,7 @@ class TestCerBasedHintsProvider:
     )
     async def test_evaluation(
         self, condition_key: str, expected_result: Optional[str], ahb_context_from_cer: AhbContext
-    ):
+    ) -> None:
         hints_provider = ahb_context_from_cer.hints_provider
         actual = await hints_provider.get_hint_text(condition_key)
         assert actual == expected_result

@@ -1,6 +1,7 @@
 """Tests for Class Condition Node Builder"""
 
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -8,7 +9,7 @@ from ahbicht.condition_node_builder import ConditionNodeBuilder
 from ahbicht.content_evaluation.ahb_context import AhbContext
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluationContext
 from ahbicht.content_evaluation.rc_evaluators import DictBasedRcEvaluator, RcEvaluator
-from ahbicht.expressions.hints_provider import DictBasedHintsProvider, JsonFileHintsProvider
+from ahbicht.expressions.hints_provider import DictBasedHintsProvider, HintsProvider, JsonFileHintsProvider
 from ahbicht.models.condition_nodes import (
     ConditionFulfilledValue,
     Hint,
@@ -48,7 +49,7 @@ class TestConditionNodeBuilder:
     @staticmethod
     def _make_context(
         rc_evaluator: RcEvaluator,
-        hints_provider,
+        hints_provider: HintsProvider,
     ) -> AhbContext:
         return AhbContext(
             rc_evaluator=rc_evaluator,
@@ -59,7 +60,7 @@ class TestConditionNodeBuilder:
         )
 
     @pytest.fixture()
-    def ahb_context(self):
+    def ahb_context(self) -> AhbContext:
         _hints_provider = JsonFileHintsProvider(
             TestConditionNodeBuilder._edifact_format,
             TestConditionNodeBuilder._edifact_format_version,
@@ -67,7 +68,7 @@ class TestConditionNodeBuilder:
         )
         return self._make_context(DummyRcEvaluator(), _hints_provider)
 
-    def test_initiating_condition_node_builder(self, ahb_context):
+    def test_initiating_condition_node_builder(self, ahb_context: AhbContext) -> None:
         """Tests if condition node builder is initiated correctly."""
 
         condition_keys = ["501", "12", "903"]
@@ -78,7 +79,7 @@ class TestConditionNodeBuilder:
         assert condition_node_builder.hints_condition_keys == ["501"]
         assert condition_node_builder.format_constraints_condition_keys == ["903"]
 
-    def test_invalid_initiating_condition_node_builder(self, ahb_context):
+    def test_invalid_initiating_condition_node_builder(self, ahb_context: AhbContext) -> None:
         """Test that correct error is shown if condition keys are out of range."""
         condition_keys = ["5", "1011"]
 
@@ -87,7 +88,7 @@ class TestConditionNodeBuilder:
 
         assert "Condition key is not in valid number range." in str(excinfo.value)
 
-    async def test_build_hint_nodes(self, ahb_context):
+    async def test_build_hint_nodes(self, ahb_context: AhbContext) -> None:
         """Tests that hint nodes are build correctly."""
         condition_keys = ["584", "583"]
         condition_node_builder = ConditionNodeBuilder(condition_keys, ahb_context=ahb_context)
@@ -95,7 +96,7 @@ class TestConditionNodeBuilder:
         excepted_hints_nodes = {"583": self._h_583, "584": self._h_584}
         assert hint_nodes == excepted_hints_nodes
 
-    async def test_invalid_hint_nodes(self, ahb_context):
+    async def test_invalid_hint_nodes(self, ahb_context: AhbContext) -> None:
         """Tests that correct error is shown, when hint is not implemented."""
         condition_keys = ["500"]
         # it is possible that a hint with [500] will be implemented in the future as not all hints are collected yet.
@@ -106,7 +107,7 @@ class TestConditionNodeBuilder:
 
         assert "There seems to be no hint implemented with condition key '500'." in str(excinfo.value)
 
-    def test_build_unevaluated_format_constraint_nodes(self, ahb_context):
+    def test_build_unevaluated_format_constraint_nodes(self, ahb_context: AhbContext) -> None:
         """Tests that unevaluated format constraints nodes are build correctly."""
         condition_keys = ["907", "955"]
         condition_node_builder = ConditionNodeBuilder(condition_keys, ahb_context=ahb_context)
@@ -122,8 +123,8 @@ class TestConditionNodeBuilder:
         ],
     )
     async def test_build_requirement_constraint_nodes(
-        self, mocker, expected_conditions_fulfilled_11, expected_conditions_fulfilled_78, ahb_context
-    ):
+        self, mocker: Any, expected_conditions_fulfilled_11: ConditionFulfilledValue, expected_conditions_fulfilled_78: ConditionFulfilledValue, ahb_context: AhbContext
+    ) -> None:
         """Tests that requirement constraint nodes are build correctly."""
 
         mocker.patch(
@@ -144,7 +145,7 @@ class TestConditionNodeBuilder:
         }
         assert evaluated_requirement_constraints == expected_requirement_constraints
 
-    async def test_requirement_evaluation_for_all_condition_keys(self, mocker, ahb_context):
+    async def test_requirement_evaluation_for_all_condition_keys(self, mocker: Any, ahb_context: AhbContext) -> None:
         mocker.patch(
             "ahbicht.content_evaluation.rc_evaluators.RcEvaluator.evaluate_single_condition",
             side_effect=[ConditionFulfilledValue.FULFILLED, ConditionFulfilledValue.UNFULFILLED],
@@ -175,12 +176,12 @@ class TestConditionNodeBuilder:
     )
     async def test_build_requirement_constraint_nodes_with_repeatabilities(
         self,
-        mocker,
-        expected_conditions_fulfilled_10,
-        expected_conditions_fulfilled_77,
-        expected_conditions_fulfilled_1_2,
-        ahb_context,
-    ):
+        mocker: Any,
+        expected_conditions_fulfilled_10: ConditionFulfilledValue,
+        expected_conditions_fulfilled_77: ConditionFulfilledValue,
+        expected_conditions_fulfilled_1_2: ConditionFulfilledValue,
+        ahb_context: AhbContext,
+    ) -> None:
         """Tests that requirement constraint nodes are build correctly."""
 
         mocker.patch(
@@ -229,7 +230,7 @@ class TestConditionNodeBuilderWithAhbContext:
             evaluatable_data=empty_default_test_data,
         )
 
-    def test_init_with_ahb_context(self):
+    def test_init_with_ahb_context(self) -> None:
         """AhbContext path works correctly."""
         ctx = self._make_context(rc_results={}, hints={})
         builder = ConditionNodeBuilder(["501", "12", "903"], ahb_context=ctx)
@@ -237,7 +238,7 @@ class TestConditionNodeBuilderWithAhbContext:
         assert builder.hints_condition_keys == ["501"]
         assert builder.format_constraints_condition_keys == ["903"]
 
-    async def test_build_hint_nodes_with_ahb_context(self):
+    async def test_build_hint_nodes_with_ahb_context(self) -> None:
         ctx = self._make_context(
             rc_results={},
             hints={
@@ -251,7 +252,7 @@ class TestConditionNodeBuilderWithAhbContext:
         assert "584" in hint_nodes
         assert hint_nodes["583"].hint == "[583] Hinweis: Verwendung der ID der Marktlokation"
 
-    async def test_build_rc_nodes_with_ahb_context(self):
+    async def test_build_rc_nodes_with_ahb_context(self) -> None:
         ctx = self._make_context(
             rc_results={
                 "11": ConditionFulfilledValue.FULFILLED,
@@ -264,7 +265,7 @@ class TestConditionNodeBuilderWithAhbContext:
         assert rc_nodes["11"].conditions_fulfilled == ConditionFulfilledValue.FULFILLED
         assert rc_nodes["78"].conditions_fulfilled == ConditionFulfilledValue.UNFULFILLED
 
-    async def test_full_evaluation_with_ahb_context(self):
+    async def test_full_evaluation_with_ahb_context(self) -> None:
         ctx = self._make_context(
             rc_results={
                 "78": ConditionFulfilledValue.FULFILLED,

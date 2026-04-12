@@ -79,7 +79,11 @@ asyncio_mode = "auto"
 markers = ["datafiles"]
 
 [tool.mypy]
-# warn_unused_ignores = true # doesn't work,because either 'error: Cannot infer type argument 1 of "Tree"  [misc]' but this is also flagged as unused ignore
+strict = true
+
+[[tool.mypy.overrides]]
+module = ["lark", "lark.*"]
+ignore_missing_imports = true
 
 [build-system]
 requires = ["hatchling>=1.8.0", "hatch-vcs", "hatch-fancy-pypi-readme"]

@@ -43,7 +43,7 @@ class PackageKeyConditionExpressionMapping(BaseModel):
         return self.package_expression is not None
 
 
-def check_max_greater_or_equal_than_min(instance: "Repeatability"):
+def check_max_greater_or_equal_than_min(instance: "Repeatability") -> None:
     """
     assert that 0<=min<max and not both min and max are 0
     """

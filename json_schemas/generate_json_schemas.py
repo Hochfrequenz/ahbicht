@@ -19,7 +19,7 @@ from ahbicht.models.evaluation_results import (
 )
 from ahbicht.models.mapping_results import ConditionKeyConditionTextMapping, PackageKeyConditionExpressionMapping
 
-schema_types: list[Type[TypeAdapter] | Type[BaseModel]] = [
+schema_types: list[Type[TypeAdapter[Any]] | Type[BaseModel]] = [
     RequirementConstraintEvaluationResult,  # pydantic
     FormatConstraintEvaluationResult,  # pydantic
     EvaluatedFormatConstraint,  # pydantic

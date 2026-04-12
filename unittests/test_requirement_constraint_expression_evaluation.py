@@ -1,6 +1,6 @@
 """Test for the evaluation of the conditions tests (Mussfeldprüfung)"""
 
-from typing import Optional
+from typing import Any, Optional
 
 import pytest
 
@@ -68,7 +68,7 @@ class TestRequirementConstraintEvaluation:
     )
     def test_evaluate_condition_expression_with_valid_conditions_fulfilled(
         self, expression: str, expected_resulting_conditions_fulfilled: cfv
-    ):
+    ) -> None:
         """
         Tests that valid strings are parsed as expected.
         Odd condition_keys are True, even condition_keys are False
@@ -104,8 +104,8 @@ class TestRequirementConstraintEvaluation:
         ],
     )
     def test_evaluate_condition_expression_with_invalid_values(
-        self, expression: str, input_values: dict, expected_error: str
-    ):
+        self, expression: str, input_values: dict[str, Any], expected_error: str
+    ) -> None:
         """Tests that an error is raised when trying to pass invalid values."""
         parsed_tree = parse_condition_expression_to_tree(expression)
 
@@ -151,8 +151,8 @@ class TestRequirementConstraintEvaluation:
         self,
         expression: str,
         expected_resulting_conditions_fulfilled: cfv,
-        expected_resulting_hint: str,
-    ):
+        expected_resulting_hint: Optional[str],
+    ) -> None:
         """Test valid expressions with Hints/Hinweise."""
 
         input_values = {
@@ -195,7 +195,7 @@ class TestRequirementConstraintEvaluation:
         expected_resulting_conditions_fulfilled: cfv,
         expected_format_constraint_expression: Optional[str],
         expected_hint_text: Optional[str],
-    ):
+    ) -> None:
         """Test valid expressions with Format Constraints"""
 
         input_values = {
@@ -240,7 +240,7 @@ class TestRequirementConstraintEvaluation:
             pytest.param("[101]X[102]", cfv.UNKNOWN),
         ],
     )
-    def test_unknown_requirement_constraints(self, expression: str, expected_resulting_conditions_fulfilled: cfv):
+    def test_unknown_requirement_constraints(self, expression: str, expected_resulting_conditions_fulfilled: cfv) -> None:
         """Test valid expressions with unnkown requirement constraints"""
 
         input_values = {
@@ -301,7 +301,7 @@ class TestRequirementConstraintEvaluation:
             pytest.param("[1]X([987]X[988])"),
         ],
     )
-    def test_hints_and_formats_with_invalid_or_xor_composition(self, expression: str):
+    def test_hints_and_formats_with_invalid_or_xor_composition(self, expression: str) -> None:
         """Test invalid expressions with invalid or/xor_compositions."""
 
         input_values = {
@@ -369,7 +369,7 @@ class TestRequirementConstraintEvaluation:
         self,
         input_values: dict[str, ConditionNode],
         expected_evaluated_result: EvaluatedComposition,
-    ):
+    ) -> None:
         """Test the example from allgemeine Festlegungen"""
         input_values["950"] = self._fc_950
         input_values["951"] = self._fc_951

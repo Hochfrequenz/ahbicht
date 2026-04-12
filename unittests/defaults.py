@@ -5,7 +5,7 @@ Inject them to have a concise test setup.
 """
 
 from itertools import cycle
-from typing import Iterator
+from typing import Any, Iterator, Mapping, Optional
 
 from efoli import EdifactFormat, EdifactFormatVersion
 
@@ -21,7 +21,7 @@ default_test_format: EdifactFormat = EdifactFormat.UTILMD
 #: the default edifact format version used in the unit tests
 default_test_version: EdifactFormatVersion = EdifactFormatVersion.FV2210
 #: an empty EvaluatableData instance
-empty_default_test_data: EvaluatableData[dict] = EvaluatableData(
+empty_default_test_data: EvaluatableData[dict[str, Any]] = EvaluatableData(
     body={}, edifact_format=default_test_format, edifact_format_version=default_test_version
 )
 
@@ -31,7 +31,7 @@ class EmptyDefaultRcEvaluator(RcEvaluator):
     An RC Evaluator in the default edifact format and edifact format version
     """
 
-    def _get_default_context(self):
+    def _get_default_context(self) -> None:  # type: ignore[override]
         return None
 
     def __init__(self) -> None:
@@ -44,7 +44,7 @@ empty_default_rc_evaluator = EmptyDefaultRcEvaluator()
 
 
 class IteratingFulfilledUnfulfilledRcEvaluator(RcEvaluator):
-    def _get_default_context(self):
+    def _get_default_context(self) -> None:  # type: ignore[override]
         return None
 
     def __init__(self) -> None:
@@ -63,11 +63,11 @@ class IteratingFulfilledUnfulfilledRcEvaluator(RcEvaluator):
             ]
         )
 
-    def evaluate_1(self, _, __) -> ConditionFulfilledValue:
+    def evaluate_1(self, _: object, __: object) -> ConditionFulfilledValue:
         # goes like: fulfilled, unfulfilled, fulfilled, unfulfilled, fulfilled, unfulfilled...
         return next(self.result_cycle_1)
 
-    def evaluate_2(self, _, __) -> ConditionFulfilledValue:
+    def evaluate_2(self, _: object, __: object) -> ConditionFulfilledValue:
         # goes like: fulfilled, fulfilled, unfulfilled, unfulfilled, fulfilled, fulfilled, unfulfilled, unfulfilled, ...
         return next(self.result_cycle_2)
 
@@ -94,7 +94,7 @@ class DefaultHintsProvider(DictBasedHintsProvider):
     An (empty) Hints Provider in the default edifact format and edifact format version
     """
 
-    def __init__(self, mappings) -> None:
+    def __init__(self, mappings: Mapping[str, Optional[str]]) -> None:
         super().__init__(mappings)
         self.edifact_format = default_test_format
         self.edifact_format_version = default_test_version
@@ -108,7 +108,7 @@ class DefaultPackageResolver(DictBasedPackageResolver):
     An (empty) Package Resolver in the default edifact format and edifact format version
     """
 
-    def __init__(self, mappings) -> None:
+    def __init__(self, mappings: Mapping[str, Optional[str]]) -> None:
         super().__init__(mappings)
         self.edifact_format = default_test_format
         self.edifact_format_version = default_test_version
@@ -117,7 +117,7 @@ class DefaultPackageResolver(DictBasedPackageResolver):
 empty_default_package_resolver = DefaultPackageResolver({})
 
 
-def return_empty_dummy_evaluatable_data() -> EvaluatableData[dict]:
+def return_empty_dummy_evaluatable_data() -> EvaluatableData[dict[str, Any]]:
     """
     :return: empty evaluatable data in the default format and format version
     """

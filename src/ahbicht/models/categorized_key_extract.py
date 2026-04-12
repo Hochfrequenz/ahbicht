@@ -57,7 +57,7 @@ class CategorizedKeyExtract(BaseModel):
         self.package_keys.sort()
         self.time_condition_keys.sort()
 
-    def _sort_repeat_key(self, item: str) -> tuple:
+    def _sort_repeat_key(self, item: str) -> tuple[int, ...]:
         """
         Custom sort key for requirement_constraint_keys to handle 'n..m' format.
         """

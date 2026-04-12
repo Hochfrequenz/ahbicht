@@ -112,12 +112,12 @@ async def _replace_sub_coroutines_with_awaited_results(tree: Union[Tree, Awaitab
 
 # pylint: disable=invalid-name
 # invalid-name: That's also the reason why it seemingly violates the naming conventions.
-class AhbExpressionResolverTransformer(Transformer):
+class AhbExpressionResolverTransformer(Transformer):  # type: ignore[misc]
     """
     Resolves the condition_expressions inside an ahb_expression.
     """
 
-    def CONDITION_EXPRESSION(self, expression):
+    def CONDITION_EXPRESSION(self, expression: Token) -> Tree[Token]:
         """
         Replacing the expression_condition with its parsed tree.
         """
@@ -126,7 +126,7 @@ class AhbExpressionResolverTransformer(Transformer):
 
 
 # pylint: disable=invalid-name
-class PackageExpansionTransformer(Transformer):
+class PackageExpansionTransformer(Transformer):  # type: ignore[misc]
     """
     The PackageExpansionTransformer expands packages inside a tree to condition expressions by using a PackageResolver.
     :param include_package_repeatabilities: Flag to include the repeatabilities of the packages.
@@ -174,6 +174,7 @@ class PackageExpansionTransformer(Transformer):
         return self._package_async(package_key_token, single_repeat_token)
 
     async def _package_async(self, package_key_token: Token, repeatability_token: Optional[Token]) -> Tree[Token]:
+        assert self._ahb_context is not None, "ahb_context is required for package resolution"
         resolver = self._ahb_context.package_resolver
         resolved_package = await resolver.get_condition_expression(package_key_token.value)
         if not resolved_package.has_been_resolved_successfully():
@@ -189,7 +190,7 @@ class PackageExpansionTransformer(Transformer):
 
 
 # pylint: disable=invalid-name
-class TimeConditionTransformer(Transformer):
+class TimeConditionTransformer(Transformer):  # type: ignore[misc]
     """
     There are two options which are chosen by the boolean `replace_time_conditions`:
     i:

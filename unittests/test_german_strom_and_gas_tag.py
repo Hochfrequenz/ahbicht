@@ -28,7 +28,7 @@ class TestGermanStromAndGasTag:
             pytest.param("20220101000010+00", datetime(2022, 1, 1, 0, 0, 10, tzinfo=timezone.utc)),
         ],
     )
-    def test_successful_parsing(self, dt_string: str, expected_datetime: datetime):
+    def test_successful_parsing(self, dt_string: str, expected_datetime: datetime) -> None:
         actual, error = parse_as_datetime(dt_string)
         assert error is None
         assert actual == expected_datetime
@@ -51,7 +51,7 @@ class TestGermanStromAndGasTag:
             ),
         ],
     )
-    def test_errornous_parsing(self, dt_string: str, expected_error_msg: str):
+    def test_errornous_parsing(self, dt_string: str, expected_error_msg: str) -> None:
         actual, error = parse_as_datetime(dt_string)
         assert actual is None
         assert error is not None
@@ -82,7 +82,7 @@ class TestGermanStromAndGasTag:
             pytest.param(datetime.fromisoformat("2022-10-31T08:00:00+09:00"), True, id="Tokyo, German standard time"),
         ],
     )
-    def test_stromtag(self, dt: datetime, expected_is_start_or_end_of_german_stromtag: bool):
+    def test_stromtag(self, dt: datetime, expected_is_start_or_end_of_german_stromtag: bool) -> None:
         actual = is_stromtag_limit(dt)
         assert actual == expected_is_start_or_end_of_german_stromtag
 
@@ -107,6 +107,6 @@ class TestGermanStromAndGasTag:
             pytest.param(datetime.fromisoformat("2022-10-31T10:45:00+05:45"), True, id="Nepal, German standard time 2"),
         ],
     )
-    def test_gastag(self, dt: datetime, expected_is_start_or_end_of_german_gastag: bool):
+    def test_gastag(self, dt: datetime, expected_is_start_or_end_of_german_gastag: bool) -> None:
         actual = is_gastag_limit(dt)
         assert actual == expected_is_start_or_end_of_german_gastag

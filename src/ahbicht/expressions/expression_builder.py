@@ -35,7 +35,7 @@ class ExpressionBuilder(Generic[SupportedNodes], ABC):
         raise NotImplementedError("Has to be implemented by inheriting class.")
 
     @abstractmethod
-    def land(self, other: SupportedNodes):
+    def land(self, other: SupportedNodes) -> "ExpressionBuilder[SupportedNodes]":
         """
         connects the expression with a logical and (LAND)
         :param other: condition or expression to be connected to the expression
@@ -44,7 +44,7 @@ class ExpressionBuilder(Generic[SupportedNodes], ABC):
         raise NotImplementedError("Has to be implemented by inheriting class.")
 
     @abstractmethod
-    def lor(self, other: SupportedNodes):
+    def lor(self, other: SupportedNodes) -> "ExpressionBuilder[SupportedNodes]":
         """
         connects the expression with a logical or (LOR)
         :param other: condition or expression to be connected to the expression
@@ -53,7 +53,7 @@ class ExpressionBuilder(Generic[SupportedNodes], ABC):
         raise NotImplementedError("Has to be implemented by inheriting class.")
 
     @abstractmethod
-    def xor(self, other: SupportedNodes):
+    def xor(self, other: SupportedNodes) -> "ExpressionBuilder[SupportedNodes]":
         """
         connects the expression with an exclusive or (XOR)
         :param other: condition or expression to be connected to the expression
@@ -117,16 +117,16 @@ class FormatConstraintExpressionBuilder(ExpressionBuilder[TSupportedFCExpression
         # could add simplifications here
         return self._expression
 
-    def land(self, other: TSupportedFCExpressionBuilderArguments) -> ExpressionBuilder:
+    def land(self, other: TSupportedFCExpressionBuilderArguments) -> "FormatConstraintExpressionBuilder":
         return self._connect(LogicalOperator.LAND, other)
 
-    def lor(self, other: TSupportedFCExpressionBuilderArguments) -> ExpressionBuilder:
+    def lor(self, other: TSupportedFCExpressionBuilderArguments) -> "FormatConstraintExpressionBuilder":
         return self._connect(LogicalOperator.LOR, other)
 
-    def xor(self, other: TSupportedFCExpressionBuilderArguments) -> ExpressionBuilder:
+    def xor(self, other: TSupportedFCExpressionBuilderArguments) -> "FormatConstraintExpressionBuilder":
         return self._connect(LogicalOperator.XOR, other)
 
-    def _connect(self, operator_character: LogicalOperator, other: TSupportedFCExpressionBuilderArguments):
+    def _connect(self, operator_character: LogicalOperator, other: TSupportedFCExpressionBuilderArguments) -> "FormatConstraintExpressionBuilder":
         """
         Connect the existing expression and the other part.
 
@@ -193,7 +193,7 @@ class HintExpressionBuilder(ExpressionBuilder[ClassesWithHintAttribute]):
     def get_expression(self) -> Optional[str]:
         return self._expression
 
-    def land(self, other: Optional[_ClassesWithHintAttribute]) -> ExpressionBuilder:
+    def land(self, other: Optional[_ClassesWithHintAttribute]) -> "HintExpressionBuilder[ClassesWithHintAttribute]":
         if other is not None:
             if self._expression:
                 self._expression += f" und {HintExpressionBuilder.get_hint_text(other)}"
@@ -201,7 +201,7 @@ class HintExpressionBuilder(ExpressionBuilder[ClassesWithHintAttribute]):
                 self._expression = HintExpressionBuilder.get_hint_text(other)
         return self
 
-    def lor(self, other: Optional[_ClassesWithHintAttribute]) -> ExpressionBuilder:
+    def lor(self, other: Optional[_ClassesWithHintAttribute]) -> "HintExpressionBuilder[ClassesWithHintAttribute]":
         if other is not None:
             if self._expression:
                 self._expression += f" oder {HintExpressionBuilder.get_hint_text(other)}"
@@ -209,7 +209,7 @@ class HintExpressionBuilder(ExpressionBuilder[ClassesWithHintAttribute]):
                 self._expression = HintExpressionBuilder.get_hint_text(other)
         return self
 
-    def xor(self, other: Optional[_ClassesWithHintAttribute]) -> ExpressionBuilder:
+    def xor(self, other: Optional[_ClassesWithHintAttribute]) -> "HintExpressionBuilder[ClassesWithHintAttribute]":
         if other is not None:
             if self._expression:
                 self._expression = f"Entweder ({self._expression}) oder ({HintExpressionBuilder.get_hint_text(other)})"
@@ -245,7 +245,7 @@ class FormatErrorMessageExpressionBuilder(ExpressionBuilder[EvaluatedFormatConst
             return f"({msg})"
         return f"'{msg}'"
 
-    def land(self, other: EvaluatedFormatConstraint) -> ExpressionBuilder:
+    def land(self, other: EvaluatedFormatConstraint) -> "FormatErrorMessageExpressionBuilder":
         if other.format_constraint_fulfilled is True:
             # If a format constraint is connected with "logical and" to another format constraint which is fulfilled,
             # then the remaining expression/error message stays the same.
@@ -259,7 +259,7 @@ class FormatErrorMessageExpressionBuilder(ExpressionBuilder[EvaluatedFormatConst
                 self._expression = f"{left_part} und {right_part}"
         return self
 
-    def lor(self, other: EvaluatedFormatConstraint) -> ExpressionBuilder:
+    def lor(self, other: EvaluatedFormatConstraint) -> "FormatErrorMessageExpressionBuilder":
         if self.format_constraint_fulfilled is False and other.format_constraint_fulfilled is False:
             left_part = self._wrap_message(self._expression)
             right_part = self._wrap_message(other.error_message)
@@ -268,7 +268,7 @@ class FormatErrorMessageExpressionBuilder(ExpressionBuilder[EvaluatedFormatConst
             self._expression = None
         return self
 
-    def xor(self, other: EvaluatedFormatConstraint) -> ExpressionBuilder:
+    def xor(self, other: EvaluatedFormatConstraint) -> "FormatErrorMessageExpressionBuilder":
         if self.format_constraint_fulfilled is False and other.format_constraint_fulfilled is False:
             left_part = self._wrap_message(self._expression)
             right_part = self._wrap_message(other.error_message)

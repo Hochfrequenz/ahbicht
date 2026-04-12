@@ -4,7 +4,9 @@ Tests the hints provider module.
 
 import asyncio
 import datetime
+import pathlib
 from logging import LogRecord
+from typing import Optional
 
 import pytest
 from efoli import EdifactFormat, EdifactFormatVersion
@@ -21,7 +23,7 @@ from ahbicht.expressions.hints_provider import (
 class Dummy1sHintsProvider(HintsProvider):
     """a hints provider that takes 1s for each (dummy) hint text"""
 
-    async def get_hint_text(self, _: str):
+    async def get_hint_text(self, _: str) -> str:
         await asyncio.sleep(1)
         return "foo"
 
@@ -29,14 +31,14 @@ class Dummy1sHintsProvider(HintsProvider):
 class DummyAsyncHintsProvider(HintsProvider):
     """a hints provider that has an async get_hint_text_method"""
 
-    async def get_hint_text(self, _: str):
+    async def get_hint_text(self, _: str) -> str:
         return "foo"
 
 
 class DummySyncHintsProvider(HintsProvider):
     """a hints provider that has a sync get_hint_text_method"""
 
-    def get_hint_text(self, _: str):
+    def get_hint_text(self, _: str) -> str:  # type: ignore[override]
         return "foo"
 
 
@@ -44,7 +46,7 @@ class TestHintsProvider:
     """Test Class for JsonFileHintsProvider"""
 
     @pytest.mark.datafiles("./unittests/provider_test_files/example_hints_file.json")
-    async def test_initiating_hints_provider(self, datafiles):
+    async def test_initiating_hints_provider(self, datafiles: pathlib.Path) -> None:
         """Tests if hints provider is initiated correctly."""
         path_to_hint_json = datafiles / "example_hints_file.json"
         hints_provider = JsonFileHintsProvider(
@@ -56,7 +58,7 @@ class TestHintsProvider:
         assert hints_provider.edifact_format_version == EdifactFormatVersion.FV2104
         assert await hints_provider.get_hint_text("583") == "[583] Hinweis: Verwendung der ID der Marktlokation"
 
-    async def test_concurrent_hint_text_resolving(self):
+    async def test_concurrent_hint_text_resolving(self) -> None:
         """
         Tests that the get_hint_text methods are evaluated concurrently
         :return:
@@ -68,7 +70,7 @@ class TestHintsProvider:
         end = datetime.datetime.now()
         assert (end - start).total_seconds() < len(dummy_keys)
 
-    async def test_sync_hint_text_resolving(self, caplog):
+    async def test_sync_hint_text_resolving(self, caplog: pytest.LogCaptureFixture) -> None:
         hints_provider = DummySyncHintsProvider()
         dummy_keys = ["1", "2", "3"]
         await hints_provider.get_hints(dummy_keys)
@@ -77,12 +79,12 @@ class TestHintsProvider:
         assert log_entries[0].message == "Instantiated DummySyncHintsProvider"
         assert log_entries[1].message == "Found 3 hints for 1, 2, 3"
 
-    async def test_async_hint_text_resolving(self):
+    async def test_async_hint_text_resolving(self) -> None:
         hints_provider = DummyAsyncHintsProvider()
         dummy_keys = ["1", "2", "3"]
         await hints_provider.get_hints(dummy_keys)
 
-    async def test_package_1p_hint_key_returns_hardcoded_text(self):
+    async def test_package_1p_hint_key_returns_hardcoded_text(self) -> None:
         """
         Test that the special hint key for package '1P' (PACKAGE_1P_HINT_KEY = 9999) always returns
         the hardcoded hint text, regardless of the provider's configured hints.
@@ -95,7 +97,7 @@ class TestHintsProvider:
         hint_text = await hints_provider.get_hint_text(PACKAGE_1P_HINT_KEY)
         assert hint_text == PACKAGE_1P_HINT_TEXT
 
-    async def test_package_1p_hint_key_in_get_hints(self):
+    async def test_package_1p_hint_key_in_get_hints(self) -> None:
         """
         Test that get_hints correctly handles the special hint key for package '1P' (PACKAGE_1P_HINT_KEY = 9999).
 

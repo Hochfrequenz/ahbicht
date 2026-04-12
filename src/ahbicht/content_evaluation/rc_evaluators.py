@@ -8,7 +8,7 @@ Typical use-cases are for example
 import asyncio
 import inspect
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Any, Optional
 
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluationContext
 from ahbicht.content_evaluation.evaluators import Evaluator
@@ -29,7 +29,7 @@ class RcEvaluator(Evaluator, ABC):
         raise NotImplementedError("Has to be implemented in inheriting class")
 
     async def evaluate_single_condition(
-        self, condition_key: str, evaluatable_data: EvaluatableData, context: Optional[EvaluationContext] = None
+        self, condition_key: str, evaluatable_data: EvaluatableData[Any], context: Optional[EvaluationContext] = None
     ) -> ConditionFulfilledValue:
         """
         Evaluates the condition with the given key.
@@ -54,7 +54,7 @@ class RcEvaluator(Evaluator, ABC):
     async def evaluate_conditions(
         self,
         condition_keys: list[str],
-        evaluatable_data: EvaluatableData,
+        evaluatable_data: EvaluatableData[Any],
         condition_keys_with_context: Optional[dict[str, EvaluationContext]] = None,
     ) -> dict[str, ConditionFulfilledValue]:
         """
@@ -106,7 +106,7 @@ class DictBasedRcEvaluator(RcEvaluator):
 
     # pylint:disable=unused-argument
     async def evaluate_single_condition(
-        self, condition_key: str, evaluatable_data: EvaluatableData, context: Optional[EvaluationContext] = None
+        self, condition_key: str, evaluatable_data: EvaluatableData[Any], context: Optional[EvaluationContext] = None
     ) -> ConditionFulfilledValue:
         try:
             return self._results[condition_key]
@@ -125,7 +125,7 @@ class ContentEvaluationResultBasedRcEvaluator(RcEvaluator):
 
     # pylint:disable=unused-argument
     async def evaluate_single_condition(
-        self, condition_key: str, evaluatable_data: EvaluatableData, context: Optional[EvaluationContext] = None
+        self, condition_key: str, evaluatable_data: EvaluatableData[Any], context: Optional[EvaluationContext] = None
     ) -> ConditionFulfilledValue:
         content_evaluation_result = ContentEvaluationResult.model_validate(evaluatable_data.body)
         try:

@@ -1,5 +1,7 @@
 """Tests for creating different condition nodes that are used in the parsed tree."""
 
+from typing import Any
+
 import pytest
 from pydantic import ValidationError
 
@@ -25,7 +27,7 @@ class TestConditionNodes:
             ),
         ],
     )
-    def test_condition_fulfilled_value_equality(self, cfv: ConditionFulfilledValue, equivalent_string: str):
+    def test_condition_fulfilled_value_equality(self, cfv: ConditionFulfilledValue, equivalent_string: str) -> None:
         """For mypy we had to replace some enum comparisons. This test is to ensure that everything works as expected"""
         assert cfv == ConditionFulfilledValue.FULFILLED
 
@@ -53,13 +55,13 @@ class TestConditionNodes:
             ),
         ],
     )
-    def test_invalid_requirement_constraint(self, condition_node_arguments, expected_error_message):
+    def test_invalid_requirement_constraint(self, condition_node_arguments: dict[str, Any], expected_error_message: str) -> None:
         """Tests if requirements for RequirementConstraints are working as expected."""
         with pytest.raises(ValidationError) as excinfo:
             RequirementConstraint(**condition_node_arguments)
         assert expected_error_message in str(excinfo.value)
 
-    def test_valid_hint(self):
+    def test_valid_hint(self) -> None:
         """Tests the creation of a valid Hint node."""
         actual_node = Hint(condition_key="501", hint="[501] Hinweis: Foo")
 
@@ -93,14 +95,14 @@ class TestConditionNodes:
             ),
         ],
     )
-    def test_invalid_hint(self, hint_node_arguments, expected_error_message):
+    def test_invalid_hint(self, hint_node_arguments: dict[str, Any], expected_error_message: str) -> None:
         """Tests if requirements for Hints are working as expected."""
 
         with pytest.raises(ValidationError) as excinfo:
             Hint(**hint_node_arguments)
         assert expected_error_message in str(excinfo.value)
 
-    def test_valid_evaluated_composition(self):
+    def test_valid_evaluated_composition(self) -> None:
         """Tests the creation of a valid EvaluatedComposition."""
         # Minimal example:
         minimal_node = EvaluatedComposition(conditions_fulfilled=ConditionFulfilledValue.FULFILLED)
@@ -141,7 +143,7 @@ class TestConditionNodes:
             ),
         ],
     )
-    def test_invalid_evaluated_composition(self, resulting_node_arguments, expected_error_message):
+    def test_invalid_evaluated_composition(self, resulting_node_arguments: dict[str, Any], expected_error_message: str) -> None:
         """Tests if requirements for Hints are working as expected."""
         with pytest.raises(ValidationError) as excinfo:
             EvaluatedComposition(**resulting_node_arguments)
@@ -164,13 +166,13 @@ class TestConditionNodes:
             ),
         ],
     )
-    def test_invalid_evaluated_format_constraint(self, format_constraint_arguments, expected_error_message):
+    def test_invalid_evaluated_format_constraint(self, format_constraint_arguments: dict[str, Any], expected_error_message: str) -> None:
         """Tests that EvaluatedFormatConstraint validates error_message correctly."""
         with pytest.raises(ValidationError) as excinfo:
             EvaluatedFormatConstraint(**format_constraint_arguments)
         assert expected_error_message in str(excinfo.value)
 
-    def test_valid_evaluated_format_constraint(self):
+    def test_valid_evaluated_format_constraint(self) -> None:
         """Tests valid EvaluatedFormatConstraint instances."""
         # fulfilled with no error message
         fulfilled = EvaluatedFormatConstraint(format_constraint_fulfilled=True)

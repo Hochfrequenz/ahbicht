@@ -20,7 +20,7 @@ class TestTimeConditionReplacement:
                 "[UB1] U [42]",
                 False,
                 False,
-                Tree(  # type: ignore[misc]
+                Tree(
                     "and_composition",
                     [
                         Tree(Token("RULE", "time_condition"), [Token("TIME_CONDITION_KEY", "UB1")]),
@@ -32,7 +32,7 @@ class TestTimeConditionReplacement:
                 "[UB1] U [42]",
                 True,
                 True,
-                Tree(  # type: ignore[misc]
+                Tree(
                     "and_composition",
                     [
                         Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", "932")]),
@@ -44,7 +44,7 @@ class TestTimeConditionReplacement:
                 "[UB2] U [42]",
                 False,
                 False,
-                Tree(  # type: ignore[misc]
+                Tree(
                     "and_composition",
                     [
                         Tree(Token("RULE", "time_condition"), [Token("TIME_CONDITION_KEY", "UB2")]),
@@ -56,7 +56,7 @@ class TestTimeConditionReplacement:
                 "[UB2] U [42]",
                 False,
                 False,
-                Tree(  # type: ignore[misc]
+                Tree(
                     "and_composition",
                     [
                         Tree(Token("RULE", "time_condition"), [Token("TIME_CONDITION_KEY", "UB2")]),
@@ -110,7 +110,7 @@ class TestTimeConditionReplacement:
                 "[UB3] U [42]",
                 False,
                 False,
-                Tree(  # type: ignore[misc]
+                Tree(
                     "and_composition",
                     [
                         Tree(Token("RULE", "time_condition"), [Token("TIME_CONDITION_KEY", "UB3")]),
@@ -122,20 +122,20 @@ class TestTimeConditionReplacement:
                 "[UB3] U [42]",
                 True,
                 True,
-                Tree(  # type: ignore[misc]
+                Tree(
                     "and_composition",
                     [
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "xor_composition",
                             [
-                                Tree(  # type: ignore[misc]
+                                Tree(
                                     "then_also_composition",
                                     [
                                         Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", "932")]),
                                         Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", "492")]),
                                     ],
                                 ),
-                                Tree(  # type: ignore[misc]
+                                Tree(
                                     "then_also_composition",
                                     [
                                         Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", "934")]),
@@ -152,7 +152,7 @@ class TestTimeConditionReplacement:
     )
     async def test_time_condition_expansion(
         self, expression: str, replace_time_conditions: bool, resolve_time_conditions: bool, expected_tree: Tree[Token]
-    ):
+    ) -> None:
         parsed_tree = await parse_expression_including_unresolved_subexpressions(
             expression, replace_time_conditions=replace_time_conditions, resolve_time_conditions=resolve_time_conditions
         )

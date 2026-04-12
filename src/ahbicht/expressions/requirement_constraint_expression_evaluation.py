@@ -65,7 +65,7 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
 
     def _or_xor_composition(
         self, left: ConditionNode, right: ConditionNode, composition: Literal["or_composition", "xor_composition"]
-    ):
+    ) -> EvaluatedComposition:
         """
         Determine the condition_fulfilled attribute for or_/xor_compostions.
         """
@@ -238,7 +238,7 @@ of the type RequirementConstraint, Hint or FormatConstraint.""")
     except VisitError as visit_err:
         raise visit_err.orig_exc
 
-    return result
+    return result  # type: ignore[no-any-return]
 
 
 async def requirement_constraint_evaluation(

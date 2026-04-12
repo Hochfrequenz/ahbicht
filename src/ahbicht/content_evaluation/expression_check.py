@@ -3,7 +3,7 @@ contains a high-level function that checks if a given expression is valid or not
 """
 
 import asyncio
-from typing import Awaitable, Optional, Union
+from typing import Any, Awaitable, Optional, Union
 
 from efoli import EdifactFormat, EdifactFormatVersion
 from lark import Token, Tree
@@ -44,7 +44,7 @@ async def is_valid_expression(  # pylint: disable=too-many-locals
         _edifact_format_version = ahb_context.evaluatable_data.edifact_format_version
 
     tree: Tree[Token]
-    parse_context_kwargs: dict = {}
+    parse_context_kwargs: dict[str, Any] = {}
     if ahb_context is not None:
         parse_context_kwargs["ahb_context"] = ahb_context
     if isinstance(expression_or_tree, str):
@@ -63,10 +63,10 @@ async def is_valid_expression(  # pylint: disable=too-many-locals
     else:
         raise ValueError(f"{expression_or_tree} is neither a string nor a Tree")
     categorized_key_extract = extract_categorized_keys_from_tree(tree, sanitize=True)
-    evaluation_tasks: list[Awaitable] = []
+    evaluation_tasks: list[Awaitable[None]] = []
     for content_evaluation_result in categorized_key_extract.generate_possible_content_evaluation_results():
 
-        async def evaluate_with_cer(cer: ContentEvaluationResult):
+        async def evaluate_with_cer(cer: ContentEvaluationResult) -> None:
             cer_context = AhbContext.from_content_evaluation_result(cer, _edifact_format, _edifact_format_version)
             try:
                 await evaluate_ahb_expression_tree(tree, ahb_context=cer_context)

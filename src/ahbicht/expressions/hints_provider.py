@@ -9,7 +9,7 @@ import json
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Mapping, Optional
+from typing import Any, Mapping, Optional
 
 from efoli import EdifactFormat, EdifactFormatVersion
 
@@ -129,7 +129,7 @@ class JsonFileHintsProvider(DictBasedHintsProvider):
         Opens the hint json file and loads it into an attribute of the class.
         """
         with open(file_path, encoding="utf-8") as json_infile:
-            return json.load(json_infile)
+            return json.load(json_infile)  # type: ignore[no-any-return]
 
 
 class ContentEvaluationResultBasedHintsProvider(HintsProvider):
@@ -139,7 +139,7 @@ class ContentEvaluationResultBasedHintsProvider(HintsProvider):
     data.
     """
 
-    def __init__(self, evaluatable_data: Optional[EvaluatableData] = None) -> None:
+    def __init__(self, evaluatable_data: Optional[EvaluatableData[Any]] = None) -> None:
         super().__init__()
         self._evaluatable_data = evaluatable_data
 

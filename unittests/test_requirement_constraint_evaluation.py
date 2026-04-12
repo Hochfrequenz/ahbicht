@@ -1,5 +1,7 @@
 """Test for the requirement constraint evaluation of the condition expressions."""
 
+from typing import Any, Optional
+
 import pytest
 
 from ahbicht.content_evaluation.ahb_context import AhbContext
@@ -69,13 +71,13 @@ class TestRequirementConstraintEvaluation:
     )
     async def test_evaluate_valid_ahb_expression(
         self,
-        mocker,
-        condition_expression,
-        expected_requirement_constraints_fulfilled,
-        expected_requirement_is_conditional,
-        expected_format_constraints_expression,
-        expected_hints,
-    ):
+        mocker: Any,
+        condition_expression: str,
+        expected_requirement_constraints_fulfilled: bool,
+        expected_requirement_is_conditional: bool,
+        expected_format_constraints_expression: Optional[str],
+        expected_hints: Optional[str],
+    ) -> None:
         """
         Tests that valid ahb expressions are evaluated as expected.
         Odd condition_keys are True, even condition_keys are False
@@ -144,19 +146,19 @@ class TestRequirementConstraintEvaluation:
     )
     async def test_evaluate_condition_expression_with_invalid_values(
         self,
-        mocker,
+        mocker: Any,
         condition_expression: str,
-        input_values: dict,
+        input_values: dict[str, Any],
         expected_error: type,
         expected_error_message: str,
-    ):
+    ) -> None:
         """Tests that an error is raised when trying to pass invalid values."""
         mocker.patch(
             "ahbicht.expressions.requirement_constraint_expression_evaluation.ConditionNodeBuilder.requirement_content_evaluation_for_all_condition_keys",
             return_value=input_values,
         )
         ctx = _make_context()
-        with pytest.raises(expected_error) as excinfo:  # type: ignore[var-annotated]
+        with pytest.raises(expected_error) as excinfo:
             await requirement_constraint_evaluation(condition_expression, ahb_context=ctx)
 
         assert expected_error_message in str(excinfo.value)

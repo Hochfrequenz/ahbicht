@@ -47,7 +47,7 @@ class TestCerBasedRcEvaluator:
     )
     async def test_evaluation(
         self, condition_key: str, expected_result: Optional[EvaluatedFormatConstraint], ahb_context_from_cer: AhbContext
-    ):
+    ) -> None:
         fc_evaluator = ahb_context_from_cer.fc_evaluator
         if expected_result is not None:
             actual = await fc_evaluator.evaluate_single_format_constraint(condition_key)

@@ -83,7 +83,7 @@ def evaluate_format_constraint_tree(
     except VisitError as visit_err:
         raise visit_err.orig_exc
 
-    return result
+    return result  # type: ignore[no-any-return]
 
 
 async def format_constraint_evaluation(

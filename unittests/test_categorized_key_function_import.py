@@ -1,4 +1,4 @@
-def test_extract_categorized_keys_is_callable():
+def test_extract_categorized_keys_is_callable() -> None:
     # pylint:disable=import-outside-toplevel
     from ahbicht.expressions.condition_expression_parser import extract_categorized_keys
 

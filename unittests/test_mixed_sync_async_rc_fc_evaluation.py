@@ -26,16 +26,16 @@ class MixedSyncAsyncRcEvaluator(RcEvaluator):
     edifact_format = default_test_format
     edifact_format_version = default_test_version
 
-    def _get_default_context(self):
-        return None  # type: ignore[return-value]
+    def _get_default_context(self) -> None:  # type: ignore[override]
+        return None
 
-    def evaluate_1(self, evaluatable_data, context):
+    def evaluate_1(self, evaluatable_data: EvaluatableData, context: EvaluationContext) -> ConditionFulfilledValue:  # type: ignore[type-arg]
         assert isinstance(evaluatable_data, EvaluatableData)
         if context is not None:
             assert isinstance(context, EvaluationContext)
         return ConditionFulfilledValue.FULFILLED
 
-    async def evaluate_2(self, evaluatable_data, context):
+    async def evaluate_2(self, evaluatable_data: EvaluatableData, context: EvaluationContext) -> ConditionFulfilledValue:  # type: ignore[type-arg]
         assert isinstance(evaluatable_data, EvaluatableData)
         if context is not None:
             assert isinstance(context, EvaluationContext)
@@ -48,10 +48,10 @@ class MixedSyncAsyncFcEvaluator(FcEvaluator):
     edifact_format = default_test_format
     edifact_format_version = default_test_version
 
-    def evaluate_901(self, _):
+    def evaluate_901(self, _: object) -> EvaluatedFormatConstraint:
         return EvaluatedFormatConstraint(format_constraint_fulfilled=True, error_message=None)
 
-    async def evaluate_902(self, _):
+    async def evaluate_902(self, _: object) -> EvaluatedFormatConstraint:
         return EvaluatedFormatConstraint(format_constraint_fulfilled=True, error_message=None)
 
 
@@ -66,7 +66,7 @@ class TestMixedSyncAsyncEvaluation:
     )
     async def test_mixed_async_non_async(
         self, expression: str, expected_rc_fulfilled: bool, expected_fc_fulfilled: bool
-    ):
+    ) -> None:
         fc_evaluator = MixedSyncAsyncFcEvaluator()
         rc_evaluator = MixedSyncAsyncRcEvaluator()
         ctx = AhbContext(

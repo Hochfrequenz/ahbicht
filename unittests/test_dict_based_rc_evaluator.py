@@ -1,5 +1,6 @@
 """Tests the dictionary based RC evaluator"""
 
+from typing import Any
 from unittest import mock
 
 import pytest
@@ -12,7 +13,7 @@ from unittests.defaults import empty_default_test_data
 class TestDictBasedRcEvaluator:
     """Test for the evaluation using the Dict Based RC Evaluator"""
 
-    async def test_evaluation(self, mocker):
+    async def test_evaluation(self, mocker: Any) -> None:
         hardcoded_results = {
             "1": ConditionFulfilledValue.NEUTRAL,
             "2": ConditionFulfilledValue.UNFULFILLED,
