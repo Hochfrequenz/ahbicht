@@ -37,7 +37,8 @@ class ConditionNodeBuilder:
     def __init__(self, condition_keys: list[str], ahb_context: Optional[AhbContext] = None) -> None:
         self._ahb_context = ahb_context
         if ahb_context is not None:
-            # New path: use the explicit context — no global inject needed
+            # New path: all collaborators come from ahb_context.
+            # self.token_logic_provider is intentionally not set on this path.
             pass
         else:
             # Legacy path: fall back to global inject container (used by wanna.bee and older code)
