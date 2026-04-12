@@ -489,3 +489,98 @@ class TestAHBExpressionEvaluation:
             )
         finally:
             inject.clear()
+
+
+class TestAhbExpressionEvaluationWithAhbContext:
+    """
+    End-to-end tests using AhbContext — no inject setup at all.
+    This proves the full pipeline works without the global DI container.
+    """
+
+    @staticmethod
+    def _make_context(
+        rc: dict[str, ConditionFulfilledValue],
+        fc: dict[str, EvaluatedFormatConstraint],
+        hints: dict[str, str],
+    ) -> "AhbContext":
+        from ahbicht.content_evaluation.ahb_context import AhbContext
+
+        cer = ContentEvaluationResult(
+            requirement_constraints=rc,
+            format_constraints=fc,
+            hints=hints,
+        )
+        return AhbContext.from_content_evaluation_result(
+            cer,
+            edifact_format=default_test_format,
+            edifact_format_version=default_test_version,
+        )
+
+    async def test_simple_muss_fulfilled(self):
+        """Muss [1] where [1] is FULFILLED → requirement_indicator=MUSS, fulfilled=True"""
+        ctx = self._make_context(
+            rc={"1": ConditionFulfilledValue.FULFILLED},
+            fc={},
+            hints={},
+        )
+        tree = await parse_expression_including_unresolved_subexpressions("Muss [1]")
+        result = await evaluate_ahb_expression_tree(tree, ahb_context=ctx)
+        assert result.requirement_indicator == ModalMark.MUSS
+        assert result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled is True
+
+    async def test_simple_muss_unfulfilled(self):
+        """Muss [1] where [1] is UNFULFILLED → fulfilled=False"""
+        ctx = self._make_context(
+            rc={"1": ConditionFulfilledValue.UNFULFILLED},
+            fc={},
+            hints={},
+        )
+        tree = await parse_expression_including_unresolved_subexpressions("Muss [1]")
+        result = await evaluate_ahb_expression_tree(tree, ahb_context=ctx)
+        assert result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled is False
+
+    async def test_and_composition_with_format_constraint(self):
+        """Muss [1] U [2][901] — RC fulfilled, FC fulfilled"""
+        ctx = self._make_context(
+            rc={"1": ConditionFulfilledValue.FULFILLED, "2": ConditionFulfilledValue.FULFILLED},
+            fc={"901": EvaluatedFormatConstraint(format_constraint_fulfilled=True)},
+            hints={},
+        )
+        tree = await parse_expression_including_unresolved_subexpressions("Muss [1] U [2][901]")
+        result = await evaluate_ahb_expression_tree(tree, ahb_context=ctx)
+        assert result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled is True
+        assert result.format_constraint_evaluation_result.format_constraints_fulfilled is True
+
+    async def test_or_composition(self):
+        """Muss [1] O [2] — one fulfilled → fulfilled"""
+        ctx = self._make_context(
+            rc={"1": ConditionFulfilledValue.UNFULFILLED, "2": ConditionFulfilledValue.FULFILLED},
+            fc={},
+            hints={},
+        )
+        tree = await parse_expression_including_unresolved_subexpressions("Muss [1] O [2]")
+        result = await evaluate_ahb_expression_tree(tree, ahb_context=ctx)
+        assert result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled is True
+
+    async def test_with_hints(self):
+        """Muss [501] — hint key, always neutral → fulfilled with hint text"""
+        ctx = self._make_context(
+            rc={},
+            fc={},
+            hints={"501": "Hinweis 501"},
+        )
+        tree = await parse_expression_including_unresolved_subexpressions("Muss [501]")
+        result = await evaluate_ahb_expression_tree(tree, ahb_context=ctx)
+        assert result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled is True
+        assert result.requirement_constraint_evaluation_result.hints == "Hinweis 501"
+
+    async def test_modal_mark_fallthrough(self):
+        """Muss [1] Kann — first unfulfilled, falls through to Kann"""
+        ctx = self._make_context(
+            rc={"1": ConditionFulfilledValue.UNFULFILLED},
+            fc={},
+            hints={},
+        )
+        tree = await parse_expression_including_unresolved_subexpressions("Muss [1] Kann")
+        result = await evaluate_ahb_expression_tree(tree, ahb_context=ctx)
+        assert result.requirement_indicator == ModalMark.KANN
