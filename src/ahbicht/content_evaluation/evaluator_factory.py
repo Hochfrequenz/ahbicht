@@ -10,13 +10,10 @@ ContentEvaluationResult. Now the methods below are useful. Simply provide a cont
 the evaluators are created based on the already known outcomes. You do not have to actually touch any evaluator code.
 """
 
-import warnings
-from typing import Callable, Iterable, Optional, Protocol
+from typing import Iterable, Optional, Protocol
 
-import inject
 from efoli import EdifactFormat, EdifactFormatVersion
 
-from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
 from ahbicht.content_evaluation.fc_evaluators import (
     ContentEvaluationResultBasedFcEvaluator,
     DictBasedFcEvaluator,
@@ -27,7 +24,6 @@ from ahbicht.content_evaluation.rc_evaluators import (
     DictBasedRcEvaluator,
     RcEvaluator,
 )
-from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
 from ahbicht.expressions.hints_provider import (
     ContentEvaluationResultBasedHintsProvider,
     DictBasedHintsProvider,
@@ -95,36 +91,3 @@ def create_content_evaluation_result_based_evaluators(
         [rc_evaluator, fc_evaluator, hints_provider, package_resolver], edifact_format, edifact_format_version
     )
     return rc_evaluator, fc_evaluator, hints_provider, package_resolver
-
-
-def create_and_inject_hardcoded_evaluators(
-    content_evaluation_result: ContentEvaluationResult,
-    evaluatable_data_provider: Optional[Callable[[], EvaluatableData]] = None,
-    edifact_format: Optional[EdifactFormat] = None,
-    edifact_format_version: Optional[EdifactFormatVersion] = None,
-) -> None:
-    """
-    Creates evaluators from hardcoded content_evaluation result and injects them.
-
-    .. deprecated:: 1.4.0
-        Use ``AhbContext.from_content_evaluation_result()`` instead.
-
-    :param content_evaluation_result:
-    :return:
-    """
-    warnings.warn(
-        "create_and_inject_hardcoded_evaluators is deprecated and will be removed in ahbicht v2.0. "
-        "Use AhbContext.from_content_evaluation_result() instead.",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-    evaluators = create_hardcoded_evaluators(
-        content_evaluation_result, edifact_format=edifact_format, edifact_format_version=edifact_format_version
-    )
-
-    def configure(binder):
-        binder.bind(TokenLogicProvider, SingletonTokenLogicProvider([*evaluators]))
-        if evaluatable_data_provider is not None:
-            binder.bind_to_provider(EvaluatableDataProvider, evaluatable_data_provider)
-
-    inject.configure_once(configure)

@@ -6,25 +6,17 @@ of the format constraint expression tree are handled.
 The used terms are defined in the README_conditions.md.
 """
 
-from __future__ import annotations
+from typing import Mapping, Optional
 
-import warnings
-from typing import TYPE_CHECKING, Mapping, Optional
-
-import inject
 from lark import Token, Tree, v_args
 from lark.exceptions import VisitError
 
-from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
-from ahbicht.content_evaluation.token_logic_provider import TokenLogicProvider
+from ahbicht.content_evaluation.ahb_context import AhbContext
 from ahbicht.expressions.base_transformer import BaseTransformer
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.expression_builder import FormatErrorMessageExpressionBuilder
 from ahbicht.models.condition_nodes import EvaluatedFormatConstraint
 from ahbicht.models.evaluation_results import FormatConstraintEvaluationResult
-
-if TYPE_CHECKING:
-    from ahbicht.content_evaluation.ahb_context import AhbContext
 
 
 @v_args(inline=True)  # Children are provided as *args instead of a list argument
@@ -96,7 +88,7 @@ def evaluate_format_constraint_tree(
 
 async def format_constraint_evaluation(
     format_constraints_expression: Optional[str],
-    ahb_context: Optional[AhbContext] = None,
+    ahb_context: AhbContext,
 ) -> FormatConstraintEvaluationResult:
     """
     Evaluation of the format constraint expression.
@@ -110,18 +102,10 @@ async def format_constraint_evaluation(
         all_evaluatable_format_constraint_keys: list[str] = [
             t.value for t in parsed_tree_fc.scan_values(lambda v: isinstance(v, Token))
         ]
-        if ahb_context is not None:
-            # New path: pass evaluatable_data explicitly to bypass @inject.params decorator
-            input_values: dict[str, EvaluatedFormatConstraint] = await _build_evaluated_format_constraint_nodes(
-                all_evaluatable_format_constraint_keys,
-                ahb_context=ahb_context,
-                evaluatable_data=ahb_context.evaluatable_data,
-            )
-        else:
-            # Legacy inject path: let @inject.params fill in evaluatable_data
-            input_values = await _build_evaluated_format_constraint_nodes(  # pylint:disable=no-value-for-parameter
-                all_evaluatable_format_constraint_keys
-            )
+        input_values: dict[str, EvaluatedFormatConstraint] = await _build_evaluated_format_constraint_nodes(
+            all_evaluatable_format_constraint_keys,
+            ahb_context=ahb_context,
+        )
         resulting_evaluated_format_constraint_node: EvaluatedFormatConstraint = evaluate_format_constraint_tree(
             parsed_tree_fc, input_values
         )
@@ -133,28 +117,11 @@ async def format_constraint_evaluation(
     )
 
 
-@inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
-# search for binder.bind_to_provider(EvaluatableDataProvider, your_function_that_returns_evaluatable_data_goes_here)
 async def _build_evaluated_format_constraint_nodes(
     evaluatable_format_constraint_keys: list[str],
-    evaluatable_data: EvaluatableData,
-    ahb_context: Optional[AhbContext] = None,
+    ahb_context: AhbContext,
 ) -> dict[str, EvaluatedFormatConstraint]:
     """Build evaluated format constraint nodes."""
-
-    if ahb_context is not None:
-        evaluator = ahb_context.fc_evaluator
-    else:
-        # Legacy inject path
-        warnings.warn(
-            "Calling _build_evaluated_format_constraint_nodes without ahb_context is deprecated "
-            "and will be removed in ahbicht v2.0. Pass an AhbContext instance explicitly.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        token_logic_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)  # type: ignore[assignment]
-        evaluator = token_logic_provider.get_fc_evaluator(
-            evaluatable_data.edifact_format, evaluatable_data.edifact_format_version
-        )
+    evaluator = ahb_context.fc_evaluator
     evaluated_format_constraints = await evaluator.evaluate_format_constraints(evaluatable_format_constraint_keys)
     return evaluated_format_constraints

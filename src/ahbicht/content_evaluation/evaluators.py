@@ -10,7 +10,6 @@ import re
 from abc import ABC
 from typing import Callable, Optional
 
-import inject
 from efoli import EdifactFormat, EdifactFormatVersion
 
 # pylint: disable=too-few-public-methods
@@ -41,17 +40,7 @@ class Evaluator(ABC):
         self._evaluation_methods: dict[str, Callable] = {}
         self.logger: logging.Logger = logging.getLogger(self.__module__)
         self.logger.setLevel(logging.DEBUG)
-        try:
-            candidates = inspect.getmembers(self, inspect.ismethod)
-        except inject.InjectorException as injector_exception:
-            if str(injector_exception) == "No injector is configured":
-                # this is due to https://github.com/ivankorobkov/python-inject/issues/77
-                # remove this catch block once the original issue is resolved
-                raise AttributeError(
-                    f"Using inject.attr in custom evaluators as you tried in {self.__class__.__name__} is not "
-                    "supported. Try inject.instance in any method except for __init__ instead."
-                ) from injector_exception
-            raise
+        candidates = inspect.getmembers(self, inspect.ismethod)
         for candidate in candidates:
             # a candidate is a tuple of a string (index 0, name of the method) and the bound method itself (index 1)
             match = Evaluator._evaluation_method_name_pattern.match(candidate[0])

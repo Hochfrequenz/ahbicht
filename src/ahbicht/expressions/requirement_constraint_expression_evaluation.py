@@ -6,14 +6,13 @@ of the condition expression tree are handled.
 The used terms are defined in the README_conditions.md.
 """
 
-from __future__ import annotations
-
-from typing import TYPE_CHECKING, Literal, Mapping, Optional, Type, Union
+from typing import Literal, Mapping, Optional, Type, Union
 
 from lark import Token, Tree, v_args
 from lark.exceptions import VisitError
 
 from ahbicht.condition_node_builder import ConditionNodeBuilder, TRCTransformerArgument
+from ahbicht.content_evaluation.ahb_context import AhbContext
 from ahbicht.expressions import InvalidExpressionError
 from ahbicht.expressions.base_transformer import BaseTransformer
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
@@ -28,9 +27,6 @@ from ahbicht.models.condition_nodes import (
     UnevaluatedFormatConstraint,
 )
 from ahbicht.models.evaluation_results import RequirementConstraintEvaluationResult
-
-if TYPE_CHECKING:
-    from ahbicht.content_evaluation.ahb_context import AhbContext
 
 
 @v_args(inline=True)  # Children are provided as *args instead of a list argument
@@ -247,13 +243,13 @@ of the type RequirementConstraint, Hint or FormatConstraint.""")
 
 async def requirement_constraint_evaluation(
     condition_expression: Union[str, Tree],
-    ahb_context: Optional[AhbContext] = None,
+    ahb_context: AhbContext,
 ) -> RequirementConstraintEvaluationResult:
     """
     Evaluation of the condition expression in regard to the requirement conditions (rc).
     The condition expression can either be a string that still needs to be parsed as condition expression or a tree
     that has already been parsed.
-    :param ahb_context: optional AhbContext; if provided, bypasses the global inject container
+    :param ahb_context: AhbContext providing all evaluators and data
     """
     if isinstance(condition_expression, str):
         parsed_tree_rc: Tree = parse_condition_expression_to_tree(condition_expression)

@@ -8,16 +8,12 @@ from __future__ import annotations
 
 import asyncio
 import inspect
-import warnings
-from typing import TYPE_CHECKING, Awaitable, Optional, Union, cast
+from typing import TYPE_CHECKING, Awaitable, Optional, Union
 
-import inject
 from lark import Token, Transformer, Tree
 from lark.exceptions import VisitError
 
 from ahbicht.condition_node_distinction import PACKAGE_1P_HINT_KEY
-from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
-from ahbicht.content_evaluation.token_logic_provider import TokenLogicProvider
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.models.mapping_results import Repeatability
@@ -45,7 +41,7 @@ async def parse_expression_including_unresolved_subexpressions(
     :param replace_time_conditions: if true the time conditions "UBx" are replaced with format constraints
     :param include_package_repeatabilities: if true we include the repeatabilities of the packages take a look at
     PackageExpansionTransformer for a better understanding why we included this flag.
-    :param ahb_context: optional AhbContext for explicit dependency passing (bypasses inject)
+    :param ahb_context: required when resolve_packages=True; provides the package resolver
     """
     try:
         expression_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(expression)
@@ -150,22 +146,11 @@ class PackageExpansionTransformer(Transformer):
     ) -> None:
         super().__init__()
         self._ahb_context = ahb_context
-        if ahb_context is not None:
-            # self.token_logic_provider intentionally not set
-            pass
-        else:
-            warnings.warn(
-                "Creating PackageExpansionTransformer without ahb_context is deprecated "
-                "and will be removed in ahbicht v2.0. Pass an AhbContext instance explicitly.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-            self.token_logic_provider = cast(TokenLogicProvider, inject.instance(TokenLogicProvider))
         self.include_package_repeatabilities = include_package_repeatabilities
 
     def package(self, tokens: list[Token]) -> Union[Tree[Token], Awaitable[Tree]]:
         """
-        try to resolve the package using the injected PackageResolver
+        try to resolve the package using the PackageResolver from ahb_context
         """
         # The grammar guarantees that there is always exactly 1 package_key token/terminal.
         # But the repeatability token is optional, so the list repeatability_tokens might contain 0 or 1 entries
@@ -186,23 +171,10 @@ class PackageExpansionTransformer(Transformer):
         if package_key_token.value == "1P":
             return Tree("condition", [Token("CONDITION_KEY", PACKAGE_1P_HINT_KEY)])
 
-        if self._ahb_context is not None:
-            return self._package_async(  # pylint:disable=no-value-for-parameter
-                package_key_token, single_repeat_token, evaluatable_data=self._ahb_context.evaluatable_data
-            )
-        return self._package_async(package_key_token, single_repeat_token)  # pylint:disable=no-value-for-parameter
+        return self._package_async(package_key_token, single_repeat_token)
 
-    @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
-    # search for binder.bind_to_provider(EvaluatableDataProvider, your_function_that_returns_evaluatable_data_goes_here)
-    async def _package_async(
-        self, package_key_token: Token, repeatability_token: Optional[Token], evaluatable_data: EvaluatableData
-    ) -> Tree[Token]:
-        if self._ahb_context is not None:
-            resolver = self._ahb_context.package_resolver
-        else:
-            resolver = self.token_logic_provider.get_package_resolver(
-                evaluatable_data.edifact_format, evaluatable_data.edifact_format_version
-            )
+    async def _package_async(self, package_key_token: Token, repeatability_token: Optional[Token]) -> Tree[Token]:
+        resolver = self._ahb_context.package_resolver
         resolved_package = await resolver.get_condition_expression(package_key_token.value)
         if not resolved_package.has_been_resolved_successfully():
             raise NotImplementedError(f"The package '{package_key_token.value}' could not be resolved by {resolver}")

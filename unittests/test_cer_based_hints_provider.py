@@ -2,10 +2,9 @@
 
 from typing import Optional
 
-import inject
 import pytest
 
-from ahbicht.content_evaluation.token_logic_provider import TokenLogicProvider
+from ahbicht.content_evaluation.ahb_context import AhbContext
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 from unittests.defaults import default_test_format, default_test_version
 
@@ -14,7 +13,7 @@ class TestCerBasedHintsProvider:
     """Test for the evaluation using the ContentEvaluationResult Based Hints Provider"""
 
     @pytest.mark.parametrize(
-        "inject_cer_evaluators",
+        "ahb_context_from_cer",
         [
             pytest.param(
                 ContentEvaluationResult(
@@ -34,8 +33,9 @@ class TestCerBasedHintsProvider:
             pytest.param("503", None),
         ],
     )
-    async def test_evaluation(self, condition_key: str, expected_result: Optional[str], inject_cer_evaluators):
-        token_logic_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)  # type: ignore[assignment]
-        hints_provider = token_logic_provider.get_hints_provider(default_test_format, default_test_version)
+    async def test_evaluation(
+        self, condition_key: str, expected_result: Optional[str], ahb_context_from_cer: AhbContext
+    ):
+        hints_provider = ahb_context_from_cer.hints_provider
         actual = await hints_provider.get_hint_text(condition_key)
         assert actual == expected_result

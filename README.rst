@@ -62,9 +62,37 @@ Note also, that this library also parses the new convention using logical operat
 Usage and Examples
 ------------------
 
+Quick Start
+~~~~~~~~~~~
+
+.. code-block:: python
+
+    from ahbicht.content_evaluation.ahb_context import AhbContext
+    from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
+    from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
+    from ahbicht.models.content_evaluation_result import ContentEvaluationResult
+    from ahbicht.models.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
+    from efoli import EdifactFormat, EdifactFormatVersion
+
+    # 1. Define what conditions are fulfilled
+    cer = ContentEvaluationResult(
+        requirement_constraints={"1": ConditionFulfilledValue.FULFILLED},
+        format_constraints={"901": EvaluatedFormatConstraint(format_constraint_fulfilled=True)},
+        hints={"501": "Some hint text"},
+    )
+
+    # 2. Create an AhbContext
+    ctx = AhbContext.from_content_evaluation_result(
+        cer, EdifactFormat.UTILMD, EdifactFormatVersion.FV2504
+    )
+
+    # 3. Parse and evaluate
+    tree = await parse_expression_including_unresolved_subexpressions("Muss [1][901] U [501]", ahb_context=ctx)
+    result = await evaluate_ahb_expression_tree(tree, ahb_context=ctx)
+
 Jupyter Notebook
 ~~~~~~~~~~~~~~~~
-For a minimal working example on how what the library is used, check out `this Jupyter notebook <minimal_working_example.ipynb>`__.
+For a more detailed example including custom evaluators, check out `this Jupyter notebook <minimal_working_example.ipynb>`__.
 
 Free to Use REST API
 ~~~~~~~~~~~~~~~~~~~~

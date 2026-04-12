@@ -151,7 +151,7 @@ async def extract_categorized_keys(
     """
     Parses the given condition expression and returns CategorizedKeyExtract as a template for content
     evaluation.
-    :param ahb_context: optional AhbContext; if provided, bypasses the global inject container
+    :param ahb_context: required when resolve_packages=True; provides the package resolver
     """
     # because of
     # ImportError: cannot import name 'parse_condition_expression_to_tree' from partially initialized module

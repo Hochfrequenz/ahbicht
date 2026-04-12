@@ -5,13 +5,12 @@ The AhbExpressionTransformer defines the rules how the different parts of the pa
 The used terms are defined in the README.md.
 """
 
-from __future__ import annotations
-
-from typing import TYPE_CHECKING, Awaitable, Optional, Union
+from typing import Awaitable, Union
 
 from lark import Token, Transformer, Tree, v_args
 from lark.exceptions import VisitError
 
+from ahbicht.content_evaluation.ahb_context import AhbContext
 from ahbicht.expressions.format_constraint_expression_evaluation import format_constraint_evaluation
 from ahbicht.expressions.requirement_constraint_expression_evaluation import requirement_constraint_evaluation
 from ahbicht.models.enums import ModalMark, PrefixOperator, RequirementIndicator
@@ -21,9 +20,6 @@ from ahbicht.models.evaluation_results import (
     RequirementConstraintEvaluationResult,
 )
 from ahbicht.utility_functions import gather_if_necessary
-
-if TYPE_CHECKING:
-    from ahbicht.content_evaluation.ahb_context import AhbContext
 
 _str_to_modal_mark_mapping: dict[str, ModalMark] = {
     "MUSS": ModalMark.MUSS,
@@ -45,7 +41,7 @@ class AhbExpressionTransformer(Transformer):
     their respective condition expressions already evaluated to booleans.
     """
 
-    def __init__(self, ahb_context: Optional[AhbContext] = None) -> None:
+    def __init__(self, ahb_context: AhbContext) -> None:
         """
         The input are the evaluated format constraint conditions in the form of ConditionNodes.
         """
@@ -80,14 +76,11 @@ class AhbExpressionTransformer(Transformer):
         """
         See :meth:`single_requirement_indicator_expression_async`
         """
-        context_kwargs: dict = {}
-        if self._ahb_context is not None:
-            context_kwargs["ahb_context"] = self._ahb_context
         requirement_constraint_evaluation_result: RequirementConstraintEvaluationResult = (
-            await requirement_constraint_evaluation(condition_expression, **context_kwargs)
+            await requirement_constraint_evaluation(condition_expression, ahb_context=self._ahb_context)
         )
         format_constraint_evaluation_result: FormatConstraintEvaluationResult = await format_constraint_evaluation(
-            requirement_constraint_evaluation_result.format_constraints_expression, **context_kwargs
+            requirement_constraint_evaluation_result.format_constraints_expression, ahb_context=self._ahb_context
         )
 
         result_of_ahb_expression_evaluation: AhbExpressionEvaluationResult = AhbExpressionEvaluationResult(
@@ -157,13 +150,13 @@ class AhbExpressionTransformer(Transformer):
 
 async def evaluate_ahb_expression_tree(
     parsed_tree: Tree,
-    ahb_context: Optional[AhbContext] = None,
+    ahb_context: AhbContext,
 ) -> AhbExpressionEvaluationResult:
     """
     Evaluates the tree built from the ahb expressions with the help of the AhbExpressionTransformer.
 
     :param parsed_tree: Tree
-    :param ahb_context: optional AhbContext; if provided, bypasses the global inject container
+    :param ahb_context: AhbContext providing all evaluators and data
     :return: the result of the overall condition check (including requirement constraints, format constraints,
         several modal marks)
     """

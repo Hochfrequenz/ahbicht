@@ -2,13 +2,12 @@
 Tests that the code can handle RC/FC evaluators that have both async and sync methods.
 """
 
-import inject
 import pytest
 
-from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider, EvaluationContext
+from ahbicht.content_evaluation.ahb_context import AhbContext
+from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluationContext
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
-from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 from ahbicht.models.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
@@ -16,7 +15,8 @@ from unittests.defaults import (
     default_test_format,
     default_test_version,
     empty_default_hints_provider,
-    return_empty_dummy_evaluatable_data,
+    empty_default_package_resolver,
+    empty_default_test_data,
 )
 
 
@@ -69,14 +69,15 @@ class TestMixedSyncAsyncEvaluation:
     ):
         fc_evaluator = MixedSyncAsyncFcEvaluator()
         rc_evaluator = MixedSyncAsyncRcEvaluator()
-        inject.clear_and_configure(
-            lambda binder: binder.bind(  # type: ignore[arg-type]
-                TokenLogicProvider,
-                SingletonTokenLogicProvider([rc_evaluator, fc_evaluator, empty_default_hints_provider]),
-            ).bind_to_provider(EvaluatableDataProvider, return_empty_dummy_evaluatable_data)
+        ctx = AhbContext(
+            rc_evaluator=rc_evaluator,
+            fc_evaluator=fc_evaluator,
+            hints_provider=empty_default_hints_provider,
+            package_resolver=empty_default_package_resolver,
+            evaluatable_data=empty_default_test_data,
         )
         tree = await parse_expression_including_unresolved_subexpressions(expression)
-        evaluation_result = await evaluate_ahb_expression_tree(tree)
+        evaluation_result = await evaluate_ahb_expression_tree(tree, ahb_context=ctx)
         assert (
             evaluation_result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled
             is expected_rc_fulfilled

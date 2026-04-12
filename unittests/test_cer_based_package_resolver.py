@@ -1,19 +1,18 @@
 """Tests the PackageResolver, that assumes a ContentEvaluationResult to be present in the evaluatable data"""
 
-import inject
 import pytest
 
-from ahbicht.content_evaluation.token_logic_provider import TokenLogicProvider
+from ahbicht.content_evaluation.ahb_context import AhbContext
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 from ahbicht.models.mapping_results import PackageKeyConditionExpressionMapping
 from unittests.defaults import default_test_format, default_test_version
 
 
 class TestCerBasedPackageResolver:
-    """Test for the evaluation using the ContentEvaluationResult Based Hints Provider"""
+    """Test for the evaluation using the ContentEvaluationResult Based Package Resolver"""
 
     @pytest.mark.parametrize(
-        "inject_cer_evaluators",
+        "ahb_context_from_cer",
         [
             pytest.param(
                 ContentEvaluationResult(
@@ -53,9 +52,11 @@ class TestCerBasedPackageResolver:
         ],
     )
     async def test_evaluation(
-        self, condition_key: str, expected_result: PackageKeyConditionExpressionMapping, inject_cer_evaluators
+        self,
+        condition_key: str,
+        expected_result: PackageKeyConditionExpressionMapping,
+        ahb_context_from_cer: AhbContext,
     ):
-        token_logic_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)  # type: ignore[assignment]
-        package_resolver = token_logic_provider.get_package_resolver(default_test_format, default_test_version)
+        package_resolver = ahb_context_from_cer.package_resolver
         actual = await package_resolver.get_condition_expression(condition_key)
         assert actual == expected_result

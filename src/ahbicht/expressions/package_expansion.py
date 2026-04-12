@@ -9,11 +9,10 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Mapping, Optional
 
-import inject
 from efoli import EdifactFormat, EdifactFormatVersion
 from pydantic import RootModel
 
-from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
+from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 from ahbicht.models.mapping_results import PackageKeyConditionExpressionMapping
 
@@ -122,15 +121,17 @@ class ContentEvaluationResultBasedPackageResolver(PackageResolver):
     evaluatable data.
     """
 
-    async def get_condition_expression(self, package_key: str) -> PackageKeyConditionExpressionMapping:
-        # the missing second argument to the private method call in the next line should be injected automatically
-        return await self._get_condition_expression(package_key)  # pylint:disable=no-value-for-parameter
+    def __init__(self, evaluatable_data: Optional[EvaluatableData] = None) -> None:
+        super().__init__()
+        self._evaluatable_data = evaluatable_data
 
-    @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
-    async def _get_condition_expression(
-        self, package_key: str, evaluatable_data: EvaluatableData
-    ) -> PackageKeyConditionExpressionMapping:
-        content_evaluation_result = ContentEvaluationResult.model_validate(evaluatable_data.body)
+    async def get_condition_expression(self, package_key: str) -> PackageKeyConditionExpressionMapping:
+        if self._evaluatable_data is None:
+            raise ValueError(
+                "ContentEvaluationResultBasedPackageResolver requires evaluatable_data. "
+                "Pass it in the constructor or use AhbContext."
+            )
+        content_evaluation_result = ContentEvaluationResult.model_validate(self._evaluatable_data.body)
         try:
             self.logger.debug("Retrieving package '%s' from Content Evaluation Result", package_key)
             if content_evaluation_result.packages is None:

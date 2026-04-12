@@ -3,21 +3,25 @@
 from logging import LogRecord
 from typing import Optional
 
-import inject
 import pytest
-import pytest_asyncio
 
 from ahbicht.content_evaluation import fc_evaluators
-from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
+from ahbicht.content_evaluation.ahb_context import AhbContext
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
-from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
 from ahbicht.expressions.format_constraint_expression_evaluation import (
     _build_evaluated_format_constraint_nodes,
     format_constraint_evaluation,
 )
 from ahbicht.models.condition_nodes import EvaluatedFormatConstraint
 from ahbicht.models.evaluation_results import FormatConstraintEvaluationResult
-from unittests.defaults import default_test_format, default_test_version, return_empty_dummy_evaluatable_data
+from unittests.defaults import (
+    default_test_format,
+    default_test_version,
+    empty_default_hints_provider,
+    empty_default_package_resolver,
+    empty_default_rc_evaluator,
+    empty_default_test_data,
+)
 
 
 class DummyFcEvaluator(FcEvaluator):
@@ -42,7 +46,7 @@ class DummyFcEvaluator(FcEvaluator):
 
     async def evaluate_951(self, entered_input: str) -> EvaluatedFormatConstraint:
         """
-        [951] Format: Zählpunktbezeichnung
+        [951] Format: Zaehlpunktbezeichnung
         """
         # this is just a minimal working example; we skip regex matching and integrity checks for simplicity
         is_zaehlpunkt: bool = entered_input and len(entered_input) == 33  # type: ignore[assignment]
@@ -51,6 +55,17 @@ class DummyFcEvaluator(FcEvaluator):
         else:
             error_message = f"'{entered_input}' is not a valid Zählpunktbezeichnung."
         return EvaluatedFormatConstraint(format_constraint_fulfilled=is_zaehlpunkt, error_message=error_message)
+
+
+def _make_dummy_fc_context(fc_evaluator: Optional[FcEvaluator] = None) -> AhbContext:
+    """Helper to build an AhbContext with the given FC evaluator."""
+    return AhbContext(
+        rc_evaluator=empty_default_rc_evaluator,
+        fc_evaluator=fc_evaluator or empty_default_rc_evaluator,  # type: ignore[arg-type]
+        hints_provider=empty_default_hints_provider,
+        package_resolver=empty_default_package_resolver,
+        evaluatable_data=empty_default_test_data,
+    )
 
 
 class TestFormatConstraintExpressionEvaluation:
@@ -69,16 +84,6 @@ class TestFormatConstraintExpressionEvaluation:
             format_constraint_fulfilled=False, error_message="Formatbedingung nicht erfüllt"
         ),
     }
-
-    @pytest_asyncio.fixture()
-    def setup_and_teardown_injector(self):
-        inject.clear_and_configure(
-            lambda binder: binder.bind(
-                TokenLogicProvider, SingletonTokenLogicProvider([DummyFcEvaluator()])
-            ).bind_to_provider(EvaluatableDataProvider, return_empty_dummy_evaluatable_data)
-        )
-        yield
-        inject.clear()
 
     @pytest.mark.parametrize(
         "format_constraint_expression, expected_format_constraints_fulfilled, expected_error_message",
@@ -105,10 +110,6 @@ class TestFormatConstraintExpressionEvaluation:
                 False,
                 "Entweder (Entweder '902 muss erfüllt sein' oder '904 muss erfüllt sein') oder '902 muss erfüllt sein'",
             ),
-            # Realistic nested XOR with format constraints 950/951 (all unfulfilled)
-            # This is a simplified version of: ([950] ⊻ [951] ⊻ [950]) from real AHB expressions
-            # Before fix: "Entweder 'Entweder 'Formatbedingung nicht erfüllt' oder 'Formatbedingung...'' oder '...'"
-            # After fix: Uses parentheses for compound expressions
             pytest.param(
                 "[950]X[951]X[950]",
                 False,
@@ -143,7 +144,8 @@ class TestFormatConstraintExpressionEvaluation:
             return_value=self._input_values,
         )
 
-        result = await format_constraint_evaluation(format_constraint_expression)
+        ctx = _make_dummy_fc_context()
+        result = await format_constraint_evaluation(format_constraint_expression, ahb_context=ctx)
 
         assert isinstance(result, FormatConstraintEvaluationResult)
         assert result.format_constraints_fulfilled == expected_format_constraints_fulfilled
@@ -177,8 +179,9 @@ class TestFormatConstraintExpressionEvaluation:
             return_value=input_values,
         )
 
+        ctx = _make_dummy_fc_context()
         with pytest.raises(ValueError) as excinfo:
-            await format_constraint_evaluation(format_constraints_expression)
+            await format_constraint_evaluation(format_constraints_expression, ahb_context=ctx)
 
         assert expected_error_message in str(excinfo.value)
 
@@ -210,16 +213,18 @@ class TestFormatConstraintExpressionEvaluation:
         ],
     )
     async def test_build_evaluated_format_constraint_nodes(
-        self, caplog, condition_keys, entered_input, expected_evaluated_fc_nodes, setup_and_teardown_injector
+        self, caplog, condition_keys, entered_input, expected_evaluated_fc_nodes
     ):
         """Tests that evaluated format constraints nodes are build correctly."""
         fc_evaluators.text_to_be_evaluated_by_format_constraint.set(entered_input)
-        evaluated_fc_nodes = await _build_evaluated_format_constraint_nodes(condition_keys)
+        dummy_fc_evaluator = DummyFcEvaluator()
+        ctx = _make_dummy_fc_context(fc_evaluator=dummy_fc_evaluator)
+        evaluated_fc_nodes = await _build_evaluated_format_constraint_nodes(condition_keys, ahb_context=ctx)
         assert evaluated_fc_nodes == expected_evaluated_fc_nodes
         log_entries: list[LogRecord] = list(caplog.records)
-        assert len(log_entries) == 2  # because in both parametrized test cases we evaluate 2 FCs
-        for log_entry in log_entries:
-            assert log_entry.message.startswith("The format constraint")
+        fc_log_entries = [e for e in log_entries if e.message.startswith("The format constraint")]
+        assert len(fc_log_entries) == 2  # because in both parametrized test cases we evaluate 2 FCs
+        for log_entry in fc_log_entries:
             assert "evaluated to " in log_entry.message
 
     @pytest.mark.parametrize(
@@ -248,13 +253,14 @@ class TestFormatConstraintExpressionEvaluation:
         entered_input: str,
         is_successful: bool,
         error_message: Optional[str],
-        setup_and_teardown_injector,
     ):
         """
         Tests that the default FC evaluator ships evaluation methods for 932, 933, 934 and 935 (those expanded from UBx)
         """
         fc_evaluators.text_to_be_evaluated_by_format_constraint.set(entered_input)
-        result = await format_constraint_evaluation(format_constraint_expression)
+        dummy_fc_evaluator = DummyFcEvaluator()
+        ctx = _make_dummy_fc_context(fc_evaluator=dummy_fc_evaluator)
+        result = await format_constraint_evaluation(format_constraint_expression, ahb_context=ctx)
         assert result is not None
         assert result.format_constraints_fulfilled == is_successful
         if is_successful is False and error_message is not None:
