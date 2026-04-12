@@ -4,9 +4,11 @@ for example ahb_expressions which contain condition_expressions or condition_exp
 Parsing expressions that are nested into other expressions is referred to as "resolving".
 """
 
+from __future__ import annotations
+
 import asyncio
 import inspect
-from typing import Awaitable, Optional, Union, cast
+from typing import TYPE_CHECKING, Awaitable, Optional, Union, cast
 
 import inject
 from lark import Token, Transformer, Tree
@@ -17,17 +19,21 @@ from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, Eval
 from ahbicht.content_evaluation.token_logic_provider import TokenLogicProvider
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
-from ahbicht.expressions.package_expansion import PackageResolver
 from ahbicht.models.mapping_results import Repeatability
 from ahbicht.utility_functions import parse_repeatability
 
+if TYPE_CHECKING:
+    from ahbicht.content_evaluation.ahb_context import AhbContext
 
+
+# pylint: disable-next=too-many-arguments, too-many-positional-arguments
 async def parse_expression_including_unresolved_subexpressions(
     expression: str,
     resolve_packages: bool = False,
     resolve_time_conditions: bool = True,
     replace_time_conditions: bool = True,
     include_package_repeatabilities: bool = False,
+    ahb_context: Optional[AhbContext] = None,
 ) -> Tree[Token]:
     """
     Parses expressions and resolves its subexpressions,
@@ -38,6 +44,7 @@ async def parse_expression_including_unresolved_subexpressions(
     :param replace_time_conditions: if true the time conditions "UBx" are replaced with format constraints
     :param include_package_repeatabilities: if true we include the repeatabilities of the packages take a look at
     PackageExpansionTransformer for a better understanding why we included this flag.
+    :param ahb_context: optional AhbContext for explicit dependency passing (bypasses inject)
     """
     try:
         expression_tree = parse_ahb_expression_to_single_requirement_indicator_expressions(expression)
@@ -50,18 +57,26 @@ async def parse_expression_including_unresolved_subexpressions(
             raise SyntaxError(f"{ahb_syntax_error.msg} {condition_syntax_error.msg}")
     if resolve_packages:
         # the condition expression inside the ahb expression has to be resolved before trying to resolve packages
-        expression_tree = await expand_packages(expression_tree, include_package_repeatabilities)
+        expression_tree = await expand_packages(
+            expression_tree, include_package_repeatabilities, ahb_context=ahb_context
+        )
     if resolve_time_conditions:
         expression_tree = expand_time_conditions(expression_tree, replace_time_conditions)
     return expression_tree
 
 
-async def expand_packages(parsed_tree: Tree, include_package_repeatabilities: bool = False) -> Tree[Token]:
+async def expand_packages(
+    parsed_tree: Tree,
+    include_package_repeatabilities: bool = False,
+    ahb_context: Optional[AhbContext] = None,
+) -> Tree[Token]:
     """
     Replaces all the "short" packages in parser_tree with the respective "long" condition expressions
     """
     try:
-        result = PackageExpansionTransformer(include_package_repeatabilities).transform(parsed_tree)
+        result = PackageExpansionTransformer(include_package_repeatabilities, ahb_context=ahb_context).transform(
+            parsed_tree
+        )
     except VisitError as visit_err:
         raise visit_err.orig_exc
     result = await _replace_sub_coroutines_with_awaited_results(result)
@@ -127,9 +142,18 @@ class PackageExpansionTransformer(Transformer):
     package repetitions in the future (cf.  https://github.com/Hochfrequenz/ahbicht/pull/565).
     """
 
-    def __init__(self, include_package_repeatabilities: bool = False) -> None:
+    def __init__(
+        self,
+        include_package_repeatabilities: bool = False,
+        ahb_context: Optional[AhbContext] = None,
+    ) -> None:
         super().__init__()
-        self.token_logic_provider = cast(TokenLogicProvider, inject.instance(TokenLogicProvider))
+        self._ahb_context = ahb_context
+        if ahb_context is not None:
+            # self.token_logic_provider intentionally not set
+            pass
+        else:
+            self.token_logic_provider = cast(TokenLogicProvider, inject.instance(TokenLogicProvider))
         self.include_package_repeatabilities = include_package_repeatabilities
 
     def package(self, tokens: list[Token]) -> Union[Tree[Token], Awaitable[Tree]]:
@@ -155,6 +179,10 @@ class PackageExpansionTransformer(Transformer):
         if package_key_token.value == "1P":
             return Tree("condition", [Token("CONDITION_KEY", PACKAGE_1P_HINT_KEY)])
 
+        if self._ahb_context is not None:
+            return self._package_async(  # pylint:disable=no-value-for-parameter
+                package_key_token, single_repeat_token, evaluatable_data=self._ahb_context.evaluatable_data
+            )
         return self._package_async(package_key_token, single_repeat_token)  # pylint:disable=no-value-for-parameter
 
     @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
@@ -162,9 +190,12 @@ class PackageExpansionTransformer(Transformer):
     async def _package_async(
         self, package_key_token: Token, repeatability_token: Optional[Token], evaluatable_data: EvaluatableData
     ) -> Tree[Token]:
-        resolver: PackageResolver = self.token_logic_provider.get_package_resolver(
-            evaluatable_data.edifact_format, evaluatable_data.edifact_format_version
-        )
+        if self._ahb_context is not None:
+            resolver = self._ahb_context.package_resolver
+        else:
+            resolver = self.token_logic_provider.get_package_resolver(
+                evaluatable_data.edifact_format, evaluatable_data.edifact_format_version
+            )
         resolved_package = await resolver.get_condition_expression(package_key_token.value)
         if not resolved_package.has_been_resolved_successfully():
             raise NotImplementedError(f"The package '{package_key_token.value}' could not be resolved by {resolver}")
