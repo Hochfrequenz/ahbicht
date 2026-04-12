@@ -6,8 +6,10 @@ The used terms are defined in the README_conditions.md.
 """
 
 # pylint:disable=cyclic-import
+from __future__ import annotations
+
 from functools import lru_cache
-from typing import Union
+from typing import TYPE_CHECKING, Optional, Union
 
 from lark import Lark, Token, Tree
 from lark.exceptions import UnexpectedCharacters, UnexpectedEOF
@@ -18,6 +20,9 @@ from ahbicht.expressions.sanitizer import sanitize_expression
 from ahbicht.models.categorized_key_extract import CategorizedKeyExtract
 from ahbicht.models.condition_node_type import ConditionNodeType
 from ahbicht.utility_functions import tree_copy
+
+if TYPE_CHECKING:
+    from ahbicht.content_evaluation.ahb_context import AhbContext
 
 GRAMMAR = r"""
 ?expression: expression "O"i expression -> or_composition
@@ -141,10 +146,12 @@ async def extract_categorized_keys(
     resolve_packages: bool = False,
     resolve_time_conditions: bool = False,
     replace_time_conditions: bool = False,
+    ahb_context: Optional[AhbContext] = None,
 ) -> CategorizedKeyExtract:
     """
     Parses the given condition expression and returns CategorizedKeyExtract as a template for content
     evaluation.
+    :param ahb_context: optional AhbContext; if provided, bypasses the global inject container
     """
     # because of
     # ImportError: cannot import name 'parse_condition_expression_to_tree' from partially initialized module
@@ -157,5 +164,6 @@ async def extract_categorized_keys(
         resolve_packages=resolve_packages,
         resolve_time_conditions=resolve_time_conditions,
         replace_time_conditions=replace_time_conditions,
+        ahb_context=ahb_context,
     )
     return extract_categorized_keys_from_tree(tree, sanitize=True)
