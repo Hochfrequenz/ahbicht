@@ -6,7 +6,9 @@ of the condition expression tree are handled.
 The used terms are defined in the README_conditions.md.
 """
 
-from typing import Literal, Mapping, Optional, Type, Union
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Literal, Mapping, Optional, Type, Union
 
 from lark import Token, Tree, v_args
 from lark.exceptions import VisitError
@@ -26,6 +28,9 @@ from ahbicht.models.condition_nodes import (
     UnevaluatedFormatConstraint,
 )
 from ahbicht.models.evaluation_results import RequirementConstraintEvaluationResult
+
+if TYPE_CHECKING:
+    from ahbicht.content_evaluation.ahb_context import AhbContext
 
 
 @v_args(inline=True)  # Children are provided as *args instead of a list argument
@@ -242,11 +247,13 @@ of the type RequirementConstraint, Hint or FormatConstraint.""")
 
 async def requirement_constraint_evaluation(
     condition_expression: Union[str, Tree],
+    ahb_context: Optional[AhbContext] = None,
 ) -> RequirementConstraintEvaluationResult:
     """
     Evaluation of the condition expression in regard to the requirement conditions (rc).
     The condition expression can either be a string that still needs to be parsed as condition expression or a tree
     that has already been parsed.
+    :param ahb_context: optional AhbContext; if provided, bypasses the global inject container
     """
     if isinstance(condition_expression, str):
         parsed_tree_rc: Tree = parse_condition_expression_to_tree(condition_expression)
@@ -255,7 +262,7 @@ async def requirement_constraint_evaluation(
 
     # get all condition keys from tree
     all_condition_keys: list[str] = [t.value for t in parsed_tree_rc.scan_values(lambda v: isinstance(v, Token))]
-    condition_node_builder = ConditionNodeBuilder(all_condition_keys)
+    condition_node_builder = ConditionNodeBuilder(all_condition_keys, ahb_context=ahb_context)
     input_nodes = await condition_node_builder.requirement_content_evaluation_for_all_condition_keys()
 
     resulting_condition_node: EvaluatedComposition = evaluate_requirement_constraint_tree(parsed_tree_rc, input_nodes)
