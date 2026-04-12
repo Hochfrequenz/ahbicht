@@ -10,7 +10,7 @@ annotated-types==0.7.0
     # via pydantic
 babel==2.18.0
     # via sphinx
-certifi==2026.1.4
+certifi==2026.2.25
     # via requests
 charset-normalizer==3.4.4
     # via requests
@@ -46,7 +46,7 @@ pytz==2025.2
     # via
     #   ahbicht (pyproject.toml)
     #   efoli
-requests==2.32.5
+requests==2.33.0
     # via sphinx
 snowballstemmer==3.0.1
     # via sphinx
