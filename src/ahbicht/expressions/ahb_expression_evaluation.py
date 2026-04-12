@@ -33,7 +33,7 @@ _str_to_modal_mark_mapping: dict[str, ModalMark] = {
 
 # pylint: disable=invalid-name
 # invalid-name: That's also the reason why they seemingly violate the naming conventions.
-class AhbExpressionTransformer(Transformer):
+class AhbExpressionTransformer(Transformer):  # type: ignore[type-arg]
     """
     Transformer, that evaluates the trees built from the ahb expressions.
     The input are the conditions as defined in the AHBs in the form of ConditionNodes.
@@ -50,7 +50,7 @@ class AhbExpressionTransformer(Transformer):
 
     def CONDITION_EXPRESSION(self, condition_expression: Token) -> str:
         """Returns the condition expression."""
-        return condition_expression.value
+        return str(condition_expression.value)
 
     def PREFIX_OPERATOR(self, prefix_operator: Token) -> PrefixOperator:
         """Returns the prefix operator."""
@@ -62,7 +62,7 @@ class AhbExpressionTransformer(Transformer):
 
     @v_args(inline=True)  # Children are provided as *args instead of a list argument
     def single_requirement_indicator_expression(
-        self, requirement_indicator: RequirementIndicator, condition_expression
+        self, requirement_indicator: RequirementIndicator, condition_expression: str
     ) -> Awaitable[AhbExpressionEvaluationResult]:
         """
         Evaluates the condition expression of the respective requirement indicator expression and returns a list of the
@@ -71,7 +71,7 @@ class AhbExpressionTransformer(Transformer):
         return self._single_requirement_indicator_expression_async(requirement_indicator, condition_expression)
 
     async def _single_requirement_indicator_expression_async(
-        self, requirement_indicator: RequirementIndicator, condition_expression
+        self, requirement_indicator: RequirementIndicator, condition_expression: str
     ) -> AhbExpressionEvaluationResult:
         """
         See :meth:`single_requirement_indicator_expression_async`
@@ -149,7 +149,7 @@ class AhbExpressionTransformer(Transformer):
 
 
 async def evaluate_ahb_expression_tree(
-    parsed_tree: Tree,
+    parsed_tree: Tree[Token],
     ahb_context: AhbContext,
 ) -> AhbExpressionEvaluationResult:
     """
@@ -165,4 +165,4 @@ async def evaluate_ahb_expression_tree(
     except VisitError as visit_err:
         raise visit_err.orig_exc
 
-    return await result
+    return await result  # type: ignore[no-any-return]

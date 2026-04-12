@@ -12,7 +12,7 @@ import asyncio
 import inspect
 from abc import ABC
 from contextvars import ContextVar
-from typing import Callable, Coroutine, Optional
+from typing import Any, Callable, Coroutine, Optional
 
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData
 from ahbicht.content_evaluation.evaluators import Evaluator
@@ -139,7 +139,7 @@ class FcEvaluator(Evaluator, ABC):
         """
         Evaluate the entered_input in regard to all the formats provided in condition_keys.
         """
-        tasks: list[Coroutine] = [
+        tasks: list[Coroutine[Any, Any, EvaluatedFormatConstraint]] = [
             self.evaluate_single_format_constraint(condition_key) for condition_key in condition_keys
         ]
         results: list[EvaluatedFormatConstraint] = await asyncio.gather(*tasks)
@@ -169,7 +169,7 @@ class DictBasedFcEvaluator(FcEvaluator):
         except KeyError as key_error:
             raise NotImplementedError(f"No result was provided for {condition_key}.") from key_error
 
-    def get_evaluation_method(self, condition_key: str) -> Optional[Callable]:
+    def get_evaluation_method(self, condition_key: str) -> Optional[Callable[..., Any]]:
         """
         Returns the method that evaluates the condition with key condition_key
         :param condition_key: unique key of the condition, e.g. "59"
@@ -184,7 +184,7 @@ class ContentEvaluationResultBasedFcEvaluator(FcEvaluator):
     Other than the DictBasedFcEvaluator the outcome is not dependent on the initialization but on the evaluatable data.
     """
 
-    def __init__(self, evaluatable_data: Optional[EvaluatableData] = None) -> None:
+    def __init__(self, evaluatable_data: Optional[EvaluatableData[Any]] = None) -> None:
         super().__init__()
         self._evaluatable_data = evaluatable_data
 
@@ -201,8 +201,8 @@ class ContentEvaluationResultBasedFcEvaluator(FcEvaluator):
         except KeyError as key_error:
             raise NotImplementedError(f"No result was provided for {condition_key}.") from key_error
 
-    def get_evaluation_method(self, condition_key: str) -> Optional[Callable]:
-        async def evaluation_method():
+    def get_evaluation_method(self, condition_key: str) -> Optional[Callable[..., Any]]:
+        async def evaluation_method() -> EvaluatedFormatConstraint:
             return await self.evaluate_single_format_constraint(condition_key)
 
         return evaluation_method

@@ -63,7 +63,7 @@ async def parse_expression_including_unresolved_subexpressions(
 
 
 async def expand_packages(
-    parsed_tree: Tree,
+    parsed_tree: Tree[Token],
     include_package_repeatabilities: bool = False,
     ahb_context: Optional[AhbContext] = None,
 ) -> Tree[Token]:
@@ -80,28 +80,28 @@ async def expand_packages(
     return result
 
 
-def expand_time_conditions(parsed_tree: Tree, replace_time_conditions: bool = True) -> Tree[Token]:
+def expand_time_conditions(parsed_tree: Tree[Token], replace_time_conditions: bool = True) -> Tree[Token]:
     """
     Replaces either all the "short" time conditions in parser_tree with the respective "long" condition expressions
     or replaces all the time conditions "UBx" with format constraints (and requirements constraints for UB3)
     """
     result = TimeConditionTransformer(replace_time_conditions).transform(parsed_tree)
-    return result
+    return result  # type: ignore[no-any-return]
 
 
-async def _replace_sub_coroutines_with_awaited_results(tree: Union[Tree, Awaitable[Tree]]) -> Tree[Token]:
+async def _replace_sub_coroutines_with_awaited_results(tree: Union[Tree[Token], Awaitable[Tree[Token]]]) -> Tree[Token]:
     """
     awaits all coroutines inside the tree and replaces the coroutines with their respective awaited result.
     returns an updated tree
     """
-    result: Tree
+    result: Tree[Token]
     if inspect.isawaitable(tree):
         result = await tree
     else:
         # if the tree type hint is correct this is always a tree if it's not awaitable
         result = tree
     # todo: check why lark type hints state the return value of scan_values is always Iterator[str]
-    sub_results = await asyncio.gather(*result.scan_values(asyncio.iscoroutine))
+    sub_results = await asyncio.gather(*result.scan_values(asyncio.iscoroutine))  # type: ignore[call-overload]
     for coro, sub_result in zip(result.scan_values(asyncio.iscoroutine), sub_results):
         for sub_tree in result.iter_subtrees():
             for child_index, child in enumerate(sub_tree.children):
@@ -112,12 +112,12 @@ async def _replace_sub_coroutines_with_awaited_results(tree: Union[Tree, Awaitab
 
 # pylint: disable=invalid-name
 # invalid-name: That's also the reason why it seemingly violates the naming conventions.
-class AhbExpressionResolverTransformer(Transformer):
+class AhbExpressionResolverTransformer(Transformer):  # type: ignore[type-arg]
     """
     Resolves the condition_expressions inside an ahb_expression.
     """
 
-    def CONDITION_EXPRESSION(self, expression):
+    def CONDITION_EXPRESSION(self, expression: Token) -> Tree[Token]:
         """
         Replacing the expression_condition with its parsed tree.
         """
@@ -126,7 +126,7 @@ class AhbExpressionResolverTransformer(Transformer):
 
 
 # pylint: disable=invalid-name
-class PackageExpansionTransformer(Transformer):
+class PackageExpansionTransformer(Transformer):  # type: ignore[type-arg]
     """
     The PackageExpansionTransformer expands packages inside a tree to condition expressions by using a PackageResolver.
     :param include_package_repeatabilities: Flag to include the repeatabilities of the packages.
@@ -148,7 +148,7 @@ class PackageExpansionTransformer(Transformer):
         self._ahb_context = ahb_context
         self.include_package_repeatabilities = include_package_repeatabilities
 
-    def package(self, tokens: list[Token]) -> Union[Tree[Token], Awaitable[Tree]]:
+    def package(self, tokens: list[Token]) -> Union[Tree[Token], Awaitable[Tree[Token]]]:
         """
         try to resolve the package using the PackageResolver from ahb_context
         """
@@ -174,6 +174,8 @@ class PackageExpansionTransformer(Transformer):
         return self._package_async(package_key_token, single_repeat_token)
 
     async def _package_async(self, package_key_token: Token, repeatability_token: Optional[Token]) -> Tree[Token]:
+        if self._ahb_context is None:
+            raise ValueError("ahb_context is required for package resolution")
         resolver = self._ahb_context.package_resolver
         resolved_package = await resolver.get_condition_expression(package_key_token.value)
         if not resolved_package.has_been_resolved_successfully():
@@ -189,7 +191,7 @@ class PackageExpansionTransformer(Transformer):
 
 
 # pylint: disable=invalid-name
-class TimeConditionTransformer(Transformer):
+class TimeConditionTransformer(Transformer):  # type: ignore[type-arg]
     """
     There are two options which are chosen by the boolean `replace_time_conditions`:
     i:
@@ -240,7 +242,7 @@ class TimeConditionTransformer(Transformer):
         super().__init__()
         self.replace_time_conditions = replace_time_conditions
 
-    def time_condition(self, tokens: list[Token]) -> Tree:
+    def time_condition(self, tokens: list[Token]) -> Tree[Token]:
         """
         Replace or resolve time conditions.
         """
@@ -248,7 +250,7 @@ class TimeConditionTransformer(Transformer):
             return self._replace_time_condition(tokens)
         return self._expand_time_condition(tokens)
 
-    def _replace_time_condition(self, tokens: list[Token]) -> Tree:
+    def _replace_time_condition(self, tokens: list[Token]) -> Tree[Token]:
         """
         Replace and resolve time conditions.
         """
@@ -265,7 +267,7 @@ class TimeConditionTransformer(Transformer):
             return parse_condition_expression_to_tree("[932][492]X[934][493]")
         raise NotImplementedError(f"The time_condition '{time_condition_key}' is not implemented")
 
-    def _expand_time_condition(self, tokens: list[Token]) -> Tree:
+    def _expand_time_condition(self, tokens: list[Token]) -> Tree[Token]:
         """
         try to resolve the time conditions using the injected PackageResolver
         """

@@ -13,11 +13,11 @@ class TestExpressionResolver:
                 Tree(  # type: ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "Muss"),
-                                Tree(  # type: ignore[misc]
+                                Tree(
                                     "and_composition",
                                     [
                                         Tree("condition", [Token("CONDITION_KEY", "3")]),
@@ -26,7 +26,7 @@ class TestExpressionResolver:
                                 ),
                             ],
                         ),
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "Soll"),
@@ -41,11 +41,11 @@ class TestExpressionResolver:
                 Tree(  # type: ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("PREFIX_OPERATOR", "X"),
-                                Tree(  # type: ignore[misc]
+                                Tree(
                                     "or_composition",
                                     [
                                         Tree("condition", [Token("CONDITION_KEY", "504")]),
@@ -59,11 +59,11 @@ class TestExpressionResolver:
             ),
             pytest.param(
                 "[905]([504]U[6])",
-                Tree(  # type: ignore[misc]
+                Tree(
                     "then_also_composition",
                     [
                         Tree("condition", [Token("CONDITION_KEY", "905")]),
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "and_composition",
                             [
                                 Tree("condition", [Token("CONDITION_KEY", "504")]),
@@ -99,7 +99,7 @@ class TestExpressionResolver:
             ),
         ],
     )
-    async def test_expression_resolver_valid(self, expression: str, expected_tree: Tree[Token]):
+    async def test_expression_resolver_valid(self, expression: str, expected_tree: Tree[Token]) -> None:
         actual_tree = await parse_expression_including_unresolved_subexpressions(
             expression, resolve_packages=False, include_package_repeatabilities=False
         )
@@ -113,7 +113,7 @@ class TestExpressionResolver:
             ),
         ],
     )
-    async def test_expression_resolver_failing(self, expression: str):
+    async def test_expression_resolver_failing(self, expression: str) -> None:
         with pytest.raises(SyntaxError) as excinfo:
             await parse_expression_including_unresolved_subexpressions(expression)
 

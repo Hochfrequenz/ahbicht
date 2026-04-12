@@ -2,6 +2,8 @@
 Tests the expression builder module.
 """
 
+from typing import Any, Optional, Union
+
 import pytest
 
 from ahbicht.expressions.expression_builder import (
@@ -17,7 +19,7 @@ class TestFormatConstraintExpressionBuilder:
     Tests the format constraint expression builder.
     """
 
-    def test_simple_construction(self):
+    def test_simple_construction(self) -> None:
         fc_1 = UnevaluatedFormatConstraint(condition_key="1")
         fc_2 = UnevaluatedFormatConstraint(condition_key="2")
         fc_3 = UnevaluatedFormatConstraint(condition_key="3")
@@ -45,9 +47,11 @@ class TestHintExpressionBuilder:
             pytest.param(None, None, None),
         ],
     )
-    def test_logical_and(self, init, other, expected: Hint):
-        builder: HintExpressionBuilder = HintExpressionBuilder(init)
-        actual = builder.land(other).get_expression()
+    def test_logical_and(
+        self, init: Optional[Union[Hint, str]], other: Optional[Union[Hint, str]], expected: Optional[str]
+    ) -> None:
+        builder: HintExpressionBuilder[Any] = HintExpressionBuilder(init)  # type: ignore[arg-type]
+        actual = builder.land(other).get_expression()  # type: ignore[arg-type]
         assert actual == expected
 
     @pytest.mark.parametrize(
@@ -61,9 +65,11 @@ class TestHintExpressionBuilder:
             pytest.param(None, None, None),
         ],
     )
-    def test_logical_or(self, init, other, expected: Hint):
-        builder: HintExpressionBuilder = HintExpressionBuilder(init)
-        actual = builder.lor(other).get_expression()
+    def test_logical_or(
+        self, init: Optional[Union[Hint, str]], other: Optional[Union[Hint, str]], expected: Optional[str]
+    ) -> None:
+        builder: HintExpressionBuilder[Any] = HintExpressionBuilder(init)  # type: ignore[arg-type]
+        actual = builder.lor(other).get_expression()  # type: ignore[arg-type]
         assert actual == expected
 
     @pytest.mark.parametrize(
@@ -82,13 +88,15 @@ class TestHintExpressionBuilder:
             pytest.param(None, None, None),
         ],
     )
-    def test_logical_xor(self, init, other, expected: Hint):
-        builder: HintExpressionBuilder = HintExpressionBuilder(init)
-        actual = builder.xor(other).get_expression()
+    def test_logical_xor(
+        self, init: Optional[Union[Hint, str]], other: Optional[Union[Hint, str]], expected: Optional[str]
+    ) -> None:
+        builder: HintExpressionBuilder[Any] = HintExpressionBuilder(init)  # type: ignore[arg-type]
+        actual = builder.xor(other).get_expression()  # type: ignore[arg-type]
         assert actual == expected
 
-    def test_a_longer_concatenation(self):
-        builder = HintExpressionBuilder("foo").land("bar").lor("asd").xor("xyz")
+    def test_a_longer_concatenation(self) -> None:
+        builder: HintExpressionBuilder[Any] = HintExpressionBuilder("foo").land("bar").lor("asd").xor("xyz")  # type: ignore[arg-type]
         assert builder.get_expression() == "Entweder (foo und bar oder asd) oder (xyz)"
 
 
@@ -117,7 +125,9 @@ class TestFormatErrorMessageExpressionBuilder:
             ),
         ],
     )
-    def test_logical_and(self, init, other, expected):
+    def test_logical_and(
+        self, init: EvaluatedFormatConstraint, other: EvaluatedFormatConstraint, expected: Optional[str]
+    ) -> None:
         builder = FormatErrorMessageExpressionBuilder(init)
         actual = builder.land(other).get_expression()
         assert actual == expected
@@ -142,7 +152,9 @@ class TestFormatErrorMessageExpressionBuilder:
             ),
         ],
     )
-    def test_logical_or(self, init, other, expected):
+    def test_logical_or(
+        self, init: EvaluatedFormatConstraint, other: EvaluatedFormatConstraint, expected: Optional[str]
+    ) -> None:
         builder = FormatErrorMessageExpressionBuilder(init)
         actual = builder.lor(other).get_expression()
         assert actual == expected
@@ -172,12 +184,14 @@ class TestFormatErrorMessageExpressionBuilder:
             ),
         ],
     )
-    def test_logical_xor(self, init, other, expected):
+    def test_logical_xor(
+        self, init: EvaluatedFormatConstraint, other: EvaluatedFormatConstraint, expected: Optional[str]
+    ) -> None:
         builder = FormatErrorMessageExpressionBuilder(init)
         actual = builder.xor(other).get_expression()
         assert actual == expected
 
-    def test_nested_xor_uses_parentheses_instead_of_quotes(self):
+    def test_nested_xor_uses_parentheses_instead_of_quotes(self) -> None:
         """
         Test that nested XOR expressions use parentheses instead of quotes to avoid
         mismatched quote problems like "Entweder 'Entweder 'msg1' oder 'msg2'' oder 'msg3'".
@@ -196,7 +210,7 @@ class TestFormatErrorMessageExpressionBuilder:
         # The result should use parentheses around the compound expression, not quotes
         assert result == "Entweder (Entweder 'msg1' oder 'msg2') oder 'msg3'"
 
-    def test_nested_lor_uses_parentheses(self):
+    def test_nested_lor_uses_parentheses(self) -> None:
         """
         Test that nested OR expressions use parentheses for compound expressions.
         """
@@ -213,7 +227,7 @@ class TestFormatErrorMessageExpressionBuilder:
         # The compound expression should use parentheses
         assert result == "('msg1' oder 'msg2') oder 'msg3'"
 
-    def test_nested_land_uses_parentheses(self):
+    def test_nested_land_uses_parentheses(self) -> None:
         """
         Test that nested AND expressions use parentheses for compound expressions.
         """

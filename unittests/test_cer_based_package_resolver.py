@@ -56,7 +56,7 @@ class TestCerBasedPackageResolver:
         condition_key: str,
         expected_result: PackageKeyConditionExpressionMapping,
         ahb_context_from_cer: AhbContext,
-    ):
+    ) -> None:
         package_resolver = ahb_context_from_cer.package_resolver
         actual = await package_resolver.get_condition_expression(condition_key)
         assert actual == expected_result

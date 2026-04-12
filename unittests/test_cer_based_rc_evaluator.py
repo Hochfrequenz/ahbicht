@@ -1,5 +1,6 @@
 """Tests the RC evaluator, that assumes a ContentEvaluationResult to be present in the evaluatable data"""
 
+from typing import Any
 from unittest import mock
 
 import pytest
@@ -13,7 +14,7 @@ from unittests.conftest import store_content_evaluation_result_in_evaluatable_da
 class TestCerBasedRcEvaluator:
     """Test for the evaluation using the ContentEvaluationResult Based RC Evaluator"""
 
-    async def test_evaluation(self, mocker):
+    async def test_evaluation(self, mocker: Any) -> None:
         hardcoded_results = ContentEvaluationResult(
             format_constraints={},
             hints={},

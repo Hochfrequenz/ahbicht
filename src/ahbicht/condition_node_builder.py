@@ -3,7 +3,7 @@ Module for taking all the condition keys of a condition expression and building 
 If necessary it evaluates the needed attributes.
 """
 
-from typing import Union
+from typing import Any, Union
 
 from ahbicht.content_evaluation.ahb_context import AhbContext
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData
@@ -60,7 +60,7 @@ class ConditionNodeBuilder:
 
     async def _build_requirement_constraint_nodes(
         self,
-        evaluatable_data: EvaluatableData,
+        evaluatable_data: EvaluatableData[Any],
     ) -> dict[str, RequirementConstraint]:
         """
         Build requirement constraint nodes by evaluating the constraints

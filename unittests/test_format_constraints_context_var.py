@@ -20,25 +20,25 @@ class _MyFcEvaluator(FcEvaluator):
             error_message=f"Input has length {len(entered_input)} but expected {length}",
         )
 
-    def evaluate_1(self, entered_input: Optional[str]):
+    def evaluate_1(self, entered_input: Optional[str]) -> EvaluatedFormatConstraint:
         """
         check if input is 1 character long
         """
         return self._evaluate_has_length(entered_input, 1)
 
-    def evaluate_2(self, entered_input: Optional[str]):
+    def evaluate_2(self, entered_input: Optional[str]) -> EvaluatedFormatConstraint:
         """
         check if input is 2 characters long
         """
         return self._evaluate_has_length(entered_input, 2)
 
-    async def evaluate_3(self, entered_input: Optional[str]):
+    async def evaluate_3(self, entered_input: Optional[str]) -> EvaluatedFormatConstraint:
         """
         check if input is 3 character long
         """
         return self._evaluate_has_length(entered_input, 3)
 
-    async def evaluate_4(self, entered_input: Optional[str]):
+    async def evaluate_4(self, entered_input: Optional[str]) -> EvaluatedFormatConstraint:
         """
         check if input is 4 character long
         """
@@ -66,23 +66,23 @@ def _build_expectations(actual_length: int) -> dict[str, EvaluatedFormatConstrai
 class TestFormatConstraintsContextVar:
     """Tests that the context variable used by the FC Evaluators works as designed"""
 
-    async def test_context_var_is_context_sensitive(self):
+    async def test_context_var_is_context_sensitive(self) -> None:
         evaluator = _MyFcEvaluator()
         fc_evaluators.text_to_be_evaluated_by_format_constraint.set("something to confuse the evaluation?")
 
-        async def first_evaluation():
+        async def first_evaluation() -> None:
             fc_evaluators.text_to_be_evaluated_by_format_constraint.set("a")
             assert await evaluator.evaluate_format_constraints(["1", "2", "3", "4"]) == _build_expectations(1)
 
-        async def second_evaluation():
+        async def second_evaluation() -> None:
             fc_evaluators.text_to_be_evaluated_by_format_constraint.set("bb")
             assert await evaluator.evaluate_format_constraints(["1", "2", "3", "4"]) == _build_expectations(2)
 
-        async def third_evaluation():
+        async def third_evaluation() -> None:
             fc_evaluators.text_to_be_evaluated_by_format_constraint.set("ccc")
             assert await evaluator.evaluate_format_constraints(["1", "2", "3", "4"]) == _build_expectations(3)
 
-        async def forth_evaluation():
+        async def forth_evaluation() -> None:
             fc_evaluators.text_to_be_evaluated_by_format_constraint.set("dddd")
             assert await evaluator.evaluate_format_constraints(["1", "2", "3", "4"]) == _build_expectations(4)
 

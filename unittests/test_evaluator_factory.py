@@ -50,7 +50,7 @@ class TestEvaluatorFactory:
         expected_requirement_indicator: RequirementIndicator,
         expected_format_constraint_result: bool,
         expected_in_hints: Optional[str],
-    ):
+    ) -> None:
         ctx = AhbContext.from_content_evaluation_result(
             content_evaluation_result,
             edifact_format=default_test_format,

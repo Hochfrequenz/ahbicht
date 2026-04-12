@@ -7,7 +7,7 @@ import json
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Mapping, Optional
+from typing import Any, Mapping, Optional
 
 from efoli import EdifactFormat, EdifactFormatVersion
 from pydantic import RootModel
@@ -121,7 +121,7 @@ class ContentEvaluationResultBasedPackageResolver(PackageResolver):
     evaluatable data.
     """
 
-    def __init__(self, evaluatable_data: Optional[EvaluatableData] = None) -> None:
+    def __init__(self, evaluatable_data: Optional[EvaluatableData[Any]] = None) -> None:
         super().__init__()
         self._evaluatable_data = evaluatable_data
 

@@ -3,7 +3,7 @@ Tests that the parsed trees are JSON serializable
 """
 
 import uuid
-from typing import TypeVar
+from typing import Any, TypeVar
 
 import pytest
 from efoli import EdifactFormat
@@ -23,7 +23,7 @@ from ahbicht.models.mapping_results import ConditionKeyConditionTextMapping, Pac
 T = TypeVar("T")
 
 
-def _test_serialization_roundtrip(serializable_object: T, expected_json_dict: dict) -> T:
+def _test_serialization_roundtrip(serializable_object: T, expected_json_dict: dict[str, Any]) -> T:
     """
     Serializes the serializable_object using the provided schema (or None for pydantic models),
     asserts, that the result is equal to the expected_json_dict
@@ -61,8 +61,8 @@ class TestJsonSerialization:
         ],
     )
     def test_evaluated_format_constraint_serialization(
-        self, evaluated_format_constraint: EvaluatedFormatConstraint, expected_json_dict: dict
-    ):
+        self, evaluated_format_constraint: EvaluatedFormatConstraint, expected_json_dict: dict[str, Any]
+    ) -> None:
         _test_serialization_roundtrip(evaluated_format_constraint, expected_json_dict)
 
     @pytest.mark.parametrize(
@@ -74,8 +74,8 @@ class TestJsonSerialization:
         ],
     )
     def test_validation_errors_on_content_evaluation_result_deserialization(
-        self, invalid_content_evaluation_result_dict: dict
-    ):
+        self, invalid_content_evaluation_result_dict: dict[str, Any]
+    ) -> None:
         with pytest.raises(ValidationError):
             ContentEvaluationResult.model_validate(invalid_content_evaluation_result_dict)
 
@@ -114,8 +114,8 @@ class TestJsonSerialization:
         ],
     )
     def test_content_evaluation_result_serialization(
-        self, content_evaluation_result: ContentEvaluationResult, expected_json_dict: dict
-    ):
+        self, content_evaluation_result: ContentEvaluationResult, expected_json_dict: dict[str, Any]
+    ) -> None:
         for rc_evaluation_result in content_evaluation_result.requirement_constraints.values():
             assert isinstance(rc_evaluation_result, ConditionFulfilledValue)
         deserialized_object = _test_serialization_roundtrip(content_evaluation_result, expected_json_dict)
@@ -124,7 +124,7 @@ class TestJsonSerialization:
         for rc_evaluation_result in content_evaluation_result.requirement_constraints.values():
             assert isinstance(rc_evaluation_result, ConditionFulfilledValue)
 
-    def test_content_evaluation_result_without_packages_may_can_deserialized(self):
+    def test_content_evaluation_result_without_packages_may_can_deserialized(self) -> None:
         json_dict = {
             "hints": {"501": "foo", "502": "bar", "503": None},
             "format_constraints": {
@@ -225,8 +225,8 @@ class TestJsonSerialization:
         ],
     )
     def test_ahb_expression_evaluation_result_serialization(
-        self, ahb_expression_evaluation_result: AhbExpressionEvaluationResult, expected_json_dict: dict
-    ):
+        self, ahb_expression_evaluation_result: AhbExpressionEvaluationResult, expected_json_dict: dict[str, Any]
+    ) -> None:
         _test_serialization_roundtrip(ahb_expression_evaluation_result, expected_json_dict)
 
     @pytest.mark.parametrize(
@@ -243,8 +243,8 @@ class TestJsonSerialization:
         ],
     )
     def test_condition_key_condition_text_mapping_serialization(
-        self, condition_key_condition_text_mapping: ConditionKeyConditionTextMapping, expected_json_dict: dict
-    ):
+        self, condition_key_condition_text_mapping: ConditionKeyConditionTextMapping, expected_json_dict: dict[str, Any]
+    ) -> None:
         _test_serialization_roundtrip(condition_key_condition_text_mapping, expected_json_dict)
 
     @pytest.mark.parametrize(
@@ -261,8 +261,10 @@ class TestJsonSerialization:
         ],
     )
     def test_package_key_condition_expression_mapping_serialization(
-        self, package_key_condition_expression_mapping: PackageKeyConditionExpressionMapping, expected_json_dict: dict
-    ):
+        self,
+        package_key_condition_expression_mapping: PackageKeyConditionExpressionMapping,
+        expected_json_dict: dict[str, Any],
+    ) -> None:
         _test_serialization_roundtrip(package_key_condition_expression_mapping, expected_json_dict)
 
     @pytest.mark.parametrize(
@@ -287,6 +289,6 @@ class TestJsonSerialization:
         ],
     )
     def test_categorized_key_extract_serialization(
-        self, categorized_key_extract: CategorizedKeyExtract, expected_json_dict: dict
-    ):
+        self, categorized_key_extract: CategorizedKeyExtract, expected_json_dict: dict[str, Any]
+    ) -> None:
         _test_serialization_roundtrip(categorized_key_extract, expected_json_dict)

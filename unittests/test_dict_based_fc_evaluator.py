@@ -1,6 +1,6 @@
 """Tests the dictionary based FC evaluator"""
 
-from typing import Optional
+from typing import Any, Optional
 from unittest import mock
 
 import pytest
@@ -39,8 +39,8 @@ class TestDictBasedFcEvaluator:
         condition_key: str,
         text_input: Optional[str],
         expected_result: EvaluatedFormatConstraint,
-        dict_fc_evaluator,
-    ):
+        dict_fc_evaluator: FcEvaluator,
+    ) -> None:
         fc_evaluators.text_to_be_evaluated_by_format_constraint.set("asd")
         assert await dict_fc_evaluator.evaluate_single_format_constraint("1") == EvaluatedFormatConstraint(
             format_constraint_fulfilled=True
@@ -50,12 +50,12 @@ class TestDictBasedFcEvaluator:
             format_constraint_fulfilled=False, error_message="something wrong"
         )
 
-    async def test_not_implemented(self, dict_fc_evaluator):
+    async def test_not_implemented(self, dict_fc_evaluator: FcEvaluator) -> None:
         fc_evaluators.text_to_be_evaluated_by_format_constraint.set("qwe")
         with pytest.raises(NotImplementedError):
             await dict_fc_evaluator.evaluate_single_format_constraint("3")
 
-    async def test_multithreading_with_same_value(self, dict_fc_evaluator, mocker):
+    async def test_multithreading_with_same_value(self, dict_fc_evaluator: FcEvaluator, mocker: Any) -> None:
         dict_evaluation_spy = mocker.spy(dict_fc_evaluator, "evaluate_single_format_constraint")
         fc_evaluators.text_to_be_evaluated_by_format_constraint.set("asd")
         assert await dict_fc_evaluator.evaluate_format_constraints(["1", "2"]) == self.hardcoded_results

@@ -20,7 +20,7 @@ SupportedReturn = TypeVar("SupportedReturn")
 
 
 @v_args(inline=True)  # Children are provided as *args instead of a list argument
-class BaseTransformer(Transformer, ABC, Generic[SupportedArgumentNode, SupportedReturn]):
+class BaseTransformer(Transformer, ABC, Generic[SupportedArgumentNode, SupportedReturn]):  # type: ignore[type-arg]
     """
     Transformer that evaluates the trees built from the format constraint expressions.
     The input are the evaluated format constraint conditions in the form of ConditionNodes.

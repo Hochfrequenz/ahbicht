@@ -2,6 +2,7 @@
 Test for the expansion of packages.
 """
 
+import pathlib
 from logging import LogRecord
 from typing import Mapping, Optional
 
@@ -57,7 +58,7 @@ class TestPackageResolver:
             pytest.param("[17] U [123P]", "[17] U ([1] U ([2] O [3]))"),
         ],
     )
-    async def test_correct_injection(self, unexpanded_expression: str, expected_expanded_expression: str):
+    async def test_correct_injection(self, unexpanded_expression: str, expected_expanded_expression: str) -> None:
         ctx = _make_package_context({"123P": "[1] U ([2] O [3])"})
         unexpanded_tree = parse_condition_expression_to_tree(unexpanded_expression)
         actual_tree = await expand_packages(parsed_tree=unexpanded_tree, ahb_context=ctx)
@@ -71,7 +72,7 @@ class TestPackageResolver:
             pytest.param("[123P8..7]", "n\u2264m is not fulfilled for n=8, m=7"),
         ],
     )
-    async def test_invalid_package_repeatability(self, unexpanded_expression: str, error_message: str):
+    async def test_invalid_package_repeatability(self, unexpanded_expression: str, error_message: str) -> None:
         ctx = _make_package_context({"123P": "[1] U ([2] O [3])"})
         unexpanded_tree = parse_condition_expression_to_tree(unexpanded_expression)
         with pytest.raises(ValueError) as invalid_repeatability_error:
@@ -84,7 +85,9 @@ class TestPackageResolver:
         "filename",
         [pytest.param("example_package_mapping_dict.json"), pytest.param("example_package_mapping_list.json")],
     )
-    async def test_file_based_package_resolver(self, caplog, filename, datafiles):
+    async def test_file_based_package_resolver(
+        self, caplog: pytest.LogCaptureFixture, filename: str, datafiles: pathlib.Path
+    ) -> None:
         """Tests if package resolver provider is instantiated correctly."""
         path_to_hint_json = datafiles / filename
         package_resolver: PackageResolver = JsonFilePackageResolver(
@@ -104,15 +107,15 @@ class TestPackageResolver:
         assert log_entries[0].message == "Instantiated JsonFilePackageResolver"
         assert log_entries[1].message.startswith("Resolved expression")
 
-    def test_how_to_access_repeatability_token(self):
+    def test_how_to_access_repeatability_token(self) -> None:
         """
         This test demonstrates how to access the repeatability token from the parsed tree
         We extract those tokens also in the PackageExpansionTransformer, but we don't do anything with them there yet.
         """
         unexpanded_tree = parse_condition_expression_to_tree("[1P2..3]")
         assert unexpanded_tree is not None
-        repeatability_tokens = [token for token in unexpanded_tree.children if token.type == "REPEATABILITY"]
-        assert parse_repeatability(repeatability_tokens[0]) == Repeatability(min_occurrences=2, max_occurrences=3)
+        repeatability_tokens = [token for token in unexpanded_tree.children if token.type == "REPEATABILITY"]  # type: ignore[union-attr]
+        assert parse_repeatability(repeatability_tokens[0]) == Repeatability(min_occurrences=2, max_occurrences=3)  # type: ignore[arg-type]
 
     @pytest.mark.parametrize(
         "expression, expected_tree",
@@ -152,7 +155,9 @@ class TestPackageResolver:
             ),
         ],
     )
-    async def test_expression_resolver_valid_include_repeatabilities(self, expression: str, expected_tree: Tree[Token]):
+    async def test_expression_resolver_valid_include_repeatabilities(
+        self, expression: str, expected_tree: Tree[Token]
+    ) -> None:
         ctx = _make_package_context({"4P": "([2] O [3])"})
         actual_tree = await parse_expression_including_unresolved_subexpressions(
             expression, resolve_packages=True, include_package_repeatabilities=True, ahb_context=ctx
@@ -191,7 +196,7 @@ class TestPackageResolver:
             ),
         ],
     )
-    async def test_package_1p_resolves_to_hint(self, unexpanded_expression: str, expected_tree: Tree[Token]):
+    async def test_package_1p_resolves_to_hint(self, unexpanded_expression: str, expected_tree: Tree[Token]) -> None:
         """
         Test that package '1P' is always resolved to a hint node with key PACKAGE_1P_HINT_KEY (9999),
         regardless of any PackageResolver configuration.

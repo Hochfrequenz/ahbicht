@@ -33,7 +33,9 @@ class TestUtilityFunctions:
             pytest.param([_return_awaitable("a"), _return_awaitable("b")], ["a", "b"]),
         ],
     )
-    async def test_gather_if_necessary(self, mixed_input: list[Union[T, Awaitable[T]]], expected_result: list[T]):
+    async def test_gather_if_necessary(
+        self, mixed_input: list[Union[T, Awaitable[T]]], expected_result: list[T]
+    ) -> None:
         actual = await gather_if_necessary(mixed_input)
         assert actual == expected_result
 
@@ -47,7 +49,7 @@ class TestUtilityFunctions:
             pytest.param("71..n", Repeatability(min_occurrences=71, max_occurrences="n")),
         ],
     )
-    def test_parse_repeatability(self, candidate: str, expected_result: Repeatability):
+    def test_parse_repeatability(self, candidate: str, expected_result: Repeatability) -> None:
         actual = parse_repeatability(candidate)
         assert actual == expected_result
 
@@ -62,6 +64,6 @@ class TestUtilityFunctions:
             pytest.param(""),
         ],
     )
-    def test_parse_repeatability_failures(self, invalid_candidate):
+    def test_parse_repeatability_failures(self, invalid_candidate: str) -> None:
         with pytest.raises(ValueError):
             _ = parse_repeatability(invalid_candidate)

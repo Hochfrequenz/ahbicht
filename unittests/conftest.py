@@ -3,6 +3,8 @@ why conftest.py?
 https://docs.pytest.org/en/7.1.x/how-to/fixtures.html#scope-sharing-fixtures-across-classes-modules-packages-or-session
 """
 
+from typing import Any
+
 import pytest
 from _pytest.fixtures import SubRequest
 
@@ -16,7 +18,7 @@ from unittests.defaults import default_test_format, default_test_version
 
 def store_content_evaluation_result_in_evaluatable_data(
     content_evaluation_result: ContentEvaluationResult,
-) -> EvaluatableData[dict]:
+) -> EvaluatableData[dict[str, Any]]:
     """
     a helper method for the tests to store a serialized content evaluation result in an EvaluatableData instance
     :param content_evaluation_result:
@@ -42,9 +44,9 @@ def ahb_context_from_cer(request: SubRequest) -> AhbContext:
         default_test_format, default_test_version
     )
     # Wire up evaluatable_data into the CER-based evaluators so they can look up results
-    fc_evaluator._evaluatable_data = evaluatable_data
-    hints_provider._evaluatable_data = evaluatable_data
-    package_resolver._evaluatable_data = evaluatable_data
+    fc_evaluator._evaluatable_data = evaluatable_data  # type: ignore[attr-defined]
+    hints_provider._evaluatable_data = evaluatable_data  # type: ignore[attr-defined]
+    package_resolver._evaluatable_data = evaluatable_data  # type: ignore[attr-defined]
 
     return AhbContext(
         rc_evaluator=rc_evaluator,

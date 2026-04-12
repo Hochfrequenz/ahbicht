@@ -1,3 +1,5 @@
+from typing import Union
+
 import pytest
 from efoli import EdifactFormat, EdifactFormatVersion
 
@@ -5,6 +7,8 @@ from ahbicht.content_evaluation.evaluators import Evaluator
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
 from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
 from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
+from ahbicht.expressions.hints_provider import HintsProvider
+from ahbicht.expressions.package_expansion import PackageResolver
 
 
 class TestEvaluatorProvider:
@@ -12,8 +16,8 @@ class TestEvaluatorProvider:
     Test that the list based evaluator provider works as expected
     """
 
-    def test_initialization(self):
-        evaluators: list[Evaluator] = []
+    def test_initialization(self) -> None:
+        evaluators: list[Union[Evaluator, PackageResolver, HintsProvider]] = []
         # setup some test data/instances
         for edifact_format in EdifactFormat:
             if edifact_format == EdifactFormat.COMDIS:
@@ -22,7 +26,7 @@ class TestEvaluatorProvider:
             for edifact_format_version in EdifactFormatVersion:
 
                 class ExampleRcEvaluator(RcEvaluator):
-                    def _get_default_context(self):
+                    def _get_default_context(self) -> None:  # type: ignore[override]
                         return None
 
                     def __init__(self) -> None:

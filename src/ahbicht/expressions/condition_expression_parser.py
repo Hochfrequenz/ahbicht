@@ -86,7 +86,7 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree[Token]
 
 
 def extract_categorized_keys_from_tree(
-    tree_or_list: Union[Tree, list[str]], sanitize: bool = False
+    tree_or_list: Union[Tree[Token], list[str]], sanitize: bool = False
 ) -> CategorizedKeyExtract:
     """
     find different types of condition nodes inside the given tree or list of keys.

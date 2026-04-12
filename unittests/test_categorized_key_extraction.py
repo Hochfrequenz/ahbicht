@@ -91,7 +91,7 @@ class TestCategorizedKeyExtraction:
     )
     async def test_extraction_of_categorized_keys_from_condition_expression(
         self, expression: str, expected_key_extract: CategorizedKeyExtract
-    ):
+    ) -> None:
         """
         Tests that the CategorizedKeyExtract is generated correctly.
         """
@@ -170,7 +170,7 @@ class TestCategorizedKeyExtraction:
     )
     def test_possible_cer_generation_small_results(
         self, key_extract: CategorizedKeyExtract, expected_cers: list[ContentEvaluationResult]
-    ):
+    ) -> None:
         actual = key_extract.generate_possible_content_evaluation_results()
         # We only test the small edge cases as real code.
         # This quickly gets super large. 2 FCs * 2 RCs is already 64 results
@@ -191,7 +191,7 @@ class TestCategorizedKeyExtraction:
         ],
     )
     @ALL_LARGE_TEST_CASES
-    def test_possible_cer_generation_large_results(self, test_file_path: str, datafiles):
+    def test_possible_cer_generation_large_results(self, test_file_path: str, datafiles: Path) -> None:
         with open(datafiles / Path(test_file_path), "r", encoding="utf-8") as infile:
             file_content = json.load(infile)
         categorized_keys = CategorizedKeyExtract.model_validate(file_content["categorizedKeyExtract"])
@@ -283,7 +283,7 @@ class TestCategorizedKeyExtraction:
     )
     def test_adding_categorized_key_extracts(
         self, cer_a: CategorizedKeyExtract, cer_b: CategorizedKeyExtract, expected: CategorizedKeyExtract
-    ):
+    ) -> None:
         actual = cer_a + cer_b
         assert actual == expected
 
@@ -311,7 +311,7 @@ class TestCategorizedKeyExtraction:
     )
     async def test_categorized_keys_sort_keys_including_repeatabilities(
         self, actual: CategorizedKeyExtract, expected_key_extract: CategorizedKeyExtract
-    ):
+    ) -> None:
         """
         Tests that the CategorizedKeyExtract is generated correctly.
         """

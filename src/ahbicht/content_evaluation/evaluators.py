@@ -8,7 +8,7 @@ import inspect
 import logging
 import re
 from abc import ABC
-from typing import Callable, Optional
+from typing import Any, Callable, Optional
 
 from efoli import EdifactFormat, EdifactFormatVersion
 
@@ -37,7 +37,7 @@ class Evaluator(ABC):
         """
         initializes a cache with all evaluation methods defined in the (child) class
         """
-        self._evaluation_methods: dict[str, Callable] = {}
+        self._evaluation_methods: dict[str, Callable[..., Any]] = {}
         self.logger: logging.Logger = logging.getLogger(self.__module__)
         self.logger.setLevel(logging.DEBUG)
         candidates = inspect.getmembers(self, inspect.ismethod)
@@ -50,7 +50,7 @@ class Evaluator(ABC):
             "Instantiated %s and found %i evaluation methods", self.__class__.__name__, len(self._evaluation_methods)
         )
 
-    def get_evaluation_method(self, condition_key: str) -> Optional[Callable]:
+    def get_evaluation_method(self, condition_key: str) -> Optional[Callable[..., Any]]:
         """
         Returns the method that evaluates the condition with key condition_key
         :param condition_key: unique key of the condition, e.g. "59"

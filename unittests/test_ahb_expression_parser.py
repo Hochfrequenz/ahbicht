@@ -17,7 +17,7 @@ class TestAhbExpressionParser:
                 Tree(  # type: ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "requirement_indicator",
                             [
                                 Token("MODAL_MARK", "Muss"),
@@ -31,7 +31,7 @@ class TestAhbExpressionParser:
                 Tree(  # type: ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "requirement_indicator",
                             [
                                 Token("PREFIX_OPERATOR", "X"),
@@ -45,7 +45,7 @@ class TestAhbExpressionParser:
                 Tree(  # type: ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "Muss"),
@@ -60,7 +60,7 @@ class TestAhbExpressionParser:
                 Tree(  # type: ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "Soll"),
@@ -75,7 +75,7 @@ class TestAhbExpressionParser:
                 Tree(  # type: ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "soll"),
@@ -90,7 +90,7 @@ class TestAhbExpressionParser:
                 Tree(  # type: ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "Muss"),
@@ -105,7 +105,7 @@ class TestAhbExpressionParser:
                 Tree(  # type: ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "Kann"),
@@ -120,7 +120,7 @@ class TestAhbExpressionParser:
                 Tree(  # type: ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "Kann"),
@@ -135,7 +135,7 @@ class TestAhbExpressionParser:
                 Tree(  # type: ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("PREFIX_OPERATOR", "X"),
@@ -150,7 +150,7 @@ class TestAhbExpressionParser:
                 Tree(  # type: ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("PREFIX_OPERATOR", "O"),
@@ -165,7 +165,7 @@ class TestAhbExpressionParser:
                 Tree(  # type: ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("PREFIX_OPERATOR", "O"),
@@ -180,7 +180,7 @@ class TestAhbExpressionParser:
                 Tree(  # type: ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "Kann"),
@@ -195,7 +195,7 @@ class TestAhbExpressionParser:
                 Tree(  # type: ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "Kann"),
@@ -210,7 +210,7 @@ class TestAhbExpressionParser:
                 Tree(  # type: ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "kann"),
@@ -225,21 +225,21 @@ class TestAhbExpressionParser:
                 Tree(  # type: ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "Muss"),
                                 Token("CONDITION_EXPRESSION", "[3]U[4]"),
                             ],
                         ),
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "Soll"),
                                 Token("CONDITION_EXPRESSION", "[5]    "),
                             ],
                         ),
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "Kann"),
@@ -254,21 +254,21 @@ class TestAhbExpressionParser:
                 Tree(  # type: ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "M"),
                                 Token("CONDITION_EXPRESSION", "[3]U[4]"),
                             ],
                         ),
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "S"),
                                 Token("CONDITION_EXPRESSION", "[5]    "),
                             ],
                         ),
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "K"),
@@ -283,21 +283,21 @@ class TestAhbExpressionParser:
                 Tree(  # type: ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "m"),
                                 Token("CONDITION_EXPRESSION", "[3]u[4]"),
                             ],
                         ),
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "s"),
                                 Token("CONDITION_EXPRESSION", "[5]    "),
                             ],
                         ),
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("MODAL_MARK", "k"),
@@ -312,7 +312,7 @@ class TestAhbExpressionParser:
                 Tree(  # type: ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("PREFIX_OPERATOR", "U"),
@@ -327,7 +327,7 @@ class TestAhbExpressionParser:
                 Tree(  # type: ignore[misc]
                     "ahb_expression",
                     [
-                        Tree(  # type: ignore[misc]
+                        Tree(
                             "single_requirement_indicator_expression",
                             [
                                 Token("PREFIX_OPERATOR", "u"),
@@ -340,8 +340,8 @@ class TestAhbExpressionParser:
         ],
     )
     def test_parse_valid_ahb_expression_to_to_single_requirement_indicator_expressions(
-        self, caplog, ahb_expression: str, expected_tree: Tree[Token]
-    ):
+        self, caplog: pytest.LogCaptureFixture, ahb_expression: str, expected_tree: Tree[Token]
+    ) -> None:
         """
         Tests that valid ahb expressions are parsed as expected.
         """
@@ -373,7 +373,7 @@ class TestAhbExpressionParser:
             pytest.param("Muss[2]C[3]"),
         ],
     )
-    def test_parse_invalid_ahb_expression(self, ahb_expression: str):
+    def test_parse_invalid_ahb_expression(self, ahb_expression: str) -> None:
         """Tests that an error is raised when trying to parse an invalid string."""
 
         with pytest.raises(SyntaxError) as excinfo:

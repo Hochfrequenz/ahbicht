@@ -28,7 +28,7 @@ from unittests.defaults import (
 class TestAhbContextDirectConstruction:
     """Tests for creating AhbContext with explicit evaluator instances."""
 
-    def test_creates_context_with_all_fields(self):
+    def test_creates_context_with_all_fields(self) -> None:
         ctx = AhbContext(
             rc_evaluator=empty_default_rc_evaluator,
             fc_evaluator=empty_default_fc_evaluator,
@@ -46,7 +46,7 @@ class TestAhbContextDirectConstruction:
 class TestAhbContextFromContentEvaluationResult:
     """Tests for the from_content_evaluation_result factory method."""
 
-    def test_creates_context_from_cer(self):
+    def test_creates_context_from_cer(self) -> None:
         cer = ContentEvaluationResult(
             requirement_constraints={"2": ConditionFulfilledValue.FULFILLED},
             format_constraints={"901": EvaluatedFormatConstraint(format_constraint_fulfilled=True)},
@@ -64,7 +64,7 @@ class TestAhbContextFromContentEvaluationResult:
         assert ctx.evaluatable_data.edifact_format == default_test_format
         assert ctx.evaluatable_data.edifact_format_version == default_test_version
 
-    def test_uses_provided_evaluatable_data_if_given(self):
+    def test_uses_provided_evaluatable_data_if_given(self) -> None:
         cer = ContentEvaluationResult(
             requirement_constraints={},
             format_constraints={},
@@ -84,7 +84,7 @@ class TestAhbContextFromContentEvaluationResult:
         assert ctx.evaluatable_data is custom_data
 
     @pytest.mark.asyncio
-    async def test_rc_evaluator_returns_correct_values(self):
+    async def test_rc_evaluator_returns_correct_values(self) -> None:
         cer = ContentEvaluationResult(
             requirement_constraints={
                 "2": ConditionFulfilledValue.FULFILLED,
@@ -108,7 +108,7 @@ class TestAhbContextFromContentEvaluationResult:
 class TestAhbContextFromTokenLogicProvider:
     """Tests for the from_token_logic_provider bridge factory."""
 
-    def test_creates_context_from_tlp(self):
+    def test_creates_context_from_tlp(self) -> None:
         tlp = SingletonTokenLogicProvider(
             [
                 empty_default_rc_evaluator,

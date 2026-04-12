@@ -1,7 +1,7 @@
 """Test for the evaluation of the format constraint expression."""
 
 from logging import LogRecord
-from typing import Optional
+from typing import Any, Optional
 
 import pytest
 
@@ -133,8 +133,12 @@ class TestFormatConstraintExpressionEvaluation:
         ],
     )
     async def test_evaluate_valid_format_constraint_expression(
-        self, mocker, format_constraint_expression, expected_format_constraints_fulfilled, expected_error_message
-    ):
+        self,
+        mocker: Any,
+        format_constraint_expression: str,
+        expected_format_constraints_fulfilled: bool,
+        expected_error_message: Optional[str],
+    ) -> None:
         """
         Tests that valid format_constraint expressions are evaluated as expected.
         Odd condition_keys are True, even condition_keys are False
@@ -168,11 +172,11 @@ class TestFormatConstraintExpressionEvaluation:
     )
     async def test_evaluate_format_constraint_expressions_with_invalid_values(
         self,
-        mocker,
+        mocker: Any,
         format_constraints_expression: str,
-        input_values: dict,
+        input_values: dict[str, Any],
         expected_error_message: str,
-    ):
+    ) -> None:
         """Tests that an error is raised when trying to pass invalid values."""
         mocker.patch(
             "ahbicht.expressions.format_constraint_expression_evaluation._build_evaluated_format_constraint_nodes",
@@ -213,8 +217,12 @@ class TestFormatConstraintExpressionEvaluation:
         ],
     )
     async def test_build_evaluated_format_constraint_nodes(
-        self, caplog, condition_keys, entered_input, expected_evaluated_fc_nodes
-    ):
+        self,
+        caplog: pytest.LogCaptureFixture,
+        condition_keys: list[str],
+        entered_input: str,
+        expected_evaluated_fc_nodes: dict[str, EvaluatedFormatConstraint],
+    ) -> None:
         """Tests that evaluated format constraints nodes are build correctly."""
         fc_evaluators.text_to_be_evaluated_by_format_constraint.set(entered_input)
         dummy_fc_evaluator = DummyFcEvaluator()
@@ -249,11 +257,11 @@ class TestFormatConstraintExpressionEvaluation:
     )
     async def test_93x_format_constraints(
         self,
-        format_constraint_expression,
+        format_constraint_expression: str,
         entered_input: str,
         is_successful: bool,
         error_message: Optional[str],
-    ):
+    ) -> None:
         """
         Tests that the default FC evaluator ships evaluation methods for 932, 933, 934 and 935 (those expanded from UBx)
         """
