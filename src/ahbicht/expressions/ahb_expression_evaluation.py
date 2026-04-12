@@ -80,14 +80,14 @@ class AhbExpressionTransformer(Transformer):
         """
         See :meth:`single_requirement_indicator_expression_async`
         """
-        rc_kwargs: dict = {}
+        context_kwargs: dict = {}
         if self._ahb_context is not None:
-            rc_kwargs["ahb_context"] = self._ahb_context
+            context_kwargs["ahb_context"] = self._ahb_context
         requirement_constraint_evaluation_result: RequirementConstraintEvaluationResult = (
-            await requirement_constraint_evaluation(condition_expression, **rc_kwargs)
+            await requirement_constraint_evaluation(condition_expression, **context_kwargs)
         )
         format_constraint_evaluation_result: FormatConstraintEvaluationResult = await format_constraint_evaluation(
-            requirement_constraint_evaluation_result.format_constraints_expression, **rc_kwargs
+            requirement_constraint_evaluation_result.format_constraints_expression, **context_kwargs
         )
 
         result_of_ahb_expression_evaluation: AhbExpressionEvaluationResult = AhbExpressionEvaluationResult(
