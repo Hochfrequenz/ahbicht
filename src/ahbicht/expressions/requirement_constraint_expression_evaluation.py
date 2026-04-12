@@ -15,9 +15,6 @@ from lark.exceptions import VisitError
 
 from ahbicht.condition_node_builder import ConditionNodeBuilder, TRCTransformerArgument
 from ahbicht.expressions import InvalidExpressionError
-
-if TYPE_CHECKING:
-    from ahbicht.content_evaluation.ahb_context import AhbContext
 from ahbicht.expressions.base_transformer import BaseTransformer
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.expression_builder import FormatConstraintExpressionBuilder, HintExpressionBuilder
@@ -31,6 +28,9 @@ from ahbicht.models.condition_nodes import (
     UnevaluatedFormatConstraint,
 )
 from ahbicht.models.evaluation_results import RequirementConstraintEvaluationResult
+
+if TYPE_CHECKING:
+    from ahbicht.content_evaluation.ahb_context import AhbContext
 
 
 @v_args(inline=True)  # Children are provided as *args instead of a list argument
