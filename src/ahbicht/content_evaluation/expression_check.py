@@ -2,8 +2,10 @@
 contains a high-level function that checks if a given expression is valid or not.
 """
 
+from __future__ import annotations
+
 import asyncio
-from typing import Any, Awaitable, Callable, Optional, Union
+from typing import TYPE_CHECKING, Any, Awaitable, Callable, Optional, Union
 
 from lark import Token, Tree
 from lark.exceptions import UnexpectedCharacters, VisitError
@@ -14,10 +16,14 @@ from ahbicht.expressions.condition_expression_parser import extract_categorized_
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 
+if TYPE_CHECKING:
+    from ahbicht.content_evaluation.ahb_context import AhbContext
+
 
 async def is_valid_expression(
     expression_or_tree: Union[str, Tree[Token]],
     content_evaluation_result_setter: Callable[[ContentEvaluationResult], Any],
+    ahb_context: Optional[AhbContext] = None,
 ) -> tuple[bool, Optional[str]]:
     """
     Returns true iff the given expression is both well-formed and valid.
@@ -33,7 +39,9 @@ async def is_valid_expression(
     tree: Tree[Token]
     if isinstance(expression_or_tree, str):
         try:
-            tree = await parse_expression_including_unresolved_subexpressions(expression_or_tree)
+            tree = await parse_expression_including_unresolved_subexpressions(
+                expression_or_tree, ahb_context=ahb_context
+            )
         except SyntaxError as syntax_error:
             return False, str(syntax_error)
         except VisitError as visit_error:
@@ -45,15 +53,19 @@ async def is_valid_expression(
     else:
         raise ValueError(f"{expression_or_tree} is neither a string nor a Tree")
     categorized_key_extract = extract_categorized_keys_from_tree(tree, sanitize=True)
+    context_kwargs: dict = {}
+    if ahb_context is not None:
+        context_kwargs["ahb_context"] = ahb_context
     evaluation_tasks: list[Awaitable] = []
     for content_evaluation_result in categorized_key_extract.generate_possible_content_evaluation_results():
         # create (but do not await) the evaluation tasks for all possible content evaluation results
         # the idea is, that if _any_ evaluation task raises an uncatched exception this can be interpreted as:
         # "the expression is invalid"
+
         async def evaluate_with_cer(cer: ContentEvaluationResult):
             content_evaluation_result_setter(cer)
             try:
-                await evaluate_ahb_expression_tree(tree)
+                await evaluate_ahb_expression_tree(tree, **context_kwargs)
             except NotImplementedError as not_implemented_error:
                 # we can ignore some specific errors
                 if "due to missing information" in str(not_implemented_error):
