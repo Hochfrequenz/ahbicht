@@ -10,6 +10,7 @@ ContentEvaluationResult. Now the methods below are useful. Simply provide a cont
 the evaluators are created based on the already known outcomes. You do not have to actually touch any evaluator code.
 """
 
+import warnings
 from typing import Callable, Iterable, Optional, Protocol
 
 import inject
@@ -103,11 +104,20 @@ def create_and_inject_hardcoded_evaluators(
     edifact_format_version: Optional[EdifactFormatVersion] = None,
 ) -> None:
     """
-    Creates evaluators from hardcoded content_evaluation result and injects them
+    Creates evaluators from hardcoded content_evaluation result and injects them.
+
+    .. deprecated:: 1.4.0
+        Use ``AhbContext.from_content_evaluation_result()`` instead.
 
     :param content_evaluation_result:
     :return:
     """
+    warnings.warn(
+        "create_and_inject_hardcoded_evaluators is deprecated and will be removed in ahbicht v2.0. "
+        "Use AhbContext.from_content_evaluation_result() instead.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     evaluators = create_hardcoded_evaluators(
         content_evaluation_result, edifact_format=edifact_format, edifact_format_version=edifact_format_version
     )
