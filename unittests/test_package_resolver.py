@@ -5,15 +5,12 @@ Test for the expansion of packages.
 from logging import LogRecord
 from typing import Mapping, Optional
 
-import inject
 import pytest
-from _pytest.fixtures import SubRequest
 from efoli import EdifactFormat, EdifactFormatVersion
 from lark import Token, Tree
 
 from ahbicht.condition_node_distinction import PACKAGE_1P_HINT_KEY
-from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
-from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
+from ahbicht.content_evaluation.ahb_context import AhbContext
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.expression_resolver import (
     expand_packages,
@@ -22,7 +19,27 @@ from ahbicht.expressions.expression_resolver import (
 from ahbicht.expressions.package_expansion import JsonFilePackageResolver, PackageResolver
 from ahbicht.models.mapping_results import PackageKeyConditionExpressionMapping, Repeatability
 from ahbicht.utility_functions import parse_repeatability
-from unittests.defaults import DefaultPackageResolver, return_empty_dummy_evaluatable_data
+from unittests.defaults import (
+    DefaultPackageResolver,
+    default_test_format,
+    default_test_version,
+    empty_default_fc_evaluator,
+    empty_default_hints_provider,
+    empty_default_rc_evaluator,
+    empty_default_test_data,
+)
+
+
+def _make_package_context(result_dict: Mapping[str, Optional[str]]) -> AhbContext:
+    """Helper to build an AhbContext with a DictBasedPackageResolver."""
+    resolver = DefaultPackageResolver(result_dict)
+    return AhbContext(
+        rc_evaluator=empty_default_rc_evaluator,
+        fc_evaluator=empty_default_fc_evaluator,
+        hints_provider=empty_default_hints_provider,
+        package_resolver=resolver,
+        evaluatable_data=empty_default_test_data,
+    )
 
 
 class TestPackageResolver:
@@ -30,23 +47,6 @@ class TestPackageResolver:
     Test for the expansions of packages
     """
 
-    @pytest.fixture
-    def inject_package_resolver(self, request: SubRequest):
-        result_dict: Mapping[str, Optional[str]] = request.param
-        resolver = DefaultPackageResolver(result_dict)
-        inject.clear_and_configure(
-            lambda binder: binder.bind(  # type: ignore[arg-type]
-                TokenLogicProvider, SingletonTokenLogicProvider([resolver])
-            ).bind_to_provider(EvaluatableDataProvider, return_empty_dummy_evaluatable_data)
-        )
-        yield
-        inject.clear()
-
-    @pytest.mark.parametrize(
-        "inject_package_resolver",
-        [{"123P": "[1] U ([2] O [3])"}],
-        indirect=True,
-    )
     @pytest.mark.parametrize(
         "unexpanded_expression, expected_expanded_expression",
         [
@@ -57,32 +57,25 @@ class TestPackageResolver:
             pytest.param("[17] U [123P]", "[17] U ([1] U ([2] O [3]))"),
         ],
     )
-    async def test_correct_injection(
-        self, inject_package_resolver, unexpanded_expression: str, expected_expanded_expression: str
-    ):
+    async def test_correct_injection(self, unexpanded_expression: str, expected_expanded_expression: str):
+        ctx = _make_package_context({"123P": "[1] U ([2] O [3])"})
         unexpanded_tree = parse_condition_expression_to_tree(unexpanded_expression)
-        actual_tree = await expand_packages(parsed_tree=unexpanded_tree)
+        actual_tree = await expand_packages(parsed_tree=unexpanded_tree, ahb_context=ctx)
         assert actual_tree is not None
         expected_expanded_tree = parse_condition_expression_to_tree(expected_expanded_expression)
         assert actual_tree == expected_expanded_tree
 
     @pytest.mark.parametrize(
-        "inject_package_resolver",
-        [{"123P": "[1] U ([2] O [3])"}],
-        indirect=True,
-    )
-    @pytest.mark.parametrize(
         "unexpanded_expression, error_message",
         [
-            pytest.param("[123P8..7]", "0≤n≤m is not fulfilled for n=8, m=7"),
+            pytest.param("[123P8..7]", "n\u2264m is not fulfilled for n=8, m=7"),
         ],
     )
-    async def test_invalid_package_repeatability(
-        self, inject_package_resolver, unexpanded_expression: str, error_message: str
-    ):
+    async def test_invalid_package_repeatability(self, unexpanded_expression: str, error_message: str):
+        ctx = _make_package_context({"123P": "[1] U ([2] O [3])"})
         unexpanded_tree = parse_condition_expression_to_tree(unexpanded_expression)
         with pytest.raises(ValueError) as invalid_repeatability_error:
-            _ = await expand_packages(parsed_tree=unexpanded_tree)
+            _ = await expand_packages(parsed_tree=unexpanded_tree, ahb_context=ctx)
         assert error_message in str(invalid_repeatability_error)
 
     @pytest.mark.datafiles("./unittests/provider_test_files/example_package_mapping_dict.json")
@@ -122,11 +115,6 @@ class TestPackageResolver:
         assert parse_repeatability(repeatability_tokens[0]) == Repeatability(min_occurrences=2, max_occurrences=3)
 
     @pytest.mark.parametrize(
-        "inject_package_resolver",
-        [{"4P": "([2] O [3])"}],
-        indirect=True,
-    )
-    @pytest.mark.parametrize(
         "expression, expected_tree",
         [
             pytest.param(
@@ -164,19 +152,13 @@ class TestPackageResolver:
             ),
         ],
     )
-    async def test_expression_resolver_valid_include_repeatabilities(
-        self, inject_package_resolver, expression: str, expected_tree: Tree[Token]
-    ):
+    async def test_expression_resolver_valid_include_repeatabilities(self, expression: str, expected_tree: Tree[Token]):
+        ctx = _make_package_context({"4P": "([2] O [3])"})
         actual_tree = await parse_expression_including_unresolved_subexpressions(
-            expression, resolve_packages=True, include_package_repeatabilities=True
+            expression, resolve_packages=True, include_package_repeatabilities=True, ahb_context=ctx
         )
         assert actual_tree == expected_tree
 
-    @pytest.mark.parametrize(
-        "inject_package_resolver",
-        [{}],  # Empty dict - 1P should work without any resolver configuration
-        indirect=True,
-    )
     @pytest.mark.parametrize(
         "unexpanded_expression, expected_tree",
         [
@@ -209,17 +191,13 @@ class TestPackageResolver:
             ),
         ],
     )
-    async def test_package_1p_resolves_to_hint(
-        self, inject_package_resolver, unexpanded_expression: str, expected_tree: Tree[Token]
-    ):
+    async def test_package_1p_resolves_to_hint(self, unexpanded_expression: str, expected_tree: Tree[Token]):
         """
         Test that package '1P' is always resolved to a hint node with key PACKAGE_1P_HINT_KEY (9999),
         regardless of any PackageResolver configuration.
-
-        See the docstring of PACKAGE_1P_HINT_KEY in condition_node_distinction.py for details.
-        See also: https://github.com/Hochfrequenz/AHahnB/issues/715
         """
+        ctx = _make_package_context({})  # Empty dict - 1P should work without any resolver configuration
         unexpanded_tree = parse_condition_expression_to_tree(unexpanded_expression)
-        actual_tree = await expand_packages(parsed_tree=unexpanded_tree)
+        actual_tree = await expand_packages(parsed_tree=unexpanded_tree, ahb_context=ctx)
         assert actual_tree is not None
         assert actual_tree == expected_tree

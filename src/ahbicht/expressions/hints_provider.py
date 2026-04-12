@@ -11,11 +11,10 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Mapping, Optional
 
-import inject
 from efoli import EdifactFormat, EdifactFormatVersion
 
 from ahbicht.condition_node_distinction import PACKAGE_1P_HINT_KEY
-from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
+from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData
 
 # pylint: disable = too-few-public-methods
 from ahbicht.models.condition_nodes import Hint
@@ -140,17 +139,21 @@ class ContentEvaluationResultBasedHintsProvider(HintsProvider):
     data.
     """
 
+    def __init__(self, evaluatable_data: Optional[EvaluatableData] = None) -> None:
+        super().__init__()
+        self._evaluatable_data = evaluatable_data
+
     async def get_hint_text(self, condition_key: str) -> Optional[str]:
         # Special case: Package '1P' hint key is always resolved to the hardcoded hint text.
         # See PACKAGE_1P_HINT_KEY docstring for details.
         if condition_key == PACKAGE_1P_HINT_KEY:
             return PACKAGE_1P_HINT_TEXT
-        # the missing second argument to the private method call in the next line should be injected automatically
-        return await self._get_hint_text(condition_key)  # pylint:disable=no-value-for-parameter
-
-    @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
-    async def _get_hint_text(self, condition_key: str, evaluatable_data: EvaluatableData) -> Optional[str]:
-        content_evaluation_result = ContentEvaluationResult.model_validate(evaluatable_data.body)
+        if self._evaluatable_data is None:
+            raise ValueError(
+                "ContentEvaluationResultBasedHintsProvider requires evaluatable_data. "
+                "Pass it in the constructor or use AhbContext."
+            )
+        content_evaluation_result = ContentEvaluationResult.model_validate(self._evaluatable_data.body)
         try:
             self.logger.debug("Retrieving hint '%s' from Content Evaluation Result", condition_key)
             return content_evaluation_result.hints[condition_key]

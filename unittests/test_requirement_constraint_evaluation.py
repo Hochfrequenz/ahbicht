@@ -1,11 +1,8 @@
 """Test for the requirement constraint evaluation of the condition expressions."""
 
-import inject
 import pytest
-import pytest_asyncio
 
-from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider
-from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
+from ahbicht.content_evaluation.ahb_context import AhbContext
 from ahbicht.expressions.requirement_constraint_expression_evaluation import requirement_constraint_evaluation
 from ahbicht.models.condition_nodes import (
     ConditionFulfilledValue,
@@ -16,10 +13,24 @@ from ahbicht.models.condition_nodes import (
 )
 from ahbicht.models.evaluation_results import RequirementConstraintEvaluationResult
 from unittests.defaults import (
+    default_test_format,
+    default_test_version,
+    empty_default_fc_evaluator,
     empty_default_hints_provider,
+    empty_default_package_resolver,
     empty_default_rc_evaluator,
-    return_empty_dummy_evaluatable_data,
+    empty_default_test_data,
 )
+
+
+def _make_context() -> AhbContext:
+    return AhbContext(
+        rc_evaluator=empty_default_rc_evaluator,
+        fc_evaluator=empty_default_fc_evaluator,
+        hints_provider=empty_default_hints_provider,
+        package_resolver=empty_default_package_resolver,
+        evaluatable_data=empty_default_test_data,
+    )
 
 
 class TestRequirementConstraintEvaluation:
@@ -36,18 +47,6 @@ class TestRequirementConstraintEvaluation:
         "503": Hint(condition_key="503", hint="[503] Hinweis:foo"),
         "504": Hint(condition_key="504", hint="[504] Hinweis:bar"),
     }
-
-    @pytest_asyncio.fixture()
-    def setup_and_teardown_injector(self):
-        inject.clear_and_configure(
-            lambda binder: binder.bind(
-                TokenLogicProvider,
-                SingletonTokenLogicProvider([empty_default_hints_provider, empty_default_rc_evaluator]),
-            ).bind_to_provider(EvaluatableDataProvider, return_empty_dummy_evaluatable_data),
-        )
-
-        yield
-        inject.clear()
 
     @pytest.mark.parametrize(
         """condition_expression, expected_requirement_constraints_fulfilled,
@@ -76,7 +75,6 @@ class TestRequirementConstraintEvaluation:
         expected_requirement_is_conditional,
         expected_format_constraints_expression,
         expected_hints,
-        setup_and_teardown_injector,
     ):
         """
         Tests that valid ahb expressions are evaluated as expected.
@@ -86,8 +84,9 @@ class TestRequirementConstraintEvaluation:
             "ahbicht.expressions.requirement_constraint_expression_evaluation.ConditionNodeBuilder.requirement_content_evaluation_for_all_condition_keys",
             return_value=self._input_values,
         )
+        ctx = _make_context()
         requirement_constraint_evaluation_result = await requirement_constraint_evaluation(
-            condition_expression=condition_expression
+            condition_expression=condition_expression, ahb_context=ctx
         )
 
         assert isinstance(requirement_constraint_evaluation_result, RequirementConstraintEvaluationResult)
@@ -150,14 +149,14 @@ class TestRequirementConstraintEvaluation:
         input_values: dict,
         expected_error: type,
         expected_error_message: str,
-        setup_and_teardown_injector,
     ):
         """Tests that an error is raised when trying to pass invalid values."""
         mocker.patch(
             "ahbicht.expressions.requirement_constraint_expression_evaluation.ConditionNodeBuilder.requirement_content_evaluation_for_all_condition_keys",
             return_value=input_values,
         )
+        ctx = _make_context()
         with pytest.raises(expected_error) as excinfo:  # type: ignore[var-annotated]
-            await requirement_constraint_evaluation(condition_expression)
+            await requirement_constraint_evaluation(condition_expression, ahb_context=ctx)
 
         assert expected_error_message in str(excinfo.value)

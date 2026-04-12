@@ -2,11 +2,10 @@
 contains a high-level function that checks if a given expression is valid or not.
 """
 
-from __future__ import annotations
-
 import asyncio
-from typing import TYPE_CHECKING, Any, Awaitable, Callable, Optional, Union
+from typing import Awaitable, Optional, Union
 
+from efoli import EdifactFormat, EdifactFormatVersion
 from lark import Token, Tree
 from lark.exceptions import UnexpectedCharacters, VisitError
 
@@ -17,35 +16,24 @@ from ahbicht.expressions.condition_expression_parser import extract_categorized_
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 
-if TYPE_CHECKING:
-    from efoli import EdifactFormat, EdifactFormatVersion
-
 
 async def is_valid_expression(  # pylint: disable=too-many-locals
     expression_or_tree: Union[str, Tree[Token]],
-    content_evaluation_result_setter: Optional[Callable[[ContentEvaluationResult], Any]] = None,
+    edifact_format: EdifactFormat,
+    edifact_format_version: EdifactFormatVersion,
     ahb_context: Optional[AhbContext] = None,
-    edifact_format: Optional[EdifactFormat] = None,
-    edifact_format_version: Optional[EdifactFormatVersion] = None,
 ) -> tuple[bool, Optional[str]]:
     """
     Returns true iff the given expression is both well-formed and valid.
     An expression is valid if and only if all possible content evaluations lead to a meaningful results.
 
-    There are two ways to use this function:
-
-    1. (New, recommended) Pass ``edifact_format`` and ``edifact_format_version``. A fresh ``AhbContext`` is built
-       for each possible CER automatically. No inject setup needed.
-
-    2. (Legacy, deprecated) Pass a ``content_evaluation_result_setter`` callback that writes the CER into the
-       evaluatable data for the injected evaluators. Requires a configured inject container.
+    Pass ``edifact_format`` and ``edifact_format_version``. A fresh ``AhbContext`` is built
+    for each possible CER automatically.
 
     :param expression_or_tree: "Muss [1] U [2]" (returns True)  "Muss ([61]u [584]) o[583]" (returns False)
-    :param content_evaluation_result_setter: (deprecated) a threadsafe method that writes the given Content Evaluation
-        Result into the evaluatable data
-    :param ahb_context: optional AhbContext; if provided, its edifact_format/version are used to build per-CER contexts
-    :param edifact_format: the EDIFACT format for building per-CER AhbContexts (used if ahb_context is None)
+    :param edifact_format: the EDIFACT format for building per-CER AhbContexts
     :param edifact_format_version: the EDIFACT format version for building per-CER AhbContexts
+    :param ahb_context: optional AhbContext; if provided, its edifact_format/version are used to build per-CER contexts
     :return: (True,None) iff the expression is valid; (False, error message) otherwise
     """
     # Determine format/version for AhbContext construction
@@ -79,21 +67,9 @@ async def is_valid_expression(  # pylint: disable=too-many-locals
     for content_evaluation_result in categorized_key_extract.generate_possible_content_evaluation_results():
 
         async def evaluate_with_cer(cer: ContentEvaluationResult):
-            eval_kwargs: dict = {}
-            if _edifact_format is not None and _edifact_format_version is not None:
-                # New path: build a fresh AhbContext per CER
-                cer_context = AhbContext.from_content_evaluation_result(cer, _edifact_format, _edifact_format_version)
-                eval_kwargs["ahb_context"] = cer_context
-            elif content_evaluation_result_setter is not None:
-                # Legacy path: use the setter callback + inject
-                content_evaluation_result_setter(cer)
-            else:
-                raise ValueError(
-                    "is_valid_expression requires either (edifact_format + edifact_format_version) "
-                    "or a content_evaluation_result_setter callback."
-                )
+            cer_context = AhbContext.from_content_evaluation_result(cer, _edifact_format, _edifact_format_version)
             try:
-                await evaluate_ahb_expression_tree(tree, **eval_kwargs)
+                await evaluate_ahb_expression_tree(tree, ahb_context=cer_context)
             except NotImplementedError as not_implemented_error:
                 # we can ignore some specific errors
                 if "due to missing information" in str(not_implemented_error):

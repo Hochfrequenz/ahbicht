@@ -3,37 +3,22 @@
 import uuid
 from typing import Optional
 
-import inject
 import pytest
-from _pytest.fixtures import SubRequest
 
-from ahbicht.content_evaluation.evaluator_factory import create_and_inject_hardcoded_evaluators
+from ahbicht.content_evaluation.ahb_context import AhbContext
 from ahbicht.expressions.ahb_expression_evaluation import evaluate_ahb_expression_tree
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
 from ahbicht.models.condition_nodes import ConditionFulfilledValue, EvaluatedFormatConstraint
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 from ahbicht.models.enums import ModalMark, RequirementIndicator
-from unittests.defaults import default_test_format, default_test_version, return_empty_dummy_evaluatable_data
+from unittests.defaults import default_test_format, default_test_version
 
 
 class TestEvaluatorFactory:
-    """Tests, that evaluators are created and injected correctly"""
-
-    @pytest.fixture
-    def inject_content_evaluation_result(self, request: SubRequest):
-        # indirect parametrization: https://stackoverflow.com/a/33879151/10009545
-        content_evaluation_result = request.param
-        create_and_inject_hardcoded_evaluators(
-            content_evaluation_result=content_evaluation_result,
-            evaluatable_data_provider=return_empty_dummy_evaluatable_data,
-            edifact_format=default_test_format,
-            edifact_format_version=default_test_version,
-        )
-        yield
-        inject.clear()
+    """Tests, that evaluators are created correctly via AhbContext"""
 
     @pytest.mark.parametrize(
-        "inject_content_evaluation_result",
+        "content_evaluation_result",
         [
             ContentEvaluationResult(
                 hints={"501": "foo"},
@@ -49,7 +34,6 @@ class TestEvaluatorFactory:
                 id=uuid.UUID("d106f335-f663-4d14-9636-4f43a883ad26"),
             )
         ],
-        indirect=True,
     )
     @pytest.mark.parametrize(
         "expression, expected_requirement_indicator, expected_format_constraint_result, expected_in_hints",
@@ -59,17 +43,24 @@ class TestEvaluatorFactory:
             pytest.param("Muss [2] O [3][902]U[501]U[123P]", ModalMark.MUSS, True, None, id="with package"),
         ],
     )
-    async def test_correct_injection(
+    async def test_correct_context(
         self,
-        inject_content_evaluation_result,
+        content_evaluation_result: ContentEvaluationResult,
         expression: str,
         expected_requirement_indicator: RequirementIndicator,
         expected_format_constraint_result: bool,
         expected_in_hints: Optional[str],
     ):
-        tree = await parse_expression_including_unresolved_subexpressions(expression=expression, resolve_packages=True)
+        ctx = AhbContext.from_content_evaluation_result(
+            content_evaluation_result,
+            edifact_format=default_test_format,
+            edifact_format_version=default_test_version,
+        )
+        tree = await parse_expression_including_unresolved_subexpressions(
+            expression=expression, resolve_packages=True, ahb_context=ctx
+        )
         assert tree is not None
-        expression_evaluation_result = await evaluate_ahb_expression_tree(tree)
+        expression_evaluation_result = await evaluate_ahb_expression_tree(tree, ahb_context=ctx)
         assert (
             expression_evaluation_result.requirement_constraint_evaluation_result.requirement_constraints_fulfilled
             is True

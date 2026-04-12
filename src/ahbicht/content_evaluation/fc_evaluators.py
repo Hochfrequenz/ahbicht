@@ -14,9 +14,7 @@ from abc import ABC
 from contextvars import ContextVar
 from typing import Callable, Coroutine, Optional
 
-import inject
-
-from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
+from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData
 from ahbicht.content_evaluation.evaluators import Evaluator
 from ahbicht.content_evaluation.german_strom_and_gas_tag import has_no_utc_offset, is_xtag_limit
 from ahbicht.models.condition_nodes import EvaluatedFormatConstraint
@@ -30,9 +28,8 @@ text_to_be_evaluated_by_format_constraint: ContextVar[Optional[str]] = ContextVa
 This context variable holds the text that is to be analysed/evaluated by the format constraint evaluator.
 It will always return the "correct" value in your context. You only have to manually set this context variable if you're
 evaluating an expression outside the validation framework.
-The conceptual difference to the EvaluatableData which are dependency injected using the EvaluatableDataProvider is,
-that the data evaluated in a format constraint (via the context variable) vary over the time span of one validation run.
-The EvaluatableData are stable in that regard.
+The conceptual difference to the EvaluatableData is that the data evaluated in a format constraint (via the context
+variable) vary over the time span of one validation run. The EvaluatableData are stable in that regard.
 """
 
 # The idea behind the context variable is to avoid passing the string/text to be evaluated by FC evaluators through many
@@ -187,15 +184,17 @@ class ContentEvaluationResultBasedFcEvaluator(FcEvaluator):
     Other than the DictBasedFcEvaluator the outcome is not dependent on the initialization but on the evaluatable data.
     """
 
-    async def evaluate_single_format_constraint(self, condition_key: str) -> EvaluatedFormatConstraint:
-        # the missing second argument to the private method call in the next line should be injected automatically
-        return await self._evaluate_single_format_constraint(condition_key)  # pylint:disable=no-value-for-parameter
+    def __init__(self, evaluatable_data: Optional[EvaluatableData] = None) -> None:
+        super().__init__()
+        self._evaluatable_data = evaluatable_data
 
-    @inject.params(evaluatable_data=EvaluatableDataProvider)  # injects what has been bound to the EvaluatableData type
-    async def _evaluate_single_format_constraint(
-        self, condition_key: str, evaluatable_data: EvaluatableData
-    ) -> EvaluatedFormatConstraint:
-        content_evaluation_result = ContentEvaluationResult.model_validate(evaluatable_data.body)
+    async def evaluate_single_format_constraint(self, condition_key: str) -> EvaluatedFormatConstraint:
+        if self._evaluatable_data is None:
+            raise ValueError(
+                "ContentEvaluationResultBasedFcEvaluator requires evaluatable_data. "
+                "Pass it in the constructor or use AhbContext."
+            )
+        content_evaluation_result = ContentEvaluationResult.model_validate(self._evaluatable_data.body)
         try:
             self.logger.debug("Retrieving key %s' from Content Evaluation Result", condition_key)
             return content_evaluation_result.format_constraints[condition_key]
