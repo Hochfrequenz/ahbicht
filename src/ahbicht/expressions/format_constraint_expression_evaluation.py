@@ -8,6 +8,7 @@ The used terms are defined in the README_conditions.md.
 
 from __future__ import annotations
 
+import warnings
 from typing import TYPE_CHECKING, Mapping, Optional
 
 import inject
@@ -145,6 +146,12 @@ async def _build_evaluated_format_constraint_nodes(
         evaluator = ahb_context.fc_evaluator
     else:
         # Legacy inject path
+        warnings.warn(
+            "Calling _build_evaluated_format_constraint_nodes without ahb_context is deprecated "
+            "and will be removed in ahbicht v2.0. Pass an AhbContext instance explicitly.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         token_logic_provider: TokenLogicProvider = inject.instance(TokenLogicProvider)  # type: ignore[assignment]
         evaluator = token_logic_provider.get_fc_evaluator(
             evaluatable_data.edifact_format, evaluatable_data.edifact_format_version

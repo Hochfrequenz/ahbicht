@@ -6,6 +6,7 @@ If necessary it evaluates the needed attributes.
 from __future__ import annotations
 
 import sys
+import warnings
 from typing import TYPE_CHECKING, Optional, Union
 
 import inject
@@ -18,6 +19,7 @@ from ahbicht.models.condition_nodes import Hint, RequirementConstraint, Unevalua
 if TYPE_CHECKING:
     from ahbicht.content_evaluation.ahb_context import AhbContext
 
+# pylint: disable=duplicate-code  # the ahb_context guard pattern is intentionally similar across files; removed in v2.0
 # TRCTransformerArgument is a union of nodes that are already evaluated from a Requirement Constraint (RC) perspective.
 # The Format Constraints (FC) might still be unevaluated. That's why the return type used in the
 # RequirementConstraintTransformer is always an EvaluatedComposition.
@@ -42,6 +44,12 @@ class ConditionNodeBuilder:
             pass
         else:
             # Legacy path: fall back to global inject container (used by wanna.bee and older code)
+            warnings.warn(
+                "Calling ConditionNodeBuilder without ahb_context is deprecated and will be removed in ahbicht v2.0. "
+                "Pass an AhbContext instance explicitly.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
             self.token_logic_provider: TokenLogicProvider = inject.instance(  # type: ignore[assignment]
                 TokenLogicProvider
             )

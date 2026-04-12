@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import asyncio
 import inspect
+import warnings
 from typing import TYPE_CHECKING, Awaitable, Optional, Union, cast
 
 import inject
@@ -153,6 +154,12 @@ class PackageExpansionTransformer(Transformer):
             # self.token_logic_provider intentionally not set
             pass
         else:
+            warnings.warn(
+                "Creating PackageExpansionTransformer without ahb_context is deprecated "
+                "and will be removed in ahbicht v2.0. Pass an AhbContext instance explicitly.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
             self.token_logic_provider = cast(TokenLogicProvider, inject.instance(TokenLogicProvider))
         self.include_package_repeatabilities = include_package_repeatabilities
 
