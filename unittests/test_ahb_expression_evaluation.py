@@ -104,7 +104,9 @@ class TestAHBExpressionEvaluation:
         Odd condition_keys are True, even condition_keys are False
         """
 
-        def side_effect_rc_evaluation(condition_expression: str, ahb_context: object = None) -> Optional[RequirementConstraintEvaluationResult]:
+        def side_effect_rc_evaluation(
+            condition_expression: str, ahb_context: object = None
+        ) -> Optional[RequirementConstraintEvaluationResult]:
             if condition_expression.lower() in ["[1]", " [ 1]  ", "[3]", "([1]o[2])u[3]"]:
                 return RequirementConstraintEvaluationResult(
                     requirement_constraints_fulfilled=True,

@@ -85,7 +85,9 @@ class TestPackageResolver:
         "filename",
         [pytest.param("example_package_mapping_dict.json"), pytest.param("example_package_mapping_list.json")],
     )
-    async def test_file_based_package_resolver(self, caplog: pytest.LogCaptureFixture, filename: str, datafiles: pathlib.Path) -> None:
+    async def test_file_based_package_resolver(
+        self, caplog: pytest.LogCaptureFixture, filename: str, datafiles: pathlib.Path
+    ) -> None:
         """Tests if package resolver provider is instantiated correctly."""
         path_to_hint_json = datafiles / filename
         package_resolver: PackageResolver = JsonFilePackageResolver(
@@ -153,7 +155,9 @@ class TestPackageResolver:
             ),
         ],
     )
-    async def test_expression_resolver_valid_include_repeatabilities(self, expression: str, expected_tree: Tree[Token]) -> None:
+    async def test_expression_resolver_valid_include_repeatabilities(
+        self, expression: str, expected_tree: Tree[Token]
+    ) -> None:
         ctx = _make_package_context({"4P": "([2] O [3])"})
         actual_tree = await parse_expression_including_unresolved_subexpressions(
             expression, resolve_packages=True, include_package_repeatabilities=True, ahb_context=ctx

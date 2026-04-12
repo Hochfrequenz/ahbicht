@@ -240,7 +240,9 @@ class TestRequirementConstraintEvaluation:
             pytest.param("[101]X[102]", cfv.UNKNOWN),
         ],
     )
-    def test_unknown_requirement_constraints(self, expression: str, expected_resulting_conditions_fulfilled: cfv) -> None:
+    def test_unknown_requirement_constraints(
+        self, expression: str, expected_resulting_conditions_fulfilled: cfv
+    ) -> None:
         """Test valid expressions with unnkown requirement constraints"""
 
         input_values = {

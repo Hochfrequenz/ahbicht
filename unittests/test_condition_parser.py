@@ -295,7 +295,9 @@ class TestConditionParser:
             ),
         ],
     )
-    def test_parse_valid_expression_to_tree_with_format_constraints(self, expression: str, expected_tree: Tree[Token]) -> None:
+    def test_parse_valid_expression_to_tree_with_format_constraints(
+        self, expression: str, expected_tree: Tree[Token]
+    ) -> None:
         """
         Tests that valid expressions containing operators "O" and "U", different whitespaces
         and no brackets are parsed as expected. It is similar to the test `test_parse_valid_expression_to_tree`
@@ -493,7 +495,9 @@ class TestConditionParser:
             ),
         ],
     )
-    def test_parse_valid_expression_with_brackets_to_tree(self, caplog: pytest.LogCaptureFixture, expression: str, expected_tree: Tree[Token]) -> None:
+    def test_parse_valid_expression_with_brackets_to_tree(
+        self, caplog: pytest.LogCaptureFixture, expression: str, expected_tree: Tree[Token]
+    ) -> None:
         """Tests that valid strings that contain brackets are parsed as expected."""
         parsed_tree = parse_condition_expression_to_tree(expression)
 

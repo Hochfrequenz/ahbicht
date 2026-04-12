@@ -133,7 +133,11 @@ class TestFormatConstraintExpressionEvaluation:
         ],
     )
     async def test_evaluate_valid_format_constraint_expression(
-        self, mocker: Any, format_constraint_expression: str, expected_format_constraints_fulfilled: bool, expected_error_message: Optional[str]
+        self,
+        mocker: Any,
+        format_constraint_expression: str,
+        expected_format_constraints_fulfilled: bool,
+        expected_error_message: Optional[str],
     ) -> None:
         """
         Tests that valid format_constraint expressions are evaluated as expected.
@@ -213,7 +217,11 @@ class TestFormatConstraintExpressionEvaluation:
         ],
     )
     async def test_build_evaluated_format_constraint_nodes(
-        self, caplog: pytest.LogCaptureFixture, condition_keys: list[str], entered_input: str, expected_evaluated_fc_nodes: dict[str, EvaluatedFormatConstraint]
+        self,
+        caplog: pytest.LogCaptureFixture,
+        condition_keys: list[str],
+        entered_input: str,
+        expected_evaluated_fc_nodes: dict[str, EvaluatedFormatConstraint],
     ) -> None:
         """Tests that evaluated format constraints nodes are build correctly."""
         fc_evaluators.text_to_be_evaluated_by_format_constraint.set(entered_input)

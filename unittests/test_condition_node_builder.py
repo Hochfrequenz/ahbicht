@@ -123,7 +123,11 @@ class TestConditionNodeBuilder:
         ],
     )
     async def test_build_requirement_constraint_nodes(
-        self, mocker: Any, expected_conditions_fulfilled_11: ConditionFulfilledValue, expected_conditions_fulfilled_78: ConditionFulfilledValue, ahb_context: AhbContext
+        self,
+        mocker: Any,
+        expected_conditions_fulfilled_11: ConditionFulfilledValue,
+        expected_conditions_fulfilled_78: ConditionFulfilledValue,
+        ahb_context: AhbContext,
     ) -> None:
         """Tests that requirement constraint nodes are build correctly."""
 

@@ -126,7 +126,9 @@ class FormatConstraintExpressionBuilder(ExpressionBuilder[TSupportedFCExpression
     def xor(self, other: TSupportedFCExpressionBuilderArguments) -> "FormatConstraintExpressionBuilder":
         return self._connect(LogicalOperator.XOR, other)
 
-    def _connect(self, operator_character: LogicalOperator, other: TSupportedFCExpressionBuilderArguments) -> "FormatConstraintExpressionBuilder":
+    def _connect(
+        self, operator_character: LogicalOperator, other: TSupportedFCExpressionBuilderArguments
+    ) -> "FormatConstraintExpressionBuilder":
         """
         Connect the existing expression and the other part.
 

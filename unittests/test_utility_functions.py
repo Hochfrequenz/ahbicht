@@ -33,7 +33,9 @@ class TestUtilityFunctions:
             pytest.param([_return_awaitable("a"), _return_awaitable("b")], ["a", "b"]),
         ],
     )
-    async def test_gather_if_necessary(self, mixed_input: list[Union[T, Awaitable[T]]], expected_result: list[T]) -> None:
+    async def test_gather_if_necessary(
+        self, mixed_input: list[Union[T, Awaitable[T]]], expected_result: list[T]
+    ) -> None:
         actual = await gather_if_necessary(mixed_input)
         assert actual == expected_result
 

@@ -261,7 +261,9 @@ class TestJsonSerialization:
         ],
     )
     def test_package_key_condition_expression_mapping_serialization(
-        self, package_key_condition_expression_mapping: PackageKeyConditionExpressionMapping, expected_json_dict: dict[str, Any]
+        self,
+        package_key_condition_expression_mapping: PackageKeyConditionExpressionMapping,
+        expected_json_dict: dict[str, Any],
     ) -> None:
         _test_serialization_roundtrip(package_key_condition_expression_mapping, expected_json_dict)
 

@@ -55,7 +55,9 @@ class TestConditionNodes:
             ),
         ],
     )
-    def test_invalid_requirement_constraint(self, condition_node_arguments: dict[str, Any], expected_error_message: str) -> None:
+    def test_invalid_requirement_constraint(
+        self, condition_node_arguments: dict[str, Any], expected_error_message: str
+    ) -> None:
         """Tests if requirements for RequirementConstraints are working as expected."""
         with pytest.raises(ValidationError) as excinfo:
             RequirementConstraint(**condition_node_arguments)
@@ -143,7 +145,9 @@ class TestConditionNodes:
             ),
         ],
     )
-    def test_invalid_evaluated_composition(self, resulting_node_arguments: dict[str, Any], expected_error_message: str) -> None:
+    def test_invalid_evaluated_composition(
+        self, resulting_node_arguments: dict[str, Any], expected_error_message: str
+    ) -> None:
         """Tests if requirements for Hints are working as expected."""
         with pytest.raises(ValidationError) as excinfo:
             EvaluatedComposition(**resulting_node_arguments)
@@ -166,7 +170,9 @@ class TestConditionNodes:
             ),
         ],
     )
-    def test_invalid_evaluated_format_constraint(self, format_constraint_arguments: dict[str, Any], expected_error_message: str) -> None:
+    def test_invalid_evaluated_format_constraint(
+        self, format_constraint_arguments: dict[str, Any], expected_error_message: str
+    ) -> None:
         """Tests that EvaluatedFormatConstraint validates error_message correctly."""
         with pytest.raises(ValidationError) as excinfo:
             EvaluatedFormatConstraint(**format_constraint_arguments)

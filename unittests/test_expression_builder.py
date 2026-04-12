@@ -47,7 +47,9 @@ class TestHintExpressionBuilder:
             pytest.param(None, None, None),
         ],
     )
-    def test_logical_and(self, init: Optional[Union[Hint, str]], other: Optional[Union[Hint, str]], expected: Optional[str]) -> None:
+    def test_logical_and(
+        self, init: Optional[Union[Hint, str]], other: Optional[Union[Hint, str]], expected: Optional[str]
+    ) -> None:
         builder: HintExpressionBuilder[Any] = HintExpressionBuilder(init)  # type: ignore[arg-type]
         actual = builder.land(other).get_expression()  # type: ignore[arg-type]
         assert actual == expected
@@ -63,7 +65,9 @@ class TestHintExpressionBuilder:
             pytest.param(None, None, None),
         ],
     )
-    def test_logical_or(self, init: Optional[Union[Hint, str]], other: Optional[Union[Hint, str]], expected: Optional[str]) -> None:
+    def test_logical_or(
+        self, init: Optional[Union[Hint, str]], other: Optional[Union[Hint, str]], expected: Optional[str]
+    ) -> None:
         builder: HintExpressionBuilder[Any] = HintExpressionBuilder(init)  # type: ignore[arg-type]
         actual = builder.lor(other).get_expression()  # type: ignore[arg-type]
         assert actual == expected
@@ -84,7 +88,9 @@ class TestHintExpressionBuilder:
             pytest.param(None, None, None),
         ],
     )
-    def test_logical_xor(self, init: Optional[Union[Hint, str]], other: Optional[Union[Hint, str]], expected: Optional[str]) -> None:
+    def test_logical_xor(
+        self, init: Optional[Union[Hint, str]], other: Optional[Union[Hint, str]], expected: Optional[str]
+    ) -> None:
         builder: HintExpressionBuilder[Any] = HintExpressionBuilder(init)  # type: ignore[arg-type]
         actual = builder.xor(other).get_expression()  # type: ignore[arg-type]
         assert actual == expected
@@ -119,7 +125,9 @@ class TestFormatErrorMessageExpressionBuilder:
             ),
         ],
     )
-    def test_logical_and(self, init: EvaluatedFormatConstraint, other: EvaluatedFormatConstraint, expected: Optional[str]) -> None:
+    def test_logical_and(
+        self, init: EvaluatedFormatConstraint, other: EvaluatedFormatConstraint, expected: Optional[str]
+    ) -> None:
         builder = FormatErrorMessageExpressionBuilder(init)
         actual = builder.land(other).get_expression()
         assert actual == expected
@@ -144,7 +152,9 @@ class TestFormatErrorMessageExpressionBuilder:
             ),
         ],
     )
-    def test_logical_or(self, init: EvaluatedFormatConstraint, other: EvaluatedFormatConstraint, expected: Optional[str]) -> None:
+    def test_logical_or(
+        self, init: EvaluatedFormatConstraint, other: EvaluatedFormatConstraint, expected: Optional[str]
+    ) -> None:
         builder = FormatErrorMessageExpressionBuilder(init)
         actual = builder.lor(other).get_expression()
         assert actual == expected
@@ -174,7 +184,9 @@ class TestFormatErrorMessageExpressionBuilder:
             ),
         ],
     )
-    def test_logical_xor(self, init: EvaluatedFormatConstraint, other: EvaluatedFormatConstraint, expected: Optional[str]) -> None:
+    def test_logical_xor(
+        self, init: EvaluatedFormatConstraint, other: EvaluatedFormatConstraint, expected: Optional[str]
+    ) -> None:
         builder = FormatErrorMessageExpressionBuilder(init)
         actual = builder.xor(other).get_expression()
         assert actual == expected
