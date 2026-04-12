@@ -1,56 +1,14 @@
-from contextvars import ContextVar
-from typing import Optional
-
-import inject
 import pytest
 
-from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluatableDataProvider
-from ahbicht.content_evaluation.evaluator_factory import create_content_evaluation_result_based_evaluators
 from ahbicht.content_evaluation.expression_check import is_valid_expression
-from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
 from ahbicht.expressions.expression_resolver import parse_expression_including_unresolved_subexpressions
-from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 from unittests.defaults import default_test_format, default_test_version
-
-_content_evaluation_result: ContextVar[Optional[ContentEvaluationResult]] = ContextVar(
-    "_content_evaluation_result", default=None
-)
-
-
-def _get_evaluatable_data():
-    """
-    returns the _content_evaluation_result context var value wrapped in a EvaluatableData container.
-    This is the kind of data that the ContentEvaluationResultBased RC/FC Evaluators, HintsProvider and Package Resolver
-    require.
-    :return:
-    """
-    cer = _content_evaluation_result.get()
-    return EvaluatableData(
-        body=cer.model_dump(mode="json"),
-        edifact_format=default_test_format,
-        edifact_format_version=default_test_version,
-    )
 
 
 class TestValidityCheck:
     """
     a test class for the expression validation feature
     """
-
-    @pytest.fixture
-    def inject_cer_evaluators(self):
-        def configure(binder):
-            binder.bind(
-                TokenLogicProvider,
-                SingletonTokenLogicProvider(
-                    [*create_content_evaluation_result_based_evaluators(default_test_format, default_test_version)]
-                ),
-            )
-            binder.bind_to_provider(EvaluatableDataProvider, _get_evaluatable_data)
-
-        inject.configure_once(configure)
-        yield
-        inject.clear()
 
     @pytest.mark.parametrize(
         "ahb_expression,expected_result",
@@ -65,7 +23,7 @@ class TestValidityCheck:
             pytest.param(
                 "([446] ∧ ([465] ∨ [466]) ∧ [467] ∧ ([468] ⊻ ([469] ∧ [470])) ⊻ [448]", False
             ),  # unbalanced brackets
-            pytest.param("Muss [15] ∧ [2050]", True),  # contains a 'Geschütztes' Leerzeichen
+            pytest.param("Muss [15] ∧ [2050]", True),  # contains a 'Geschütztes' Leerzeichen
             pytest.param("Muss [15]🙄∧ [2050]", False),
             pytest.param(
                 "X ([950] [509] ∧ ([64] V [70])) V ([960] [522] ∧ [71] ∧ [53])", True
@@ -73,15 +31,24 @@ class TestValidityCheck:
             pytest.param("X [1P0..n]", True),
         ],
     )
-    async def test_is_valid_expression(self, ahb_expression: str, expected_result: bool, inject_cer_evaluators):
-        actual_str = await is_valid_expression(ahb_expression, lambda cer: _content_evaluation_result.set(cer))
+    async def test_is_valid_expression(self, ahb_expression: str, expected_result: bool):
+        """Tests validity using AhbContext (no inject setup needed)."""
+        actual_str = await is_valid_expression(
+            ahb_expression,
+            edifact_format=default_test_format,
+            edifact_format_version=default_test_version,
+        )
         assert actual_str[0] == expected_result
         # check the tree as argument, too
         try:
             tree = await parse_expression_including_unresolved_subexpressions(ahb_expression)
         except SyntaxError:
             return  # ok, the syntax error is actually raised on parsing already
-        actual_tree = await is_valid_expression(tree, lambda cer: _content_evaluation_result.set(cer))
+        actual_tree = await is_valid_expression(
+            tree,
+            edifact_format=default_test_format,
+            edifact_format_version=default_test_version,
+        )
         assert actual_tree[0] == expected_result
 
     async def test_is_valid_expression_value_error(self):
