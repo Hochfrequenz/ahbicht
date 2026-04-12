@@ -7,17 +7,25 @@ import pytest
 import pytest_asyncio
 
 from ahbicht.condition_node_builder import ConditionNodeBuilder
+from ahbicht.content_evaluation.ahb_context import AhbContext
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableDataProvider, EvaluationContext
-from ahbicht.content_evaluation.rc_evaluators import RcEvaluator
+from ahbicht.content_evaluation.rc_evaluators import DictBasedRcEvaluator, RcEvaluator
 from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider, TokenLogicProvider
-from ahbicht.expressions.hints_provider import JsonFileHintsProvider
+from ahbicht.expressions.hints_provider import DictBasedHintsProvider, JsonFileHintsProvider
 from ahbicht.models.condition_nodes import (
     ConditionFulfilledValue,
     Hint,
     RequirementConstraint,
     UnevaluatedFormatConstraint,
 )
-from unittests.defaults import default_test_format, default_test_version, return_empty_dummy_evaluatable_data
+from unittests.defaults import (
+    default_test_format,
+    default_test_version,
+    empty_default_fc_evaluator,
+    empty_default_package_resolver,
+    empty_default_test_data,
+    return_empty_dummy_evaluatable_data,
+)
 
 
 class DummyRcEvaluator(RcEvaluator):
@@ -190,3 +198,79 @@ class TestConditionNodeBuilder:
             "1..2": RequirementConstraint(condition_key="1..2", conditions_fulfilled=expected_conditions_fulfilled_1_2),
         }
         assert evaluated_requirement_constraints == expected_requirement_constraints
+
+
+class TestConditionNodeBuilderWithAhbContext:
+    """Tests that ConditionNodeBuilder works with an explicit AhbContext (no inject setup)."""
+
+    @staticmethod
+    def _make_context(
+        rc_results: dict[str, ConditionFulfilledValue],
+        hints: dict[str, str],
+    ) -> AhbContext:
+        rc_evaluator = DictBasedRcEvaluator(rc_results)
+        rc_evaluator.edifact_format = default_test_format
+        rc_evaluator.edifact_format_version = default_test_version
+        hints_provider = DictBasedHintsProvider(hints)
+        hints_provider.edifact_format = default_test_format
+        hints_provider.edifact_format_version = default_test_version
+        return AhbContext(
+            rc_evaluator=rc_evaluator,
+            fc_evaluator=empty_default_fc_evaluator,
+            hints_provider=hints_provider,
+            package_resolver=empty_default_package_resolver,
+            evaluatable_data=empty_default_test_data,
+        )
+
+    def test_init_with_ahb_context_does_not_call_inject(self):
+        """AhbContext path must not touch inject at all."""
+        ctx = self._make_context(rc_results={}, hints={})
+        # This would fail with inject.InjectorException if inject were called
+        builder = ConditionNodeBuilder(["501", "12", "903"], ahb_context=ctx)
+        assert builder.requirement_constraints_condition_keys == ["12"]
+        assert builder.hints_condition_keys == ["501"]
+        assert builder.format_constraints_condition_keys == ["903"]
+
+    async def test_build_hint_nodes_with_ahb_context(self):
+        ctx = self._make_context(
+            rc_results={},
+            hints={
+                "583": "[583] Hinweis: Verwendung der ID der Marktlokation",
+                "584": "[584] Hinweis: Verwendung der ID der Messlokation",
+            },
+        )
+        builder = ConditionNodeBuilder(["584", "583"], ahb_context=ctx)
+        # Pass evaluatable_data explicitly to bypass @inject.params decorator
+        hint_nodes = await builder._build_hint_nodes(evaluatable_data=ctx.evaluatable_data)
+        assert "583" in hint_nodes
+        assert "584" in hint_nodes
+        assert hint_nodes["583"].hint == "[583] Hinweis: Verwendung der ID der Marktlokation"
+
+    async def test_build_rc_nodes_with_ahb_context(self):
+        ctx = self._make_context(
+            rc_results={
+                "11": ConditionFulfilledValue.FULFILLED,
+                "78": ConditionFulfilledValue.UNFULFILLED,
+            },
+            hints={},
+        )
+        builder = ConditionNodeBuilder(["11", "78"], ahb_context=ctx)
+        # Pass evaluatable_data explicitly to bypass @inject.params decorator
+        rc_nodes = await builder._build_requirement_constraint_nodes(evaluatable_data=ctx.evaluatable_data)
+        assert rc_nodes["11"].conditions_fulfilled == ConditionFulfilledValue.FULFILLED
+        assert rc_nodes["78"].conditions_fulfilled == ConditionFulfilledValue.UNFULFILLED
+
+    async def test_full_evaluation_with_ahb_context(self):
+        ctx = self._make_context(
+            rc_results={
+                "78": ConditionFulfilledValue.FULFILLED,
+                "11": ConditionFulfilledValue.UNFULFILLED,
+            },
+            hints={"583": "[583] Hinweis: Verwendung der ID der Marktlokation"},
+        )
+        builder = ConditionNodeBuilder(["78", "907", "11", "583"], ahb_context=ctx)
+        result = await builder.requirement_content_evaluation_for_all_condition_keys()
+        assert result["78"].conditions_fulfilled == ConditionFulfilledValue.FULFILLED
+        assert result["11"].conditions_fulfilled == ConditionFulfilledValue.UNFULFILLED
+        assert isinstance(result["583"], Hint)
+        assert isinstance(result["907"], UnevaluatedFormatConstraint)
