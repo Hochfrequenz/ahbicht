@@ -2,7 +2,7 @@ import asyncio
 from itertools import product
 from typing import Any
 
-from lark import Tree
+from lark import Token, Tree
 
 from ahbicht.expressions.ahb_expression_parser import _parser as ahb_expr_parser
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
@@ -18,7 +18,7 @@ class TestCaching:
     def test_ahb_expression_cache_sync(self, mocker: Any) -> None:
         ahb_expression = "Muss [3] U [4]"
         parse_spy = mocker.spy(ahb_expr_parser, "parse")
-        tree_instances: list[Tree] = []
+        tree_instances: list[Tree[Token]] = []
         number_of_calls: int = 100
         for _ in range(number_of_calls):
             tree_instance = parse_ahb_expression_to_single_requirement_indicator_expressions(ahb_expression)
@@ -47,7 +47,7 @@ class TestCaching:
     def test_condition_expression_cache_sync(self, mocker: Any) -> None:
         cond_expression = "[1] U [2]"
         parse_spy = mocker.spy(cond_expr_parser, "parse")
-        tree_instances: list[Tree] = []
+        tree_instances: list[Tree[Token]] = []
         number_of_calls: int = 100
         for _ in range(number_of_calls):
             tree_instance = parse_condition_expression_to_tree(cond_expression)

@@ -36,7 +36,7 @@ class _TreeOrTokenDictWithTree(TypedDict):
 _TreeOrTokenDict: TypeAlias = Union[_TreeOrTokenDictWithToken, _TreeOrTokenDictWithTree]
 
 
-def _serialize_children(t: Union[Tree, Token]) -> Union[_TokenDict, _TreeDict]:
+def _serialize_children(t: Union[Tree[Token], Token]) -> Union[_TokenDict, _TreeDict]:
     if isinstance(t, Tree):
         return TREE_ADAPTER.dump_python(t, mode="json")  # type: ignore[no-any-return]
     if isinstance(t, Token):
@@ -44,7 +44,7 @@ def _serialize_children(t: Union[Tree, Token]) -> Union[_TokenDict, _TreeDict]:
     raise ValueError(f"Unsupported type {t.__class__.__name__}")
 
 
-def _serialize_tree(tree: Tree) -> _TreeOrTokenDictWithTree:
+def _serialize_tree(tree: Tree[Token]) -> _TreeOrTokenDictWithTree:
     return {"token": None, "tree": {"type": tree.data, "children": [_serialize_children(c) for c in tree.children]}}
 
 
@@ -56,13 +56,13 @@ TOKEN_ADAPTER: TypeAdapter[Token] = TypeAdapter(
     Annotated[Token, PlainSerializer(_serialize_token)], config=ConfigDict(arbitrary_types_allowed=True)
 )
 
-TREE_ADAPTER: TypeAdapter[Tree] = TypeAdapter(
-    Annotated[Tree, PlainSerializer(_serialize_tree)], config=ConfigDict(arbitrary_types_allowed=True)
+TREE_ADAPTER: TypeAdapter[Tree[Token]] = TypeAdapter(
+    Annotated[Tree[Token], PlainSerializer(_serialize_tree)], config=ConfigDict(arbitrary_types_allowed=True)
 )
 
 
 def model_dump_tree(
-    tree: Tree, mode: Literal["json", "concise", "compress-conditions-only"] = "json"
+    tree: Tree[Token], mode: Literal["json", "concise", "compress-conditions-only"] = "json"
 ) -> dict[str, Any]:
     """ahbicht v1 replacement for the removed TreeSchema"""
     result: dict[str, Any] = TREE_ADAPTER.dump_python(tree, mode="json")

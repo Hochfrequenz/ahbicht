@@ -216,7 +216,7 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
 
 
 def evaluate_requirement_constraint_tree(
-    parsed_tree: Tree, input_values: Mapping[str, TRCTransformerArgument]
+    parsed_tree: Tree[Token], input_values: Mapping[str, TRCTransformerArgument]
 ) -> EvaluatedComposition:
     """
     Evaluates the tree built from the expressions with the help of the ConditionsTransformer.
@@ -242,7 +242,7 @@ of the type RequirementConstraint, Hint or FormatConstraint.""")
 
 
 async def requirement_constraint_evaluation(
-    condition_expression: Union[str, Tree],
+    condition_expression: Union[str, Tree[Token]],
     ahb_context: AhbContext,
 ) -> RequirementConstraintEvaluationResult:
     """
@@ -252,7 +252,7 @@ async def requirement_constraint_evaluation(
     :param ahb_context: AhbContext providing all evaluators and data
     """
     if isinstance(condition_expression, str):
-        parsed_tree_rc: Tree = parse_condition_expression_to_tree(condition_expression)
+        parsed_tree_rc: Tree[Token] = parse_condition_expression_to_tree(condition_expression)
     else:
         parsed_tree_rc = condition_expression
 

@@ -33,7 +33,7 @@ _str_to_modal_mark_mapping: dict[str, ModalMark] = {
 
 # pylint: disable=invalid-name
 # invalid-name: That's also the reason why they seemingly violate the naming conventions.
-class AhbExpressionTransformer(Transformer):  # type: ignore[misc]
+class AhbExpressionTransformer(Transformer):  # type: ignore[type-arg]
     """
     Transformer, that evaluates the trees built from the ahb expressions.
     The input are the conditions as defined in the AHBs in the form of ConditionNodes.
@@ -60,7 +60,7 @@ class AhbExpressionTransformer(Transformer):  # type: ignore[misc]
         """Returns the modal mark."""
         return _str_to_modal_mark_mapping[modal_mark.value.upper()]
 
-    @v_args(inline=True)  # type: ignore[untyped-decorator]  # Children are provided as *args instead of a list argument
+    @v_args(inline=True)  # Children are provided as *args instead of a list argument
     def single_requirement_indicator_expression(
         self, requirement_indicator: RequirementIndicator, condition_expression: str
     ) -> Awaitable[AhbExpressionEvaluationResult]:
@@ -91,7 +91,7 @@ class AhbExpressionTransformer(Transformer):  # type: ignore[misc]
 
         return result_of_ahb_expression_evaluation
 
-    @v_args(inline=True)  # type: ignore[untyped-decorator]  # Children are provided as *args instead of a list argument
+    @v_args(inline=True)  # Children are provided as *args instead of a list argument
     def requirement_indicator(self, requirement_indicator: RequirementIndicator) -> AhbExpressionEvaluationResult:
         """
         If there is no condition expression but only a requirement indicator,
@@ -149,7 +149,7 @@ class AhbExpressionTransformer(Transformer):  # type: ignore[misc]
 
 
 async def evaluate_ahb_expression_tree(
-    parsed_tree: Tree,
+    parsed_tree: Tree[Token],
     ahb_context: AhbContext,
 ) -> AhbExpressionEvaluationResult:
     """

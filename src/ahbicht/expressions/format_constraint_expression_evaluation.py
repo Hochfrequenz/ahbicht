@@ -67,7 +67,7 @@ class FormatConstraintTransformer(BaseTransformer[EvaluatedFormatConstraint, Eva
 
 
 def evaluate_format_constraint_tree(
-    parsed_tree: Tree, input_values: Mapping[str, EvaluatedFormatConstraint]
+    parsed_tree: Tree[Token], input_values: Mapping[str, EvaluatedFormatConstraint]
 ) -> EvaluatedFormatConstraint:
     """
     Evaluates the tree built from the format constraint expressions with the help of the FormatConstraintTransformer.
@@ -98,7 +98,7 @@ async def format_constraint_evaluation(
     if not format_constraints_expression:
         format_constraints_fulfilled = True
     else:
-        parsed_tree_fc: Tree = parse_condition_expression_to_tree(format_constraints_expression)
+        parsed_tree_fc: Tree[Token] = parse_condition_expression_to_tree(format_constraints_expression)
         all_evaluatable_format_constraint_keys: list[str] = [
             t.value for t in parsed_tree_fc.scan_values(lambda v: isinstance(v, Token))
         ]

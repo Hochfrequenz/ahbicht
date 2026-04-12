@@ -86,7 +86,7 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree[Token]
 
 
 def extract_categorized_keys_from_tree(
-    tree_or_list: Union[Tree, list[str]], sanitize: bool = False
+    tree_or_list: Union[Tree[Token], list[str]], sanitize: bool = False
 ) -> CategorizedKeyExtract:
     """
     find different types of condition nodes inside the given tree or list of keys.
@@ -105,14 +105,18 @@ def extract_categorized_keys_from_tree(
         condition_keys = tree_or_list
     elif isinstance(tree_or_list, Tree):
         condition_keys = [
-            x.value for x in tree_or_list.scan_values(lambda token: token.type == "CONDITION_KEY")
+            x.value
+            for x in tree_or_list.scan_values(lambda token: token.type == "CONDITION_KEY")  # type: ignore[union-attr]
         ]
         result.package_keys = [
-            x.value for x in tree_or_list.scan_values(lambda token: token.type == "PACKAGE_KEY")
+            x.value
+            for x in tree_or_list.scan_values(lambda token: token.type == "PACKAGE_KEY")  # type: ignore[union-attr]
         ]
         result.time_condition_keys = [
             x.value
-            for x in tree_or_list.scan_values(lambda token: token.type == "TIME_CONDITION_KEY")
+            for x in tree_or_list.scan_values(
+                lambda token: token.type == "TIME_CONDITION_KEY"  # type: ignore[union-attr]
+            )
         ]
     else:
         raise ValueError(f"{tree_or_list} is neither a list nor a {Tree.__name__}")

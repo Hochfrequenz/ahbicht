@@ -10,7 +10,7 @@ class TestExpressionResolver:
         [
             pytest.param(
                 "Muss[3]U[4] Soll[5]",
-                Tree(
+                Tree(  # type: ignore[misc]
                     "ahb_expression",
                     [
                         Tree(
@@ -38,7 +38,7 @@ class TestExpressionResolver:
             ),
             pytest.param(
                 "X[504]O[6]",
-                Tree(
+                Tree(  # type: ignore[misc]
                     "ahb_expression",
                     [
                         Tree(
@@ -75,7 +75,7 @@ class TestExpressionResolver:
             ),
             pytest.param(
                 "Muss[3]U[4P0..1]",
-                Tree(
+                Tree(  # type: ignore[misc]
                     Token("RULE", "ahb_expression"),
                     [
                         Tree(

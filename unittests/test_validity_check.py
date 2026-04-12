@@ -54,13 +54,13 @@ class TestValidityCheck:
     async def test_is_valid_expression_value_error(self) -> None:
         with pytest.raises(ValueError):
             await is_valid_expression(
-                12345,
+                12345,  # type: ignore[arg-type]
                 edifact_format=default_test_format,
                 edifact_format_version=default_test_version,
             )
         with pytest.raises(ValueError):
             await is_valid_expression(
-                None,
+                None,  # type: ignore[arg-type]
                 edifact_format=default_test_format,
                 edifact_format_version=default_test_version,
             )

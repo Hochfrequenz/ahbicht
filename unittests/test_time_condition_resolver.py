@@ -20,7 +20,7 @@ class TestTimeConditionReplacement:
                 "[UB1] U [42]",
                 False,
                 False,
-                Tree(
+                Tree(  # type: ignore[misc]
                     "and_composition",
                     [
                         Tree(Token("RULE", "time_condition"), [Token("TIME_CONDITION_KEY", "UB1")]),
@@ -32,7 +32,7 @@ class TestTimeConditionReplacement:
                 "[UB1] U [42]",
                 True,
                 True,
-                Tree(
+                Tree(  # type: ignore[misc]
                     "and_composition",
                     [
                         Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", "932")]),
@@ -44,7 +44,7 @@ class TestTimeConditionReplacement:
                 "[UB2] U [42]",
                 False,
                 False,
-                Tree(
+                Tree(  # type: ignore[misc]
                     "and_composition",
                     [
                         Tree(Token("RULE", "time_condition"), [Token("TIME_CONDITION_KEY", "UB2")]),
@@ -56,7 +56,7 @@ class TestTimeConditionReplacement:
                 "[UB2] U [42]",
                 False,
                 False,
-                Tree(
+                Tree(  # type: ignore[misc]
                     "and_composition",
                     [
                         Tree(Token("RULE", "time_condition"), [Token("TIME_CONDITION_KEY", "UB2")]),
@@ -110,7 +110,7 @@ class TestTimeConditionReplacement:
                 "[UB3] U [42]",
                 False,
                 False,
-                Tree(
+                Tree(  # type: ignore[misc]
                     "and_composition",
                     [
                         Tree(Token("RULE", "time_condition"), [Token("TIME_CONDITION_KEY", "UB3")]),

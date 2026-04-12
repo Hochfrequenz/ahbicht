@@ -81,10 +81,6 @@ markers = ["datafiles"]
 [tool.mypy]
 strict = true
 
-[[tool.mypy.overrides]]
-module = ["lark", "lark.*"]
-ignore_missing_imports = true
-
 [build-system]
 requires = ["hatchling>=1.8.0", "hatch-vcs", "hatch-fancy-pypi-readme"]
 build-backend = "hatchling.build"

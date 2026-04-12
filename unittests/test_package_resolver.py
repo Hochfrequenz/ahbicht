@@ -112,15 +112,15 @@ class TestPackageResolver:
         """
         unexpanded_tree = parse_condition_expression_to_tree("[1P2..3]")
         assert unexpanded_tree is not None
-        repeatability_tokens = [token for token in unexpanded_tree.children if token.type == "REPEATABILITY"]
-        assert parse_repeatability(repeatability_tokens[0]) == Repeatability(min_occurrences=2, max_occurrences=3)
+        repeatability_tokens = [token for token in unexpanded_tree.children if token.type == "REPEATABILITY"]  # type: ignore[union-attr]
+        assert parse_repeatability(repeatability_tokens[0]) == Repeatability(min_occurrences=2, max_occurrences=3)  # type: ignore[arg-type]
 
     @pytest.mark.parametrize(
         "expression, expected_tree",
         [
             pytest.param(
                 "Muss[3]U[4P0..1]",
-                Tree(
+                Tree(  # type: ignore[misc]
                     Token("RULE", "ahb_expression"),
                     [
                         Tree(
@@ -170,7 +170,7 @@ class TestPackageResolver:
             ),
             pytest.param(
                 "[1P] U [3]",
-                Tree(
+                Tree(  # type: ignore[misc]
                     "and_composition",
                     [
                         Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", PACKAGE_1P_HINT_KEY)]),
@@ -181,7 +181,7 @@ class TestPackageResolver:
             ),
             pytest.param(
                 "[3] O [1P]",
-                Tree(
+                Tree(  # type: ignore[misc]
                     "or_composition",
                     [
                         Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", "3")]),
