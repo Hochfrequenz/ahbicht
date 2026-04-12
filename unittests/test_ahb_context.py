@@ -7,8 +7,8 @@ from efoli import EdifactFormat, EdifactFormatVersion
 
 from ahbicht.content_evaluation.ahb_context import AhbContext
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData
-from ahbicht.content_evaluation.rc_evaluators import DictBasedRcEvaluator, RcEvaluator
 from ahbicht.content_evaluation.fc_evaluators import FcEvaluator
+from ahbicht.content_evaluation.rc_evaluators import DictBasedRcEvaluator, RcEvaluator
 from ahbicht.content_evaluation.token_logic_provider import SingletonTokenLogicProvider
 from ahbicht.expressions.hints_provider import HintsProvider
 from ahbicht.expressions.package_expansion import PackageResolver
