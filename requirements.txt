@@ -6,7 +6,7 @@
 #
 annotated-types==0.7.0
     # via pydantic
-efoli==2.1.1
+efoli==2.3.0
     # via ahbicht (pyproject.toml)
     # via ahbicht (pyproject.toml)
 lark==1.3.1
