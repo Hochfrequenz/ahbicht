@@ -37,7 +37,7 @@ packaging==26.0
     # via sphinx
 pydantic==2.12.5
     # via ahbicht (pyproject.toml)
-pydantic-core==2.41.5
+pydantic-core==2.46.0
     # via pydantic
 pygments==2.20.0
     # via sphinx
