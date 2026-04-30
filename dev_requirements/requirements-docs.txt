@@ -35,7 +35,7 @@ markupsafe==3.0.3
     # via jinja2
 packaging==26.2
     # via sphinx
-pydantic==2.12.5
+pydantic==2.13.3
     # via ahbicht (pyproject.toml)
 pydantic-core==2.41.5
     # via pydantic
