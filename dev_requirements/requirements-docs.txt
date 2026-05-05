@@ -22,7 +22,7 @@ docutils==0.21.2
     #   sphinx-rtd-theme
 efoli==2.3.0
     # via ahbicht (pyproject.toml)
-idna==3.11
+idna==3.13
     # via requests
 imagesize==2.0.0
     # via sphinx
