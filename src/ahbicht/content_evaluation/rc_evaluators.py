@@ -12,6 +12,7 @@ from typing import Any, Optional
 
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData, EvaluationContext
 from ahbicht.content_evaluation.evaluators import Evaluator
+from ahbicht.condition_node_distinction import PACKAGE_1P_RC_KEY
 from ahbicht.models.condition_nodes import ConditionFulfilledValue
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 
@@ -38,6 +39,10 @@ class RcEvaluator(Evaluator, ABC):
         :param condition_key: key of the condition, e.g. "78"
         :return:
         """
+        # Special case: Package '1P' RC key is always fulfilled.
+        # See the docstring of PACKAGE_1P_RC_KEY for details.
+        if condition_key == PACKAGE_1P_RC_KEY:
+            return ConditionFulfilledValue.FULFILLED
         evaluation_method = self.get_evaluation_method(condition_key)
         if evaluation_method is None:
             raise NotImplementedError(f"There is no content_evaluation method for condition '{condition_key}'")
@@ -108,6 +113,9 @@ class DictBasedRcEvaluator(RcEvaluator):
     async def evaluate_single_condition(
         self, condition_key: str, evaluatable_data: EvaluatableData[Any], context: Optional[EvaluationContext] = None
     ) -> ConditionFulfilledValue:
+        # Special case: Package '1P' RC key is always fulfilled.
+        if condition_key == PACKAGE_1P_RC_KEY:
+            return ConditionFulfilledValue.FULFILLED
         try:
             return self._results[condition_key]
         except KeyError as key_error:
@@ -127,6 +135,9 @@ class ContentEvaluationResultBasedRcEvaluator(RcEvaluator):
     async def evaluate_single_condition(
         self, condition_key: str, evaluatable_data: EvaluatableData[Any], context: Optional[EvaluationContext] = None
     ) -> ConditionFulfilledValue:
+        # Special case: Package '1P' RC key is always fulfilled.
+        if condition_key == PACKAGE_1P_RC_KEY:
+            return ConditionFulfilledValue.FULFILLED
         content_evaluation_result = ContentEvaluationResult.model_validate(evaluatable_data.body)
         try:
             return content_evaluation_result.requirement_constraints[condition_key]

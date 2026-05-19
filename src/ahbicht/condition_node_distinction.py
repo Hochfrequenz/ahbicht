@@ -8,29 +8,27 @@ from ahbicht.models.condition_node_type import ConditionNodeType
 
 REGEX_PACKAGE_REPEATABILITY = re.compile(r"^(?P<n>\d+)\.\.(?P<m>\d+|n)$")
 
-PACKAGE_1P_HINT_KEY: str = "9999"
+PACKAGE_1P_RC_KEY: str = "9999"
 """
 A special, hardcoded condition key that is used when resolving the package '1P'.
 
 Background:
-Package '1P' is defined to always resolve to a hint node, regardless of any PackageResolver configuration.
+Package '1P' is an empty dummy-package that should always evaluate as FULFILLED (RC_FULFILLED).
 Unlike other packages (e.g. '2P', '3P', ...) which are resolved dynamically via a PackageResolver that maps
-package keys to condition expressions, '1P' is treated as a special case and directly converted to a hint.
+package keys to condition expressions, '1P' is treated as a special case and directly converted to a
+requirement constraint that is always fulfilled.
 
 Why we chose this approach:
 
-1. Hint condition keys are normally in the range 500-900 (as defined by EDI@Energy "Allgemeine Festlegungen").
-2. We cannot use any key in the 500-900 range because those keys may already be taken by actual hints
-   defined in the AHB documents. Using an existing key would cause conflicts.
+1. Requirement constraint condition keys are normally in the range 1-499 (as defined by EDI@Energy
+   "Allgemeine Festlegungen").
+2. We cannot use any key in the 1-499 range because those keys may already be taken by actual
+   requirement constraints defined in the AHB documents. Using an existing key would cause conflicts.
 3. By using 9999 (a number well outside all defined ranges), we ensure no collision with any existing
-   condition keys while still being able to leverage the existing hint infrastructure.
-4. This constant is used in multiple places: in derive_condition_node_type() to recognize 9999 as a HINT type,
-   in PackageExpansionTransformer to resolve '1P' to this key, and in HintsProvider implementations to provide
-   a hardcoded hint text for this key.
-
-The hint text for this key is hardcoded as
-"Hinweis: Das ist das Standardpaket, wenn keine Bedingung zum Tragen kommt, z.B. im COM-Segment."
-in the HintsProvider base class.
+   condition keys while still being able to leverage the existing RC infrastructure.
+4. This constant is used in multiple places: in derive_condition_node_type() to recognize 9999 as a
+   REQUIREMENT_CONSTRAINT type, in PackageExpansionTransformer to resolve '1P' to this key, and in
+   RcEvaluator implementations to always return FULFILLED for this key.
 """
 
 
@@ -45,9 +43,11 @@ def derive_condition_node_type(condition_key: str) -> ConditionNodeType:
         return ConditionNodeType.PACKAGE_REPEATABILITY
     if 1 <= int(condition_key) <= 499:
         return ConditionNodeType.REQUIREMENT_CONSTRAINT
-    if 500 <= int(condition_key) <= 900 or condition_key == PACKAGE_1P_HINT_KEY:
-        # condition_key == PACKAGE_1P_HINT_KEY (9999) is a special case for package '1P'.
-        # See the docstring of PACKAGE_1P_HINT_KEY for details.
+    if condition_key == PACKAGE_1P_RC_KEY:
+        # condition_key == PACKAGE_1P_RC_KEY (9999) is a special case for package '1P'.
+        # See the docstring of PACKAGE_1P_RC_KEY for details.
+        return ConditionNodeType.REQUIREMENT_CONSTRAINT
+    if 500 <= int(condition_key) <= 900:
         return ConditionNodeType.HINT
     if 901 <= int(condition_key) <= 999:
         return ConditionNodeType.FORMAT_CONSTRAINT
