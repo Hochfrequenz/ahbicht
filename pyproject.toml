@@ -39,8 +39,6 @@ linting = ["pylint==4.0.5"]
 spellcheck = ["codespell==2.4.2"]
 test_packaging = [
     "build==1.5.0",
-    "setuptools==82.0.0",
-    "setuptools-scm==10.0.5",
     "twine==6.2.0",
 ]
 tests = [
@@ -51,9 +49,6 @@ tests = [
 ]
 type_check = ["mypy[pydantic]==1.20.2", "types-pytz==2026.1.1.20260408"]
 dev = ["pip-tools"]
-
-[tool.setuptools.dynamic]
-readme = { file = "README.rst" }
 
 [project.urls]
 Changelog = "https://github.com/Hochfrequenz/ahbicht/releases"
