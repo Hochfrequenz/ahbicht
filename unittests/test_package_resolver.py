@@ -10,7 +10,7 @@ import pytest
 from efoli import EdifactFormat, EdifactFormatVersion
 from lark import Token, Tree
 
-from ahbicht.condition_node_distinction import PACKAGE_1P_HINT_KEY
+from ahbicht.condition_node_distinction import PACKAGE_1P_RC_KEY
 from ahbicht.content_evaluation.ahb_context import AhbContext
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.expressions.expression_resolver import (
@@ -169,15 +169,15 @@ class TestPackageResolver:
         [
             pytest.param(
                 "[1P]",
-                Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", PACKAGE_1P_HINT_KEY)]),
-                id="1P alone resolves to hint key",
+                Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", PACKAGE_1P_RC_KEY)]),
+                id="1P alone resolves to rc key",
             ),
             pytest.param(
                 "[1P] U [3]",
                 Tree(  # type: ignore[misc]
                     "and_composition",
                     [
-                        Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", PACKAGE_1P_HINT_KEY)]),
+                        Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", PACKAGE_1P_RC_KEY)]),
                         Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", "3")]),
                     ],
                 ),
@@ -189,16 +189,16 @@ class TestPackageResolver:
                     "or_composition",
                     [
                         Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", "3")]),
-                        Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", PACKAGE_1P_HINT_KEY)]),
+                        Tree(Token("RULE", "condition"), [Token("CONDITION_KEY", PACKAGE_1P_RC_KEY)]),
                     ],
                 ),
                 id="1P in or_composition",
             ),
         ],
     )
-    async def test_package_1p_resolves_to_hint(self, unexpanded_expression: str, expected_tree: Tree[Token]) -> None:
+    async def test_package_1p_resolves_to_rc(self, unexpanded_expression: str, expected_tree: Tree[Token]) -> None:
         """
-        Test that package '1P' is always resolved to a hint node with key PACKAGE_1P_HINT_KEY (9999),
+        Test that package '1P' is always resolved to an RC node with key PACKAGE_1P_RC_KEY (9999),
         regardless of any PackageResolver configuration.
         """
         ctx = _make_package_context({})  # Empty dict - 1P should work without any resolver configuration
