@@ -19,7 +19,7 @@ pytz==2026.2
     # via
     #   ahbicht (pyproject.toml)
     #   efoli
-typing-extensions==4.15.0
+typing-extensions==4.16.0
     # via
     #   pydantic
     #   pydantic-core
