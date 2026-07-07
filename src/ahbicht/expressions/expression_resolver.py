@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Awaitable, Optional, Union
 from lark import Token, Transformer, Tree
 from lark.exceptions import VisitError
 
-from ahbicht.condition_node_distinction import PACKAGE_1P_HINT_KEY
+from ahbicht.condition_node_distinction import PACKAGE_1P_RC_KEY
 from ahbicht.expressions.ahb_expression_parser import parse_ahb_expression_to_single_requirement_indicator_expressions
 from ahbicht.expressions.condition_expression_parser import parse_condition_expression_to_tree
 from ahbicht.models.mapping_results import Repeatability
@@ -166,10 +166,10 @@ class PackageExpansionTransformer(Transformer):  # type: ignore[type-arg]
         else:
             repeatability = None
 
-        # Special case: Package '1P' is always resolved to a hint node.
-        # See the docstring of PACKAGE_1P_HINT_KEY for details.
+        # Special case: Package '1P' is always resolved to a requirement constraint node.
+        # See the docstring of PACKAGE_1P_RC_KEY for details.
         if package_key_token.value == "1P":
-            return Tree("condition", [Token("CONDITION_KEY", PACKAGE_1P_HINT_KEY)])
+            return Tree("condition", [Token("CONDITION_KEY", PACKAGE_1P_RC_KEY)])
 
         return self._package_async(package_key_token, single_repeat_token)
 
