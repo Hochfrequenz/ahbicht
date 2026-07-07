@@ -5,7 +5,7 @@ from unittest import mock
 
 import pytest
 
-from ahbicht.content_evaluation.rc_evaluators import ContentEvaluationResultBasedRcEvaluator, RcEvaluator
+from ahbicht.content_evaluation.rc_evaluators import ContentEvaluationResultBasedRcEvaluator, MissingConditionKeyError, RcEvaluator
 from ahbicht.models.condition_nodes import ConditionFulfilledValue
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 from unittests.conftest import store_content_evaluation_result_in_evaluatable_data
@@ -45,8 +45,10 @@ class TestCerBasedRcEvaluator:
             await evaluator.evaluate_single_condition("4", evaluatable_data=dummy_eval_data)
             == ConditionFulfilledValue.UNKNOWN
         )
-        with pytest.raises(NotImplementedError):
+        with pytest.raises(MissingConditionKeyError) as exc_info:
             await evaluator.evaluate_single_condition("5", evaluatable_data=dummy_eval_data)
+        assert exc_info.value.condition_key == "5"
+        assert isinstance(exc_info.value, KeyError)
 
         single_condition_spy = mocker.spy(evaluator, "evaluate_single_condition")
 
