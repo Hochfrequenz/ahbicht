@@ -42,6 +42,7 @@ class TestDictBasedRcEvaluator:
             await evaluator.evaluate_single_condition("5", evaluatable_data=dummy_eval_data)
         assert exc_info.value.condition_key == "5"
         assert isinstance(exc_info.value, KeyError)
+        assert str(exc_info.value) == "No result was provided for condition '5'."
 
         single_condition_spy = mocker.spy(evaluator, "evaluate_single_condition")
 
