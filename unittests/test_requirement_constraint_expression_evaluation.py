@@ -323,6 +323,15 @@ class TestRequirementConstraintEvaluation:
 
         assert """is not implemented as it has no useful result.""" in str(excinfo.value)
 
+    def test_invalid_expression_error_is_an_exception(self) -> None:
+        """
+        InvalidExpressionError must inherit from Exception (not BaseException) so that ordinary
+        ``except Exception`` guards in web frameworks, ASGI servers and task groups catch it instead of it
+        propagating like KeyboardInterrupt/SystemExit and tearing down whole task groups.
+        See https://github.com/Hochfrequenz/ahbicht-functions/issues/732
+        """
+        assert issubclass(InvalidExpressionError, Exception)
+
     @pytest.mark.parametrize(
         "input_values, expected_evaluated_result",
         [

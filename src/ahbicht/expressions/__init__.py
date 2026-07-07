@@ -9,10 +9,15 @@ parsing_logger = logging.getLogger("ahbicht.expressions")
 parsing_logger.setLevel(logging.DEBUG)
 
 
-class InvalidExpressionError(BaseException):
+class InvalidExpressionError(Exception):
     """
     Is raised when an expression is well-formed but invalid.
     A syntactical error leads to a SyntaxError during parsing with lark whereas this exception occurs during evaluation.
+
+    Inherits from :class:`Exception` (not :class:`BaseException`) so that ordinary ``except Exception`` guards -- as
+    used by web frameworks, ASGI servers and task groups -- catch it. Inheriting from ``BaseException`` made this
+    validation error bypass those guards and propagate like ``KeyboardInterrupt``/``SystemExit``, which could tear
+    down an entire ASGI/anyio task group instead of failing the single request. See Hochfrequenz/ahbicht-functions#732.
     """
 
     def __init__(self, error_message: str, invalid_expression: Optional[str] = None) -> None:
