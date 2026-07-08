@@ -5,7 +5,7 @@ from unittest import mock
 
 import pytest
 
-from ahbicht.content_evaluation.rc_evaluators import DictBasedRcEvaluator
+from ahbicht.content_evaluation.rc_evaluators import DictBasedRcEvaluator, MissingConditionKeyError
 from ahbicht.models.condition_nodes import ConditionFulfilledValue
 from unittests.defaults import empty_default_test_data
 
@@ -38,8 +38,11 @@ class TestDictBasedRcEvaluator:
             await evaluator.evaluate_single_condition("4", evaluatable_data=dummy_eval_data)
             == ConditionFulfilledValue.UNKNOWN
         )
-        with pytest.raises(NotImplementedError):
+        with pytest.raises(MissingConditionKeyError) as exc_info:
             await evaluator.evaluate_single_condition("5", evaluatable_data=dummy_eval_data)
+        assert exc_info.value.condition_key == "5"
+        assert isinstance(exc_info.value, KeyError)
+        assert str(exc_info.value) == "No result was provided for condition '5'."
 
         single_condition_spy = mocker.spy(evaluator, "evaluate_single_condition")
 

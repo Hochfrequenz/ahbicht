@@ -16,6 +16,22 @@ from ahbicht.models.condition_nodes import ConditionFulfilledValue
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 
 
+class MissingConditionKeyError(KeyError):
+    """
+    Raised when a caller asks to evaluate a condition key for which no result was provided.
+    This is a caller/input error — the caller referenced condition X but did not supply a state for X.
+    It is intentionally distinct from :class:`NotImplementedError` (which signals an unimplemented feature),
+    so that consumers can map this to a 4xx HTTP response rather than a 5xx.
+    """
+
+    def __init__(self, condition_key: str) -> None:
+        self.condition_key = condition_key
+        super().__init__(f"No result was provided for condition '{condition_key}'.")
+
+    def __str__(self) -> str:
+        return f"No result was provided for condition '{self.condition_key}'."
+
+
 class RcEvaluator(Evaluator, ABC):
     """
     Base class of all Requirement Constraint (RC) evaluators.
@@ -111,7 +127,7 @@ class DictBasedRcEvaluator(RcEvaluator):
         try:
             return self._results[condition_key]
         except KeyError as key_error:
-            raise NotImplementedError(f"No result was provided for condition '{condition_key}'.") from key_error
+            raise MissingConditionKeyError(condition_key) from key_error
 
 
 class ContentEvaluationResultBasedRcEvaluator(RcEvaluator):
@@ -131,4 +147,4 @@ class ContentEvaluationResultBasedRcEvaluator(RcEvaluator):
         try:
             return content_evaluation_result.requirement_constraints[condition_key]
         except KeyError as key_error:
-            raise NotImplementedError(f"No result was provided for condition '{condition_key}'.") from key_error
+            raise MissingConditionKeyError(condition_key) from key_error
