@@ -1,5 +1,5 @@
 """
-This script is run in the tox 'json_schemas' environment.
+This script is run via the uv 'json_schemas' dependency group.
 It creates json schema files as described in the README.md in the same directory.
 """
 
