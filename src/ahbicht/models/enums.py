@@ -99,5 +99,12 @@ class LogicalOperator(StrEnum):
 
     XOR = "X"
     """
-    logical excluxive OR (XOR), also denoted as "⊻", used in xor_composition
+    logical exclusive OR (XOR), also denoted as "⊻", used in xor_composition.
+
+    Important semantics:
+    - ``X`` chains as a left-associative fold of boolean XOR, so a chain is fulfilled **if and only if
+      an odd number of its operands are fulfilled** (odd-parity), *not* "exactly one of".
+      Example: ``[1] X [2] X [3]`` with all three fulfilled evaluates to ``true`` (3 is odd).
+    - Self-XOR (``[1] X [1]``) is always ``false`` regardless of the state of ``[1]``,
+      and therefore makes the enclosing expression unsatisfiable.
     """
