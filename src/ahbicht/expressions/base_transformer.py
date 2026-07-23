@@ -70,6 +70,12 @@ class BaseTransformer(Transformer, ABC, Generic[SupportedArgumentNode, Supported
 
     @abstractmethod
     def xor_composition(self, left: SupportedArgumentNode, right: SupportedArgumentNode) -> SupportedReturn:
-        """Evaluates exclusive xor_composition"""
+        """
+        Evaluates exclusive xor_composition.
+
+        Note: ``X`` chains as a left-associative fold of boolean XOR (odd-parity semantics).
+        A chain is fulfilled if and only if an *odd* number of its operands are fulfilled — not "exactly one of".
+        In particular, ``[1] X [1]`` is always ``false`` (self-XOR is unsatisfiable).
+        """
 
         raise NotImplementedError("Has to be implemented by inheriting class.")
