@@ -35,7 +35,11 @@ class MixedSyncAsyncRcEvaluator(RcEvaluator):
             assert isinstance(context, EvaluationContext)
         return ConditionFulfilledValue.FULFILLED
 
-    async def evaluate_2(self, evaluatable_data: EvaluatableData, context: EvaluationContext) -> ConditionFulfilledValue:  # type: ignore[type-arg]
+    async def evaluate_2(
+        self,
+        evaluatable_data: EvaluatableData,  # type: ignore[type-arg]
+        context: EvaluationContext,
+    ) -> ConditionFulfilledValue:
         assert isinstance(evaluatable_data, EvaluatableData)
         if context is not None:
             assert isinstance(context, EvaluationContext)

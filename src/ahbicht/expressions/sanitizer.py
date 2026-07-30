@@ -1,6 +1,6 @@
 """contains a function to sanitize user input/expressions from the AHBs"""
 
-from typing import Literal, Optional, overload
+from typing import Literal, overload
 
 _replacements: dict[str, str] = {
     "\u00a0": " ",  # no-break space,
@@ -15,7 +15,7 @@ def sanitize_expression(expression: Literal[None]) -> Literal[None]: ...
 def sanitize_expression(expression: str) -> str: ...
 
 
-def sanitize_expression(expression: Optional[str]) -> Optional[str]:
+def sanitize_expression(expression: str | None) -> str | None:
     """
     fixes some common issues with expressions from the AHBs
     """

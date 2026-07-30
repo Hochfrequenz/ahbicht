@@ -6,7 +6,7 @@ of the format constraint expression tree are handled.
 The used terms are defined in the README_conditions.md.
 """
 
-from typing import Mapping, Optional
+from collections.abc import Mapping
 
 from lark import Token, Tree, v_args
 from lark.exceptions import VisitError
@@ -81,19 +81,19 @@ def evaluate_format_constraint_tree(
     try:
         result = FormatConstraintTransformer(input_values).transform(parsed_tree)
     except VisitError as visit_err:
-        raise visit_err.orig_exc
+        raise visit_err.orig_exc from None
 
     return result  # type: ignore[no-any-return]
 
 
 async def format_constraint_evaluation(
-    format_constraints_expression: Optional[str],
+    format_constraints_expression: str | None,
     ahb_context: AhbContext,
 ) -> FormatConstraintEvaluationResult:
     """
     Evaluation of the format constraint expression.
     """
-    error_message: Optional[str] = None
+    error_message: str | None = None
     format_constraints_fulfilled: bool
     if not format_constraints_expression:
         format_constraints_fulfilled = True

@@ -3,7 +3,8 @@ contains a high-level function that checks if a given expression is valid or not
 """
 
 import asyncio
-from typing import Any, Awaitable, Optional, Union
+from collections.abc import Awaitable
+from typing import Any
 
 from efoli import EdifactFormat, EdifactFormatVersion
 from lark import Token, Tree
@@ -18,11 +19,11 @@ from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 
 
 async def is_valid_expression(  # pylint: disable=too-many-locals
-    expression_or_tree: Union[str, Tree[Token]],
+    expression_or_tree: str | Tree[Token],
     edifact_format: EdifactFormat,
     edifact_format_version: EdifactFormatVersion,
-    ahb_context: Optional[AhbContext] = None,
-) -> tuple[bool, Optional[str]]:
+    ahb_context: AhbContext | None = None,
+) -> tuple[bool, str | None]:
     """
     Returns true iff the given expression is both well-formed and valid.
     An expression is valid if and only if all possible content evaluations lead to a meaningful results.

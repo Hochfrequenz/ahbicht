@@ -6,8 +6,9 @@ e.g. if inside a tree "[123P]" is replaced by "[1] U ([2] O [3])".
 import json
 import logging
 from abc import ABC, abstractmethod
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, Mapping, Optional
+from typing import Any
 
 from efoli import EdifactFormat, EdifactFormatVersion
 from pydantic import RootModel
@@ -52,7 +53,7 @@ class DictBasedPackageResolver(PackageResolver):
     A Package Resolver that is based on hardcoded values from a dictionary
     """
 
-    def __init__(self, results: Mapping[str, Optional[str]]) -> None:
+    def __init__(self, results: Mapping[str, str | None]) -> None:
         """
         Initialize with a dictionary that contains all the condition expressions.
         :param results: maps the package key (e.g. '123') to the package expression (e.g. '[1] U [2]')
@@ -61,7 +62,7 @@ class DictBasedPackageResolver(PackageResolver):
         for key in results.keys():
             if not key.endswith("P"):
                 raise ValueError("The keys should end with 'P' to avoid ambiguities. Use '123P' instead of '123'.")
-        self._all_packages: Mapping[str, Optional[str]] = results
+        self._all_packages: Mapping[str, str | None] = results
 
     async def get_condition_expression(self, package_key: str) -> PackageKeyConditionExpressionMapping:
         if not package_key:
@@ -98,7 +99,7 @@ class JsonFilePackageResolver(DictBasedPackageResolver):
         self.edifact_format_version = edifact_format_version
 
     @staticmethod
-    def _open_and_load_package_mappings(file_path: Path) -> dict[str, Optional[str]]:
+    def _open_and_load_package_mappings(file_path: Path) -> dict[str, str | None]:
         """
         Opens the hint json file and loads it into an attribute of the class.
         The method can read both a dictionary of package key/package expression mappings and a
@@ -121,7 +122,7 @@ class ContentEvaluationResultBasedPackageResolver(PackageResolver):
     evaluatable data.
     """
 
-    def __init__(self, evaluatable_data: Optional[EvaluatableData[Any]] = None) -> None:
+    def __init__(self, evaluatable_data: EvaluatableData[Any] | None = None) -> None:
         super().__init__()
         self._evaluatable_data = evaluatable_data
 

@@ -3,7 +3,7 @@ Module for taking all the condition keys of a condition expression and building 
 If necessary it evaluates the needed attributes.
 """
 
-from typing import Any, Union
+from typing import Any
 
 from ahbicht.content_evaluation.ahb_context import AhbContext
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData
@@ -13,7 +13,7 @@ from ahbicht.models.condition_nodes import Hint, RequirementConstraint, Unevalua
 # TRCTransformerArgument is a union of nodes that are already evaluated from a Requirement Constraint (RC) perspective.
 # The Format Constraints (FC) might still be unevaluated. That's why the return type used in the
 # RequirementConstraintTransformer is always an EvaluatedComposition.
-TRCTransformerArgument = Union[RequirementConstraint, UnevaluatedFormatConstraint, Hint]  # pylint:disable=invalid-name
+TRCTransformerArgument = RequirementConstraint | UnevaluatedFormatConstraint | Hint
 
 
 # pylint: disable=no-member, too-few-public-methods

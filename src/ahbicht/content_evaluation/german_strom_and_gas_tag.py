@@ -3,9 +3,10 @@ A module to evaluate datetimes and whether they are "on the edge" of a German "S
 """
 
 import re
+from collections.abc import Callable
 from datetime import datetime, time, timedelta
 from datetime import timezone as tz
-from typing import Callable, Literal, Optional, Union
+from typing import Literal
 
 # The problem with the stdlib zoneinfo is, that the availability of timezones via ZoneInfo(zone_key) depends on the OS
 # and system on which you're running it. In some cases "Europe/Berlin" might be available, but generally it's not,
@@ -42,11 +43,11 @@ def _is_edifact_time_str(time_str: str) -> bool:
     return time_str[:-3].isdigit()
 
 
-def _is_edifact_time_str_convertible_to_datetime(time_str: str) -> tuple[bool, Optional[EdifactDateTimeFormat]]:
+def _is_edifact_time_str_convertible_to_datetime(time_str: str) -> tuple[bool, EdifactDateTimeFormat | None]:
     """
     Checks if a EDIFACT time string can be converted to datetime. If not the EdiFactDateTimeFormat is returned.
     """
-    edifact_time_format: Optional[EdifactDateTimeFormat] = None
+    edifact_time_format: EdifactDateTimeFormat | None = None
     if len(time_str) == 2:  # 802 Monat erlaubt: 1, 3, 6, 12
         edifact_time_format = EdifactDateTimeFormat.MM
     elif len(time_str) == 4 and EDIFACT_TIME_QUANTITY_REGEX.match(time_str):  # Z01 ZZRB
@@ -78,7 +79,7 @@ EDIFACT_TIME_QUANTITY_REGEX = re.compile(r"^(?P<quantity>\d{2})(?P<unit>[TWM])(?
 
 
 # the functions below are excessively unit tested; Please add a test case if you suspect their behaviour to be wrong
-def parse_as_datetime(entered_input: str) -> tuple[Optional[datetime], Optional[EvaluatedFormatConstraint]]:
+def parse_as_datetime(entered_input: str) -> tuple[datetime | None, EvaluatedFormatConstraint | None]:
     """
     Try to parse the given entered_input as datetime
     :param entered_input: a string
@@ -167,7 +168,7 @@ def is_gastag_limit(date_time: datetime) -> bool:  # the name is not as speaking
     return german_local_time.hour == 6 and german_local_time.minute == 0 and german_local_time.second == 0
 
 
-def is_xtag_limit(entered_input: str, division: Union[Literal["Strom"], Literal["Gas"]]) -> EvaluatedFormatConstraint:
+def is_xtag_limit(entered_input: str, division: Literal["Strom"] | Literal["Gas"]) -> EvaluatedFormatConstraint:
     """
     Tries to parse the entered_input as datetime and checks if it is the start/end of a Strom- or Gastag
     """
@@ -183,7 +184,5 @@ def is_xtag_limit(entered_input: str, division: Union[Literal["Strom"], Literal[
         raise NotImplementedError(f"The division must either be 'Strom' or 'Gas': '{division}'")
     if xtag_evaluator(date_time):  # type: ignore[arg-type]
         return EvaluatedFormatConstraint(format_constraint_fulfilled=True, error_message=None)
-    error_message = (
-        f"The given datetime '{date_time.isoformat()}' is not the limit of a {division}tag"  # type: ignore[union-attr]
-    )
+    error_message = f"The given datetime '{date_time.isoformat()}' is not the limit of a {division}tag"  # type: ignore[union-attr]
     return EvaluatedFormatConstraint(format_constraint_fulfilled=False, error_message=error_message)

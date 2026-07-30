@@ -5,8 +5,9 @@ Functions that are not clearly related to another module
 import asyncio
 import inspect
 import re
+from collections.abc import Awaitable, Callable
 from re import Match
-from typing import Any, Awaitable, Callable, Literal, Optional, TypeVar, Union
+from typing import Any, Literal, TypeVar
 
 from lark import Token, Tree
 
@@ -21,7 +22,7 @@ _repeatability_pattern = re.compile(
 )  #: a pattern to match "n..m" repeatabilities
 
 
-async def gather_if_necessary(results_and_awaitable_results: list[Union[Result, Awaitable[Result]]]) -> list[Result]:
+async def gather_if_necessary(results_and_awaitable_results: list[Result | Awaitable[Result]]) -> list[Result]:
     """
     Await the awaitables, pass the un-awaitable results
     :param results_and_awaitable_results: heterogeneous list of both Ts and Awaitable[T]s.
@@ -75,11 +76,11 @@ def parse_repeatability(repeatability_string: str) -> Repeatability:
     """
     parses the given string as repeatability; e.g. `17..23` is parsed as min=17, max=23
     """
-    match: Optional[Match[str]] = _repeatability_pattern.match(repeatability_string)
+    match: Match[str] | None = _repeatability_pattern.match(repeatability_string)
     if match is None:
         raise ValueError(f"The given string '{repeatability_string}' could not be parsed as repeatability")
     min_repeatability = int(match["min"])
-    max_repeatability: Union[int, Literal["n"]]
+    max_repeatability: int | Literal["n"]
     try:
         max_repeatability = int(match["max"])
     except TypeError:

@@ -8,7 +8,8 @@ from __future__ import annotations
 
 import asyncio
 import inspect
-from typing import TYPE_CHECKING, Awaitable, Optional, Union
+from collections.abc import Awaitable
+from typing import TYPE_CHECKING
 
 from lark import Token, Transformer, Tree
 from lark.exceptions import VisitError
@@ -30,7 +31,7 @@ async def parse_expression_including_unresolved_subexpressions(
     resolve_time_conditions: bool = True,
     replace_time_conditions: bool = True,
     include_package_repeatabilities: bool = False,
-    ahb_context: Optional[AhbContext] = None,
+    ahb_context: AhbContext | None = None,
 ) -> Tree[Token]:
     """
     Parses expressions and resolves its subexpressions,
@@ -50,8 +51,7 @@ async def parse_expression_including_unresolved_subexpressions(
         try:
             expression_tree = parse_condition_expression_to_tree(expression)
         except SyntaxError as condition_syntax_error:
-            # pylint: disable=raise-missing-from
-            raise SyntaxError(f"{ahb_syntax_error.msg} {condition_syntax_error.msg}")
+            raise SyntaxError(f"{ahb_syntax_error.msg} {condition_syntax_error.msg}") from condition_syntax_error
     if resolve_packages:
         # the condition expression inside the ahb expression has to be resolved before trying to resolve packages
         expression_tree = await expand_packages(
@@ -65,7 +65,7 @@ async def parse_expression_including_unresolved_subexpressions(
 async def expand_packages(
     parsed_tree: Tree[Token],
     include_package_repeatabilities: bool = False,
-    ahb_context: Optional[AhbContext] = None,
+    ahb_context: AhbContext | None = None,
 ) -> Tree[Token]:
     """
     Replaces all the "short" packages in parser_tree with the respective "long" condition expressions
@@ -75,7 +75,7 @@ async def expand_packages(
             parsed_tree
         )
     except VisitError as visit_err:
-        raise visit_err.orig_exc
+        raise visit_err.orig_exc from None
     result = await _replace_sub_coroutines_with_awaited_results(result)
     return result
 
@@ -89,7 +89,7 @@ def expand_time_conditions(parsed_tree: Tree[Token], replace_time_conditions: bo
     return result  # type: ignore[no-any-return]
 
 
-async def _replace_sub_coroutines_with_awaited_results(tree: Union[Tree[Token], Awaitable[Tree[Token]]]) -> Tree[Token]:
+async def _replace_sub_coroutines_with_awaited_results(tree: Tree[Token] | Awaitable[Tree[Token]]) -> Tree[Token]:
     """
     awaits all coroutines inside the tree and replaces the coroutines with their respective awaited result.
     returns an updated tree
@@ -102,7 +102,7 @@ async def _replace_sub_coroutines_with_awaited_results(tree: Union[Tree[Token], 
         result = tree
     # todo: check why lark type hints state the return value of scan_values is always Iterator[str]
     sub_results = await asyncio.gather(*result.scan_values(asyncio.iscoroutine))  # type: ignore[call-overload]
-    for coro, sub_result in zip(result.scan_values(asyncio.iscoroutine), sub_results):
+    for coro, sub_result in zip(result.scan_values(asyncio.iscoroutine), sub_results, strict=False):
         for sub_tree in result.iter_subtrees():
             for child_index, child in enumerate(sub_tree.children):
                 if child == coro:
@@ -142,29 +142,28 @@ class PackageExpansionTransformer(Transformer):  # type: ignore[type-arg]
     def __init__(
         self,
         include_package_repeatabilities: bool = False,
-        ahb_context: Optional[AhbContext] = None,
+        ahb_context: AhbContext | None = None,
     ) -> None:
         super().__init__()
         self._ahb_context = ahb_context
         self.include_package_repeatabilities = include_package_repeatabilities
 
-    def package(self, tokens: list[Token]) -> Union[Tree[Token], Awaitable[Tree[Token]]]:
+    def package(self, tokens: list[Token]) -> Tree[Token] | Awaitable[Tree[Token]]:
         """
         try to resolve the package using the PackageResolver from ahb_context
         """
         # The grammar guarantees that there is always exactly 1 package_key token/terminal.
         # But the repeatability token is optional, so the list repeatability_tokens might contain 0 or 1 entries
         # They all come in the same `tokens` list which we split in the following two lines.
-        package_key_token = [t for t in tokens if t.type == "PACKAGE_KEY"][0]
+        package_key_token = next(t for t in tokens if t.type == "PACKAGE_KEY")
         repeatability_tokens = [t for t in tokens if t.type == "REPEATABILITY"]
         single_repeat_token = repeatability_tokens[0] if len(repeatability_tokens) == 1 else None
-        # pylint: disable=unused-variable
         # we parse the repeatability, but we don't to anything with it, yet. Cf. docstring of this class.
-        repeatability: Optional[Repeatability]
+        repeatability: Repeatability | None
         if single_repeat_token:
             repeatability = parse_repeatability(single_repeat_token.value)
         else:
-            repeatability = None
+            repeatability = None  # noqa: F841
 
         # Special case: Package '1P' is always resolved to a hint node.
         # See the docstring of PACKAGE_1P_HINT_KEY for details.
@@ -173,7 +172,7 @@ class PackageExpansionTransformer(Transformer):  # type: ignore[type-arg]
 
         return self._package_async(package_key_token, single_repeat_token)
 
-    async def _package_async(self, package_key_token: Token, repeatability_token: Optional[Token]) -> Tree[Token]:
+    async def _package_async(self, package_key_token: Token, repeatability_token: Token | None) -> Tree[Token]:
         if self._ahb_context is None:
             raise ValueError("ahb_context is required for package resolution")
         resolver = self._ahb_context.package_resolver
@@ -282,9 +281,6 @@ class TimeConditionTransformer(Transformer):  # type: ignore[type-arg]
             # RC 492 = receiver is from division electricity/strom
             # RC 493 = receiver is from division gas
             return parse_condition_expression_to_tree(
-                "([931]∧[932][492]∧[490])⊻"
-                "([931]∧[933][492]∧[491])⊻"
-                "([931]∧[934][493]∧[490])⊻"
-                "([931]∧[935][493]∧[491])"
+                "([931]∧[932][492]∧[490])⊻([931]∧[933][492]∧[491])⊻([931]∧[934][493]∧[490])⊻([931]∧[935][493]∧[491])"
             )
         raise NotImplementedError(f"The time_condition '{time_condition_key}' is not implemented")

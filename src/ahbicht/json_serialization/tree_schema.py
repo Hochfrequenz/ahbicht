@@ -3,7 +3,7 @@ Schemata for the JSON serialization of expressions.
 """
 
 import sys
-from typing import TYPE_CHECKING, Annotated, Any, Literal, TypeAlias, Union
+from typing import TYPE_CHECKING, Annotated, Any, Literal, TypeAlias
 
 from lark import Token, Tree
 from pydantic import ConfigDict, PlainSerializer, TypeAdapter
@@ -33,10 +33,10 @@ class _TreeOrTokenDictWithTree(TypedDict):
     tree: _TreeDict
 
 
-_TreeOrTokenDict: TypeAlias = Union[_TreeOrTokenDictWithToken, _TreeOrTokenDictWithTree]
+_TreeOrTokenDict: TypeAlias = _TreeOrTokenDictWithToken | _TreeOrTokenDictWithTree
 
 
-def _serialize_children(t: Union[Tree[Token], Token]) -> Union[_TokenDict, _TreeDict]:
+def _serialize_children(t: Tree[Token] | Token) -> _TokenDict | _TreeDict:
     if isinstance(t, Tree):
         return TREE_ADAPTER.dump_python(t, mode="json")  # type: ignore[no-any-return]
     if isinstance(t, Token):

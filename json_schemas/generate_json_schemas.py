@@ -5,7 +5,7 @@ It creates json schema files as described in the README.md in the same directory
 
 import json
 import pathlib
-from typing import Any, Type
+from typing import Any
 
 from pydantic import BaseModel, TypeAdapter
 
@@ -19,7 +19,7 @@ from ahbicht.models.evaluation_results import (
 )
 from ahbicht.models.mapping_results import ConditionKeyConditionTextMapping, PackageKeyConditionExpressionMapping
 
-schema_types: list[Type[TypeAdapter[Any]] | Type[BaseModel]] = [
+schema_types: list[type[TypeAdapter[Any]] | type[BaseModel]] = [
     RequirementConstraintEvaluationResult,  # pydantic
     FormatConstraintEvaluationResult,  # pydantic
     EvaluatedFormatConstraint,  # pydantic

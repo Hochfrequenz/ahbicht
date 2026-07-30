@@ -6,7 +6,8 @@ of the condition expression tree are handled.
 The used terms are defined in the README_conditions.md.
 """
 
-from typing import Literal, Mapping, Optional, Type, Union
+from collections.abc import Mapping
+from typing import Literal
 
 from lark import Token, Tree, v_args
 from lark.exceptions import VisitError
@@ -82,10 +83,9 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
         if (
             left.conditions_fulfilled == ConditionFulfilledValue.NEUTRAL
             and right.conditions_fulfilled != ConditionFulfilledValue.NEUTRAL
-            or (
-                right.conditions_fulfilled == ConditionFulfilledValue.NEUTRAL
-                and left.conditions_fulfilled != ConditionFulfilledValue.NEUTRAL
-            )
+        ) or (
+            right.conditions_fulfilled == ConditionFulfilledValue.NEUTRAL
+            and left.conditions_fulfilled != ConditionFulfilledValue.NEUTRAL
         ):
             neutral_element: ConditionNode
             boolean_element: ConditionNode
@@ -163,7 +163,7 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
     def _then_also(
         self,
         format_constraint: UnevaluatedFormatConstraint,
-        other_condition: Type[ConditionNode],
+        other_condition: type[ConditionNode],
     ) -> EvaluatedComposition:
         """
         Evaluates a boolean condition with a format constraint. The functions name indicates its behaviour:
@@ -198,7 +198,7 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
 
         return evaluated_composition
 
-    def then_also_composition(self, left: Type[ConditionNode], right: Type[ConditionNode]) -> EvaluatedComposition:
+    def then_also_composition(self, left: type[ConditionNode], right: type[ConditionNode]) -> EvaluatedComposition:
         """
         A "then also" composition is typically used for format constraints.
         It connects an evaluable expression with a format constraint.
@@ -236,13 +236,13 @@ of the type RequirementConstraint, Hint or FormatConstraint.""")
     try:
         result = RequirementConstraintTransformer(input_values).transform(parsed_tree)
     except VisitError as visit_err:
-        raise visit_err.orig_exc
+        raise visit_err.orig_exc from None
 
     return result  # type: ignore[no-any-return]
 
 
 async def requirement_constraint_evaluation(
-    condition_expression: Union[str, Tree[Token]],
+    condition_expression: str | Tree[Token],
     ahb_context: AhbContext,
 ) -> RequirementConstraintEvaluationResult:
     """
@@ -263,10 +263,10 @@ async def requirement_constraint_evaluation(
 
     resulting_condition_node: EvaluatedComposition = evaluate_requirement_constraint_tree(parsed_tree_rc, input_nodes)
 
-    requirement_constraints_fulfilled: Optional[bool] = (
+    requirement_constraints_fulfilled: bool | None = (
         resulting_condition_node.conditions_fulfilled == ConditionFulfilledValue.FULFILLED
     )
-    requirement_is_conditional: Optional[bool] = True
+    requirement_is_conditional: bool | None = True
     if resulting_condition_node.conditions_fulfilled == ConditionFulfilledValue.NEUTRAL:  # pylint:disable=no-member
         requirement_constraints_fulfilled = True
         requirement_is_conditional = False
