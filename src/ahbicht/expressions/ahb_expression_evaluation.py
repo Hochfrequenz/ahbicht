@@ -5,7 +5,7 @@ The AhbExpressionTransformer defines the rules how the different parts of the pa
 The used terms are defined in the README.md.
 """
 
-from typing import Awaitable, Union
+from collections.abc import Awaitable
 
 from lark import Token, Transformer, Tree, v_args
 from lark.exceptions import VisitError
@@ -114,7 +114,7 @@ class AhbExpressionTransformer(Transformer):  # type: ignore[type-arg]
     def ahb_expression(
         self,
         list_of_single_requirement_indicator_expressions: list[
-            Union[AhbExpressionEvaluationResult, Awaitable[AhbExpressionEvaluationResult]]
+            AhbExpressionEvaluationResult | Awaitable[AhbExpressionEvaluationResult]
         ],
     ) -> Awaitable[AhbExpressionEvaluationResult]:
         """
@@ -127,7 +127,7 @@ class AhbExpressionTransformer(Transformer):  # type: ignore[type-arg]
     async def _ahb_expression_async(
         self,
         list_of_single_requirement_indicator_expressions: list[
-            Union[AhbExpressionEvaluationResult, Awaitable[AhbExpressionEvaluationResult]]
+            AhbExpressionEvaluationResult | Awaitable[AhbExpressionEvaluationResult]
         ],
     ) -> AhbExpressionEvaluationResult:
         # the thing is that some user funcs (like e.g. 'requirement_indicator') are not async and there's no reason to
@@ -135,15 +135,12 @@ class AhbExpressionTransformer(Transformer):  # type: ignore[type-arg]
         # evaluation results. The utility function 'gather_if_necessary' accounts for that (see its separate tests).
         results = await gather_if_necessary(list_of_single_requirement_indicator_expressions)
         for single_requirement_indicator_expression in results:
-            if (
-                single_requirement_indicator_expression.requirement_constraint_evaluation_result.requirement_constraints_fulfilled
-            ):
+            rc_eval_result = single_requirement_indicator_expression.requirement_constraint_evaluation_result
+            if rc_eval_result.requirement_constraints_fulfilled:
                 # if there are more than one modal mark, the requirement is conditional
                 # even if the one of modal mark itself is not, e.g. `Muss[1] Kann`
                 if len(list_of_single_requirement_indicator_expressions) > 1:
-                    single_requirement_indicator_expression.requirement_constraint_evaluation_result.requirement_is_conditional = (
-                        True
-                    )
+                    rc_eval_result.requirement_is_conditional = True
                 return single_requirement_indicator_expression
         return results[-1]
 
@@ -163,6 +160,6 @@ async def evaluate_ahb_expression_tree(
     try:
         result = AhbExpressionTransformer(ahb_context=ahb_context).transform(parsed_tree)
     except VisitError as visit_err:
-        raise visit_err.orig_exc
+        raise visit_err.orig_exc from None
 
     return await result  # type: ignore[no-any-return]

@@ -8,8 +8,9 @@ import inspect
 import json
 import logging
 from abc import ABC, abstractmethod
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, Mapping, Optional
+from typing import Any
 
 from efoli import EdifactFormat, EdifactFormatVersion
 
@@ -57,7 +58,7 @@ class HintsProvider(ABC):
         self.logger.info("Instantiated %s", self.__class__.__name__)
 
     @abstractmethod
-    async def get_hint_text(self, condition_key: str) -> Optional[str]:
+    async def get_hint_text(self, condition_key: str) -> str | None:
         """
         Get the hint text for the given condition key.
         :param condition_key: e.g. "501"
@@ -69,14 +70,14 @@ class HintsProvider(ABC):
         """
         Get Hints for given condition keys by asynchronously awaiting all self.get_hint_text at once
         """
-        results: list[Optional[str]]
+        results: list[str | None]
         if inspect.iscoroutinefunction(self.get_hint_text):
             tasks = [self.get_hint_text(ck) for ck in condition_keys]
             results = await asyncio.gather(*tasks)
         else:
             results = [self.get_hint_text(ck) for ck in condition_keys]  # type: ignore[misc]
         result: dict[str, Hint] = {}
-        for key, value in zip(condition_keys, results):
+        for key, value in zip(condition_keys, results, strict=False):
             if value is None:
                 if raise_key_error:
                     raise KeyError(f"There seems to be no hint implemented with condition key '{key}'.")
@@ -91,15 +92,15 @@ class DictBasedHintsProvider(HintsProvider):
     A Hints Provider that is based on hardcoded values from a dictionary
     """
 
-    def __init__(self, results: Mapping[str, Optional[str]]) -> None:
+    def __init__(self, results: Mapping[str, str | None]) -> None:
         """
         Initialize with a dictionary that contains all the Hinweis texts.
         :param results:
         """
         super().__init__()
-        self._all_hints: Mapping[str, Optional[str]] = results
+        self._all_hints: Mapping[str, str | None] = results
 
-    async def get_hint_text(self, condition_key: str) -> Optional[str]:
+    async def get_hint_text(self, condition_key: str) -> str | None:
         if not condition_key:
             raise ValueError(f"The condition key must not be None/empty but was '{condition_key}'")
         # Special case: Package '1P' hint key is always resolved to the hardcoded hint text.
@@ -139,11 +140,11 @@ class ContentEvaluationResultBasedHintsProvider(HintsProvider):
     data.
     """
 
-    def __init__(self, evaluatable_data: Optional[EvaluatableData[Any]] = None) -> None:
+    def __init__(self, evaluatable_data: EvaluatableData[Any] | None = None) -> None:
         super().__init__()
         self._evaluatable_data = evaluatable_data
 
-    async def get_hint_text(self, condition_key: str) -> Optional[str]:
+    async def get_hint_text(self, condition_key: str) -> str | None:
         # Special case: Package '1P' hint key is always resolved to the hardcoded hint text.
         # See PACKAGE_1P_HINT_KEY docstring for details.
         if condition_key == PACKAGE_1P_HINT_KEY:

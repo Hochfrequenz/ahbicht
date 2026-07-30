@@ -3,7 +3,6 @@ instantiates a "global" logger for all parsing related stuff
 """
 
 import logging
-from typing import Optional
 
 parsing_logger = logging.getLogger("ahbicht.expressions")
 parsing_logger.setLevel(logging.DEBUG)
@@ -20,7 +19,7 @@ class InvalidExpressionError(Exception):
     down an entire ASGI/anyio task group instead of failing the single request. See Hochfrequenz/ahbicht-functions#732.
     """
 
-    def __init__(self, error_message: str, invalid_expression: Optional[str] = None) -> None:
+    def __init__(self, error_message: str, invalid_expression: str | None = None) -> None:
         """
         initialize the exception
         :param invalid_expression: the expression which is invalid (if known)

@@ -3,7 +3,6 @@ Contains a class that is able to provide any RC/FC Evaluator, HintsProvider or P
 """
 
 from abc import ABC, abstractmethod
-from typing import Optional, Union
 
 from efoli import EdifactFormat, EdifactFormatVersion
 
@@ -38,7 +37,7 @@ class TokenLogicProvider(ABC):
 
     @abstractmethod
     def get_hints_provider(
-        self, edifact_format: Optional[EdifactFormat] = None, format_version: Optional[EdifactFormatVersion] = None
+        self, edifact_format: EdifactFormat | None = None, format_version: EdifactFormatVersion | None = None
     ) -> HintsProvider:
         """
         returns an appropriate HintsProvider for the given edifact_format and edifact_format_version.
@@ -48,7 +47,7 @@ class TokenLogicProvider(ABC):
 
     @abstractmethod
     def get_package_resolver(
-        self, edifact_format: Optional[EdifactFormat] = None, format_version: Optional[EdifactFormatVersion] = None
+        self, edifact_format: EdifactFormat | None = None, format_version: EdifactFormatVersion | None = None
     ) -> PackageResolver:
         """
         Returns an appropriate PackageResolver for the given edifact_format and edifact_format_version.
@@ -67,7 +66,7 @@ class SingletonTokenLogicProvider(TokenLogicProvider):
     _unknown_key = "undefined"
 
     @staticmethod
-    def _to_key(edifact_format: Optional[EdifactFormat], format_version: Optional[EdifactFormatVersion]) -> str:
+    def _to_key(edifact_format: EdifactFormat | None, format_version: EdifactFormatVersion | None) -> str:
         """
         because a tuple for format and format version is not hashable / usable as key in a dict this methods
         converts them to a unique and hashable string
@@ -77,7 +76,7 @@ class SingletonTokenLogicProvider(TokenLogicProvider):
         # we don't care what the key is, it just has to be unique and consistent
         return f"{edifact_format}-{format_version}"
 
-    def __init__(self, inputs: list[Union[Evaluator, PackageResolver, HintsProvider]]) -> None:
+    def __init__(self, inputs: list[Evaluator | PackageResolver | HintsProvider]) -> None:
         self._rc_evaluators: dict[str, RcEvaluator] = {}
         self._fc_evaluators: dict[str, FcEvaluator] = {}
         self._hints_providers: dict[str, HintsProvider] = {}
@@ -112,7 +111,7 @@ class SingletonTokenLogicProvider(TokenLogicProvider):
             target_dict[key] = instance  # type: ignore[assignment]
 
     def get_fc_evaluator(
-        self, edifact_format: Optional[EdifactFormat] = None, format_version: Optional[EdifactFormatVersion] = None
+        self, edifact_format: EdifactFormat | None = None, format_version: EdifactFormatVersion | None = None
     ) -> FcEvaluator:
         try:
             return self._fc_evaluators[SingletonTokenLogicProvider._to_key(edifact_format, format_version)]
@@ -122,7 +121,7 @@ class SingletonTokenLogicProvider(TokenLogicProvider):
             ) from key_error
 
     def get_rc_evaluator(
-        self, edifact_format: Optional[EdifactFormat] = None, format_version: Optional[EdifactFormatVersion] = None
+        self, edifact_format: EdifactFormat | None = None, format_version: EdifactFormatVersion | None = None
     ) -> RcEvaluator:
         try:
             return self._rc_evaluators[SingletonTokenLogicProvider._to_key(edifact_format, format_version)]
@@ -132,7 +131,7 @@ class SingletonTokenLogicProvider(TokenLogicProvider):
             ) from key_error
 
     def get_hints_provider(
-        self, edifact_format: Optional[EdifactFormat] = None, format_version: Optional[EdifactFormatVersion] = None
+        self, edifact_format: EdifactFormat | None = None, format_version: EdifactFormatVersion | None = None
     ) -> HintsProvider:
         try:
             return self._hints_providers[SingletonTokenLogicProvider._to_key(edifact_format, format_version)]
@@ -142,7 +141,7 @@ class SingletonTokenLogicProvider(TokenLogicProvider):
             ) from key_error
 
     def get_package_resolver(
-        self, edifact_format: Optional[EdifactFormat] = None, format_version: Optional[EdifactFormatVersion] = None
+        self, edifact_format: EdifactFormat | None = None, format_version: EdifactFormatVersion | None = None
     ) -> PackageResolver:
         try:
             return self._package_resolvers[SingletonTokenLogicProvider._to_key(edifact_format, format_version)]

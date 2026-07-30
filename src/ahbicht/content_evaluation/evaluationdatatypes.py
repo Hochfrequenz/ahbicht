@@ -3,7 +3,7 @@ Dataclasses that are relevant in the context of the content_evaluation.
 """
 
 from dataclasses import dataclass, replace
-from typing import Generic, Optional, TypeVar
+from typing import Generic, TypeVar
 
 from efoli import EdifactFormat, EdifactFormatVersion
 
@@ -38,9 +38,8 @@ class EvaluationContext:
     content_evaluation is one zähler entry although there might be multiple zählers present in the message.
     """
 
-    scope: Optional[
-        str
-    ]  # jsonpath that refers to the scope of the content_eval. If None, then "$" = entire message is used as scope.
+    # jsonpath that refers to the scope of the content_eval. If None, then "$" = entire message is used as scope.
+    scope: str | None
 
 
 def copy_evaluation_context(context: EvaluationContext) -> EvaluationContext:

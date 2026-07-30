@@ -559,7 +559,7 @@ class TestConditionParser:
 
     async def test_parsing_is_thread_safe(self) -> None:
         async def parse_arbitrary_expression() -> None:
-            random_expr_string = f"[{random.randrange(100,499)}] U [{random.randrange(100,499)}]"
+            random_expr_string = f"[{random.randrange(100, 499)}] U [{random.randrange(100, 499)}]"
             tree = parse_condition_expression_to_tree(random_expr_string)
             await asyncio.sleep(random.randint(500, 1500) / 1000.0)  # wait 0.5-1.5s in each call (avg 1s)
             assert tree is not None

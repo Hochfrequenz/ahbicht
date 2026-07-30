@@ -9,7 +9,7 @@ The used terms are defined in the README_conditions.md.
 from __future__ import annotations
 
 from functools import lru_cache
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING
 
 from lark import Lark, Token, Tree
 from lark.exceptions import UnexpectedCharacters, UnexpectedEOF
@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 GRAMMAR = r"""
 ?expression: expression "O"i expression -> or_composition
             | expression "∨" expression -> or_composition // the logical or
-            | expression "V"i expression -> or_composition // a 'v' for those who first chose to introduce logical symbols like ∨ but now can't find them on their keyboard  
+            | expression "V"i expression -> or_composition // a 'v' for those who first chose to introduce logical symbols like ∨ but now can't find them on their keyboard
             | expression "X"i expression -> xor_composition
             | expression "⊻" expression -> xor_composition
             | expression "U"i expression -> and_composition
@@ -86,7 +86,7 @@ def parse_condition_expression_to_tree(condition_expression: str) -> Tree[Token]
 
 
 def extract_categorized_keys_from_tree(
-    tree_or_list: Union[Tree[Token], list[str]], sanitize: bool = False
+    tree_or_list: Tree[Token] | list[str], sanitize: bool = False
 ) -> CategorizedKeyExtract:
     """
     find different types of condition nodes inside the given tree or list of keys.
@@ -146,7 +146,7 @@ async def extract_categorized_keys(
     resolve_packages: bool = False,
     resolve_time_conditions: bool = False,
     replace_time_conditions: bool = False,
-    ahb_context: Optional[AhbContext] = None,
+    ahb_context: AhbContext | None = None,
 ) -> CategorizedKeyExtract:
     """
     Parses the given condition expression and returns CategorizedKeyExtract as a template for content

@@ -19,11 +19,11 @@ jobs:
           python-version: "3.14"
       - name: Install Dependencies
         run: uv sync --group ${{ matrix.linter-env }}
-      - name: Run pylint
+      - name: Run ruff
         if: matrix.linter-env == 'linting'
         run: |
-          uv run pylint src/ahbicht
-          uv run pylint json_schemas/generate_json_schemas.py
+          uv run ruff check src/ahbicht
+          uv run ruff check json_schemas/generate_json_schemas.py
       - name: Run mypy
         if: matrix.linter-env == 'type_check'
         run: |

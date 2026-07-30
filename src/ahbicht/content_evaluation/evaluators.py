@@ -8,14 +8,15 @@ import inspect
 import logging
 import re
 from abc import ABC
-from typing import Any, Callable, Optional
+from collections.abc import Callable
+from typing import Any
 
 from efoli import EdifactFormat, EdifactFormatVersion
 
 # pylint: disable=too-few-public-methods
 
 
-class Evaluator(ABC):
+class Evaluator(ABC):  # noqa: B024 -- subclasses are discovered via evaluate_<condition_key> naming, not abstractmethod
     """
     Base of all evaluators.
     To implement a content_evaluation create or update an inheriting class that has edifact_format and
@@ -50,7 +51,7 @@ class Evaluator(ABC):
             "Instantiated %s and found %i evaluation methods", self.__class__.__name__, len(self._evaluation_methods)
         )
 
-    def get_evaluation_method(self, condition_key: str) -> Optional[Callable[..., Any]]:
+    def get_evaluation_method(self, condition_key: str) -> Callable[..., Any] | None:
         """
         Returns the method that evaluates the condition with key condition_key
         :param condition_key: unique key of the condition, e.g. "59"

@@ -11,8 +11,9 @@ validate already required data.
 import asyncio
 import inspect
 from abc import ABC
+from collections.abc import Callable, Coroutine
 from contextvars import ContextVar
-from typing import Any, Callable, Coroutine, Optional
+from typing import Any
 
 from ahbicht.content_evaluation.evaluationdatatypes import EvaluatableData
 from ahbicht.content_evaluation.evaluators import Evaluator
@@ -21,7 +22,7 @@ from ahbicht.models.condition_nodes import EvaluatedFormatConstraint
 from ahbicht.models.content_evaluation_result import ContentEvaluationResult
 from ahbicht.models.evaluation_results import FormatConstraintEvaluationResult
 
-text_to_be_evaluated_by_format_constraint: ContextVar[Optional[str]] = ContextVar(
+text_to_be_evaluated_by_format_constraint: ContextVar[str | None] = ContextVar(
     "text_to_be_evaluated_by_format_constraint", default=None
 )
 """
@@ -144,7 +145,7 @@ class FcEvaluator(Evaluator, ABC):
         ]
         results: list[EvaluatedFormatConstraint] = await asyncio.gather(*tasks)
 
-        result: dict[str, EvaluatedFormatConstraint] = dict(zip(condition_keys, results))
+        result: dict[str, EvaluatedFormatConstraint] = dict(zip(condition_keys, results, strict=False))
         return result
 
 
@@ -169,7 +170,7 @@ class DictBasedFcEvaluator(FcEvaluator):
         except KeyError as key_error:
             raise NotImplementedError(f"No result was provided for {condition_key}.") from key_error
 
-    def get_evaluation_method(self, condition_key: str) -> Optional[Callable[..., Any]]:
+    def get_evaluation_method(self, condition_key: str) -> Callable[..., Any] | None:
         """
         Returns the method that evaluates the condition with key condition_key
         :param condition_key: unique key of the condition, e.g. "59"
@@ -184,7 +185,7 @@ class ContentEvaluationResultBasedFcEvaluator(FcEvaluator):
     Other than the DictBasedFcEvaluator the outcome is not dependent on the initialization but on the evaluatable data.
     """
 
-    def __init__(self, evaluatable_data: Optional[EvaluatableData[Any]] = None) -> None:
+    def __init__(self, evaluatable_data: EvaluatableData[Any] | None = None) -> None:
         super().__init__()
         self._evaluatable_data = evaluatable_data
 
@@ -201,7 +202,7 @@ class ContentEvaluationResultBasedFcEvaluator(FcEvaluator):
         except KeyError as key_error:
             raise NotImplementedError(f"No result was provided for {condition_key}.") from key_error
 
-    def get_evaluation_method(self, condition_key: str) -> Optional[Callable[..., Any]]:
+    def get_evaluation_method(self, condition_key: str) -> Callable[..., Any] | None:
         async def evaluation_method() -> EvaluatedFormatConstraint:
             return await self.evaluate_single_format_constraint(condition_key)
 

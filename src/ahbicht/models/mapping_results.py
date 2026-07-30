@@ -3,7 +3,7 @@ This module contains classes that are returned by mappers, meaning they contain 
 """
 
 import math
-from typing import Literal, Optional, Union
+from typing import Literal
 
 from efoli import EdifactFormat
 from pydantic import BaseModel, model_validator
@@ -17,7 +17,7 @@ class ConditionKeyConditionTextMapping(BaseModel):
 
     edifact_format: EdifactFormat  #: the format in which the condition is used; e.g. 'UTILMD'
     condition_key: str  #: the key of the condition without square brackets; e.g. '78'
-    condition_text: Optional[str] = None
+    condition_text: str | None = None
     """
     the description of the condition as in the AHB; None if unknown;
     e.g. 'Wenn SG4 STS+7++E02 (Transaktionsgrund: Einzug/Neuanlage)  nicht vorhanden'.
@@ -33,7 +33,7 @@ class PackageKeyConditionExpressionMapping(BaseModel):
 
     edifact_format: EdifactFormat  #: the format in which the package is used; e.g. 'UTILMD'
     package_key: str  #: the key of the package without square brackets but with trailing P; e.g. '10P'
-    package_expression: Optional[str] = None
+    package_expression: str | None = None
     """the expression for which the package is a shortcut; None if unknown e.g. '[20] ∧ [244]'"""
 
     def has_been_resolved_successfully(self) -> bool:
@@ -65,7 +65,7 @@ class Repeatability(BaseModel):
     how often the segment/code has to be repeated (lower, inclusive bound); may be 0 for optional packages
     """
 
-    max_occurrences: Union[int, Literal["n"]]
+    max_occurrences: int | Literal["n"]
     """
     how often the segment/code may be repeated at most (upper, inclusive bound).
     This is inclusive meaning that [123P0..1] leads to max_occurrences==1

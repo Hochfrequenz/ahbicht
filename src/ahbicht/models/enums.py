@@ -3,7 +3,6 @@ Enums used in AHB and condition expressions.
 """
 
 from enum import unique
-from typing import Union
 
 from ahbicht import StrEnum
 
@@ -55,7 +54,7 @@ class PrefixOperator(StrEnum):
     The prefix operator works differently from the logical operator in condition expressions!
     The usage of "X" as logical operator is deprecated since 2022-04-01. It will be replaced with the "⊻" symbol.
     """
-    O = "O"
+    O = "O"  # noqa: E741
     """
     The "O" operator means that at least one out of multiple possible qualifiers/codes has to be given.
     This is typically found when describing ways to contact a market partner (CTA): You can use email or phone or fax
@@ -75,7 +74,7 @@ class PrefixOperator(StrEnum):
     """
 
 
-RequirementIndicator = Union[PrefixOperator, ModalMark]
+RequirementIndicator = PrefixOperator | ModalMark
 """
 A Requirement Indicator is either the Merkmal :class:`ModalMark` or the :class:`PrefixOperator` of the
 data element/data element group/segment/segment group at which it is used.

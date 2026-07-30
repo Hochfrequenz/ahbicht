@@ -207,7 +207,8 @@ class TestRequirementConstraintEvaluation:
         }
         parsed_tree = parse_condition_expression_to_tree(expression)
         result: EvaluatedComposition = evaluate_requirement_constraint_tree(
-            parsed_tree, input_values  # type: ignore[arg-type]
+            parsed_tree,
+            input_values,  # type: ignore[arg-type]
         )
         assert isinstance(result, EvaluatedComposition)
         assert result.conditions_fulfilled == expected_resulting_conditions_fulfilled
@@ -255,7 +256,8 @@ class TestRequirementConstraintEvaluation:
         }
         parsed_tree = parse_condition_expression_to_tree(expression)
         result: EvaluatedComposition = evaluate_requirement_constraint_tree(
-            parsed_tree, input_values  # type: ignore[arg-type]
+            parsed_tree,
+            input_values,  # type: ignore[arg-type]
         )
         assert isinstance(result, ConditionNode)
         assert result.conditions_fulfilled == expected_resulting_conditions_fulfilled
@@ -386,7 +388,8 @@ class TestRequirementConstraintEvaluation:
         input_values["951"] = self._fc_951
         parsed_tree = parse_condition_expression_to_tree("([950] ([2] U [4])) O ([951] ([1] U [3]))")
         actual: EvaluatedComposition = evaluate_requirement_constraint_tree(
-            parsed_tree, input_values  # type: ignore[arg-type]
+            parsed_tree,
+            input_values,  # type: ignore[arg-type]
         )
         assert isinstance(actual, EvaluatedComposition)
         assert actual == expected_evaluated_result

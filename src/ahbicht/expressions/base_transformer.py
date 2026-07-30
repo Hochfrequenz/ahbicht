@@ -4,7 +4,8 @@ that evaluate trees build from the condition_expression_parser.
 """
 
 from abc import ABC, abstractmethod
-from typing import Generic, Mapping, TypeVar
+from collections.abc import Mapping
+from typing import Generic, TypeVar
 
 from lark import Token, Transformer, v_args
 

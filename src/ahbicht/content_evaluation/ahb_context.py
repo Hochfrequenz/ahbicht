@@ -9,7 +9,7 @@ and eliminates global mutable state.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from efoli import EdifactFormat, EdifactFormatVersion
 
@@ -49,7 +49,7 @@ class AhbContext:
         content_evaluation_result: ContentEvaluationResult,
         edifact_format: EdifactFormat,
         edifact_format_version: EdifactFormatVersion,
-        evaluatable_data: Optional[EvaluatableData[Any]] = None,
+        evaluatable_data: EvaluatableData[Any] | None = None,
     ) -> AhbContext:
         """
         Creates an AhbContext from a ContentEvaluationResult.

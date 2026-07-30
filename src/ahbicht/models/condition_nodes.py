@@ -9,7 +9,7 @@ The used terms are defined in the README_conditions.md.
 """
 
 from enum import Enum
-from typing import Optional, TypeVar
+from typing import TypeVar
 
 # pylint: disable=too-few-public-methods
 from pydantic import BaseModel, ConfigDict, model_validator
@@ -137,7 +137,7 @@ class EvaluatedFormatConstraint(BaseModel):
     """
 
     format_constraint_fulfilled: bool
-    error_message: Optional[str] = None
+    error_message: str | None = None
 
     @model_validator(mode="after")
     def _validate_error_message(self) -> "EvaluatedFormatConstraint":
@@ -175,8 +175,8 @@ class EvaluatedComposition(ConditionNode):
     Node which is returned after a composition of two nodes is evaluated.
     """
 
-    hint: Optional[str] = None  #: text from hints/notes
-    format_constraints_expression: Optional[str] = None
+    hint: str | None = None  #: text from hints/notes
+    format_constraints_expression: str | None = None
     """
     an expression that consists of (initially unevaluated) format constraints that the evaluated field needs to obey
     """
