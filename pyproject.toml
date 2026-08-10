@@ -48,7 +48,7 @@ type_check = [
     "types-pytz==2026.3.1.20260727",
     { include-group = "tests" },
 ]
-coverage = ["coverage==7.15.2", { include-group = "tests" }]
+coverage = ["coverage==7.15.4", { include-group = "tests" }]
 spellcheck = ["codespell==2.4.3"]
 docs = ["sphinx==8.1.3", "sphinx-rtd-theme==3.1.0"]
 json_schemas = []
