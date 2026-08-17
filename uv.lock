@@ -467,14 +467,14 @@ wheels = [
 
 [[package]]
 name = "efoli"
-version = "2.3.0"
+version = "2.3.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pytz" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/1a/ab/99cfdb47005a1c5c8048cd7969f7fba8e7a449de86d26aa7fcb6ff54565c/efoli-2.3.0.tar.gz", hash = "sha256:30b99b3fdf568c336ad955372410b77846154df939a4264ea542c533dc44d713", size = 11391, upload-time = "2026-04-04T11:35:34.04Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e4/f3/edbafae463d9390fd4efb97bdfcb7ea6fb94cd1afa934dc23bb9b030eb4c/efoli-2.3.4.tar.gz", hash = "sha256:f85950fe89beb16dc980954181d53101f24555d89e2fa96727848e5a1a333feb", size = 62654, upload-time = "2026-08-14T12:12:04.063Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ee/5f/21d964c54215e37528b45eb10cb9fc164d570fec062b2eab8a54ec990cd4/efoli-2.3.0-py3-none-any.whl", hash = "sha256:c61102adc0068d452bf374e587b8b7e365494f7087685dd54ec05dcf177acea3", size = 6713, upload-time = "2026-04-04T11:35:32.461Z" },
+    { url = "https://files.pythonhosted.org/packages/1c/59/405268b39ae1bdb874b64dcccbee8e0a1d1bd32b0d83f24250b357d35709/efoli-2.3.4-py3-none-any.whl", hash = "sha256:b6c917bf9fbbe536d1497035550f25a90e0800ed0eb4474e8e150513c7e207a0", size = 7128, upload-time = "2026-08-14T12:12:03.16Z" },
 ]
 
 [[package]]
