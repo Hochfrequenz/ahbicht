@@ -1,0 +1,157 @@
+# Regenerates the JSON schemas from the pydantic models whenever a release is published and
+# converts them into the TypeScript models of https://github.com/Hochfrequenz/ahbicht-ts-models.
+#
+# Before this workflow existed, regenerating the JSON schemas was a manual task: the
+# "Test JSON Schema Creation" workflow runs the generator on every push, but throws its output
+# away, so nothing ever propagated to the npm package unless somebody remembered to run the
+# script locally and commit the result.
+name: Generate Schemas and TypeScript Models
+
+on:
+  release:
+    types:
+      - published
+  workflow_dispatch:
+
+# Two releases published in quick succession would otherwise race: on the shared Pull Request
+# branch and on the push to the models repository (which would be rejected non-fast-forward).
+concurrency:
+  group: generate-schemas-and-ts-models
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    name: Generate Schemas and TypeScript Models
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Check that a Personal Access Token is configured
+        # Without a PAT the schema Pull Request would be created with the default GITHUB_TOKEN,
+        # which does not trigger any workflows: its required status checks would never run and it
+        # could never be merged - while this run still reported success.
+        env:
+          PUSH_TOKEN: ${{ secrets.TS_MODELS_PUSH_TOKEN }}
+        run: |
+          # SCHEMA_PR_TOKEN falls back to TS_MODELS_PUSH_TOKEN, so checking the latter is enough.
+          # Note that this only checks for presence: an expired token passes and fails later.
+          if [ -z "$PUSH_TOKEN" ]; then
+            echo "::error::TS_MODELS_PUSH_TOKEN is not set (or expired and was removed)."
+            exit 1
+          fi
+      - name: Check out the released commit
+        uses: actions/checkout@v7
+        with:
+          # never an arbitrary dispatched branch: that would push unreleased models to
+          # ahbicht-ts-models and delete schemas that only exist on main
+          ref: ${{ github.event.release.tag_name || 'main' }}
+          # all branches, so that the regenerated schemas can be committed onto main below
+          fetch-depth: 0
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.0.1
+        with:
+          python-version: "3.14"
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: uv sync --group json_schemas
+      - name: Generate the JSON Schemas from the pydantic models
+        run: |
+          # deleted first, so that the schema of a removed pydantic model is not parked together
+          # with the freshly generated ones below (TokenSchema.json is such a leftover)
+          rm -f json_schemas/*.json
+          uv run python json_schemas/generate_json_schemas.py
+      # The generator writes into json_schemas/ inside the working tree, so the result has to be
+      # parked outside the repository before switching to main.
+      - name: Park the generated schemas and switch to main
+        run: |
+          mkdir -p "$RUNNER_TEMP/json_schemas"
+          cp json_schemas/*.json "$RUNNER_TEMP/json_schemas/"
+          # a leftover modification (uv sync re-locking uv.lock, for example) would abort the
+          # branch switch below
+          git reset --hard
+          # actions/checkout leaves a detached HEAD on the released tag and does not create local
+          # branches, so main is created explicitly from the remote instead of relying on DWIM.
+          git fetch origin main
+          git switch --force-create main origin/main
+          rm -f json_schemas/*.json
+          cp "$RUNNER_TEMP/json_schemas/"*.json json_schemas/
+      - name: Format the generated schemas
+        # The generator writes json.dump(indent=4) output, while the schemas in this repository are
+        # prettier formatted. Without this step every run would produce a formatting-only diff.
+        run: npx --yes prettier@3 -w "json_schemas/*.json"
+      - name: Generate TypeScript Models from the JSON Schemas
+        # Pinned: an unpinned generator silently rewrites every .d.ts file as soon as a new major
+        # version is released.
+        run: npx --yes json-schema-to-typescript@15 -i 'json_schemas/**.json' -o "$RUNNER_TEMP/ts_models"
+      - name: Upload the TypeScript Models as artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: TypeScriptClasses
+          path: ${{ runner.temp }}/ts_models
+      - name: Open a Pull Request with the regenerated schemas
+        id: create-pull-request
+        uses: peter-evans/create-pull-request@v8
+        with:
+          # A Pull Request created with the default GITHUB_TOKEN does not trigger any workflows,
+          # so its required status checks would never run and it could never be merged.
+          # SCHEMA_PR_TOKEN (or the fallback) has to be a Personal Access Token with repo scope;
+          # a missing token is caught by the very first step of this job.
+          token: ${{ secrets.SCHEMA_PR_TOKEN || secrets.TS_MODELS_PUSH_TOKEN }}
+          base: main
+          branch: chore/regenerate-schemas
+          add-paths: json_schemas
+          commit-message: "chore: regenerate JSON schemas"
+          title: "chore: regenerate JSON schemas"
+          body: |
+            The JSON schemas were regenerated from the pydantic models by the
+            [Generate Schemas and TypeScript Models](https://github.com/Hochfrequenz/ahbicht/blob/main/.github/workflows/generate_schemas_and_ts_models.yml)
+            workflow, triggered by ${{ github.event.release.html_url || 'a manual workflow run' }}.
+
+            The same workflow run also pushes the TypeScript models generated from these schemas to
+            [ahbicht-ts-models](https://github.com/Hochfrequenz/ahbicht-ts-models);
+            merging this PR only keeps the schemas in this repository in sync.
+
+            If this PR is empty or was not created, the schemas were already up to date.
+      - name: Assign the release publisher as reviewer
+        # Not the `reviewers` input of create-pull-request: if the release publisher happens to own
+        # the token that created the Pull Request, GitHub answers 422 ("Review cannot be requested
+        # from pull request author") and the whole workflow run would fail - and with it the push of
+        # the TypeScript models in the step below.
+        if: steps.create-pull-request.outputs.pull-request-number
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PULL_REQUEST_NUMBER: ${{ steps.create-pull-request.outputs.pull-request-number }}
+          REVIEWER: ${{ github.event.release.author.login || github.actor }}
+        run: |
+          gh api "repos/${{ github.repository }}/pulls/$PULL_REQUEST_NUMBER/requested_reviewers" \
+            --method POST --input - <<< "{\"reviewers\":[\"$REVIEWER\"]}" ||
+            echo "Could not request a review from $REVIEWER (they are probably the author of the Pull Request)."
+      - name: Push the TypeScript Models to ahbicht-ts-models
+        env:
+          # Personal Access Token with repo scope. Rotate at
+          # https://github.com/Hochfrequenz/ahbicht/settings/secrets/actions/TS_MODELS_PUSH_TOKEN
+          GITHUB_TOKEN: ${{ secrets.TS_MODELS_PUSH_TOKEN }}
+          SOURCE_COMMIT: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          # cloned without the token (the repository is public) and pushed with the token passed
+          # inline, so that it is not persisted in .git/config for the rest of the job
+          git clone --depth 1 \
+            "https://github.com/Hochfrequenz/ahbicht-ts-models.git" \
+            "$RUNNER_TEMP/ts-models-repo"
+          # --delete, so that the models of removed pydantic models do not linger forever
+          rsync -a --delete "$RUNNER_TEMP/ts_models/" "$RUNNER_TEMP/ts-models-repo/src/"
+          cd "$RUNNER_TEMP/ts-models-repo"
+          git config user.name "github-actions[bot]"
+          git config user.email "ahbicht@hochfrequenz.de"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "The TypeScript models are already up to date."
+            exit 0
+          fi
+          git commit -m "Update from https://github.com/Hochfrequenz/ahbicht/commit/${SOURCE_COMMIT}"
+          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/Hochfrequenz/ahbicht-ts-models.git" main
