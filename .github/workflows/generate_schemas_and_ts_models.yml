@@ -84,6 +84,7 @@ jobs:
           git commit -m "Update from https://github.com/Hochfrequenz/ahbicht/commit/${SOURCE_COMMIT}"
           git push origin main
       - name: Open a Pull Request with the regenerated schemas
+        id: create-pull-request
         uses: peter-evans/create-pull-request@v8
         with:
           # A Pull Request created with the default GITHUB_TOKEN does not trigger any workflows,
@@ -95,8 +96,6 @@ jobs:
           add-paths: json_schemas
           commit-message: "chore: regenerate JSON schemas"
           title: "chore: regenerate JSON schemas"
-          # whoever published the release knows which model changes are expected in it
-          reviewers: ${{ github.event.release.author.login || github.actor }}
           body: |
             The JSON schemas were regenerated from the pydantic models by the
             [Generate Schemas and TypeScript Models](https://github.com/Hochfrequenz/ahbicht/blob/main/.github/workflows/generate_schemas_and_ts_models.yml)
@@ -108,3 +107,17 @@ jobs:
             sync.
 
             If this PR is empty or was not created, the schemas were already up to date.
+      - name: Assign the release publisher as reviewer
+        # Not the `reviewers` input of create-pull-request: if the release publisher happens to own
+        # the token that created the Pull Request, GitHub answers 422 ("Review cannot be requested
+        # from pull request author") and the whole workflow run would fail - after the TypeScript
+        # models have already been pushed.
+        if: steps.create-pull-request.outputs.pull-request-number
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PULL_REQUEST_NUMBER: ${{ steps.create-pull-request.outputs.pull-request-number }}
+          REVIEWER: ${{ github.event.release.author.login || github.actor }}
+        run: |
+          gh api "repos/${{ github.repository }}/pulls/$PULL_REQUEST_NUMBER/requested_reviewers" \
+            --method POST --input - <<< "{\"reviewers\":[\"$REVIEWER\"]}" ||
+            echo "Could not request a review from $REVIEWER (they are probably the author of the Pull Request)."
