@@ -3,18 +3,27 @@
 #
 # Before this workflow existed, regenerating the JSON schemas was a manual task: the
 # "Test JSON Schema Creation" workflow runs the generator on every push, but throws its output
-# away, so nothing ever propagated to the npm package unless somebody remembered to run the
-# script locally and commit the result.
+# away, so nothing ever propagated unless somebody remembered to run the script locally and commit
+# the result.
+#
+# Note that a release is only the *trigger*: the schemas are always generated from main, never from
+# the released tag. They are committed to main and the models package always describes the newest
+# state of the data model, so generating from an older tag - a hotfix from a maintenance branch, or
+# a long lived draft release - would revert the schemas on main and delete the models of pydantic
+# models that were added since.
 name: Generate Schemas and TypeScript Models
 
 on:
   release:
     types:
+      # released: a prerelease that is promoted to a regular release does not fire "published" again
       - published
+      - released
   workflow_dispatch:
 
-# Two releases published in quick succession would otherwise race: on the shared Pull Request
-# branch and on the push to the models repository (which would be rejected non-fast-forward).
+# Two releases published in quick succession would otherwise race on the shared Pull Request branch
+# and on the push to the models repository, where the loser is rejected non-fast-forward. Only one
+# run is kept pending, which is harmless here: every run regenerates the newest state of main.
 concurrency:
   group: generate-schemas-and-ts-models
   cancel-in-progress: false
@@ -23,6 +32,8 @@ jobs:
   generate:
     name: Generate Schemas and TypeScript Models
     runs-on: ubuntu-latest
+    # a prerelease should not update what the npm package is built from
+    if: github.event.release.prerelease != true
     permissions:
       contents: write
       pull-requests: write
@@ -40,14 +51,16 @@ jobs:
             echo "::error::TS_MODELS_PUSH_TOKEN is not set (or expired and was removed)."
             exit 1
           fi
-      - name: Check out the released commit
+      - name: Check out main
         uses: actions/checkout@v7
         with:
-          # never an arbitrary dispatched branch: that would push unreleased models to
-          # ahbicht-ts-models and delete schemas that only exist on main
-          ref: ${{ github.event.release.tag_name || 'main' }}
-          # all branches, so that the regenerated schemas can be committed onto main below
-          fetch-depth: 0
+          # deliberately not the released tag, see the note at the top of this file
+          ref: main
+      - name: Remember the commit the schemas are generated from
+        id: source-commit
+        # not github.sha: that is the commit of the release tag or of the dispatching branch, while
+        # the schemas are generated from main
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
       - name: Install uv
         uses: astral-sh/setup-uv@v10.0.1
         with:
@@ -60,25 +73,9 @@ jobs:
         run: uv sync --group json_schemas
       - name: Generate the JSON Schemas from the pydantic models
         run: |
-          # deleted first, so that the schema of a removed pydantic model is not parked together
-          # with the freshly generated ones below (TokenSchema.json is such a leftover)
+          # deleted first, so that the schema of a removed pydantic model does not linger forever
           rm -f json_schemas/*.json
           uv run python json_schemas/generate_json_schemas.py
-      # The generator writes into json_schemas/ inside the working tree, so the result has to be
-      # parked outside the repository before switching to main.
-      - name: Park the generated schemas and switch to main
-        run: |
-          mkdir -p "$RUNNER_TEMP/json_schemas"
-          cp json_schemas/*.json "$RUNNER_TEMP/json_schemas/"
-          # a leftover modification (uv sync re-locking uv.lock, for example) would abort the
-          # branch switch below
-          git reset --hard
-          # actions/checkout leaves a detached HEAD on the released tag and does not create local
-          # branches, so main is created explicitly from the remote instead of relying on DWIM.
-          git fetch origin main
-          git switch --force-create main origin/main
-          rm -f json_schemas/*.json
-          cp "$RUNNER_TEMP/json_schemas/"*.json json_schemas/
       - name: Format the generated schemas
         # The generator writes json.dump(indent=4) output, while the schemas in this repository are
         # prettier formatted. Without this step every run would produce a formatting-only diff.
@@ -107,7 +104,7 @@ jobs:
           commit-message: "chore: regenerate JSON schemas"
           title: "chore: regenerate JSON schemas"
           body: |
-            The JSON schemas were regenerated from the pydantic models by the
+            The JSON schemas were regenerated from the pydantic models on main by the
             [Generate Schemas and TypeScript Models](https://github.com/Hochfrequenz/ahbicht/blob/main/.github/workflows/generate_schemas_and_ts_models.yml)
             workflow, triggered by ${{ github.event.release.html_url || 'a manual workflow run' }}.
 
@@ -129,13 +126,16 @@ jobs:
         run: |
           gh api "repos/${{ github.repository }}/pulls/$PULL_REQUEST_NUMBER/requested_reviewers" \
             --method POST --input - <<< "{\"reviewers\":[\"$REVIEWER\"]}" ||
-            echo "Could not request a review from $REVIEWER (they are probably the author of the Pull Request)."
+            echo "::warning::Could not request a review from $REVIEWER (probably the author of the Pull Request), so nobody was notified about Pull Request $PULL_REQUEST_NUMBER."
       - name: Push the TypeScript Models to ahbicht-ts-models
+        # Deliberately the last step: pushing to another repository cannot be undone, so it only
+        # happens once the schema Pull Request exists. If an earlier step fails, this push is
+        # skipped and the whole workflow can be re-run - every step is idempotent.
         env:
           # Personal Access Token with repo scope. Rotate at
           # https://github.com/Hochfrequenz/ahbicht/settings/secrets/actions/TS_MODELS_PUSH_TOKEN
           GITHUB_TOKEN: ${{ secrets.TS_MODELS_PUSH_TOKEN }}
-          SOURCE_COMMIT: ${{ github.sha }}
+          SOURCE_COMMIT: ${{ steps.source-commit.outputs.sha }}
         run: |
           set -euo pipefail
           # cloned without the token (the repository is public) and pushed with the token passed
