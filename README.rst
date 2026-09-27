@@ -149,7 +149,8 @@ Functionality
    condition expression is fulfilled and which Hints and
    FormatConstraints are relevant.
 -  The boolean logic follows 'brackets ``( )`` before ``then_also``
-   before ``and`` before ``or``'.
+   before ``and`` (``U``/``∧``) before ``or`` (``O``/``∨``) / ``xor`` (``X``/``⊻``)'.
+   See `Operator Semantics & Precedence`_ for details on XOR parity and self-XOR.
 -  Hints and UnevaluatedFormatConstraints are implemented as ``neutral``
    element, so not changing the boolean outcome of an expression for the
    evaluation regarding the requirement constraints and raising errors
@@ -349,6 +350,50 @@ Unknown Neutral Unknown
 
 Link to automatically generate HintsProvider Json content:
 https://regex101.com/r/za8pr3/5
+
+Operator Semantics & Precedence
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This section summarises three behaviours of the composition operators (``U``/AND, ``O``/OR, ``X``/XOR)
+that are logically consistent but routinely surprise readers of AHB expressions.
+
+**Operator precedence: ``U`` (AND) binds tighter than ``O`` (OR)**
+
+``Muss [1] O [2] U [3]`` is parsed as ``[1] O ([2] U [3])``, i.e. "[1] alone suffices, *or* both [2] and [3]",
+**not** ``([1] O [2]) U [3]``. This follows standard boolean precedence (AND before OR), but AHB expressions
+are read left-to-right by domain users who may not expect it. Use explicit parentheses whenever the intended
+grouping differs from the default.
+
+Full precedence order (highest to lowest):
+
+1. ``( )`` – brackets
+2. ``then_also`` – format-constraint attachment
+3. ``U`` / ``∧`` – AND
+4. ``O`` / ``∨`` – OR / ``X`` / ``⊻`` – XOR
+
+**``X`` (XOR) is odd-parity, not "exactly one of"**
+
+``X`` chains as a left-associative fold of boolean XOR, so a chain of conditions is **fulfilled if and only if
+an odd number of its operands are fulfilled** — *not* "exactly one":
+
++------------------------------+------------------------+--------+
+| Expression                   | Operands fulfilled     | Result |
++==============================+========================+========+
+| ``[1] X [2]``                | 2 (even)               | false  |
++------------------------------+------------------------+--------+
+| ``[1] X [2] X [3]``          | 3 (odd)                | true   |
++------------------------------+------------------------+--------+
+| ``[1] X [2] X [3] X [4]``   | 4 (even)               | false  |
++------------------------------+------------------------+--------+
+
+The ``n = 3 → true`` case is the common trap: many readers expect ``X`` to mean "mutually exclusive / exactly one",
+which would make three-fulfilled ``false``. The operator is *associative XOR (parity)*, not "exclusive selection".
+
+**Self-XOR is unsatisfiable**
+
+``[1] X [1]`` evaluates to **false for every possible state of** ``[1]`` (since ``a XOR a = false``).
+An expression that references the same condition on both sides of a ``X`` can therefore *never* be fulfilled.
+This is an easy copy/paste footgun — watch for duplicate condition keys on either side of ``X``.
 
 Content Evaluation
 ------------------

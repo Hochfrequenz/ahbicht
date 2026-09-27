@@ -144,7 +144,17 @@ class RequirementConstraintTransformer(BaseTransformer[TRCTransformerArgument, E
         return evaluated_composition
 
     def xor_composition(self, left: ConditionNode, right: ConditionNode) -> EvaluatedComposition:
-        """Evaluates exclusive xor_composition"""
+        """
+        Evaluates exclusive xor_composition (odd-parity semantics).
+
+        ``X`` chains as a left-associative fold of boolean XOR: a chain is fulfilled if and only if an *odd* number
+        of its operands are fulfilled, not "exactly one of". Examples:
+
+        - ``[1] X [2]`` with both fulfilled → false (2 is even)
+        - ``[1] X [2] X [3]`` with all three fulfilled → true (3 is odd)
+
+        Self-XOR (``[1] X [1]``) is always false and makes the enclosing expression unsatisfiable.
+        """
 
         evaluated_composition = self._or_xor_composition(left, right, "xor_composition")
 
