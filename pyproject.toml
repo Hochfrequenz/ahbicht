@@ -43,7 +43,7 @@ tests = [
     "pytest-datafiles==3.0.1",
     "pytest-mock==3.16.0",
 ]
-linting = ["ruff==0.17.1"]
+linting = ["ruff==0.17.2"]
 type_check = [
     "mypy[pydantic]==2.4.0",
     "types-pytz==2026.5.0.20261006",
