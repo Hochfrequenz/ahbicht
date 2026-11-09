@@ -39,7 +39,7 @@ Documentation = "https://ahbicht.readthedocs.io/en/latest/"
 [dependency-groups]
 tests = [
     "pytest==9.2.0",
-    "pytest-asyncio==1.4.1",
+    "pytest-asyncio==1.4.1.post1",
     "pytest-datafiles==3.0.1",
     "pytest-mock==3.17.0",
 ]
