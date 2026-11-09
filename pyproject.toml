@@ -46,7 +46,7 @@ tests = [
 linting = ["ruff==0.17.3"]
 type_check = [
     "mypy[pydantic]==2.4.0",
-    "types-pytz==2026.5.0.20261006",
+    "types-pytz==2026.6.0.20261031",
     { include-group = "tests" },
 ]
 coverage = ["coverage==7.16.2", { include-group = "tests" }]
